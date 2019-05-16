@@ -1,0 +1,14 @@
+# Ignore data
+/data/01-in/*
+/data/02-out/*
+/data/03-clean/*
+
+# Ignore node modules
+*/node_modules/*
+
+# R related
+*.Rdata
+*.Rhistory
+
+# Python related
+*.ipynb_checkpoints/
