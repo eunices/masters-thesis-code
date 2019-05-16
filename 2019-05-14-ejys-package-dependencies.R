@@ -4,7 +4,7 @@ library(igraph)
 library(miniCRAN)
 
 setwd('c:/Dev/msc/01-literature-review/')
-df = read.csv('data-out/clean/pkgs-comb-2019-05-13.csv', stringsAsFactors = F)
+df = read.csv('data/01-in/clean/pkgs-comb-2019-05-13.csv', stringsAsFactors = F)
 
 tags <- c(df[df$source == "CRAN",]$name)
 x <- makeDepGraph(tags, available=T, recommended=F, enhances = F, includeBasePkgs = F, suggests = F)
@@ -43,7 +43,7 @@ igraph::plot.igraph(x, vertex.size = 1,
 
 dev.off()
 
-write.csv(as_long_data_frame(x), 'data-out/pkgs-deps-2019-05-14.csv')
+write.csv(as_long_data_frame(x), 'data/02-out/pkgs-deps-2019-05-14.csv')
 
 ##################################################
 
