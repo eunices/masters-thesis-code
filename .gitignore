@@ -12,3 +12,8 @@
 
 # Python related
 *.ipynb_checkpoints/
+
+# Packrat
+packrat/lib*/
+.Rproj.user
+
