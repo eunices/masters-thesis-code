@@ -17,3 +17,5 @@
 packrat/lib*/
 .Rproj.user
 
+# Ancillary
+desktop.ini
