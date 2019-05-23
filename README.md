@@ -16,4 +16,8 @@ Some general guidelines that I follow:
 - For efficiency purposes, I work from one conda environment, instead of creating one for each analyses, as the tools likely to be used are common to most of them. However, if the analyses is niche and requires such unique environment, a `requirements.txt` will be output.
 - Standard files such as `.gitignore` and `README.md` are also present.
 
+Specific files:
+- `backup.sh` enables me to backup my data to Dropbox
+
+
 Last updated 16 May 2019

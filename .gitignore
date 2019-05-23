@@ -1,9 +1,10 @@
-# Ignore data
+# Data except look up
 /data/01-in/*
 /data/02-out/*
 /data/03-clean/*
+/data/geospatial/*
 
-# Ignore node modules
+# Nnode modules
 */node_modules/*
 
 # R related
