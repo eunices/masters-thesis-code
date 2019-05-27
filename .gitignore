@@ -1,10 +1,13 @@
-# Data except look up
+# Data 
 /data/01-in/*
 /data/02-out/*
 /data/03-clean/*
 /data/geospatial/*
 /data/lookup/*
 /data/201*/*
+
+# Do not ignore folders with gitkeep
+!.gitkeep 
 
 # Package modules
 */node_modules/*
