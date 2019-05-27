@@ -10,5 +10,5 @@ echo "$fn"
 zip -r $fn data/*
 echo File is backed up as $fn
 
-dir="../../Dropbox/msc-thesis/data-dump"
+dir="../../Dropbox/msc-thesis/data-dump/backups"
 mv $fn $dir/$fn

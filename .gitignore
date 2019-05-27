@@ -4,9 +4,12 @@
 /data/03-clean/*
 /data/geospatial/*
 /data/lookup/*
+*/data/*
 
-# Nnode modules
+# Package modules
 */node_modules/*
+*/__pycache__/*
+*/src/*
 
 # R related
 *.Rdata
@@ -21,3 +24,9 @@ packrat/lib*/
 
 # Ancillary
 desktop.ini
+
+# Passwords
+*.env
+
+# Logs
+*.log

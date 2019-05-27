@@ -1,7 +1,7 @@
 var fs = require('fs');
 var gs = require('github-scraper');
 
-var filedir = 'data-in/github/'
+var filedir = '../01-in/github/'
 
 processJson('species-distribution-modelling')
 
