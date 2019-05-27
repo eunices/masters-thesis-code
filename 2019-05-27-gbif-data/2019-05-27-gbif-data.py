@@ -13,7 +13,7 @@ from dwca.read import DwCAReader
 from pygbif import occurrences as occ
 
 
-# Load file from the path.
+# Load file from the path
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
@@ -30,12 +30,31 @@ dir_data = f'../data/{basepath}'
 if sys.argv[1] == 'q':
 
     # Form query string
-    species ='1335213' # Megachile sculpturalis
-    query = f'taxonKey = {species}'
+    # For more information: https://pygbif.readthedocs.io/en/latest/modules/occurrence.html
+
+    # Multiple taxa [does not appear to work as dataset has 0 records!]
+    # apoidea = {
+    #     'apidae': 4334,
+    #     'halictidae': 7908,
+    #     'andrenidae': 7901,
+    #     'megachilidae': 7911,
+    #     'colletidae': 7905,
+    #     'melittidae': 4345,
+    #     'stenotritidae': 7916,
+    # }
+    # query = [f'taxonKey = {x}' for x in apoidea.values()]
+    
+    # Single taxa
+    # species ='1335213' # Megachile sculpturalis
+    # query = f'taxonKey = {species}'
+
+    # Kick start process of requesting for dataset
+    # Should see download at https://gbif.org/user/download
+    print(f'{dt.now()} Query is {query}.')
     meta = occ.download(query)
     key = meta[0]
 
-    # Log dataset identifier
+    # Log identifier
     f = open(logfile, "a")
     f.write(f'{key}: {query}\n')
     f.close()
@@ -70,7 +89,7 @@ if sys.argv[1] == 'dl':
         with DwCAReader(zipf['path']) as dwca:
 
             if any(check_xml):
-                # Obtained from https://python-dwca-reader.readthedocs.io/
+                # For more information: https://python-dwca-reader.readthedocs.io/
                 df = dwca.pd_read(f'occurrence.txt', parse_dates=True)
 
             if any(check_csv):
