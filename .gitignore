@@ -4,7 +4,7 @@
 /data/03-clean/*
 /data/geospatial/*
 /data/lookup/*
-*/data/*
+/data/201*/*
 
 # Package modules
 */node_modules/*
