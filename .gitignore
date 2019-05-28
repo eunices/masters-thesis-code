@@ -5,6 +5,7 @@
 /data/geospatial/*
 /data/lookup/*
 /data/201*/*
+*.db
 
 # Do not ignore folders with gitkeep
 !.gitkeep 
