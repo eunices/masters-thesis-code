@@ -27,72 +27,73 @@ dir_data = f'../data/{basepath}'
 
 
 # Query
-if sys.argv[1] == 'q':
+if __name__ == '__main__':
+    if sys.argv[1] == 'q':
 
-    # Form query string
-    # For more information: https://pygbif.readthedocs.io/en/latest/modules/occurrence.html
+        # Form query string
+        # For more information: https://pygbif.readthedocs.io/en/latest/modules/occurrence.html
 
-    # Multiple taxa [does not appear to work as dataset has 0 records!]
-    # apoidea = {
-    #     'apidae': 4334,
-    #     'halictidae': 7908,
-    #     'andrenidae': 7901,
-    #     'megachilidae': 7911,
-    #     'colletidae': 7905,
-    #     'melittidae': 4345,
-    #     'stenotritidae': 7916,
-    # }
-    # query = [f'taxonKey = {x}' for x in apoidea.values()]
-    
-    # Single taxa
-    # species ='1335213' # Megachile sculpturalis
-    # query = f'taxonKey = {species}'
+        # Multiple taxa [does not appear to work as dataset has 0 records!]
+        # apoidea = {
+        #     'apidae': 4334,
+        #     'halictidae': 7908,
+        #     'andrenidae': 7901,
+        #     'megachilidae': 7911,
+        #     'colletidae': 7905,
+        #     'melittidae': 4345,
+        #     'stenotritidae': 7916,
+        # }
+        # query = [f'taxonKey = {x}' for x in apoidea.values()]
+        
+        # Single taxa
+        # species ='1335213' # Megachile sculpturalis
+        # query = f'taxonKey = {species}'
 
-    # Kick start process of requesting for dataset
-    # Should see download at https://gbif.org/user/download
-    print(f'{dt.now()} Query is {query}.')
-    meta = occ.download(query)
-    key = meta[0]
+        # Kick start process of requesting for dataset
+        # Should see download at https://gbif.org/user/download
+        print(f'{dt.now()} Query is {query}.')
+        meta = occ.download(query)
+        key = meta[0]
 
-    # Log identifier
-    f = open(logfile, "a")
-    f.write(f'{key}: {query}\n')
-    f.close()
+        # Log identifier
+        f = open(logfile, "a")
+        f.write(f'{key}: {query}\n')
+        f.close()
 
-
-# Download dataset
-if sys.argv[1] == 'dl':
-    f = open(logfile, "r")
-    d = f.readlines()
-    d = [re.sub('\n', '', line).split(': ') for line in d]
-
-    if not isdir(dir_data):
-        mkdir(dir_data)
 
     # Download dataset
-    for idx, i in enumerate(d):
-        print(f'{dt.now()} Downloading data for {idx}. {i[0]}')
-        zipf = occ.download_get(key=i[0], path=dir_data)
+    if sys.argv[1] == 'dl':
+        f = open(logfile, "r")
+        d = f.readlines()
+        d = [re.sub('\n', '', line).split(': ') for line in d]
 
-        # List files in .zip
-        files = zipfile.ZipFile(zipf['path']).namelist()
+        if not isdir(dir_data):
+            mkdir(dir_data)
 
-        # Check if file contains .csv or darwin core archives (.xml)
-        check_xml = [x.lower().endswith('.xml') for x in files]
-        check_csv = [x.lower().endswith('.csv') for x in files]
+        # Download dataset
+        for idx, i in enumerate(d):
+            print(f'{dt.now()} Downloading data for {idx}. {i[0]}')
+            zipf = occ.download_get(key=i[0], path=dir_data)
 
-        if any(check_xml):
-            print(f'{dt.now()} Occurrence data contains .xml')
-            with DwCAReader(zipf['path']) as dwca:
-                # For more information: https://python-dwca-reader.readthedocs.io/
-                df = dwca.pd_read(f'occurrence.txt', parse_dates=True)
+            # List files in .zip
+            files = zipfile.ZipFile(zipf['path']).namelist()
 
-            print(f'{dt.now()} File contains {len(df)} rows.')
-            target = f'{dir_data}/{i[0]}.csv'
-            df.to_csv(target, index=False)
+            # Check if file contains .csv or darwin core archives (.xml)
+            check_xml = [x.lower().endswith('.xml') for x in files]
+            check_csv = [x.lower().endswith('.csv') for x in files]
 
-        if any(check_csv):
-            print(f'{dt.now()} Occurrence data contains .csv')
-            with zipfile.ZipFile(zipf['path'], 'r') as zip:
-                zip.extract(f'{i[0]}.csv', dir_data)
+            if any(check_xml):
+                print(f'{dt.now()} Occurrence data contains .xml')
+                with DwCAReader(zipf['path']) as dwca:
+                    # For more information: https://python-dwca-reader.readthedocs.io/
+                    df = dwca.pd_read(f'occurrence.txt', parse_dates=True)
+
+                print(f'{dt.now()} File contains {len(df)} rows.')
+                target = f'{dir_data}/{i[0]}.csv'
+                df.to_csv(target, index=False)
+
+            if any(check_csv):
+                print(f'{dt.now()} Occurrence data contains .csv')
+                with zipfile.ZipFile(zipf['path'], 'r') as zip:
+                    zip.extract(f'{i[0]}.csv', dir_data)
 
