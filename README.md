@@ -4,7 +4,7 @@ Note: README is written in the first-person voice.
 
 This repository contains all the code to do with my masters thesis, in order for the research to be reproducible.
 
-## How I arranged the files
+## Folder structure
 
 Some general guidelines that I follow:
 
@@ -17,7 +17,12 @@ Some general guidelines that I follow:
 - Standard files such as `.gitignore` and `README.md` are also present.
 
 Specific files:
+
 - `backup.sh` enables me to backup my data to Dropbox
+
+## Useful links
+
+- [Using citizen science data for ecological niche modelling](https://www.researchgate.net/post/does_it_reliable_to_use_only_citizen_science_data_for_Ecological_niche_modelling)
 
 
 Last updated 16 May 2019
