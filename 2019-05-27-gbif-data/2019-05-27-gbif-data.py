@@ -71,38 +71,28 @@ if sys.argv[1] == 'dl':
 
     # Download dataset
     for idx, i in enumerate(d):
+        print(f'{dt.now()} Downloading data for {idx}. {i[0]}')
         zipf = occ.download_get(key=i[0], path=dir_data)
 
-        # To extract the zipfile
-        zip_ref = zipfile.ZipFile(zipf['path'], 'r')
-        extract_to = re.sub('.zip', '', zipf['path'])
-        zip_ref.extractall(extract_to)
-        zip_ref.close()
+        # List files in .zip
+        files = zipfile.ZipFile(zipf['path']).namelist()
 
         # Check if file contains .csv or darwin core archives (.xml)
-        check_xml = [x.lower().endswith('.xml') for x in os.listdir(extract_to)]
-        check_csv = [x.lower().endswith('.csv') for x in os.listdir(extract_to)]
+        check_xml = [x.lower().endswith('.xml') for x in files]
+        check_csv = [x.lower().endswith('.csv') for x in files]
 
-        # Remove zip folder
-        shutil.rmtree(extract_to)
-
-        with DwCAReader(zipf['path']) as dwca:
-
-            if any(check_xml):
+        if any(check_xml):
+            print(f'{dt.now()} Occurrence data contains .xml')
+            with DwCAReader(zipf['path']) as dwca:
                 # For more information: https://python-dwca-reader.readthedocs.io/
                 df = dwca.pd_read(f'occurrence.txt', parse_dates=True)
 
-            if any(check_csv):
-                df = pd.read_csv(f'{i}.csv')
-
-            # Summarise df only if it exists
-            try:
-                df
-            except NameError:
-                df_exists = False
-            else: 
-                df_exists = True
-
-        if df_exists:
             print(f'{dt.now()} File contains {len(df)} rows.')
-            df.to_csv(f'{dir_data}/analysis.csv')
+            target = f'{dir_data}/{i[0]}.csv'
+            df.to_csv(target, index=False)
+
+        if any(check_csv):
+            print(f'{dt.now()} Occurrence data contains .csv')
+            with zipfile.ZipFile(zipf['path'], 'r') as zip:
+                zip.extract(f'{i[0]}.csv', dir_data)
+
