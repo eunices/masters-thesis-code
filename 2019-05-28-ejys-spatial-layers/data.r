@@ -1,1 +1,0 @@
-# https://www.gis-blog.com/r-raster-data-acquisition/

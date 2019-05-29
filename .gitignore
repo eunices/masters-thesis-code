@@ -2,7 +2,7 @@
 /data/01-in/*
 /data/02-out/*
 /data/03-clean/*
-/data/geospatial/*
+/data/geo/*
 /data/lookup/*
 /data/201*/*
 *.db
@@ -35,3 +35,6 @@ desktop.ini
 
 # Logs
 *.log
+
+# Ephemeral files
+*.txt
