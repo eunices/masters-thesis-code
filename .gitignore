@@ -35,6 +35,8 @@ desktop.ini
 
 # Logs
 *.log
+*.log*
+*-log*
 
 # Ephemeral files
 *.txt
