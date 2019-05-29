@@ -1,1 +1,0 @@
-# UML diagram see https://github.com/Featuretools/predict-remaining-useful-life/blob/master/Simple%20Featuretools%20RUL%20Demo.ipynb
