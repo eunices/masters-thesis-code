@@ -19,6 +19,7 @@ cd $dir
 unzip -o "*.zip"
 rm *.zip
 
+echo "Reorganizing files"
 cd $dir
 shp_pri_dir="shp_pri"
 mkdir $shp_pri_dir
@@ -31,6 +32,6 @@ mv *_1.* "$shp_sec_dir/"
 cd $shp_sec_dir && rename -f 's/_AFG_1/\_1/' *_AFG_1* && cd ".."
 
 
-echo "Running script to merge shp"
+echo "Running script to merge shp_pri" # can be extended for shp_sec later
 cd $folder_dir
 python -m process_GADM
