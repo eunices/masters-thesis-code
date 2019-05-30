@@ -6,9 +6,14 @@
 
 [name of layer] - [type of data, resolution and data format if applicable] - date downloaded
 1. GADM country boundaries - vector (.shp and .gpkg) - 27 May 2019
-2. Chelsa bioclim - raster 30 arc sec (geoTIFF) - 28 May 2019
+2. Chelsa bioclim - raster 30 arc sec (.geoTIFF) - 28 May 2019
 3. GMTED2010 - raster 7.5 arc second (.adf) - 28 May 2019
-4. 
+4. Beck's Koppen - raster 1km resolution (.geoTIFF) - 29 May 2019
+
+
+## To download
+
+1. 
 
 ## Potential sources
 
