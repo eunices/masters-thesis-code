@@ -38,7 +38,7 @@ def click():
         # Get html link
         el = browser.find_elements_by_tag_name('a')
         links = [x.get_attribute('href') for x in el]
-        link = links[5] # Get gpkg format
+        link = links[5] # Get shp format
         li_link.append(link)
 
         print(f'{dt.now()} Click {v} {link}')
