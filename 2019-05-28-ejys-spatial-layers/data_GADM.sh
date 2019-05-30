@@ -11,7 +11,7 @@ python -m data_GADM
 
 echo "Downloading files"
 mkdir $dir
-wget -i countries_GADM.txt --directory-prefix=$dir -nc 
+wget -i "$folder_dir/GADM-countries.txt" --directory-prefix=$dir -nc 
 
 
 echo "Unzipping files"
