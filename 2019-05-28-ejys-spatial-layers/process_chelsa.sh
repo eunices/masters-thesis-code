@@ -1,11 +1,11 @@
 base_dir=${PWD%/*}
 geo_data_dir="$base_dir/data/geo"
-dir="$geo_data_dir/chelsa/bioclim"
+bioclim_dir="$geo_data_dir/chelsa/bioclim"
 files="$dir/*.tif"
 asc_subfolder="asc"
 
 # Convert from geotiff to asc
-cd $dir
+cd $bioclim_dir
 for f in $files
 do 
     echo "Processing $f file."
