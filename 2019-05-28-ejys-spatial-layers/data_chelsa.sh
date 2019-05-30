@@ -53,3 +53,4 @@ file="12407516"
 wget "$base_url$file" -nc
 mv "$file" "$file.zip"
 unzip *.zip
+

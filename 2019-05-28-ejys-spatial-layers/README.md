@@ -5,15 +5,16 @@
 30 arc seconds ~ 1km
 
 [name of layer] - [type of data, resolution and data format if applicable] - date downloaded
+
 1. GADM country boundaries - vector (.shp and .gpkg) - 27 May 2019
 2. Chelsa bioclim - raster 30 arc sec (.geoTIFF) - 28 May 2019
 3. GMTED2010 - raster 7.5 arc second (.adf) - 28 May 2019
 4. Beck's Koppen - raster 1km resolution (.geoTIFF) - 29 May 2019
 
-
 ## To download
 
-1. 
+1. USGS HydroSheds https://hydrosheds.cr.usgs.gov/datadownload.php?reqdata=15rivs
+2. 
 
 ## Potential sources
 
@@ -40,8 +41,8 @@ Karger, D.N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza, R.W., 
 
 - USGS landcover (Zeng et al. 2016)
   - avg-MGVF
-- (Plant diversity)[https://www.nees.uni-bonn.de/research-/systematics-evolution-ecology/biogeography-and-macroecology-biomaps/worldmaps/worldmaps-of-plant-diversity]
-- (Other diversity)[http://guides.lib.berkeley.edu/VegMaps]
+- [Plant diversity](https://www.nees.uni-bonn.de/research-/systematics-evolution-ecology/biogeography-and-macroecology-biomaps/worldmaps/worldmaps-of-plant-diversity)
+- [Other diversity](http://guides.lib.berkeley.edu/VegMaps)
 
 ## Resolution
 
