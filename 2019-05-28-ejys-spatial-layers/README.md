@@ -1,5 +1,15 @@
 # Species distribution modelling covariates and resolution
 
+## Downloaded sources
+
+30 arc seconds ~ 1km
+
+[name of layer] - [type of data, resolution and data format if applicable] - date downloaded
+1. GADM country boundaries - vector (.shp and .gpkg) - 27 May 2019
+2. Chelsa bioclim - raster 30 arc sec (geoTIFF) - 28 May 2019
+3. GMTED2010 - raster 7.5 arc second (.adf) - 28 May 2019
+4. 
+
 ## Potential sources
 
 ### Climatic variables
@@ -9,6 +19,7 @@
 - IPCC (Zeng et al. 2016)
   - tmp, dtr, frs, pre, cld, tmn, tmx, vap, wet
 - (Chelsa)[http://chelsa-climate.org/]
+- (Koppen)[http://www.gloh2o.org/koppen/]
 
 Karger, D.N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza, R.W., Zimmermann, N.E., Linder, H.P. & Kessler, M. (2017) Climatologies at high resolution for the earth’s land surface areas. Scientific Data 4, 170122.
 
@@ -20,10 +31,12 @@ Karger, D.N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza, R.W., 
 - USGS HydroSHEDS (Zeng et al. 2016)
   - cond_dem, flow_accum, slope, aspect
 
-### Vegetation
+### Vegetation and other fauna
 
 - USGS landcover (Zeng et al. 2016)
   - avg-MGVF
+- (Plant diversity)[https://www.nees.uni-bonn.de/research-/systematics-evolution-ecology/biogeography-and-macroecology-biomaps/worldmaps/worldmaps-of-plant-diversity]
+- (Other diversity)[http://guides.lib.berkeley.edu/VegMaps]
 
 ## Resolution
 

@@ -38,7 +38,7 @@ def click():
         # Get html link
         el = browser.find_elements_by_tag_name('a')
         links = [x.get_attribute('href') for x in el]
-        link = links[4] # Get gpkg format
+        link = links[5] # Get gpkg format
         li_link.append(link)
 
         print(f'{dt.now()} Click {v} {link}')
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     # values, countries = get_countries()
     links = click()
 
-    f = open('countries_GADM.txt', 'w+')
+    f = open('GADM-countries.txt', 'w+')
     for i in links:
         f.write(f'{i}\n')
     f.close()
