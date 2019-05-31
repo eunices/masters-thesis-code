@@ -4,6 +4,7 @@ geo_data_dir="$base_dir/data/geo"
 dir="$geo_data_dir/gadm"
 folder_dir=$(pwd)
 
+conda activate msc
 
 echo "Scraping urls of specified file type"
 python -m data_GADM
