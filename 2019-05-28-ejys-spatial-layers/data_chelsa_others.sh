@@ -6,7 +6,7 @@ gmted_dir="$geo_data_dir/gmted2010"
 beck_dir="$geo_data_dir/beck_koppen"
 folder_dir=$(pwd)
 
-conda activate msc
+source activate msc
 
 echo "Making all dirs"
 mkdir $geo_data_dir
