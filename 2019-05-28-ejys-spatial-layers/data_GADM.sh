@@ -26,13 +26,14 @@ cd $dir # creating folder for all primary divisions (countries)
 shp_pri_dir="shp_pri"
 mkdir $shp_pri_dir
 mv *_0.* "$shp_pri_dir/"
-cd $shp_pri_dir && rename -f 's/_ABW_0/\_0/' *_ABW_0* && cd ".." # copying file to be merged
+cd $shp_pri_dir && rename -f 's/_ABW_0/\_0/' *_ABW_0* # copying file to be merged
+cd ".."
 
 shp_sec_dir="shp_sec" # creating folder for all sec divisions
 mkdir $shp_sec_dir
 mv *_1.* "$shp_sec_dir/"
-cd $shp_sec_dir && rename -f 's/_AFG_1/\_1/' *_AFG_1* && cd ".." # copying file to be merged
-
+cd $shp_sec_dir && rename -f 's/_AFG_1/\_1/' *_AFG_1* # copying file to be merged
+cd ".."
 
 # echo "Running script to merge shp_pri" # can be extended for shp_sec later
 cd $folder_dir

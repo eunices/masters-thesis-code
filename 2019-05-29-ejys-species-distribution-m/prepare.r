@@ -17,6 +17,7 @@ library(sp)
 # Params
 map_crs = '+proj=longlat +datum=WGS84'
 raster_dir = 'data/geo/chelsa/bioclim/'
+should_plot = 'no'
 
 
 # Read dataset
@@ -75,10 +76,12 @@ names(m)
 
 # Quick plot
 data(wrld_simpl)
-plot(wrld_simpl, xlim=c(-100, 150), ylim=c(25, 50), axes=TRUE, col="light yellow")
-box()
-points(m$decimalLongitude, m$decimalLatitude, col='orange', pch=20, cex=0.75)
-points(m$decimalLongitude, m$decimalLatitude, col='red', cex=0.75)
+if should_plot == 'yes':
+    plot(wrld_simpl, xlim=c(-100, 150), ylim=c(25, 50), axes=TRUE, col="light yellow")
+    box()
+    points(m$decimalLongitude, m$decimalLatitude, col='orange', pch=20, cex=0.75)
+    points(m$decimalLongitude, m$decimalLatitude, col='red', cex=0.75)
+    dev.off()
 
 
 # Data cleaning
@@ -103,10 +106,11 @@ r = extend(r, extent(r)+1)   # expand extent by 1 deg
 sam = gridSample(m, r, n=1)  # sample grid
 p = rasterToPolygons(r)      # convert raster to polygon
 
-plot(p, border='grey')
-points(m)
-points(sam, cex=1, col='red', pch='x')
-dev.off()
+if should_plot == "yes":
+    plot(p, border='grey')
+    points(m)
+    points(sam, cex=1, col='red', pch='x')
+    dev.off()
 
 
 # Prepare presence absence information
@@ -117,15 +121,17 @@ pred = raster(files[1], pattern='tif', full.names=TRUE)
 set.seed(1963)
 # Get random points
 bg = randomPoints(pred, 500)
-# par(mfrow=c(1,2))
-# plot(!is.na(pred), legend=FALSE)
-# points(bg, cex=0.5)
+if should_plot == 'yes':
+    par(mfrow=c(1,2))
+    plot(!is.na(pred), legend=FALSE)
+    points(bg, cex=0.5)
 # Create new extent and generate randomly sampled points based on it
 ee = extent(-80, -53, -39, -22)
 bg2 = randomPoints(pred, 50, ext=ee)
-# plot(!is.na(pred), legend=FALSE)
-# plot(ee, add=TRUE, col='red')
-# points(bg2, cex=0.5)
+if should_plot == 'yes':
+    plot(!is.na(pred), legend=FALSE)
+    plot(ee, add=TRUE, col='red')
+    points(bg2, cex=0.5)
 
 # Random circles
 # make circles
@@ -140,30 +146,33 @@ print(length(cells)); print(length(unique(cells)))
 # get xy coords from raster cells
 xy = xyFromCell(pred, cells)
 print(dim(xy))
-plot(pol, axes=TRUE)
-points(xy, cex=0.75, pch=20, col='blue')
-dev.off()
+
+if should_plot == "yes":
+    plot(pol, axes=TRUE)
+    points(xy, cex=0.75, pch=20, col='blue')
+    dev.off()
 
 # get overlay between circles and points
 spxy = SpatialPoints(xy, proj4string=CRS(map_crs))
 o = over(spxy, geometry(x))
 table(is.na(o))
 xyInside = xy[!is.na(o), ]
-
 # see separate method on pg 21, vignette for dismo
 
 
 # Raster preparation
 
 predictors = stack(files)
-# plot(predictors)
+if should_plot == 'yes':
+    plot(predictors)
 
 worldmap = rgdal::readOGR(dsn = "data/geo/gadm/shp_pri/gadm36_0.shp")
 crs(worldmap) = map_crs
-# plot(predictors, 1)
-# plot(worldmap, add=TRUE)
-# points(m, col='blue')
-# dev.off()
+if should_plot == 'yes':
+    plot(predictors, 1)
+    plot(worldmap, add=TRUE)
+    points(m, col='blue')
+    dev.off()
 
 
 # Extracting values from raster
