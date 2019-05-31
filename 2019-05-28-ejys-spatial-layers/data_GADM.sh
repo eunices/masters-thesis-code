@@ -35,5 +35,7 @@ cd $shp_sec_dir && rename -f 's/_AFG_1/\_1/' *_AFG_1* && cd ".." # copying file 
 
 # echo "Running script to merge shp_pri" # can be extended for shp_sec later
 cd $folder_dir
-Rscript process_GADM.r # creating IND_0 as it does not exist
+# creating IND_0 as it does not exist 
+# R part cannot run in WSL as R cannot be installed/ conda R does not have all packages required
+Rscript process_GADM.r 
 python -m process_GADM
