@@ -33,6 +33,7 @@ desktop.ini
 
 # Passwords
 *.env
+keys.R
 
 # Logs
 *.log
