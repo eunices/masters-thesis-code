@@ -1,24 +1,13 @@
 # Species Distribution Modelling spatial covariates
 
-## Downloaded sources
-
-30 arc seconds ~ 1km
-
-[name of layer] - [type of data, resolution and data format if applicable] - date downloaded
-
-1. GADM country boundaries - vector (.shp and .gpkg) - 27 May 2019
-2. Chelsa bioclim - raster 30 arc sec (.geoTIFF) - 28 May 2019
-3. GMTED2010 - raster 7.5 arc second (.adf) - 28 May 2019
-4. Beck's Koppen - raster 1km resolution (.geoTIFF) - 29 May 2019
+See `data/lookup/2019-06-01-spatial-layers-metadata.csv`
 
 ## To download
 
-1. Terrestrial ecoregions https://www.worldwildlife.org/publications/terrestrial-ecoregions-of-the-world
-2. Wetlands https://www.worldwildlife.org/pages/global-lakes-and-wetlands-database
-3. USGS HydroSheds https://hydrosheds.cr.usgs.gov/datadownload.php?reqdata=15rivs
-4. USGS LandCover https://archive.usgs.gov/archive/sites/landcover.usgs.gov/globallandcover.html
-5. NASA Anthropogenic bioms https://sedac.ciesin.columbia.edu/data/collection/anthromes/sets/browse
-6. Soils https://www.isric.org/explore/soil-geographic-databases / http://www.fao.org/geonetwork/srv/en/main.home?uuid=446ed430-8383-11db-b9b2-000d939bc5d8 / http://webarchive.iiasa.ac.at/Research/LUC/External-World-soil-database/HTML/SoilQuality.html?sb=10
+1. USGS HydroSheds https://hydrosheds.cr.usgs.gov/datadownload.php?reqdata=15rivs
+2. USGS LandCover https://archive.usgs.gov/archive/sites/landcover.usgs.gov/globallandcover.html
+3. NASA Anthropogenic bioms https://sedac.ciesin.columbia.edu/data/collection/anthromes/sets/browse
+4. Soils https://www.isric.org/explore/soil-geographic-databases / http://www.fao.org/geonetwork/srv/en/main.home?uuid=446ed430-8383-11db-b9b2-000d939bc5d8 / http://webarchive.iiasa.ac.at/Research/LUC/External-World-soil-database/HTML/SoilQuality.html?sb=10
 
 Explore http://www.gisresources.com/free-gis-data-ecology/
 
