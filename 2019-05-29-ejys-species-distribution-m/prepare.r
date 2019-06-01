@@ -12,12 +12,18 @@ library(dismo)
 library(maptools)
 library(rgdal)
 library(sp)
+library(ggmap)
 
 
 # Params
+geocode_api = 'AIzaSyAkLYuBhwxR7glHNVuR1Gsszt4BmJ8ScY4'
 map_crs = '+proj=longlat +datum=WGS84'
 raster_dir = 'data/geo/chelsa/bioclim/'
 should_plot = 'no'
+
+
+# Initialize google api for geocoding
+register_google(key = geocode_api)
 
 
 # Read dataset
@@ -40,14 +46,48 @@ df[,.(.N), by=.(hasCoordinate, countryCode)][order(countryCode, hasCoordinate)]
 
 
 # Georeference those without coordinates
-# TODO:
 georef_cols = c(
     'locality',
     'verbatimLocality'
 )
-georef = df[is.na(decimalLongitude) || is.na(decimalLatitude), ..georef_cols]
-try(geocode(georef$locality[4])) # TODO: setup api keys https://stackoverflow.com/questions/52565472/
+# followed for setting up setting api keys https://stackoverflow.com/questions/52565472/
+filter = is.na(df$decimalLatitude) | is.na(df$decimalLongitude)
+table(filter)
 
+# Separate tables
+df1 = df[!filter]   # no need geocoding
+df2 = df[filter]    # to be geocoded
+# Remove those with no locality
+df2 = df2[!(verbatimLocality == "" & locality == ""),]; print(dim(df2)[1]) 
+# Create columns with most information for geocoding
+df2$localityCombined = df2$locality
+df2[locality=="",]$localityCombined = df2[locality=="", verbatimLocality]
+df2$localityMoreDetails = paste0(gsub("\\|", ", ", df2$higherGeography), ", ", df2$localityCombined)
+df2$localityMoreDetails = gsub("^, ", "", df2$localityMoreDetails)
+# Checks
+df2[locality=="", localityMoreDetails]
+df2[verbatimLocality=="", localityMoreDetails]
+dim(df2[verbatimLocality=="" & locality=="",])
+dim(df2[verbatimLocality=="" & locality=="",])
+# Geocoding
+geocoded = try(geocode(df2$localityMoreDetails)) 
+geocoded = as.data.frame(geocoded)
+df2$decimalLatitude = geocoded$lat
+df2$decimalLongitude = geocoded$lon
+# Cleanup 
+filter = is.na(df2$decimalLatitude) | is.na(df2$decimalLongitude)
+table(filter)
+df2 = df2[!filter]
+df2$hasGeospatialIssues = TRUE
+df2$issue = "GEOREFERENCED W/ GOOGLE API"
+df2$locality = df$localityMoreDetails
+df2$localityCombined = NULL
+df2$localityMoreDetails = NULL
+# Recombine both dataframes
+df = rbind(df1, df2)
+# Last checks
+df[hasCoordinate==FALSE, decimalLatitude]
+df[hasCoordinate==FALSE, decimalLongitude]
 
 # Remove duplicates
 # TODO:
@@ -181,4 +221,8 @@ set.seed(0)
 backgr = randomPoints(predictors, 500)
 abs_vals = extract(predictors, backgr)    # get raster values for background
 pb = c(rep(1, nrow(abs_vals)), rep(0, nrow(absvals)))
+sdm_data = data.frame(cbind(pb, rbind(presvals, absvals))) # creating dataframe
+head(sdm_data)
+summary(sdm_data)
 
+pairs(sdm_data[,2:5], cex=0.1, fig=TRUE)
