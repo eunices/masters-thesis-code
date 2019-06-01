@@ -3,8 +3,9 @@
 
 
 # Setup
-setwd('C:/Dev/msc-thesis-code')
 source('keys.R')
+setwd(working_dir)
+
 
 # Load libraries
 library(data.table)
