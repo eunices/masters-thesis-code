@@ -19,14 +19,14 @@ echo "Activate conda environment"
 conda activate msc
 
 echo "Making all dirs"
-mkdir $dir_usgs_gmted2010
-mkdir $dir_beck_koppen
-mkdir $dir_teow
-mkdir $dir_global_water1
-mkdir $dir_global_water2
-mkdir $dir_global_water3
-mkdir $dir_et0
-mkdir $dir_intact_forest
+mkdir $dir_usgs_gmted2010 -p
+mkdir $dir_beck_koppen -p
+mkdir $dir_teow -p
+mkdir $dir_global_water1 -p
+mkdir $dir_global_water2 -p
+mkdir $dir_global_water3 -p
+mkdir $dir_et0 -p
+mkdir $dir_intact_forest -p
 
 
 echo "Download 'Global Multi-resolution Terrain Elevation Data 2010 (GMTED2010)' to $dir_usgs_gmted2010..."

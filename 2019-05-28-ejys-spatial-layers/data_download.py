@@ -37,7 +37,7 @@ f.write('\n\n')
 
 f.write('echo "Making all dirs"\n')
 for idx, row in rows.iterrows():
-    f.write(f'mkdir ${row.variable}\n')
+    f.write(f'mkdir ${row.variable} -p\n')
 f.write('\n\n')
 
 for idx, row in rows.iterrows():
