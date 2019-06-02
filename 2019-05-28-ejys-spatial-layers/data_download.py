@@ -32,12 +32,13 @@ for idx, row in rows.iterrows():
 f.write('\n\n')
 
 f.write('echo "Activate conda environment"\n')
+f.write('conda init bash\n')
 f.write('conda activate msc')
 f.write('\n\n')
 
 f.write('echo "Making all dirs"\n')
 for idx, row in rows.iterrows():
-    f.write(f'mkdir ${row.variable}\n')
+    f.write(f'mkdir ${row.variable} -p\n')
 f.write('\n\n')
 
 for idx, row in rows.iterrows():
@@ -45,9 +46,11 @@ for idx, row in rows.iterrows():
     f.write(f'cd ${row.variable}\n')
     f.write(f'wget {row.data_url} -nc\n')
     if row.zip == "yes":
-        if not '.zip' in row.data_url:
-            f.write('mv $file $file.zip\n')
-        f.write('unzip *.zip')
+        if not ('.zip' in row.data_url):
+            f.write('for file in *; do cp $file "$file.zip"; done\n')
+        f.write('unzip -o *.zip')
+    if row.zip == "rar":
+        f.write('unrar e *.rar')
     f.write('\n\n')
 
 f.close()

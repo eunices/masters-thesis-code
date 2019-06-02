@@ -2,7 +2,7 @@
 folder_dir=$(pwd)
 base_dir=${PWD%/*}
 geo_data_dir="$base_dir/data/geo"
-chelsa_dir="$geo_data_dir/chelsa"
+chelsa_dir="$geo_data_dir/01_separate/chelsa"
 
 
 echo "Activate conda environment"

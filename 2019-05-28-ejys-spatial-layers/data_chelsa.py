@@ -3,7 +3,7 @@ import pandas as pd
 import re
 import sys
 
-fdir = '../data/geo/chelsa'
+fdir = '../data/geo/01_separate/chelsa'
 base_url = 'https://www.wsl.ch/lud/chelsa/data'
 
 if __name__ == "__main__":
