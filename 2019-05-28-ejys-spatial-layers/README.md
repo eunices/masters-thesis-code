@@ -4,10 +4,10 @@ See `data/lookup/2019-06-01-spatial-layers-metadata.csv`
 
 ## To download
 
-1. USGS HydroSheds https://hydrosheds.cr.usgs.gov/datadownload.php?reqdata=15rivs
-2. USGS LandCover https://archive.usgs.gov/archive/sites/landcover.usgs.gov/globallandcover.html
-3. NASA Anthropogenic bioms https://sedac.ciesin.columbia.edu/data/collection/anthromes/sets/browse
-4. Soils https://www.isric.org/explore/soil-geographic-databases / http://www.fao.org/geonetwork/srv/en/main.home?uuid=446ed430-8383-11db-b9b2-000d939bc5d8 / http://webarchive.iiasa.ac.at/Research/LUC/External-World-soil-database/HTML/SoilQuality.html?sb=10
+2. USGS HydroSheds https://hydrosheds.cr.usgs.gov/datadownload.php?reqdata=15rivs
+3. USGS LandCover https://archive.usgs.gov/archive/sites/landcover.usgs.gov/globallandcover.html
+4. NASA Anthropogenic biomes https://sedac.ciesin.columbia.edu/data/collection/anthromes/sets/browse
+5. Soils https://www.isric.org/explore/soil-geographic-databases / http://www.fao.org/geonetwork/srv/en/main.home?uuid=446ed430-8383-11db-b9b2-000d939bc5d8 / http://webarchive.iiasa.ac.at/Research/LUC/External-World-soil-database/HTML/SoilQuality.html?sb=10
 
 Explore http://www.gisresources.com/free-gis-data-ecology/
 
