@@ -16,3 +16,4 @@ file=msc-thesis-code-data-$d
 dir="/mnt/e/msc"
 mkdir $dir/$file
 cp -R --verbose -n data/* $dir/$file
+echo "Files copied to $dir/$file"
