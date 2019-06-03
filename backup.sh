@@ -15,4 +15,4 @@ file=msc-thesis-code-data-$d
 # Option 2: in portable hard disk drive
 dir="/mnt/e/msc"
 mkdir $dir/$file
-cp -R data/* $dir/$file
+cp -R --verbose data/* $dir/$file
