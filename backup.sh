@@ -1,14 +1,18 @@
 #!/bin/bash
 # Backup files
 
-# Backup data to Dropbox
+# Backup data
 d=$(date +%Y-%m-%d)
 echo Today is "$d"
 
-fn=msc-thesis-code-data-$d.zip
-echo "$fn"
-zip -r $fn data/*
-echo File is backed up as $fn
+file=msc-thesis-code-data-$d
 
-dir="../../Dropbox/msc-thesis/data-dump/backups"
-mv $fn $dir/$fn
+# Option 1: as zip file in dropbox
+# zip -r $file data/*
+# dir="../../Dropbox/msc-thesis/data-dump/backups"
+# mv $fn "$dir/$file.zip"
+
+# Option 2: in portable hard disk drive
+dir="/mnt/e/msc"
+mkdir $dir/$file
+cp -R data/* $dir/$file
