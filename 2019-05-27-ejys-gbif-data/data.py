@@ -46,8 +46,8 @@ if __name__ == '__main__':
         # query = [f'taxonKey = {x}' for x in apoidea.values()]
         
         # Single taxa
-        # species ='1335213' # Megachile sculpturalis
-        # query = f'taxonKey = {species}'
+        species ='1335213' # Megachile sculpturalis
+        query = f'taxonKey = {species}'
 
         # Kick start process of requesting for dataset
         # Should see download at https://gbif.org/user/download

@@ -73,7 +73,7 @@ cd $dir_usgs_gmted2010
 wget http://edcintl.cr.usgs.gov/downloads/sciweb1/shared/topo/downloads/GMTED/Grid_ZipFiles/mn30_grd.zip -nc
 unzip -o *.zip
 
-echo "Download 'Present and future Kppen-Geiger climate classification maps at 1-km resolution' to $dir_beck_koppen..."
+echo "Download 'Present and future Koppen-Geiger climate classification maps at 1-km resolution' to $dir_beck_koppen..."
 cd $dir_beck_koppen
 wget https://ndownloader.figshare.com/files/12407516 -nc
 for file in *; do cp $file "$file.zip"; done
