@@ -89,11 +89,12 @@ r = extend(r, extent(r)+1)   # expand extent by 1 deg
 sam = gridSample(m, r, n=1)  # sample grid
 p = rasterToPolygons(r)      # convert raster to polygon
 
-if should_plot == "yes":
+if(should_plot == "yes") {
     plot(p, border='grey')
     points(m)
     points(sam, cex=1, col='red', pch='x')
     dev.off()
+}
 
 
 # Prepare presence absence information
@@ -133,7 +134,7 @@ print(length(cells)); print(length(unique(cells)))
 xy = xyFromCell(pred, cells)
 print(dim(xy))
 
-if should_plot == "yes"{
+if(should_plot == "yes"){
     plot(pol, axes=TRUE)
     points(xy, cex=0.75, pch=20, col='blue')
     dev.off()

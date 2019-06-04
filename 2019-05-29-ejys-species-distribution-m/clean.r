@@ -56,7 +56,7 @@ df2[locality=="", localityMoreDetails]
 df2[verbatimLocality=="", localityMoreDetails]
 dim(df2[verbatimLocality=="" & locality=="",])
 # Geocoding
-geocoded = try(geocode(df2$localityMoreDetails)) 
+geocoded = try(geocode(df2$localityMoreDetails))
 geocoded = as.data.frame(geocoded)
 df2$decimalLatitude = geocoded$lat
 df2$decimalLongitude = geocoded$lon
