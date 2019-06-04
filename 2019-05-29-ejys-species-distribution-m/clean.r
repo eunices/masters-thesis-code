@@ -13,9 +13,9 @@ library(ggmap)
 
 
 # Parameters
-data_in = 'data/2019-05-27-gbif-data/0018967-190415153152247.csv'
-data_geo = 'data/2019-05-27-gbif-data/0018967-190415153152247-geocoded.csv'
-data_out = 'data/2019-05-27-gbif-data/0018967-190415153152247-clean.csv'
+data_in = 'data/2019-05-27-ejys-gbif-data/0018967-190415153152247.csv'
+data_geo = 'data/2019-05-27-ejys-gbif-data/0018967-190415153152247-geocoded.csv'
+data_out = 'data/2019-05-27--ejys-gbif-data/0018967-190415153152247-clean.csv'
 if(file.exists(data_geo)){
     should_geocode = 'no'
 } else {
