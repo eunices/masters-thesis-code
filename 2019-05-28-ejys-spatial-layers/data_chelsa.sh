@@ -21,6 +21,7 @@ wget $url -O "index.js"
 
 
 echo "Modify metadata for chelsa to have a list of links"
+cd $folder_dir
 python -m data_chelsa part1 # add extra commands in js file
 cd $chelsa_dir 
 npm init --yes && npm install file-system --save && node "index.js" # dump as json
@@ -35,6 +36,6 @@ echo "Download chelsea data to $chelsa_dir"
 
 # Second option
 cd $folder_dir
-python -m "$folder_dir/data_chelsa" part3 # to be written if necessary
+python -m data_chelsa part3 # to be written if necessary
 cd $chelsa_dir
 wget -i $"$folder_dir/CHELSA-url.txt" --directory-prefix=bioclim -nc 
