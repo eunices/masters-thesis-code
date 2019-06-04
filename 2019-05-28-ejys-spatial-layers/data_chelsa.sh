@@ -25,7 +25,7 @@ python -m data_chelsa part1 # add extra commands in js file
 cd $chelsa_dir 
 npm init --yes && npm install file-system --save && node "index.js" # dump as json
 cd $folder_dir
-python -m /data_chelsa part2 # dump list of links as text
+python -m data_chelsa part2 # dump list of links as text
 
 
 echo "Download chelsea data to $chelsa_dir"
