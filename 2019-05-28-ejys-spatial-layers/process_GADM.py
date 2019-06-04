@@ -5,9 +5,9 @@ import glob
 import shapefile
 import geopandas as gpd 
 
-fdir = '../data/geo/01_separate/gadm/shp_pri'
+fdir = '../data/geo/1_separate/gadm/shp_pri'
 files = glob.glob(f'{fdir}/*.shp')
-file = '../data/geo/01_separate/gadm/shp_pri/gadm36_0.shp' # only primary
+file = '../data/geo/1_separate/gadm/shp_pri/gadm36_0.shp' # only primary
 
 if __name__ == "__main__":
     # Read first file

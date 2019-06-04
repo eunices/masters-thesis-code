@@ -6,7 +6,7 @@ library(tidyverse)
 library(sf)
 
 # Merge IDN to country level as it is missing
-region = read_sf("../data/geo/01_separate/gadm/shp_sec/gadm36_IDN_1.shp")
+region = read_sf("../data/geo/1_separate/gadm/shp_sec/gadm36_IDN_1.shp")
 region %>%
   st_set_geometry(NULL) %>%
   glimpse()
@@ -17,4 +17,4 @@ ind =
   region %>%
   summarise(NAME_0="Indonesia", GID_0="IDN")
 
-st_write(ind, "../data/geo/01_separate/gadm/shp_pri/gadm36_IDN_0.shp", driver="ESRI Shapefile")
+st_write(ind, "../data/geo/1_separate/gadm/shp_pri/gadm36_IDN_0.shp", driver="ESRI Shapefile")

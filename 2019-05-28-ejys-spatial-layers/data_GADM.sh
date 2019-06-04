@@ -1,7 +1,7 @@
  #!/bin/bash
 base_dir=${PWD%/*}
 geo_data_dir="$base_dir/data/geo"
-dir="$geo_data_dir/01_separate/gadm"
+dir="$geo_data_dir/1_separate/gadm"
 folder_dir=$(pwd)
 
 conda activate msc
