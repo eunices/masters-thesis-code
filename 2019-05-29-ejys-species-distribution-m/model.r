@@ -17,9 +17,9 @@ library(ggmap)
 
 # Params
 map_crs = '+proj=longlat +datum=WGS84'
-raster_dir = 'data/geo/chelsa/bioclim/'
+raster_dir = 'data/geo/1_separate/chelsa/bioclim/'
 should_plot = 'no'
-data_in = 'data/2019-05-27-gbif-data/0018967-190415153152247-clean.csv'
+data_in = 'data/2019-05-27-ejys-gbif-data/0018967-190415153152247-clean.csv'
 
 
 # Read dataset
