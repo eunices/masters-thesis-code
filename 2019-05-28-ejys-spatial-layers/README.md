@@ -2,6 +2,14 @@
 
 See `data/lookup/2019-06-01-spatial-layers-metadata.csv`
 
+
+## Tools
+
+1. pyModis http://pymodis.org/ 
+2. MODIStsp https://cran.r-project.org/web/packages/MODIStsp/index.html
+3. Data exploration https://lpdaac.usgs.gov/resources/e-learning/masking-visualizing-and-plotting-appeears-output-geotiff-time-series-python/
+
+
 ## To download
 
 1. Soils https://www.isric.org/explore/soil-geographic-databases / http://webarchive.iiasa.ac.at/Research/LUC/External-World-soil-database/HTML/SoilQuality.html?sb=10
