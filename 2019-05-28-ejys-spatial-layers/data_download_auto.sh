@@ -32,6 +32,9 @@ dir_terraspect2=$geo_data_dir/terr/aspect/2
 dir_terraspect3=$geo_data_dir/terr/aspect/3
 dir_terraspect4=$geo_data_dir/terr/aspect/4
 dir_terraspect5=$geo_data_dir/terr/aspect/5
+dir_worldclimsolar=$geo_data_dir/worldclim/solar
+dir_worldclimwind=$geo_data_dir/worldclim/wind
+dir_worldclimvapour=$geo_data_dir/worldclim/vapour
 
 
 echo "Activate conda environment"
@@ -66,6 +69,9 @@ mkdir $dir_terraspect2 -p
 mkdir $dir_terraspect3 -p
 mkdir $dir_terraspect4 -p
 mkdir $dir_terraspect5 -p
+mkdir $dir_worldclimsolar -p
+mkdir $dir_worldclimwind -p
+mkdir $dir_worldclimvapour -p
 
 
 echo "Download 'Global Multi-resolution Terrain Elevation Data 2010 (GMTED2010)' to $dir_usgs_gmted2010..."
@@ -204,4 +210,19 @@ echo "Download 'Global Terrain Slope and Aspect Data: aspect 5' to $dir_terraspe
 cd $dir_terraspect5
 wget http://webarchive.iiasa.ac.at/Research/LUC/External-World-soil-database/Terrain/GloAspectClN_30as.rar -nc
 unrar e *.rar
+
+echo "Download 'World Clim: Solar radiation' to $dir_worldclimsolar..."
+cd $dir_worldclimsolar
+wget http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_30s_tmax.zip -nc
+unzip -o *.zip
+
+echo "Download 'World Clim: Wind speed' to $dir_worldclimwind..."
+cd $dir_worldclimwind
+wget http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_30s_wind.zip -nc
+unzip -o *.zip
+
+echo "Download 'World Clim: water vapour pressure' to $dir_worldclimvapour..."
+cd $dir_worldclimvapour
+wget http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_30s_vapr.zip -nc
+unzip -o *.zip
 
