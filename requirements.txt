@@ -1,6 +1,7 @@
 # This file may be used to create an environment using:
 # $ conda create --name <env> --file <this file>
 # platform: linux-64
+appdirs=1.4.3=pypi_0
 asn1crypto=0.24.0=py37_0
 attrs=19.1.0=py37_1
 beautifulsoup4=4.7.1=py37_1
@@ -16,6 +17,7 @@ click-plugins=1.1.1=py_0
 cligj=0.5.0=py37_0
 cryptography=2.6.1=py37h1ba5d50_0
 curl=7.64.1=hbc83047_0
+cycler=0.10.0=pypi_0
 expat=2.2.6=he6710b0_0
 fiona=1.8.4=py37hc38cc03_0
 fontconfig=2.13.0=h9420a91_0
@@ -23,6 +25,8 @@ freetype=2.9.1=h8a8886c_1
 freexl=1.0.5=h14c3975_0
 future=0.17.1=pypi_0
 gdal=2.3.3=py37hbb2a789_0
+geojson-rewind=0.1.1=pypi_0
+geomet=0.2.0.post2=pypi_0
 geos=3.7.1=he6710b0_0
 giflib=5.1.4=h14c3975_1
 glib=2.56.2=hd408876_0
@@ -34,6 +38,7 @@ intel-openmp=2019.3=199
 jpeg=9b=h024ee3a_2
 json-c=0.13.1=h1bed415_0
 kealib=1.4.7=hd0c454d_6
+kiwisolver=1.1.0=pypi_0
 krb5=1.16.1=h173b8e3_7
 libboost=1.67.0=h46d08c1_4
 libcurl=7.64.1=h20c2e04_0
@@ -54,6 +59,7 @@ libtiff=4.0.10=h2733197_2
 libuuid=1.0.3=h1bed415_2
 libxcb=1.13=h1bed415_1
 libxml2=2.9.9=he19cac6_0
+matplotlib=3.1.0=pypi_0
 mkl=2019.3=199
 mkl_fft=1.0.12=py37ha843d7b_0
 mkl_random=1.0.2=py37hd81dba3_0
@@ -71,8 +77,10 @@ poppler=0.65.0=h581218d_1
 poppler-data=0.4.9=0
 proj4=5.2.0=he6710b0_1
 pycparser=2.19=py37_0
+pygbif=0.3.0=pypi_0
 pymodis=2.0.9=pypi_0
 pyopenssl=19.0.0=py37_0
+pyparsing=2.4.0=pypi_0
 pysocks=1.7.0=py37_0
 python=3.7.3=h0371630_0
 python-dateutil=2.8.0=py37_0
