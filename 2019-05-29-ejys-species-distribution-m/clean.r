@@ -312,9 +312,12 @@ add = data.frame("",
 names(add) = names(df)[1:length(add)]
 df = rbind(df, add, fill=T)
 
-
-
 # Quick cleans
+# Add back country code
+ids = c(as.character(df[countryCode == ""]$id))
+df[id %in% ids]$countryCode = "US" # all are US localities
+
+# Shorten institution name
 df$institutionCodeShort = gsub(".*\\((.*)\\).*", "\\1", df[,institutionCode])
 df[institutionCode == "", "institutionCodeShort"] = df[institutionCode == "", "collectionCode"] 
 

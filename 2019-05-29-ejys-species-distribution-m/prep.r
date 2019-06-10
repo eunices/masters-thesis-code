@@ -1,7 +1,7 @@
 # An exercise on species disribution modelling with Megachile sculpturalis
 # R packages to use: SDMTools, dismo, biomod, hSDM
 
-# 02
+# 03 - following tutorial
 
 # Setup
 source('keys.R')
@@ -9,13 +9,16 @@ setwd(working_dir)
 
 
 # Load libraries
+
+library(car)
 library(data.table)
 library(dismo)
+library(dplyr)
+library(ggmap)
+library(ggplot2)
 library(maptools)
 library(rgdal)
 library(sp)
-library(ggmap)
-library(dplyr)
 
 # Initialize variables
 data(wrld_simpl)
@@ -28,12 +31,7 @@ should_plot = 'no'
 
 # clean data where every point would be used, prior to subsetting
 data_in = 'data/2019-05-27-ejys-gbif-data/0018967-190415153152247-clean.csv' 
-
-# dataset to be used for training
-data_out_train = 'data/2019-05-27-ejys-gbif-data/0018967-190415153152247-model-train.csv' 
-
-# dataset to be used for testing
-data_out_test = 'data/2019-05-27-ejys-gbif-data/0018967-190415153152247-model-test.csv' 
+data_out_glm = 'data/2019-05-27-ejys-gbif-data/0018967-190415153152247-glm.csv' 
 
 
 # Read dataset
@@ -42,6 +40,7 @@ df_cols = names(df)
 if(any(df_cols == "V1")) {
     df$V1 = NULL
 }
+
 
 # Quick checks
 necessary_cols = c(
@@ -55,184 +54,107 @@ necessary_cols = c(
     'institutionCodeShort'
 )
 
-# Check dataset length
-dim(df)
+native_range = c("JP", "KR", "CN", "TW")
+exotic_range = c("US", "IT", "DE", "CA", "SI", "FR", "KR", "CH", "AD", "MG")
+table(df$countryCode %in% native_range)
 
-# Check which have coords
-df[,.(.N), by=.(hasCoordinate)] # retaining the original information prior to geocoding
-df[is.na(decimalLatitude),] # but all are geocoded
 
-# Check institution codes
-df[,.(.N), by=.(institutionCodeShort, basisOfRecord)][order(basisOfRecord),]
-df[basisOfRecord == "HUMAN_OBSERVATION",.(.N), by=.(institutionCode, basisOfRecord)][order(basisOfRecord),]
-df[institutionCode == "", ..necessary_cols]
+# For modelling, only using native range
+m_coords = df[countryCode %in% native_range] # dataframe
+m = df[countryCode %in% native_range]        # spatial dataframe
+length(m)
 
-# Check issues
-# see https://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/OccurrenceIssue.html
-df[,.(.N), by=.(issue)]
-# issues don't seem very serious
-
-# Check sex
-df[,.(.N), by=.(sex)]
-# many specimens do not have sex
-
-# Check month
-df[,.(.N), by=.(month)][order(month)]
-# mainly spotted from Jun - Aug
-df_map = df[month %in% c("2", "4","5","11", "12"), ..necessary_cols]
-# df_map = df[month %in% c("11"), ..necessary_cols]
-df_map
-mp = ggplot() + borders("world", colour="gray70", fill="gray80", ylim=c(20, 50)) 
-mapPoints = mp + 
-    geom_point(
-        aes(x = decimalLongitude, y = decimalLatitude, colour=as.factor(month)), 
-        data = df,
-        alpha = .8,
-        ) + theme_minimal()
-mapPoints + labs(color='Month', x='Longtitude', y='Latitude')
-dev.off()
-
-# April records (max temp 20-23 deg C)
-df[month=="4"]
-# Feb record (max temp -4 to 2 deg C)
-df[month=="2"] # seems like outlier
-# Nov records (max temp 24 deg C)
-df[month=="11"]
-# Dec records (max temp 24 deg C)
-df[month=="12"]
-
-df[is.na(month), verbatimEventDate]
-df[is.na(month), ..necessary_cols] # may not be useful if there is no date
-
-# Check year
-df[is.na(year), ..necessary_cols]
-df2 = df
-df2$decade = paste0(substr(df2$year, 0, 3), "0s")
-df2[decade=="NA0s"]$decade = "No year"
-
-df2$addValue = "No georef"
-df2[issue=="GEOREFERENCED_GOOGLE_API_WITH_HIGHER_GEOG"]$addValue = "Geo ref (higher geo)"
-df2[issue=="GEOREFERENCED_GOOGLE_API"]$addValue = "Geo ref"
-
-df2$addValue = factor(df2$addValue, levels=c("No georef", "Geo ref", "Geo ref (higher geo)"))
-
-tib = df2 %>%
-  group_by(decade, addValue) %>%
-  summarise (n = n()) %>%
-  mutate(freq = n / sum(n))
-ggplot(data=tib, aes(x=decade, y=freq, fill=addValue), fill="black") +
-  geom_bar(stat="identity") + theme_minimal() + labs(x="Decade", y="Number of specimens", fill="Georeference status")
-
-year = df2[,.(.N), by=.(decade, addValue)][order(decade)]
-year
-ggplot(data=year, aes(x=decade, y=N, fill=addValue), fill="black") +
-  geom_bar(stat="identity") + theme_minimal() + labs(x="Decade", y="Number of specimens", fill="Georeference status")
-dev.off(); year = NULL; df2 = NULL
-year = df2[,.(.N), by=.(decade)][order(decade)]
-year
-
-# Check country codes
-df[,.(.N), by=.(countryCode)]
-df[,.(.N), by=.(hasCoordinate, countryCode)][order(countryCode, hasCoordinate)]
-# Added records from China, from Discover Life
-
-# For modelling
-m = df
 
 # Convert to geodataframe
 coordinates(m) = ~decimalLongitude + decimalLatitude
 crs(m) = crs(wrld_simpl)
+native_extent = extent(min(m$decimalLongitude)-1,
+                       max(m$decimalLongitude)+1, 
+                       min(m$decimalLatitude)-1,
+                       max(m$decimalLatitude)+1)
+native_extent_pol = as(native_extent, 'SpatialPolygons')
 
-# Spatial checks
-sp_join = over(m, wrld_simpl)
-m@data$countryJoin = sp_join$FIPS
-m@data$countryJoin2 = sp_join$NAME
-country_do_not_match = m@data[m@data$countryCode!=m@data$countryJoin,]
-dim(country_do_not_match)
-summary = as.data.frame(unique(country_do_not_match[,c("countryCode", "countryJoin", "countryJoin2")]))
-summary[order(summary$countryCode),]
-cols = c(necessary_cols[-1:-3], "countryJoin")
-# All is good based on country mapping
+# Subsampling presence points for test
+pres_raster = raster(m)                               # create raster
+res(pres_raster) = 1                                  # set resolution 1 deg
+pres_raster = extend(pres_raster, native_extent)      # expand extent by 1 deg (following native_extent)
+pres_polygon = rasterToPolygons(pres_raster)          # convert raster to polygon
 
-# Subsampling
+sam = gridSample(m, pres_raster, n=1, chess="black")  # sample grid for points
 
-r = raster(m)                # create raster
-res(r) = 1                   # set resolution 1 deg
-r = extend(r, extent(r)+1)   # expand extent by 1 deg
-sam = gridSample(m, r, n=1)  # sample grid
-p = rasterToPolygons(r)      # convert raster to polygon
 
-if(should_plot == "yes") {
-    plot(p, border='grey')
-    points(m)
-    points(sam, cex=1, col='red', pch='x')
-    dev.off()
-}
+# Plotting points to check
+native = ggplot2::map_data('world2', c('japan', 'china', 'taiwan', 'korea')) 
+polygons = ggplot2::fortify(pres_polygon)
+base = ggplot() + geom_polygon(data = native, aes(x=long, y = lat, group = group), fill = NA, color = "grey70") + 
+    geom_polygon(data = native_extent_pol, aes(x=long, y = lat, group = group), fill = NA, color = "grey70") 
+poly = base + 
+    geom_polygon(data = polygons, aes(x=long, y = lat, group = group), fill = NA, color = "grey50") + 
+        coord_fixed(1.3) + theme_minimal() 
+points = poly +
+    geom_point(aes(x = decimalLongitude, y = decimalLatitude, color = as.factor(month)), data = m_coords, alpha = .4, size = 2) +
+         labs(x="Longitude (dd)", y="Latitude (dd)", color="Month") 
+points
+points + geom_point(aes(x=decimalLongitude, y=decimalLatitude), data = as.data.frame(sam), color="black", size=2)
+# 23 points from 574 points
 
 
 # Prepare presence absence information
-
-# Load background data
-files = list.files(raster_dir, pattern="tif", full.names=TRUE)
-pred = raster(files[1], pattern='tif', full.names=TRUE)
+files = list.files(raster_dir, pattern="tif", full.names=TRUE) # Load background data
+rast = raster(files[1], pattern='tif', full.names=TRUE)
+rast = crop(rast, native_extent)
+# raster_polygon = rasterToPolygons(rast) # too slow
 set.seed(1963)
-# Get random points
-bg = randomPoints(pred, 500)
-if(should_plot == 'yes'){
-    par(mfrow=c(1,2))
-    plot(!is.na(pred), legend=FALSE)
-    points(bg, cex=0.5)
-}
+bg_random_points = randomPoints(rast, 500) # get random points
+# bg = randomPoints(pred, 500, ext=ee) # get random points
 
-# Create new extent and generate randomly sampled points based on it
-ee = extent(-80, -53, -39, -22)
-bg2 = randomPoints(pred, 50, ext=ee)
-if(should_plot == 'yes'){
-    plot(!is.na(pred), legend=FALSE)
-    plot(ee, add=TRUE, col='red')
-    points(bg2, cex=0.5)
-}
+
+# Plotting this information
+base + theme_minimal() + 
+    geom_point(aes(x = x, y = y), data = as.data.frame(bg_random_points), color="black", size=2) + # sampled background points
+        geom_point(aes(x=decimalLongitude, y=decimalLatitude), data = as.data.frame(m), color="blue", size=2) + # all presence points
+             geom_point(aes(x=decimalLongitude, y=decimalLatitude), data = as.data.frame(sam), color="red", size=2)
+
 
 # Random circles
-# make circles
-x = circles(m, d=50000, lonlat=TRUE) # 50km rad circles from presence points
-pol = polygons(x)
-print(pol)
-# subsample points from these polygons [how?]
-samp1 = spsample(pol, 250, type='random', iter=25)
-# get unique raster cells
-cells = cellFromXY(pred, samp1)
-print(length(cells)); print(length(unique(cells)))
-# get xy coords from raster cells
-xy = xyFromCell(pred, cells)
-print(dim(xy))
+pres_circles = circles(m, d=50000, lonlat=TRUE) # 50km rad circles from presence points
+pres_circles_polygon = polygons(pres_circles) # convert circle to polygon
+pres_xy_sample = spsample(pres_circles_polygon, 250, type='random', iter=25) # subsample points from these polygons
+pres_cells = cellFromXY(rast, pres_xy_sample)  # get unique raster cells
+pres_cells = pres_cells[!is.na(pres_cells)]
+print(length(cells)); print(length(unique(pres_cells)))
+pres_cells_xy = xyFromCell(rast, pres_cells) # get xy coords from raster cells
+print(dim(pres_cells_xy)); print(dim(unique(pres_cells_xy)))
 
-if(should_plot == "yes"){
-    plot(pol, axes=TRUE)
-    points(xy, cex=0.75, pch=20, col='blue')
-    dev.off()
-}
-
-# get overlay between circles and points
-spxy = SpatialPoints(xy, proj4string=CRS(map_crs))
-o = over(spxy, geometry(x))
-table(is.na(o))
-xyInside = xy[!is.na(o), ]
+# Overlay between circles and points
+pres_cells_xy_sp = SpatialPoints(pres_cells_xy, proj4string=CRS(map_crs))
+pres_cells_xy_overlay = over(pres_cells_xy_sp, geometry(pres_circles_polygon))
+table(is.na(pres_cells_xy_overlay))
+pres_cells_xy_inside = pres_cells_xy[!is.na(pres_cells_xy_overlay), ]
 # see separate method on pg 21, vignette for dismo
 
 
-# Raster preparation
+# Plotting this information
+base + theme_minimal() + 
+    geom_point(aes(x = x, y = y), data = as.data.frame(bg_random_points), color="black", size=2) +  # sampled background points
+        geom_point(aes(x=decimalLongitude, y=decimalLatitude), data = as.data.frame(m_coords), color="blue", size=2) + # all presence points
+             geom_point(aes(x=x, y=y), data = as.data.frame(pres_cells_xy_inside), colour = "green", fill = NA, size=2, stroke = 0.1) # sampled presence raster cells (based on bioclim raster)
 
+
+# Raster preparation
+# TODO: add more raster layers like topography/aspect, land cover type, etc.
 predictors = stack(files)
+predictors = crop(predictors, native_extent)
 if(should_plot == 'yes'){
     plot(predictors)
 }
 
-worldmap = rgdal::readOGR(dsn = "data/geo/1_separate/gadm/shp_pri/gadm36_0.shp")
-crs(worldmap) = map_crs
+# worldmap = rgdal::readOGR(dsn = "data/geo/1_separate/gadm/shp_pri/gadm36_0.shp")
+# crs(worldmap) = map_crs
 if(should_plot == 'yes'){
     plot(predictors, 1)
-    plot(worldmap, add=TRUE)
+    plot(wrld_simpl, add=TRUE)
+    plot(native_extent_pol, add=TRUE)
     points(m, col='blue')
     dev.off()
 }
@@ -241,10 +163,138 @@ if(should_plot == 'yes'){
 # Extracting values from raster
 pres_vals = extract(predictors, m)        # get raster values for species occurrence
 set.seed(0)
-backgr = randomPoints(predictors, 500)
-abs_vals = extract(predictors, backgr)    # get raster values for background
+bg_points = randomPoints(predictors, 500)
+abs_vals = extract(predictors, bg_points)    # get raster values for background
 pb = c(rep(1, nrow(abs_vals)), rep(0, nrow(abs_vals)))
 sdm_data = data.frame(cbind(pb, rbind(pres_vals, abs_vals))) # creating dataframe
 head(sdm_data)
+
+base + theme_minimal() + 
+    geom_point(aes(x = x, y = y), data = as.data.frame(bg_points), color="black", size=1) +  # sampled background points
+        geom_point(aes(x=decimalLongitude, y=decimalLatitude), data = as.data.frame(m_coords), color="blue", size=1) # all presence points
+
+write.csv(sdm_data, data_out_glm)
+
+
+#########################################################################################
+
+# Load libraries
+library(car)
+library(dismo)
+library(data.table)
+
+# Params
+raster_dir = 'data/geo/1_separate/chelsa/bioclim/'
+data_in_raw = 'data/2019-05-27-ejys-gbif-data/0018967-190415153152247-clean.csv' 
+data_in_glm = 'data/2019-05-27-ejys-gbif-data/0018967-190415153152247-glm.csv' 
+map_crs = '+proj=longlat +datum=WGS84'
+
+# Read data
+sdm_data = read.csv(data_in_glm)
+sdm_data = sdm_data[,-1] # drop index col
+names(sdm_data)[2:length(names(sdm_data))] = paste0("bio", 1:19)
+
+
+# Predictors
+df = fread(data_in_raw, integer64="character")
+native_range = c("JP", "KR", "CN", "TW")
+m = df[countryCode %in% native_range]        # spatial dataframe
+coordinates(m) = ~decimalLongitude + decimalLatitude
+crs(m) = map_crs
+native_extent = extent(min(m$decimalLongitude)-1,
+                       max(m$decimalLongitude)+1, 
+                       min(m$decimalLatitude)-1,
+                       max(m$decimalLatitude)+1)
+files = list.files(raster_dir, pattern="tif", full.names=TRUE) # Load background data
+predictors = stack(files)
+predictors = crop(predictors, native_extent)
+names(predictors) = paste0("bio", 1:19)
+crs(predictors) = map_crs
+
+# Quick plots
 summary(sdm_data)
-pairs(sdm_data[,2:5], cex=0.1, fig=TRUE)
+pairs(sdm_data[,2:8], cex=0.1, fig=TRUE)   # temperature variables
+pairs(sdm_data[,13:20], cex=0.1, fig=TRUE) # precipitation variables
+
+
+# Modelling with GLM
+# Model 1 - fully saturated
+model1 = glm(pb ~ ., data=sdm_data)
+summary(model1)
+car::vif(model1)
+
+# Model 2
+# model2 = glm(pb ~ bio1 + bio12, data=sdm_data)
+model2 = glm(pb ~ bio5 + bio6 + bio18 + bio19, data=sdm_data)
+summary(model2)
+car::vif(model2)
+
+
+# Modelling with bioclim
+mod_cols = c('bio5', 'bio6', 'bio18', 'bio19')
+bc = bioclim(sdm_data[sdm_data$pb=="1", mod_cols])
+pairs(bc)
+response(bc)
+
+p = predict(predictors, model2)
+plot(p)
+points(m)
+# text(m, m@data$id, cex=0.65, pos=3,col="red")
+
+# Creating train and test datasets
+
+# Test and train only
+train_indices = sample(nrow(sdm_data), round(0.75 * nrow(sdm_data)))
+sdm_data_train = sdm_data[train_indices,]
+sdm_data_train = sdm_data_train[sdm_data_train$pb==1, mod_cols]
+sdm_data_test = sdm_data[-train_indices,]
+bc = bioclim(sdm_data_train)
+e = evaluate(sdm_data_test[sdm_data_test$pb==1,], sdm_data_test[sdm_data_test$pb==0,], bc); e
+plot(e, 'ROC')
+
+# Test and train kfold
+pres_data = sdm_data[sdm_data $pb==1, mod_cols]
+abs_data = sdm_data[sdm_data $pb==0, mod_cols]
+
+k = 5
+group = kfold(pres_data, k)
+e = list()
+for (i in 1:k) {
+    print(paste0("k=", i))
+    train = pres_data[group != i,]; print(paste0("Train data ", dim(train)[1]))
+    test = pres_data[group == i,]; print(paste0("Test data ", dim(test)[1]))
+    bc = bioclim(train)
+    e[[i]] = evaluate(p=test, a=abs_data, bc)
+}
+
+auc = sapply(e, function(x){slot(x, 'auc')}); mean(auc)
+thres = sapply( e, function(x){x@t[which.max(x@TPR + x@TNR)]}); mean(thres)
+
+# Test by removing spatial sorting bias
+pres = fread(data_in_raw, integer64="character")
+pres = pres[,c("decimalLatitude", "decimalLongitude")]
+nr = nrow(pres)
+s = sample(nr, 0.25 * nr)
+pres_train = pres[-s, ]
+pres_test = pres[s, ]
+
+files = list.files(raster_dir, pattern="tif", full.names=TRUE) 
+rast = raster(files[1], pattern='tif', full.names=TRUE)
+rast = crop(rast, native_extent)
+set.seed(1963); bg_random_points = randomPoints(rast, 1200)
+nr = nrow(abs)
+s = sample(nr, 0.25 * nr)
+back_train = abs[-s, ]
+back_test = abs[s, ]
+
+sb = ssb(pres_test, back_test, pres_train); sb
+sb[,1] / sb[,2] 
+
+i = pwdSample(fixed=pres_test, sample=back_test, reference=pres_train, n=1, tr=0.2)
+pres_test_pwd = pres_test[!is.na(i[,1]), ]
+back_test_pwd = back_test[na.omit(as.vector(i)), ]
+# doesn't work
+# sb2 = ssb(pres_test_pwd, back_test_pwd, pres_train)
+# sb2[1]/ sb2[2]
+
+########################################################################################
