@@ -13,6 +13,7 @@ See `data/lookup/2019-06-01-spatial-layers-metadata.csv`
 ## To download
 
 1. Soils https://www.isric.org/explore/soil-geographic-databases / http://webarchive.iiasa.ac.at/Research/LUC/External-World-soil-database/HTML/SoilQuality.html?sb=10
+2. https://www.nature.com/articles/sdata201669
 
 Explore http://www.gisresources.com/free-gis-data-ecology/
 
