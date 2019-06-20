@@ -35,6 +35,8 @@ dir_terraspect5=$geo_data_dir/terr/aspect/5
 dir_worldclimsolar=$geo_data_dir/worldclim/solar
 dir_worldclimwind=$geo_data_dir/worldclim/wind
 dir_worldclimvapour=$geo_data_dir/worldclim/vapour
+dir_gdp=$geo_data_dir/gdp
+dir_tree_den=$geo_data_dir/tree_den
 
 
 echo "Activate conda environment"
@@ -72,6 +74,8 @@ mkdir $dir_terraspect5 -p
 mkdir $dir_worldclimsolar -p
 mkdir $dir_worldclimwind -p
 mkdir $dir_worldclimvapour -p
+mkdir $dir_gdp -p
+mkdir $dir_tree_den -p
 
 
 echo "Download 'Global Multi-resolution Terrain Elevation Data 2010 (GMTED2010)' to $dir_usgs_gmted2010..."
@@ -224,5 +228,16 @@ unzip -o *.zip
 echo "Download 'World Clim: water vapour pressure' to $dir_worldclimvapour..."
 cd $dir_worldclimvapour
 wget http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_30s_vapr.zip -nc
+unzip -o *.zip
+
+echo "Download 'Gridded global datasets for Gross Domestic Product and Human Development Index over 1990-2015' to $dir_gdp..."
+cd $dir_gdp
+wget https://datadryad.org/bitstream/handle/10255/dryad.154107/GDP_PPP_30arcsec_v2.nc?sequence=1 -nc
+
+
+echo "Download 'Spatially-explicit models of global tree density' to $dir_tree_den..."
+cd $dir_tree_den
+wget https://ndownloader.figshare.com/files/5332990 -nc
+for file in *; do cp $file "$file.zip"; done
 unzip -o *.zip
 
