@@ -3,9 +3,11 @@
 /data/02-out/*
 /data/03-clean/*
 /data/geo/*
+/data/geo_processed/*
 /data/lookup/*
 /data/201*/*
 *.db
+/tmp/*
 
 # Do not ignore folders with gitkeep
 !.gitkeep 
