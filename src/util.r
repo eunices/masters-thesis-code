@@ -1,16 +1,23 @@
 library(tidyverse)
 library(sf)
 
-dissolvePolygon = function(filepath) {
-    # Merge IDN to country level as it is missing
+dissolvePolygon = function(filepath, by="None") {
     region = read_sf(filepath)
-    region %>%
-    st_set_geometry(NULL) %>%
-    glimpse()
 
-    dissolve =
     region %>%
-    summarise()
+        st_set_geometry(NULL) %>%
+        glimpse()
+
+    if (by=="None") {
+        dissolve =
+            region %>%
+            summarise()
+    } else {
+        dissolve =
+            region %>% 
+            group_by(eval(by)) %>%
+            summarise()
+    }
 
     filename_out = paste0(gsub(".shp", "", filepath), "_dissolved.shp")
 
