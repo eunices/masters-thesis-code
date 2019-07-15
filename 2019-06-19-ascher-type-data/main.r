@@ -1,5 +1,6 @@
 source('2019-06-19-ascher-type-data/init.r')
 source('2019-06-19-ascher-type-data/clean.r')
+source('2019-06-19-ascher-type-data/df1.r')
 
 # Plot world object
 pdf('plots/2019-06-19-type-data-map.pdf', width=21, height=10)
