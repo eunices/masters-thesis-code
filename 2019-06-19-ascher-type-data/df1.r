@@ -176,11 +176,3 @@ length(unique(df_mapper5[no_realms > 1 & countries_n == 1 & BIOGEO_OVERLAP_CTY_r
 length(unique(df_mapper5[no_realms > 1 & countries_n > 1 & BIOGEO_OVERLAP_CTY_row != "FALSE", ]$idx))
 
 # http://brooksandrew.github.io/simpleblog/articles/advanced-data-table/
-
-
-# TODO: Create analysis by continent
-
-
-
-
-# TODO: Create dataset by country
