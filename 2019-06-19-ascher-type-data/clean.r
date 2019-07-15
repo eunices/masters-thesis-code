@@ -8,6 +8,9 @@ print(paste0(Sys.time(), " --- quick formatting"))
 # read dataset with index
 filepath <- paste0(dir, '2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_1-idx.csv')
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+# csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
+
 
 # replace unknown values with NA
 replace_na <- c('other,_unknown,_or none', 'other,_unknown,_or_other', 'other,_unknown,_or_none')
@@ -190,6 +193,7 @@ flag <- "COUNTRY_AND_PRI_DIV_ONLY"
 # write.csv(geocoded_na, paste0(dir, "clean/", "geocoded_na3.csv"), fileEncoding="UTF-8")
 geocoded_na <- read.csv(paste0(dir, "clean/", "geocoded_na3.csv"), stringsAsFactors=F, 
                         encoding="UTF-8")
+                        
 
 # ensure consistency in NA values
 flag1 <- 'COUNTRY_ONLY'
@@ -285,11 +289,13 @@ df[df$lat < -90, "lat"] <- -21.3558    # manual correction
 df <- df[order(as.numeric(idx))]
 write.csv(df, 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_2-geocoded.csv"),
-          na='', row.names=F, fileEncoding="UTF-8")
+          na='', row.names=F, fileEncoding="UTF-8") # write.csv escapes double quotes PROPERLY
 
 
 df <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_2-geocoded.csv"),
-            na.strings=c('', 'NA'), encoding="UTF-8")
+            na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+# csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
 
 # + check country and lat lon
 # # =================
@@ -318,6 +324,7 @@ df <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 
 # Integrate discrepancies
 corrected <- fread(paste0(dir, "clean/", "check2_edit.csv"), 
                    encoding='UTF-8', stringsAsFactors=F); dim(corrected)
+corrected[, names(corrected) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 unique(corrected$flag.country)
 unique(corrected$flag.amended)
 
@@ -419,6 +426,8 @@ df <- df_merge[,..df_original_cols]
 
 search <- read.csv(paste0(dir, "clean/geocoded2.csv"), encoding="UTF-8", stringsAsFactors=F)
 
+df$idx <- as.numeric(df$idx)
+search$idx <- as.numeric(search$idx)
 df_merged <- merge(df, search, by="idx", all.x=T, all.y=T, suffix=c('', '_MERGED'))
 df_merged[!is.na(df_merged$lat_MERGED)]$flag <- df_merged[!is.na(df_merged$lat_MERGED)]$flag_MERGED
 df_merged[!is.na(df_merged$lat_MERGED)]$lat <- df_merged[!is.na(df_merged$lat_MERGED)]$lat_MERGED
@@ -429,32 +438,92 @@ df_merged[!is.na(df_merged$lat_MERGED)]$type.country <- df_merged[!is.na(df_merg
 # done merging
 df <- df_merged[,..df_original_cols]
 
-# df[df$type.locality.updated == "0"]$type.locality.updated <- ''
+checks <- fread(paste0(dir, "clean/lat_long_check.csv"))
+remove_lat_long_idxs <- checks[comment == "Lat long removed"]$idx
+df[idx %in% remove_lat_long_idxs]$lat <- ""
+df[idx %in% remove_lat_long_idxs]$lon <- ""
 
+modify_lat_lon_idxs <- checks[comment == "Geocode modified"]$idx
+for (i in length(modify_lat_lon_idxs)) {
+    id <- modify_lat_lon_idxs[i]
+    print(paste0("Modifying idx ", id))
+    df[idx==id]$lat <- checks[idx==id]$lat
+    df[idx==id]$lon <- checks[idx==id]$lon
+}
+
+# check1 <- 
+#     df$type.locality.update == "" | df$type.locality.update == "[unknown]" | is.na(df$type.locality.update) |
+#     df$type.locality.update == "\\[NW Mongolia\\]" | 
+#     df$type.locality.update == "\\[N Italy\\]" |
+#     df$type.locality.update == "\\[N Spain\\]" |
+#     df$type.locality.update == "\\[S Spain\\]" |
+#     df$type.locality.update == "\\[S Germany\\]" |
+#     df$type.locality.update == "\\[S of France\\]" |
+#     df$type.locality.update == "\\[provinces of Florence or Pisa\\]" |
+#     df$type.locality.update == "\\[N Germany\\]" |
+#     df$type.locality.update == "southern Brasil" |
+#     df$type.locality.update == "\\[S Germany\\]" |
+#     df$type.locality.update == "Utai" |
+#     df$type.locality.update == "\\[\\"Assam\\"\\]" |
+#     df$type.locality.update == "\\[Upper Egypt\\]" |
+#     df$type.locality.update == "German East Africa \\[Afrique Oriental Allemand or Deutsch Ost-Afrika\\]" |
+#     df$type.locality.update == "\\[Borneo\\]" |
+#     df$type.locality.update == "central Japan" |
+#     df$type.locality.update == "northern Mongolia" |
+#     df$type.locality.update == "S Transbaikal" |
+#     df$type.locality.update == "Canton, Pestacho bei Tsiuwangtau" |
+#     df$type.locality.update == "Amx" |
+#     df$type.locality.update == "\\[NE Sichuan\\]" |
+#     df$type.locality.update == "\\[England\\]" |
+#     df$type.locality.update == "Ramat" |
+#     df$type.locality.update == "between Seziwa and Kampala" |
+#     df$type.locality.update == "56.34" |
+#     df$type.locality.update == "\\[Seaford \\(two syntypes\\)\\]" |
+#     df$type.locality.update == "NW coast \\[Nicol Bay, Swan River, or Champion Bay\\]" |
+#     df$type.locality.update == "\\[Kimberly\\]" |
+#     df$type.locality.update == "\\[Arabia\\]" |
+#     df$type.locality.update == "\\[Central Australia\\]" |
+#     df$type.locality.update == "\\[interior of South Africa\\]" |
+#     df$type.locality.update == "\\"Palm\\"" 
+# df[check1]$lat <- NA
+# df[check1]$lon <- NA
+
+check0 <- df$flag == "" | is.na(df$flag)
+check1 <- df$country == "" | is.na(df$country)
+check2 <- is.na(df$lat) | is.na(df$lon)
+check3 <- df$type.state == "" | is.na(df$type.state)
+check4 <- grepl("CN|AS|BR|CA", df$type.country)
+df[check0&check1&!check2]$flag <- "NO_COUNTRY"
+df[check0&check1&check2&check3]$flag <- "COUNTRY ONLY"
+df[check0&check1&check2&!check3&check4]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_LRG_DIV"
+df[check0&check1&check2&!check3&!check4]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_SML_DIV"
+
+# df[df$type.locality.updated == "0"]$type.locality.updated <- ''
+df <- df[order(as.numeric(idx))]
 write.csv(df, 
           paste0(dir, 
                 "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3-clean-lat-lon.csv"),
           na='', row.names=F, fileEncoding="UTF-8")
 
-
-
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3-clean-lat-lon.csv")
+filepath <- paste0(dir, 
+                   "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3-clean-lat-lon.csv")
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-
+df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - clean date columns
+# Section - check duplicated rows & make new cols
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- clean date column"))
 
+# duplicates rows
+gs <- paste0(df$genus, df$species)
+df$duplicated.row <- duplicated(gs)
+
 # date
-df$date[1:100]
-df$date.n <- gsub("\\[.*\\]", "", df$date) # remove square brackets
-df$date.n[1:100]
+df$date.n <- as.numeric(gsub("\\[.*\\]", "", df$date)) # remove square brackets
 
 # date.of.type
-df$date.of.type[1:100]
 df$date.of.type.string <- paste0("'", df$date.of.type)
 df$date.of.type.dd <- as.numeric(sub("\\D*(\\d+).*", "\\1", df$date.of.type))
 df[df$date.of.type.dd>31,]$date.of.type.dd <- NA
@@ -471,7 +540,8 @@ paste_nine = function(numeric){
     as.numeric(word)
 }
 
-df[df$date.of.type.yyyy<1200]$date.of.type.yyyy[] <- lapply(df[df$date.of.type.yyyy<1200]$date.of.type.yyyy, function(x) paste_nine(x)[1])
+df[df$date.of.type.yyyy<1200]$date.of.type.yyyy[] <- 
+    lapply(df[df$date.of.type.yyyy<1200]$date.of.type.yyyy, function(x) paste_nine(x)[1])
 
 # checks
 # date_cols <- names(df)[grepl("date.of.type", names(df))]
@@ -479,22 +549,25 @@ df[df$date.of.type.yyyy<1200]$date.of.type.yyyy[] <- lapply(df[df$date.of.type.y
 # tmp$check <- ifelse(tmp$date.of.type.yyyy == tmp$date.of.type.yyyy2, 1, 0)
 # tmp$check2 <- ifelse(!is.na(tmp$date.of.type.mm) & tmp$date.of.type.mm %in% c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), 1, 0)
 
-
+# date differences
+df$years.lag <- df$date.n - df$date.of.type.yyyy
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - useful columns
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- subset useful columns"))
 
 # Subset useful columns
 main <- c('idx',                                       # identifier
           'family', 'subfamily', 'tribe',              # taxonomic info
-          'genus', 'subgenus', 'species',
+          'genus', 'subgenus', 'species', 'full.name',
           'author', 'date.n', 'full.name.of.describer',  # description info
           'collector.of.type', 'date.of.type.string',           # collector info
           'date.of.type.yyyy', 'date.of.type.mm', 'date.of.type.dd',
+          'years.lag',
           'lat', 'lon',                                  # georeference
           'type.repository', 'country.of.type.repository', 'status', # type info
-          'flag') 
+          'flag', 'duplicated.row') 
 
 loc <- c('type.country', 'type.state',     # locality info
          'type.locality.verbatim', 'type.locality.updated', 'elev.m',
@@ -506,10 +579,12 @@ checks <- c('date.of.type.string',
             'sociality',
             'type.status', 'type.depository.notes', 'notes',             # specimen status
             'title', 'journal', 'volume', 'issue', 'paper.type',         # publication info
-            'global.mapper', 'distributional.footnotes', 'notes', 'flag')        # distribution info
+            'global.mapper', 'distributional.footnotes', 'notes')        # distribution info
 
 
 cols <- c(main, loc, checks)
 
+df <- df[order(as.numeric(idx))]
 write.csv(df[,..cols], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4-useful-cols.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
