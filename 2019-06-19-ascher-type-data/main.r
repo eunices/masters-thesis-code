@@ -9,8 +9,7 @@ ggplot() +
   geom_sf(data = ll, colour = "slategray3") + theme_minimal()
 dev.off()
 
-
-#
+# Exploratory analysis
 df[,.(.N), by=.(host.plant)][order(-N)]
 df[,.(.N), by=.(host.insect.or.prey)][order(-N)]
 df[,.(.N), by=.(type.status)][order(-N)]
@@ -20,9 +19,3 @@ df[,.(.N), by=.(verificiation.of.type.repository)][order(-N)]
 df[,.(.N), by=.(paper.type)][order(-N)]
 df[,.(.N), by=.(type.sex)][order(-N)]
 
-
-# Plot time over number of species discovered
-
-
-
-# 
