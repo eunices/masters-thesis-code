@@ -53,7 +53,9 @@ shp.pol_boundaries.cen <- sp::spTransform(shp.pol_boundaries_moll.cen, raster::c
 shp.pol_boundaries.cen <- SpatialPointsDataFrame(shp.pol_boundaries.cen, 
                                                  shp.pol_boundaries@data,
                                                  match.ID=F)
-                                                 daries.cen, shp.pol_boundaries)
+
+
+#################### For WWF's ecoregions
 
 filepath <- 'data/geo_processed/teow/official/wwf_terr_ecos_dissolved.shp'
 shp.terr_eco <- rgdal::readOGR(filepath, use_iconv=TRUE, encoding = "UTF-8")
@@ -128,3 +130,38 @@ rgdal::writeOGR(obj=shp.pol_boundaries.cen,
                 layer='boundaries', driver="ESRI Shapefile", encoding='UTF-8')
 
 
+#################### For realms (Holt et al 2013) 
+
+
+
+filepath <- 'data/geo/0_manual/biogeo/CMEC_regions_&_realms/CMEC regions & realms/newRealms.shp'
+shp.terr_eco <- rgdal::readOGR(filepath, use_iconv=TRUE, encoding = "UTF-8")
+
+shp.pol_boundaries.cen <- spatialEco::point.in.poly(shp.pol_boundaries.cen, shp.terr_eco)
+data <- merge(shp.pol_boundaries@data,
+              shp.pol_boundaries.cen@data[,c('idx', 'Realm')],
+              by='idx', all.x=T, all.y=F)
+
+data[] <- lapply(data, as.character)
+
+dim(shp.pol_boundaries@data); dim(data)
+
+table(is.na(data$Realm))
+cty_realms <- unique(data[,c('NAME_0', 'Realm')])
+cty_realms <- cty_realms[!is.na(cty_realms$Realm),]
+cty_realms <- cty_realms[order(cty_realms$NAME_0, cty_realms$Realm),]
+cty_realms <- cty_realms[!duplicated(cty_realms$NAME_0),]
+cty_realms[] <- lapply(cty_realms, as.character)
+
+data$NAME_CONCAT_1.2 <- ifelse(is.na(data$NAME_2), data$NAME_1, paste0(data$NAME_1, ", ", data$NAME_2))
+
+shp.pol_boundaries@data <- data
+shp.pol_boundaries.cen@data <- data
+
+
+rgdal::writeOGR(obj=shp.pol_boundaries, dsn="data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_holt.shp",
+                layer='boundaries', driver="ESRI Shapefile", encoding='UTF-8')
+
+rgdal::writeOGR(obj=shp.pol_boundaries.cen, 
+                dsn="data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_cen_holt`.shp",
+                layer='boundaries', driver="ESRI Shapefile", encoding='UTF-8')
