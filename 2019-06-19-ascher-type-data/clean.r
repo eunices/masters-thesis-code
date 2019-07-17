@@ -584,7 +584,7 @@ checks <- c('date.of.type.string',
 
 cols <- c(main, loc, checks)
 
-df <- df[order(as.numeric(idx))]
+df <- df[duplicated.row == "FALSE"][order(as.numeric(idx))]
 write.csv(df[,..cols], 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv"), na='', row.names=F, fileEncoding="UTF-8")
 

@@ -132,12 +132,10 @@ rgdal::writeOGR(obj=shp.pol_boundaries.cen,
 
 #################### For realms (Holt et al 2013) 
 
-
-
 filepath <- 'data/geo/0_manual/biogeo/CMEC_regions_&_realms/CMEC regions & realms/newRealms.shp'
-shp.terr_eco <- rgdal::readOGR(filepath, use_iconv=TRUE, encoding = "UTF-8")
+shp.terr_holt <- rgdal::readOGR(filepath, use_iconv=TRUE, encoding = "UTF-8")
 
-shp.pol_boundaries.cen <- spatialEco::point.in.poly(shp.pol_boundaries.cen, shp.terr_eco)
+shp.pol_boundaries.cen <- spatialEco::point.in.poly(shp.pol_boundaries.cen, shp.terr_holt)
 data <- merge(shp.pol_boundaries@data,
               shp.pol_boundaries.cen@data[,c('idx', 'Realm')],
               by='idx', all.x=T, all.y=F)
@@ -146,22 +144,105 @@ data[] <- lapply(data, as.character)
 
 dim(shp.pol_boundaries@data); dim(data)
 
-table(is.na(data$Realm))
 cty_realms <- unique(data[,c('NAME_0', 'Realm')])
 cty_realms <- cty_realms[!is.na(cty_realms$Realm),]
 cty_realms <- cty_realms[order(cty_realms$NAME_0, cty_realms$Realm),]
 cty_realms <- cty_realms[!duplicated(cty_realms$NAME_0),]
 cty_realms[] <- lapply(cty_realms, as.character)
 
+table(data[is.na(data$Realm),]$GID_0)
+unique(data[is.na(data$Realm),]$GID_0)
+length(unique(data[is.na(data$Realm),]$GID_0))
+
+data[is.na(data$Realm) & data$GID_0 == 'BDI',]$Realm <- 'Afrotropical'
+data[is.na(data$Realm) & data$GID_0 == 'CPV',]$Realm <- 'Afrotropical'
+data[is.na(data$Realm) & data$GID_0 == 'MWI',]$Realm <- 'Afrotropical'
+data[is.na(data$Realm) & data$GID_0 == 'NGA',]$Realm <- 'Afrotropical'
+data[is.na(data$Realm) & data$GID_0 == 'SHN',]$Realm <- 'Afrotropical'
+data[is.na(data$Realm) & data$GID_0 == 'SYC',]$Realm <- 'Afrotropical'
+data[is.na(data$Realm) & data$GID_0 == 'TZA',]$Realm <- 'Afrotropical'
+data[is.na(data$Realm) & data$GID_0 == 'UGA',]$Realm <- 'Afrotropical'
+data[is.na(data$Realm) & data$GID_0 == 'ATF',]$Realm <- 'Antarctica'
+data[is.na(data$Realm) & data$GID_0 == 'NZL',]$Realm <- 'Australian'
+data[is.na(data$Realm) & data$GID_0 == 'SLB',]$Realm <- 'Australian'
+data[is.na(data$Realm) & data$GID_0 == 'CAN',]$Realm <- 'Nearctic'
+data[is.na(data$Realm) & data$GID_0 == 'USA',]$Realm <- 'Nearctic'
+data[is.na(data$Realm) & data$GID_0 == 'ATG',]$Realm <- 'Neotropical'
+data[is.na(data$Realm) & data$GID_0 == 'BES',]$Realm <- 'Neotropical'
+data[is.na(data$Realm) & data$GID_0 == 'BRA',]$Realm <- 'Neotropical'
+data[is.na(data$Realm) & data$GID_0 == 'COL',]$Realm <- 'Neotropical'
+data[is.na(data$Realm) & data$GID_0 == 'CYM',]$Realm <- 'Neotropical'
+data[is.na(data$Realm) & data$GID_0 == 'ECU',]$Realm <- 'Neotropical'
+data[is.na(data$Realm) & data$GID_0 == 'KNA',]$Realm <- 'Neotropical'
+data[is.na(data$Realm) & data$GID_0 == 'NIC',]$Realm <- 'Neotropical'
+data[is.na(data$Realm) & data$GID_0 == 'PER',]$Realm <- 'Neotropical'
+data[is.na(data$Realm) & data$GID_0 == 'PRI',]$Realm <- 'Neotropical'
+data[is.na(data$Realm) & data$GID_0 == 'VCT',]$Realm <- 'Neotropical'
+data[is.na(data$Realm) & data$GID_0 == 'VIR',]$Realm <- 'Neotropical'
+data[is.na(data$Realm) & data$GID_0 == 'ASM',]$Realm <- 'Oceanina'
+data[is.na(data$Realm) & data$GID_0 == 'FJI',]$Realm <- 'Oceanina'
+data[is.na(data$Realm) & data$GID_0 == 'PLW',]$Realm <- 'Oceanina'
+data[is.na(data$Realm) & data$GID_0 == 'TKL',]$Realm <- 'Oceanina'
+data[is.na(data$Realm) & data$GID_0 == 'WLF',]$Realm <- 'Oceanina'
+data[is.na(data$Realm) & data$GID_0 == 'HKG',]$Realm <- 'Oriental'
+data[is.na(data$Realm) & data$GID_0 == 'IND',]$Realm <- 'Oriental'
+data[is.na(data$Realm) & data$GID_0 == 'MYS',]$Realm <- 'Oriental'
+data[is.na(data$Realm) & data$GID_0 == 'PHL',]$Realm <- 'Oriental'
+data[is.na(data$Realm) & data$GID_0 == 'ALA',]$Realm <- 'Palearctic'
+data[is.na(data$Realm) & data$GID_0 == 'GRL',]$Realm <- 'Palearctic'
+data[is.na(data$Realm) & data$GID_0 == 'MLT',]$Realm <- 'Palearctic'
+data[is.na(data$Realm) & data$GID_0 == 'NLD',]$Realm <- 'Palearctic'
+data[is.na(data$Realm) & data$GID_0 == 'BHS',]$Realm <- 'Panamanian'
+data[is.na(data$Realm) & data$GID_0 == 'TCA',]$Realm <- 'Panamanian'
+data[is.na(data$Realm) & data$GID_0 == 'VGB',]$Realm <- 'Panamanian'
+data[is.na(data$Realm) & data$GID_0 == 'EGY',]$Realm <- 'Saharo-Arabian'
+data[is.na(data$Realm) & data$GID_0 == 'KWT',]$Realm <- 'Saharo-Arabian'
+data[is.na(data$Realm) & data$GID_0 == 'XAD',]$Realm <- 'Saharo-Arabian'
+data[is.na(data$Realm) & data$GID_0 == 'CHN',]$Realm <- 'Sino-Japanese'
+
+# OLd edits
+
+# data[is.na(data$Realm) & data$GID_0 == 'VUT',]$Realm <- 'Australian'
+# data[is.na(data$Realm) & data$GID_0 == 'GNQ',]$Realm <- 'Afrotropical'
+# data[is.na(data$Realm) & data$GID_0 == 'MUS',]$Realm <- 'Afrotropical'
+# data[is.na(data$Realm) & data$GID_0 == 'MAC',]$Realm <- 'Oriental'
+# data[is.na(data$Realm) & data$GID_0 == 'ABW',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'AIA',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'ATA',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'BLM',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'BMU',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'CUW',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'CXR',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'GIB',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'KIR',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'MAF',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'MCO',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'MDV',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'MHL',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'NIU',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'PCN',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'SXM',]$Realm <- 'Nearctic'
+# data[is.na(data$Realm) & data$GID_0 == 'GRD',]$Realm <- 'Neotropical'
+# data[is.na(data$Realm) & data$GID_0 == 'FSM',]$Realm <- 'Oceanina'
+# data[is.na(data$Realm) & data$GID_0 == 'MNP',]$Realm <- 'Oceanina'
+# data[is.na(data$Realm) & data$GID_0 == 'PYF',]$Realm <- 'Oceanina'
+# data[is.na(data$Realm) & data$GID_0 == 'TON',]$Realm <- 'Oceanina'
+# data[is.na(data$Realm) & data$GID_0 == 'TUV',]$Realm <- 'Oceanina'
+# data[is.na(data$Realm) & data$GID_0 == 'UMI',]$Realm <- 'Oceanina'
+# data[is.na(data$Realm) & data$GID_0 == 'GGY',]$Realm <- 'Oceanina'
+
+table(data[is.na(data$Realm),]$GID_0)
+unique(data[is.na(data$Realm),]$GID_0)
+length(unique(data[is.na(data$Realm),]$GID_0))
+
 data$NAME_CONCAT_1.2 <- ifelse(is.na(data$NAME_2), data$NAME_1, paste0(data$NAME_1, ", ", data$NAME_2))
 
 shp.pol_boundaries@data <- data
 shp.pol_boundaries.cen@data <- data
 
-
 rgdal::writeOGR(obj=shp.pol_boundaries, dsn="data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_holt.shp",
                 layer='boundaries', driver="ESRI Shapefile", encoding='UTF-8')
 
 rgdal::writeOGR(obj=shp.pol_boundaries.cen, 
-                dsn="data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_cen_holt`.shp",
+                dsn="data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_cen_holt.shp",
                 layer='boundaries', driver="ESRI Shapefile", encoding='UTF-8')
