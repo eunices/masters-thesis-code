@@ -18,11 +18,3 @@ df[,.(.N), by=.(type.repository)][order(-N)]          # not so useful?
 df[,.(.N), by=.(verificiation.of.type.repository)][order(-N)]  # not useful
 df[,.(.N), by=.(paper.type)][order(-N)]               # not useful
 df[,.(.N), by=.(type.sex)][order(-N)]                 # not useful
-
-df$date.decade <- paste0(substr(df$date.n, 1, 3), "0s")
-ggplot(df[!is.na(date.n),.(.N), by=.(date.decade)], aes(x=date.decade, y=N)) + geom_bar(stat="identity") + theme_minimal()
-
-# ggplotdf[,.(.N), by=.(date.n)], aes(x=date.n, y=N)) + geom_line() +
-#   scale_x_date(format = "%Y") + xlab("") + ylab("")
-
-

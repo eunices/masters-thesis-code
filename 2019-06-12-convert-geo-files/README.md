@@ -20,7 +20,6 @@ Purpose: To read in R's `raster` package.
 - [Soil moisture data in R](https://ropensci.github.io/smapr/articles/smapr-intro.html)
 - [Beautiful vector/raster map in R](https://timogrossenbacher.ch/2019/04/bivariate-maps-with-ggplot2-and-sf)
 
-
 ## TODO:
 
 - Combining raster tiles

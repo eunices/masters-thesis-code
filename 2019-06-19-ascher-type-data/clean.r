@@ -522,6 +522,7 @@ df$duplicated.row <- duplicated(gs)
 
 # date
 df$date.n <- as.numeric(gsub("\\[.*\\]", "", df$date)) # remove square brackets
+df[is.na(date.n)]$date.n <- as.numeric(sub("\\D*(\\d+).*", "\\1", df[is.na(date.n)]$author.date))
 
 # date.of.type
 df$date.of.type.string <- paste0("'", df$date.of.type)
