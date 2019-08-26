@@ -50,3 +50,33 @@ print(paste0("Read df_biogeo_holt"))
 table(is.na(df_biogeo_holt$Realm))
 dim(df_biogeo_holt); df_biogeo_holt <- df_biogeo_holt[!is.na(Realm)]; dim(df_biogeo_holt)
 df_biogeo_holt <- df_biogeo_holt[date.n<2019]
+
+
+
+df_trop_type1 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4-species-cty6-trop-type1.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+
+print(paste0("Read df_trop_type1"))
+table(is.na(df_trop_type1$Latitude_type))
+df_trop_type1 <- df_trop_type1[date.n<2019]
+
+
+
+df_trop_type2 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4-species-cty7-trop-type2.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+
+print(paste0("Read df_trop_type1"))
+table(is.na(df_trop_type2$Latitude_type))
+df_trop_type2 <- df_trop_type2[date.n<2019]
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Read shp files
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Read shpfiles"))
+
+shp_gadm_0 <- sf::st_read('data/geo/1_separate/gadm/shp_all_levels/gadm36_0.shp')
+print(paste0("Read shp_gadm_0"))
+shp_biogeo <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo2.shp')
+print(paste0("Read shp_biogeo"))
+shp_biogeo_holt <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_holt2.shp')
+print(paste0("Read shp_biogeo_holt"))
+shp_continents <- sf::st_read('data/geo_processed/gadm/gadm36_0_utf8_continents.shp')
+print(paste0("Read shp_continents"))

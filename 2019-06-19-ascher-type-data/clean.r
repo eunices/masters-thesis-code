@@ -498,6 +498,9 @@ df[check0&check1&check2&check3]$flag <- "COUNTRY ONLY"
 df[check0&check1&check2&!check3&check4]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_LRG_DIV"
 df[check0&check1&check2&!check3&!check4]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_SML_DIV"
 
+df[idx==16354]$lat <- NA # modify for Kimberly
+df[idx==16354]$lon <- NA
+
 # df[df$type.locality.updated == "0"]$type.locality.updated <- ''
 df <- df[order(as.numeric(idx))]
 write.csv(df, 
@@ -563,7 +566,7 @@ main <- c('idx',                                       # identifier
           'family', 'subfamily', 'tribe',              # taxonomic info
           'genus', 'subgenus', 'species', 'full.name',
           'author', 'date.n', 'full.name.of.describer',  # description info
-          'collector.of.type', 'date.of.type.string',           # collector info
+          'collector.of.type', 'date.of.type.string',    # collector info      
           'date.of.type.yyyy', 'date.of.type.mm', 'date.of.type.dd',
           'years.lag',
           'lat', 'lon',                                  # georeference
@@ -589,3 +592,20 @@ df <- df[duplicated.row == "FALSE"][order(as.numeric(idx))]
 write.csv(df[,..cols], 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
+
+cols <- c("idx", "author", "full.name.of.describer", "describer.gender", 
+          "dob.describer", "dod.describer",
+          "origin.country.describer", "residence.country.describer", "institution.of.describer")
+
+describers_info <- df[,..cols]
+
+write.csv(describers_info[order(author)], 
+          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-describers.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+
+cols <- c("idx", "collector.of.type", "full.name.of.collector",
+          "title.of.collector", "collector.gender", "info.about.collector", "date.of.type.yyyy")
+collectors_info <- df[,..cols]
+
+write.csv(collectors_info[order(full.name.of.collector)], 
+          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.3-collectors.csv"), na='', row.names=F, fileEncoding="UTF-8")

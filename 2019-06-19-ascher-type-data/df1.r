@@ -5,50 +5,61 @@ source('2019-06-19-ascher-type-data/init.r')
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- get distribution from global mapper"))
 
-# Get countries from global mapper
-df_mapper <- df[,c("idx", "global.mapper")]
-global_mapper_split <- function(x) {
-    x <- strsplit(x, " ")                                   # split by space
-    x <- lapply(x, function(x) gsub("(:|\\[)(.+?)$", "", x)) # get words before :
-    x <- lapply(x, function(x) gsub(":", "", x))[[1]]        # remove :
-    x[!(grepl("\\[|\\]", x) | x=="")]                # remove uncertain countries
-}
-# https://www.hackerearth.com/practice/machine-learning/advanced-techniques/regular-expressions-string-manipulation-r/tutorial/
+df <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
-df$global.mapper[1308]
-lapply(df$global.mapper[1308], global_mapper_split)
-df$global.mapper[3767]
-lapply(df$global.mapper[3767], global_mapper_split)
+# # =================
+# # DONE ONCE ONLY ##
+# # =================
+# # Get countries from global mapper
+# df_mapper <- df[,c("idx", "global.mapper")]
+# global_mapper_split <- function(x) {
+#     x <- strsplit(x, " ")                                   # split by space
+#     x <- lapply(x, function(x) gsub("(:|\\[)(.+?)$", "", x)) # get words before :
+#     x <- lapply(x, function(x) gsub(":", "", x))[[1]]        # remove :
+#     x[!(grepl("\\[|\\]", x) | x=="")]                # remove uncertain countries
+# }
+# # https://www.hackerearth.com/practice/machine-learning/advanced-techniques/regular-expressions-string-manipulation-r/tutorial/
 
-df_mapper$global.mapper.cty <- lapply(df_mapper$global.mapper, global_mapper_split)
-df_mapper$global.mapper.cty[1:5]
+# df$global.mapper[1308]
+# lapply(df$global.mapper[1308], global_mapper_split)
+# df$global.mapper[3767]
+# lapply(df$global.mapper[3767], global_mapper_split)
 
-df_mapper2 <- data.frame(idx=character(), country=character())
-for (i in 1:dim(df_mapper)[1]) {
-    idx_row <- df_mapper[i]$idx
-    cty_row <- df_mapper[i]$global.mapper.cty[[1]]
+# df_mapper$global.mapper.cty <- lapply(df_mapper$global.mapper, global_mapper_split)
+# df_mapper$global.mapper.cty[1:5]
 
-    if (!identical(cty_row, character(0))) {
-        for (j in 1:length(cty_row)) {
-            if (is.na(cty_row[j])) {
-                to_merge <- data.frame(idx=idx_row, country=NA)
-            } else {
-                to_merge <- data.frame(idx=idx_row, country=cty_row[j])
-                df_mapper2 <- rbind(df_mapper2, to_merge)
-            }
-        }
-    } else {
-        to_merge <- data.frame(idx=idx_row, country=NA)
-        df_mapper2 <- rbind(df_mapper2, to_merge)
-    }
-    print(paste0("Row ", i , " completed for ", cty_row[j]))
-}
+# df_mapper2 <- data.frame(idx=character(), country=character())
+# for (i in 1:dim(df_mapper)[1]) {
+#     idx_row <- df_mapper[i]$idx
+#     cty_row <- df_mapper[i]$global.mapper.cty[[1]]
 
-df_mapper2 <- merge(df_mapper2, lookup.cty, by.x="country", by.y="A.2", suffix=c(3,4), all.x=T, all.y=F)
-df_mapper2 <- merge(df_mapper2, lookup.cty, by.x="country", by.y="GEC", suffix=c(1,2), all.x=T, all.y=F)
+#     if (!identical(cty_row, character(0))) {
+#         for (j in 1:length(cty_row)) {
+#             if (is.na(cty_row[j])) {
+#                 to_merge <- data.frame(idx=idx_row, country=NA)
+#             } else {
+#                 to_merge <- data.frame(idx=idx_row, country=cty_row[j])
+#                 df_mapper2 <- rbind(df_mapper2, to_merge)
+#             }
+#         }
+#     } else {
+#         to_merge <- data.frame(idx=idx_row, country=NA)
+#         df_mapper2 <- rbind(df_mapper2, to_merge)
+#     }
+#     print(paste0("Row ", i , " completed for ", cty_row[j]))
+# }
 
-write.csv(df_mapper2[,c("country", "idx", "Country1", "Country2")], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4-species-cty1.csv"), na='', row.names=F, fileEncoding="UTF-8")
+# df_mapper2 <- merge(df_mapper2, lookup.cty, by.x="country", by.y="A.2", suffix=c(3,4), all.x=T, all.y=F)
+# df_mapper2 <- merge(df_mapper2, lookup.cty, by.x="country", by.y="GEC", suffix=c(1,2), all.x=T, all.y=F)
+
+# df_mapper2 <- data.table(df_mapper2)
+
+# df_mapper2[country=="UR"]$Country1 <- "Ukraine"
+# df_mapper2[country=="AY"]$Country1 <- "Armenia"
+# df_mapper2[country=="RS"]$Country1 <- "Russian Federation"
+
+# write.csv(df_mapper2[,c("country", "idx", "Country1", "Country2")], 
+#           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4-species-cty1.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # YY, RV, OH, ZC, YA, RZ, KD, WE, KK, OG
 
@@ -59,10 +70,9 @@ print(paste0(Sys.time(), " --- by country"))
 
 
 df_mapper2 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4-species-cty1.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 df_mapper2$Country.final <- ifelse(is.na(df_mapper2$Country1), df_mapper2$Country2, df_mapper2$Country1)
-df_mapper2[country=="UR"]$Country.final <- "Ukraine"
+
 
 missing <- unique(df_mapper2[is.na(df_mapper2$Country.final)]$idx)
 not_missing <- unique(df_mapper2[!is.na(df_mapper2$Country.final)]$idx)
@@ -72,13 +82,45 @@ no_data <- df[idx %in% as.character(missing) & !(idx %in% as.character(not_missi
 write.csv(no_data[order(global.mapper)], 
           paste0(dir, "clean/countries.csv"), row.names=F)
 
-df_mapper3 <- df_mapper2[!is.na(Country.final),c("idx", "Country.final")]
+df_mapper3 <- df_mapper2[(!is.na(Country.final) & Country.final!=" "), c("idx", "Country.final")]
 df_mapper3 <- unique(df_mapper3)
 df_mapper3[Country.final == "C<f4>te d'Ivoire", ]$Country.final <- "Côte d'Ivoire"
 df_mapper3[Country.final == "Cura<e7>ao",]$Country.final <- "Curaçao"
 df_mapper3[Country.final == "Saint Barth<e9>lemy",]$Country.final <- "Saint Barthélemy"
 
 df_mapper3 <- merge(df_mapper3, lookup.cty, by.x="Country.final", by.y="Country", all.x=T, all.y=F)
+
+df_mapper9 <- df_mapper3[,c("idx", "A.3", "Latitude_type", "Latitude_type2")]
+df_mapper9[] <- lapply(df_mapper9, as.character)
+
+
+# By type1 of trop/sub tropical
+df_mapper10 <- copy(df_mapper9)
+df_mapper10 <- df_mapper10[, no_cty_in_trop:=length(unique(A.3)), by=c("idx", "Latitude_type")]
+df_mapper10 <- df_mapper10[, cty_in_trop:=paste(unique(A.3), collapse=', '), by=c("idx", "Latitude_type")]
+df_mapper10 <- df_mapper10[,c("idx", "Latitude_type", "no_cty_in_trop", "cty_in_trop")]
+df_mapper10 <- unique(df_mapper10)
+
+df_merge <- df[,c("idx", "duplicated.row", "date.n", "full.name.of.describer")]
+df_merge[] <- lapply(df_merge, as.character)
+df_mapper10a <- merge(df_mapper10, df_merge, by.x="idx", by.y="idx", all.x=T, all.y=F)
+
+write.csv(df_mapper10a[date.n <2019][duplicated.row=="FALSE"][order(as.numeric(idx))], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4-species-cty6-trop-type1.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+# By type2 of trop/sub tropical
+df_mapper11 <- copy(df_mapper9)
+df_mapper11 <- df_mapper11[, no_cty_in_trop:=length(unique(A.3)), by=c("idx", "Latitude_type2")]
+df_mapper11 <- df_mapper11[, cty_in_trop:=paste(unique(A.3), collapse=', '), by=c("idx", "Latitude_type2")]
+df_mapper11 <- df_mapper11[,c("idx", "Latitude_type2", "no_cty_in_trop", "cty_in_trop")]
+df_mapper11 <- unique(df_mapper11)
+
+df_merge <- df[,c("idx", "duplicated.row", "date.n", "full.name.of.describer", "family")]
+df_merge[] <- lapply(df_merge, as.character)
+df_mapper11a <- merge(df_mapper11, df_merge, by.x="idx", by.y="idx", all.x=T, all.y=F)
+
+write.csv(df_mapper11a[date.n <2019][duplicated.row=="FALSE"][order(as.numeric(idx))], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4-species-cty7-trop-type2.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+
 
 
 #### Using WWF's ####

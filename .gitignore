@@ -7,6 +7,7 @@
 /data/lookup/*
 /data/201*/*
 *.db
+*.sqlite
 /tmp/*
 
 # Do not ignore folders with gitkeep
