@@ -40,6 +40,7 @@ df[] <- lapply(df, gsub, pattern='[\r\n]', replacement=' ')
 na_count <- data.frame(names=names(df), N=sapply(df, function(x) sum(length(which(is.na(x))))), row.names=NULL)
 print(paste0(Sys.time(), " --- Number of NA")); print(na_count[order(-na_count$N), c("names", "N")][1:10,])
 
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - geocoding + quick lat lon checks
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -505,11 +506,11 @@ df[idx==16354]$lon <- NA
 df <- df[order(as.numeric(idx))]
 write.csv(df, 
           paste0(dir, 
-                "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3-clean-lat-lon.csv"),
+                "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean-lat-lon.csv"),
           na='', row.names=F, fileEncoding="UTF-8")
 
 filepath <- paste0(dir, 
-                   "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3-clean-lat-lon.csv")
+                   "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean-lat-lon.csv")
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -556,6 +557,18 @@ df[df$date.of.type.yyyy<1200]$date.of.type.yyyy[] <-
 # date differences
 df$years.lag <- df$date.n - df$date.of.type.yyyy
 
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - quick fixes
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- quick fixes (only on useful columns)"))
+
+# 2019-08-27: discovered when cleaning author dates 
+df[idx %in% c(12335, 12337, 12338, 12341, 12346)]$date <- 2008
+df[idx %in% c(13187)]$date <- 2018
+
+
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - useful columns
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -577,13 +590,12 @@ loc <- c('type.country', 'type.state',     # locality info
          'type.locality.verbatim', 'type.locality.updated', 'elev.m',
          'source.of.latlon')
 
-checks <- c('date.of.type.string', 
-            'other.names', 'original.genus',                             # synonyms
+checks <- c('other.names', 'original.genus',                          # synonyms
             'host.plant', 'host.plant.of.type', 'host.insect.or.prey', 'type.sex', # life history info
             'sociality',
-            'type.status', 'type.depository.notes', 'notes',             # specimen status
-            'title', 'journal', 'volume', 'issue', 'paper.type',         # publication info
-            'global.mapper', 'distributional.footnotes', 'notes')        # distribution info
+            'type.status', 'type.depository.notes', # specimen status
+            'title', 'journal', 'volume', 'issue', 'paper.type',      # publication info
+            'global.mapper', 'distributional.footnotes', 'notes')     # distribution info
 
 
 cols <- c(main, loc, checks)
@@ -593,6 +605,16 @@ write.csv(df[,..cols],
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - create collector and describer raw dataset
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- collector and describer raw dataset"))
+
+# 2019-08-27: discovered when cleaning author dates 
+df[idx %in% c(12335, 12337, 12338, 12341, 12346)]$date <- 2008
+df[idx %in% c(13187)]$date <- 2018
+
+
 cols <- c("idx", "author", "full.name.of.describer", "describer.gender", 
           "dob.describer", "dod.describer",
           "origin.country.describer", "residence.country.describer", "institution.of.describer")
@@ -600,7 +622,7 @@ cols <- c("idx", "author", "full.name.of.describer", "describer.gender",
 describers_info <- df[,..cols]
 
 write.csv(describers_info[order(author)], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-describers.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.0-describers.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 cols <- c("idx", "collector.of.type", "full.name.of.collector",

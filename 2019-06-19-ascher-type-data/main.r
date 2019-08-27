@@ -1,13 +1,14 @@
 source('2019-06-19-ascher-type-data/init.r')
 source('2019-06-19-ascher-type-data/clean.r')
 source('2019-06-19-ascher-type-data/df1.r')
+source('2019-06-19-ascher-type-data/df2.r')
 
 # Plot world object
-pdf('plots/2019-06-19-type-data-map.pdf', width=21, height=10)
-ggplot() +
-  geom_sf(data = shp, fill = NA, ) +
-  geom_sf(data = ll, colour = "slategray3") + theme_minimal()
-dev.off()
+# pdf('plots/2019-06-19-type-data-map.pdf', width=21, height=10)
+# ggplot() +
+#   geom_sf(data = shp, fill = NA, ) +
+#   geom_sf(data = ll, colour = "slategray3") + theme_minimal()
+# dev.off()
 
 # Exploratory analysis
 df[,.(.N), by=.(host.plant)][order(-N)]               # not useful
