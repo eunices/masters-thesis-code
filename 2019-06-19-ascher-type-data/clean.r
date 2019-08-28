@@ -630,4 +630,4 @@ cols <- c("idx", "collector.of.type", "full.name.of.collector",
 collectors_info <- df[,..cols]
 
 write.csv(collectors_info[order(full.name.of.collector)], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.3-collectors.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.3.0-collectors.csv"), na='', row.names=F, fileEncoding="UTF-8")

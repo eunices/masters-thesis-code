@@ -67,6 +67,22 @@ print(paste0("Read df_trop_type1"))
 table(is.na(df_trop_type2$Latitude_type))
 df_trop_type2 <- df_trop_type2[date.n<2019]
 
+
+
+taxonomic_effort <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.4-describers_by_year.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+
+print(paste0("Read taxonomic_effort"))
+
+
+df_describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.3-describers_minmax.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+
+print(paste0("Read df_describers"))
+
+df_species_describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.2-describers.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+
+print(paste0("Read df_species_describers"))
+
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Read shp files
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

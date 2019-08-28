@@ -1,3 +1,6 @@
+# TODO: first author publications only
+# TODO: watch lectures on probability
+
 source('2019-07-15-edie-et-al/init.r')
 
 df$date.decade <- paste0(substr(df$date.n, 1, 3), "0s")

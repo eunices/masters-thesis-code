@@ -6,12 +6,12 @@ library(tidyr)
 
 # Describers dataset
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section -  get individual rows from dataset
+# Section -  individual author species rows 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- 'describers': get individual rows from dataset"))
+print(paste0(Sys.time(), " --- 'describers': individual author species rows"))
 
-describers_info <- fread(
-    paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.0-describers_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# describers_info <- fread(
+#     paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.0-describers_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 # # =================
 # # DONE ONCE ONLY ##
@@ -45,7 +45,7 @@ describers_info <- fread(
 # describers <- data.frame(idx=character(), full.name.of.describer.n=character(),
 #                          describer.gender.n=character(), dob.describer.n=character(),
 #                          dod.describer.n=character(), origin.country.describer.n=character(),
-#                          residence.country.describer.n=character(), institution.of.describer.n=character())
+#                          residence.country.describer.n=character(), institution.of.describer.n=character(), author.order=integer())
 # for (i in 1:dim(describers_info)[1]) {
 # # for (i in 1:2) {
 #     idx_row <- describers_info[i]$idx
@@ -63,7 +63,7 @@ describers_info <- fread(
 #                 to_merge <- data.frame(idx=idx_row, full.name.of.describer.n=NA,
 #                          describer.gender.n=NA, dob.describer.n=NA,
 #                          dod.describer.n=NA, origin.country.describer.n=NA,
-#                          residence.country.describer.n=NA, institution.of.describer.n=NA)
+#                          residence.country.describer.n=NA, institution.of.describer.n=NA,author.order=NA)
 #             } else {
 
 #                 gender <- ifelse(is.na(gender_row[j]) || identical(gender_row[j], logical(0)) , NA, gender_row[j])
@@ -73,6 +73,7 @@ describers_info <- fread(
 #                 residence <- ifelse(is.na(residence_row[j]) || identical(residence_row[j], logical(0)), 
 #                                     NA, residence_row[j])
 #                 inst <- ifelse(is.na(inst_row[j]) || identical(inst_row[j], logical(0)), NA, inst_row[j])
+#                 order <- ifelse(j==1, 1, ifelse(j==length(describer_row), "L", j))
 
 #                 to_merge <- data.frame(idx=idx_row,
 #                                        full.name.of.describer.n=describer_row[j],
@@ -81,7 +82,8 @@ describers_info <- fread(
 #                                        dod.describer.n=dod,
 #                                        origin.country.describer.n=origin,
 #                                        residence.country.describer.n=residence,
-#                                        institution.of.describer.n=inst)
+#                                        institution.of.describer.n=inst,
+#                                        author.order=order)
 #                 describers <- rbind(describers, to_merge)
 #             }
 #         }
@@ -89,7 +91,8 @@ describers_info <- fread(
 #         to_merge <- data.frame(idx=idx_row, full.name.of.describer.n=NA,
 #                          describer.gender.n=NA, dob.describer.n=NA,
 #                          dod.describer.n=NA, origin.country.describer.n=NA,
-#                          residence.country.describer.n=NA, institution.of.describer.n=NA)
+#                          residence.country.describer.n=NA, institution.of.describer.n=NA,
+#                          author.order=NA)
 #         describers <- rbind(describers, to_merge)
 #     }
 #     print(paste0("Row ", i , " completed for ", idx_row))
@@ -99,9 +102,9 @@ describers_info <- fread(
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - summarize by idx
+# Section - summarize by species idx for checks of authors
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- 'describers': summarize by idx"))
+print(paste0(Sys.time(), " --- 'describers': summarize by species idx for checks on authors"))
 
 describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.0-describers2.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 
@@ -115,8 +118,9 @@ describers_info[] <- lapply(describers_info, as.character)
 describers_merged <- merge(describers_merged, describers_info[,..cols], by='idx', all.x=T, all.y=F)
 
 # Summarize by idx
-describers_idx <- describers_merged[, idxes:=paste0(unique(as.numeric(idx)), collapse=', '), 
-                                      by=c("full.name.of.describer.n")]
+describers_idx <- describers_merged[, idxes:=paste0(idx, collapse=', '), by=c('full.name.of.describer.n')]
+describers_idx <- describers_idx[, idxes_author.order:=paste0(author.order, collapse=', '), 
+                                 by=c("full.name.of.describer.n")]
 describers_idx <- describers_idx[,c("full.name.of.describer.n", 
                                     "describer.gender.n",
                                     "dob.describer.n",
@@ -124,7 +128,7 @@ describers_idx <- describers_idx[,c("full.name.of.describer.n",
                                     "origin.country.describer.n",
                                     "residence.country.describer.n",
                                     "institution.of.describer.n", 
-                                    "idxes")]
+                                    "idxes", "idxes_author.order")]
 describers_idx <- describers_idx[order(full.name.of.describer.n,
                                        describer.gender.n,
                                        -dob.describer.n, 
@@ -138,117 +142,144 @@ describers_idx <- data.table(describers_idx)
 describers_idx <- describers_idx[order(full.name.of.describer.n),]
 describers_idx$idx_auth <- 1:dim(describers_idx)[1]
 
+# Prioritize based on gender
+describers_idx$describer.gender.n <- factor(describers_idx$describer.gender.n, levels=c("F", "M", "U"), ordered=T)
+describers_idx <- describers_idx[order(full.name.of.describer.n, describer.gender.n)]
+dim(describers_idx)
+describers_idx <- describers_idx[!duplicated(full.name.of.describer.n)]
+dim(describers_idx)
+describers_idx$describer.gender.n <- as.character(describers_idx$describer.gender.n)
+
+
+describers_idx$dob.describer.n <- gsub(";| ", "", describers_idx$dob.describer.n)
+describers_idx$dod.describer.n <- gsub(";| ", "", describers_idx$dod.describer.n)
+
+
 write.csv(describers_idx, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.1-describers.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - further cleaning 
+# Section - further denormalization of data with cleaned describer data
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- 'describers': further cleaning"))
+print(paste0(Sys.time(), " --- 'describers': further denormalization of data with cleaned describer data"))
 
 describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.1-describers.csv"),
             na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
-describers$describer.gender.n <- factor(describers$describer.gender.n, levels=c("F", "M", "U"), ordered=T)
-describers <- describers[order(full.name.of.describer.n, describer.gender.n)]
-dim(describers)
-describers <- describers[!duplicated(full.name.of.describer.n)]
-dim(describers)
-describers$describer.gender.n <- as.character(describers$describer.gender.n)
+
+# Denormalization
+describers <- describers %>% separate_rows(idxes, idxes_author.order)
+
+# Joining with dates
+dfx <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+
+dfx <- dfx[,c("idx", "date.n")]
+dfx$idx <- as.numeric(dfx$idx)
+describers$idxes <- as.numeric(describers$idxes)
+describers <- merge(describers, dfx, by.x="idxes", by.y="idx", all.x=T, all.y=F)
 
 write.csv(describers, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.2-describers.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - further denormalization of data
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- 'describers': further denormalization of data"))
-
-describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.2-describers.csv"),
-            na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
-
-# Dataset unnested from idxes
-describers <- describers %>% 
-  mutate(idxes = strsplit(as.character(idxes), ",")) %>%
-  unnest(idxes)
-
-describers <- data.table(describers)
-
-write.csv(describers, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.3-describers.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
-describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.3-describers.csv"),
-            na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
-describers$idxes <- as.numeric(describers$idxes)
-
-describers[, N_authors := length(unique(full.name.of.describer.n)), by="idxes"]
-describers[, names_authors:=paste(unique(full.name.of.describer.n), collapse="; "), by="idxes"]
-describers[, idx_authors:=paste(unique(idx_auth), collapse="; "), by="idxes"]
-describers[, gender_authors:=paste(describer.gender.n, collapse="; "), by="idxes"]
-describers <- describers[,c("idxes", "N_authors", "idx_authors", "gender_authors")]
-describers <- unique(describers)
-describers$idxes <- as.numeric(describers$idxes)
-describers <- describers[order(idxes)]
-
-write.csv(describers, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.4-describers.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
-# https://stackoverflow.com/questions/13773770/
+# TODO: N taxonomists (only first authors)
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - joining author data back to main dataframe
+# Section - summarizing describer information
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- 'describers': joining author data back to main dataframe"))
+print(paste0(Sys.time(), " --- 'describers': summarizing describer information"))
 
-df <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.2-describers.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 
-describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.4-describers.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+describers[,max:=max(date.n), by="idx_auth"]
+describers[,min:=min(date.n), by="idx_auth"]
+describers[, spp_N := length(unique(idxes)), by="idx_auth"]
+describers[, spp_N_1st_auth := sum(idxes_author.order=="1"), by="idx_auth"]
+describers[, spp_N_not_1st_auth := sum(idxes_author.order!="1"), by="idx_auth"]
+describers[, spp_N_lst_auth := sum(idxes_author.order!="L"), by="idx_auth"]
+describers[, spp_idxes := paste(unique(idxes), collapse=", "), by="idx_auth"]
 
-describers2 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.1-describers.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+cols <- c("idx_auth","full.name.of.describer.n", "describer.gender.n", 
+          "dob.describer.n", "dod.describer.n", "origin.country.describer.n", "residence.country.describer.n", "institution.of.describer.n", 
+          "min", "max", "spp_N", "spp_N_1st_auth", "spp_N_not_1st_auth", "spp_N_lst_auth", "spp_idxes")
+describers <- unique(describers[,..cols])
 
-df$idx <- as.numeric(df$idx)
-describers$idx <- as.numeric(describers$idx)
+# Row by row discrepancies
+describers[full.name.of.describer.n=="Ismael Alejandro Hinojosa-Díaz"]$min = 2003
+describers[full.name.of.describer.n=="Johan Christian Fabricius"]$max = 1804  
+describers[full.name.of.describer.n=="Michael Kuhlmann"]$min = 1998  
+describers[full.name.of.describer.n=="Eduardo Andrade Botelho de Almeida"]$min = 2008 # should be modified in original file
+describers[full.name.of.describer.n=="Michael Scott Engel"]$min = 1995 # should be modified in original file
+dob = describers[full.name.of.describer.n=="Wilhelm Albert Schulz"]$dod.describer.n
+dod = describers[full.name.of.describer.n=="Wilhelm Albert Schulz"]$dob.describer.n  
+describers[full.name.of.describer.n=="Wilhelm Albert Schulz"]$dod.describer.n = dod
+describers[full.name.of.describer.n=="Wilhelm Albert Schulz"]$dob.describer.n  = dob
 
-df <- merge(df, describers, by.x="idx", by.y="idxes", all.x=T, all.y=F)
-df$idx.y <- NULL
+# Metrics
+describers$years_active <- describers$max - describers$min +1
+describers$years_alive <- as.numeric(describers$dod.describer.n) - as.numeric(describers$dob.describer.n) + 1
+describers$years_discrepancy <- describers$years_alive - describers$years_active
+describers$species_per_year_active <- round(describers$spp_N / describers$years_active, 2)
+describers$species_per_year_alive <- round(describers$spp_N / describers$years_alive, 2)
 
-df <- df[,c("date.n", "idx_authors")]
-df <- df %>% 
-  mutate(idx_authors = strsplit(as.character(idx_authors), "; ")) %>%
-  unnest(idx_authors)
-df <- data.table(df)
+describers$prop_species_described_lst_author <- round(describers$spp_N_lst_auth / describers$spp_N, 2)
+describers$prop_species_described_not_1st_author <- round((describers$spp_N
+ - describers$spp_N_1st_auth) / describers$spp_N, 2)
+describers$prop_species_as_1st_author <- round(describers$spp_N_1st_auth
+/ describers$spp_N,2)
 
-df[,max:=max(date.n), by=idx_authors]
-df[,min:=min(date.n), by=idx_authors]
-df <- unique(df[,c("idx_authors", "min", "max")])
-df$idx_authors <- as.integer(df$idx_authors)
-df <- merge(df, describers2, by.x="idx_authors", by.y="idx_auth", all.x=T, all.y=F)
 
-df[full.name.of.describer.n=="Ismael Alejandro Hinojosa-Díaz"]$min = 2003  
-df[full.name.of.describer.n=="Johan Christian Fabricius"]$max = 1804  
-df[full.name.of.describer.n=="Michael Kuhlmann"]$min = 1998  
-df[full.name.of.describer.n=="Eduardo Andrade Botelho de Almeida"]$min = 2008 # should be modified in original file
-df[full.name.of.describer.n=="Michael Scott Engel"]$min = 1995 # should be modified in original file
+write.csv(describers[order(idx_auth)], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.3-describers_minmax.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-dob = df[full.name.of.describer.n=="Wilhelm Albert Schulz"]$dod.describer.n
-dod = df[full.name.of.describer.n=="Wilhelm Albert Schulz"]$dob.describer.n  
-df[full.name.of.describer.n=="Wilhelm Albert Schulz"]$dod.describer.n = dod
-df[full.name.of.describer.n=="Wilhelm Albert Schulz"]$dob.describer.n  = dob
 
-df$dob.describer.n <- gsub(";| ", "", df$dob.describer.n)
-df$dod.describer.n <- gsub(";| ", "", df$dod.describer.n)
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - no of taxonomist active per year
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- 'describers': number of taxonomist active per year"))
 
-df$years_active <- df$max - df$min +1
-df$years_alive <- as.numeric(df$dod.describer.n) - as.numeric(df$dob.describer.n) + 1
-df$years_discrepancy <- df$years_alive - df$years_active
+describer_data <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.3-describers_minmax.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
-df[, num_species_described:= length(strsplit(idxes, ", ")[[1]]), by=idx_authors]
+# N number of describers
+describers <- describer_data[,c("idx_authors", "full.name.of.describer.n", "min", "max")]
 
-df$species_per_year_active <- df$num_species_described / df$years_active
-df$species_per_year_alive <- df$num_species_described / df$years_alive
+seq <- mapply(function(a, b) {
+    seq(a, b)
+}, a=describers$min, b=describers$max)
 
-cols <- c("idx_authors", "full.name.of.describer.n", "describer.gender.n", "min", "max", "years_active",
-          "dob.describer.n", "dod.describer.n", "years_alive", "years_discrepancy", "idxes", "num_species_described", 
-          "origin.country.describer.n", "residence.country.describer.n", "institution.of.describer.n")
-# idxes = species idxes
+describers$years <- seq
+describers <- describers %>% separate_rows(years)
 
-write.csv(df[,..cols], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.5-describers_minmax.csv"), na='', row.names=F, fileEncoding="UTF-8")
+describers_active_by_year <- describers[,N_describers := length(idx_authors), by=years]
 
+describers_active_by_year <- unique(describers_active_by_year[,c("years", "N_describers")])[order(as.numeric(years))]
+
+# Weighted 
+describers <- describer_data[,c("idx_authors", "full.name.of.describer.n", "min", "max", "species_per_year_active")]
+
+seq <- mapply(function(a, b) {
+    seq(a, b)
+}, a=describers$min, b=describers$max)
+
+describers$years <- seq
+describers <- describers %>% separate_rows(years)
+describers_weighted_by_year <- describers[,N_weighted_describers := sum(species_per_year_active), by=years]
+describers_weighted_by_year <- unique(describers_weighted_by_year[,c("years", "N_weighted_describers")])[order(as.numeric(years))]
+
+taxonomic_effort <- merge(describers_active_by_year, describers_weighted_by_year, by="years", all.x=T, all.y=T)
+min_year <- min(taxonomic_effort$years)
+max_year <- max(taxonomic_effort$years)
+taxonomic_effort <- merge(data.frame(years=min_year:max_year), taxonomic_effort, by="years", all.x=T, all.y=F)
+
+species_per_year <- dfx[,c("idx", "date.n")]
+species_per_year <- species_per_year[,N_species_described:=length(idx),by="date.n"]
+names(species_per_year) <- c("idx", "years", "N_species_described")
+species_per_year <- unique(species_per_year[,c("years", "N_species_described")])
+taxonomic_effort <- merge(taxonomic_effort, species_per_year, by="years", all.x=T, all.y=T)
+
+
+taxonomic_effort[is.na(taxonomic_effort)] <- 0
+write.csv(taxonomic_effort, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.5-describers_by_year.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+
+# Other metrics
+# Number of taxonomists active per year DONE
+# Number as first author DONE
+# Number as last author DONE
+# TODO: Ratio of synonym v valid name [for future work]
