@@ -245,7 +245,7 @@ describer_date <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sor
 describer_data <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.3-describers_minmax.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 # N number of describers
-describers <- describer_data[,c("idx_authors", "full.name.of.describer.n", "min", "max")]
+describers <- describer_data[,c("idx_auth", "full.name.of.describer.n", "min", "max")]
 seq <- mapply(function(a, b) {
     seq(a, b)
 }, a=describers$min, b=describers$max)
@@ -255,7 +255,7 @@ describers_active_by_year <- describers[,N_describers := length(idx_auth), by=ye
 describers_active_by_year <- unique(describers_active_by_year[,c("years", "N_describers")])[order(as.numeric(years))]
 
 # Weighted 
-describers <- describer_data[,c("idx_authors", "full.name.of.describer.n",
+describers <- describer_data[,c("idx_auth", "full.name.of.describer.n",
                                 "min", "max", "species_per_year_active")]
 seq <- mapply(function(a, b) {
     seq(a, b)
@@ -273,20 +273,20 @@ taxonomic_effort1 <- merge(data.frame(years=min_year:max_year), taxonomic_effort
 
 
 # Exclude these
-to_exclude <- describers[prop_species_as_1st_author_s<0.1 & prop_species_described_not_1st_author > 0.9]$idx_auth
+to_exclude <- describers_data[prop_species_as_1st_author_s<0.1 & prop_species_described_not_1st_author > 0.9]$idx_auth
 
 # N number of describers
-describers <- describer_data[!full.name.of.describer.n %in% to_exclude,c("idx_authors", "full.name.of.describer.n", "min", "max")]
+describers <- describer_data[!full.name.of.describer.n %in% to_exclude,c("idx_auth", "full.name.of.describer.n", "min", "max")]
 seq <- mapply(function(a, b) {
     seq(a, b)
 }, a=describers$min, b=describers$max)
 describers$years <- seq
 describers <- describers %>% separate_rows(years)
-describers_active_by_year <- describers[,N_real_describers := length(idx_authors), by=years]
-describers_active_by_year <- unique(describers_active_by_year[,c("years", "N_describers")])[order(as.numeric(years))]
+describers_active_by_year <- describers[,N_real_describers := length(idx_auth), by=years]
+describers_active_by_year <- unique(describers_active_by_year[,c("years", "N_real_describers")])[order(as.numeric(years))]
 
 # Weighted 
-describers <- describer_data[!full.name.of.describer.n %in% to_exclude,c("idx_authors", "full.name.of.describer.n",
+describers <- describer_data[!full.name.of.describer.n %in% to_exclude,c("idx_auth", "full.name.of.describer.n",
                                 "min", "max", "species_per_year_active")]
 seq <- mapply(function(a, b) {
     seq(a, b)
@@ -294,7 +294,7 @@ seq <- mapply(function(a, b) {
 describers$years <- seq
 describers <- describers %>% separate_rows(years)
 describers_weighted_by_year <- describers[,N_weighted_real_describers := sum(species_per_year_active), by=years]
-describers_weighted_by_year <- unique(describers_weighted_by_year[,c("years", "N_weighted_describers")])[order(as.numeric(years))]
+describers_weighted_by_year <- unique(describers_weighted_by_year[,c("years", "N_weighted_real_describers")])[order(as.numeric(years))]
 
 
 taxonomic_effort2 <- merge(describers_active_by_year, describers_weighted_by_year, by="years", all.x=T, all.y=T)
