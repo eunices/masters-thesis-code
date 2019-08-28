@@ -282,7 +282,7 @@ seq <- mapply(function(a, b) {
 }, a=describers$min, b=describers$max)
 describers$years <- seq
 describers <- describers %>% separate_rows(years)
-describers_active_by_year <- describers[,N_describers := length(idx_authors), by=years]
+describers_active_by_year <- describers[,N_real_describers := length(idx_authors), by=years]
 describers_active_by_year <- unique(describers_active_by_year[,c("years", "N_describers")])[order(as.numeric(years))]
 
 # Weighted 
@@ -293,7 +293,7 @@ seq <- mapply(function(a, b) {
 }, a=describers$min, b=describers$max)
 describers$years <- seq
 describers <- describers %>% separate_rows(years)
-describers_weighted_by_year <- describers[,N_weighted_describers := sum(species_per_year_active), by=years]
+describers_weighted_by_year <- describers[,N_weighted_real_describers := sum(species_per_year_active), by=years]
 describers_weighted_by_year <- unique(describers_weighted_by_year[,c("years", "N_weighted_describers")])[order(as.numeric(years))]
 
 
@@ -313,7 +313,6 @@ described_per_year_final2 <- merge(taxonomic_effort, described_species_by_year,
 
 described_per_year_final2[is.na(described_per_year_final2)] <- 0
 write.csv(described_per_year_final2, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.5-describers_by_year.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
 
 # Other metrics
 # Number of taxonomists active per year DONE
