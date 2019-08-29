@@ -63,7 +63,7 @@ df_trop_type1 <- df_trop_type1[date.n<2019]
 
 df_trop_type2 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4-species-cty7-trop-type2.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
-print(paste0("Read df_trop_type1"))
+print(paste0("Read df_trop_type2"))
 table(is.na(df_trop_type2$Latitude_type))
 df_trop_type2 <- df_trop_type2[date.n<2019]
 
