@@ -553,7 +553,6 @@ print(paste0(Sys.time(), " --- quick fixes (only on useful columns)"))
 df[idx %in% c(12335, 12337, 12338, 12341, 12346)]$date <- 2008
 df[idx %in% c(13187)]$date <- 2018
 
-
 # df[df$type.locality.updated == "0"]$type.locality.updated <- ''
 df <- df[order(as.numeric(idx))]
 write.csv(df, 
