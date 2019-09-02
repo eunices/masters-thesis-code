@@ -1,5 +1,5 @@
-source('2019-08-05-bee-distribution-data/init_amnh.r')
-source('2019-08-05-bee-distribution-data/init_gbif.r')
+source('2019-08-05-bee-distribution-data/r/init_amnh.r')
+source('2019-08-05-bee-distribution-data/r/init_gbif.r')
 
 # Libraries
 library(RSQLite)

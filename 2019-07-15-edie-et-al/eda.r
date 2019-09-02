@@ -5,6 +5,7 @@ library(ggplot2)
 library(grid); library(gridExtra)
 
 # Analyses
+
 # Cumulative bee species across years
 
 ## All bees
@@ -42,13 +43,15 @@ plot_year_fam + geom_point() + geom_line() +
         ggtitle("Cumulative number of bee species time series for each family (1758-2018)") + 
              theme(plot.title = element_text(lineheight=.8, face="bold"))
 
-# Map by country
-summary_country <- df_country[,.(.N), by="A.3"][order(A.3)]
-shp_gadm_0_bee <- merge(shp_gadm_0, summary_country, by.x="GID_0", by.y="A.3")
-map_country <- ggplot(data = shp_gadm_0_bee) 
-map_country + geom_sf(aes(fill=N)) + theme_minimal() +
-    ggtitle("Map of observed species richness by country") + 
-             theme(plot.title = element_text(lineheight=.8, face="bold"))
+
+# # Map by country
+# summary_country <- df_country[,.(.N), by="A.3"][order(A.3)]
+# shp_gadm_0_bee <- merge(shp_gadm_0, summary_country, by.x="GID_0", by.y="A.3")
+# map_country <- ggplot(data = shp_gadm_0_bee) 
+# map_country + geom_sf(aes(fill=N)) + theme_minimal() +
+#     ggtitle("Map of observed species richness by country") + 
+#              theme(plot.title = element_text(lineheight=.8, face="bold"))
+
 
 # Taxonomic effort
 plot_tax_effort1 <- ggplot(data=taxonomic_effort, aes(x=years, y=N_describers)) +
@@ -57,6 +60,19 @@ plot_tax_effort1 <- ggplot(data=taxonomic_effort, aes(x=years, y=N_describers)) 
                 ggtitle("Number of active taxonomists in each year")
 
 plot_tax_effort2 <- ggplot(data=taxonomic_effort, aes(x=years, y=N_weighted_describers)) +
+    geom_point() + geom_line() + theme_minimal() +
+       xlab("Year") + ylab("Number of active taxonomists, \nweighted by mean number of species described") + 
+                ggtitle("Number of active taxonomists in each year")
+
+grid.arrange(plot_tax_effort1, plot_tax_effort2, ncol=1)
+
+# Taxonomic effort (exclude authors w no first author)
+plot_tax_effort1 <- ggplot(data=taxonomic_effort, aes(x=years, y=N_real_describers)) +
+    geom_point() + geom_line() + theme_minimal() +
+       xlab("Year") + ylab("Number of \nactive taxonomists") + 
+                ggtitle("Number of active taxonomists in each year")
+
+plot_tax_effort2 <- ggplot(data=taxonomic_effort, aes(x=years, y=N_weighted_real_describers)) +
     geom_point() + geom_line() + theme_minimal() +
        xlab("Year") + ylab("Number of active taxonomists, \nweighted by mean number of species described") + 
                 ggtitle("Number of active taxonomists in each year")
@@ -75,7 +91,25 @@ rsq <- round(cor(taxonomic_effort$N_weighted_describers, taxonomic_effort$N_spec
 plot_tax_effort4 <- ggplot(data=taxonomic_effort, aes(x=N_weighted_describers, y=N_species_described)) +
     geom_point() + theme_minimal() +
        xlab("Number of active taxonomists") + ylab("Number of species described") + 
-                ggtitle(paste0("Number of active taxonomists in each year, \n weighted by mean no. of species described per taxonomist (Rsq = ", rsq, ")"))
+                ggtitle(paste0("Number of active taxonomists in each year, \nweighted by mean no. of species described per taxonomist (Rsq = ", rsq, ")"))
+
+grid.arrange(plot_tax_effort3, plot_tax_effort4, nrow=1)
+
+
+
+# Not weighted
+rsq <- round(cor(taxonomic_effort$N_real_describers, taxonomic_effort$N_species_described)^2,2)
+plot_tax_effort3 <- ggplot(data=taxonomic_effort, aes(x=N_real_describers, y=N_species_described)) +
+    geom_point() + theme_minimal() +
+       xlab("Number of active taxonomists") + ylab("Number of species described") + 
+                ggtitle(paste0("Number of active taxonomists in each year (Rsq = ", rsq, ")"))
+
+# Weighted
+rsq <- round(cor(taxonomic_effort$N_weighted_real_describers, taxonomic_effort$N_species_described)^2,2)
+plot_tax_effort4 <- ggplot(data=taxonomic_effort, aes(x=N_weighted_real_describers, y=N_species_described)) +
+    geom_point() + theme_minimal() +
+       xlab("Number of active taxonomists") + ylab("Number of species described") + 
+                ggtitle(paste0("Number of active taxonomists in each year, \nweighted by mean no. of species described per taxonomist (Rsq = ", rsq, ")"))
 
 grid.arrange(plot_tax_effort3, plot_tax_effort4, nrow=1)
 
