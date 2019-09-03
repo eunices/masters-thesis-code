@@ -5,8 +5,8 @@ library(dplyr)
 library(tidyr)
 
 # Parameters
-loop <- 'Y'
-# loop <- 'N'
+# loop <- 'Y'
+loop <- 'N'
 
 # Describers dataset
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
