@@ -5,7 +5,7 @@ source('2019-06-19-ascher-type-data/init.r')
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- get distribution from global mapper"))
 
-df <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-synonyms.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 # # =================
 # # DONE ONCE ONLY ##
