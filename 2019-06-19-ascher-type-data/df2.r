@@ -17,6 +17,7 @@ print(paste0(Sys.time(), " --- 'describers': individual author species rows"))
 describers_info <- fread(
     paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
+describers_info[, names(describers_info) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape 
 
 # A loop was written because currently this doesn't really work!~
 # describers <- describers_info %>% separate_rows(full.name.of.describer, 
@@ -312,6 +313,83 @@ describers$prop_species_as_1st_author_s <- round(describers$spp_N_1st_auth_s
 describers$prop_species_syn <- round(describers$syn_spp_N
 / describers$spp_N,2)
 
+# clean countries
+describers$origin.country.describer.n2 <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
+                                               describers$origin.country.describer.n)
+describers$residence.country.describer.n2 <-  gsub(" ", ", ", gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
+                                                  describers$residence.country.describer.n)) 
+
+describers.origin.cty <- data.table(describers[,c("idx_auth", "origin.country.describer.n2")] %>% separate_rows(origin.country.describer.n2), " ")[order(as.numeric(idx_auth))]
+describers.res.cty <- data.table(describers[,c("idx_auth", "residence.country.describer.n2")] %>% separate_rows(residence.country.describer.n2), " ")[order(as.numeric(idx_auth))]
+
+lookup <- data.table(lookup.cty)
+describers.origin.cty <- describers.origin.cty[origin.country.describer.n2 != ""]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('UK', 'GB', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('EZ', 'CZ', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('SW', 'SE', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('UP', 'UA', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('CS', 'CR', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('PO', 'PT', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('DA', 'DK', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('JA', 'JP', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('TU', 'TR', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('KS', 'KR', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('SF', 'ZA', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('SP', 'ES', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('EN', 'EE', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('EI', 'IE', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('LO', 'SK', x))]
+describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('RP', 'PH', x))]
+describers.origin.cty <- merge(describers.origin.cty, 
+                               lookup[,c("Country", "A.2")],
+                               by.x="origin.country.describer.n2", 
+                               by.y="A.2", all.x=T, all.y=F)
+describers.origin.cty <-  data.table(describers.origin.cty)[order(as.numeric(idx_auth))]
+describers.origin.cty[is.na(origin.country.describer.n2)]$Country <- NA
+dup <- describers.origin.cty[duplicated(idx_auth)]$idx_auth
+describers.origin.cty[idx_auth %in% dup] # CHECK
+
+describers.origin.cty <- describers.origin.cty[order(as.numeric(idx_auth), Country),]
+describers.origin.cty <- describers.origin.cty[!duplicated(idx_auth)][,c("idx_auth", "Country")]
+names(describers.origin.cty) <- c("idx_auth", "origin.country.describer.full")
+
+
+describers.res.cty <- describers.res.cty[residence.country.describer.n2 != ""]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('UK', 'GB', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('EZ', 'CZ', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('SW', 'SE', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('UP', 'UA', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('CS', 'CR', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('PO', 'PT', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('DA', 'DK', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('JA', 'JP', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('TU', 'TR', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('KS', 'KR', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('SF', 'ZA', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('SP', 'ES', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('EN', 'EE', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('EI', 'IE', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('LO', 'SK', x))]
+describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('RP', 'PH', x))]
+describers.res.cty <- merge(describers.res.cty, 
+                            lookup[,c("Country", "A.2")],
+                            by.x="residence.country.describer.n2", 
+                            by.y="A.2", all.x=T, all.y=F)
+describers.res.cty <-  data.table(describers.res.cty)[order(as.numeric(idx_auth))]
+describers.res.cty[is.na(residence.country.describer.n2)]$Country <- NA
+describers.res.cty$idx_auth <- as.numeric(describers.res.cty$idx_auth)
+
+describers.res.cty <- describers.res.cty[!is.na(Country)][,c("idx_auth", "Country")]
+
+describers.res.cty.grp <- data.table(describers.res.cty %>%
+  group_by(idx_auth) %>%
+  summarise(residence.country.describer.full=paste0(Country,collapse='; ')))
+describers.res.cty.grp$idx_auth <- as.character(describers.res.cty.grp$idx_auth)
+
+rm(lookup)
+
+describers <- merge(describers, describers.origin.cty, by='idx_auth', all.x=T, all.y=F)
+describers <- merge(describers, describers.res.cty.grp, by='idx_auth', all.x=T, all.y=F)
 
 
 write.csv(describers[order(as.numeric(idx_auth))], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), na='', row.names=F, fileEncoding="UTF-8")
