@@ -11,7 +11,6 @@ df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='U
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 # csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
 
-
 # replace unknown values with NA
 replace_na <- c('other,_unknown,_or none', 'other,_unknown,_or_other', 'other,_unknown,_or_none')
 for (i in 1:length(replace_na)){
@@ -39,7 +38,6 @@ df[] <- lapply(df, gsub, pattern='[\r\n]', replacement=' ')
 # check number of NA
 na_count <- data.frame(names=names(df), N=sapply(df, function(x) sum(length(which(is.na(x))))), row.names=NULL)
 print(paste0(Sys.time(), " --- Number of NA")); print(na_count[order(-na_count$N), c("names", "N")][1:10,])
-
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - geocoding + quick lat lon checks
@@ -88,7 +86,6 @@ missing_locality <-
 no_geocode[(missing_state & missing_locality),]$flag <- 'COUNTRY_ONLY' # add flags
 no_geocode[missing_country,]$flag <- 'NO_COUNTRY'
 no_geocode <- no_geocode[,c('idx', 'flag')]
-
 
 # actual geocoding
 # # =================
@@ -673,6 +670,52 @@ df_s$taxonomicnotes.subspecies.synonyms.etc <- NULL
 
 write.csv(df_s[order(idx)], 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3-useful-col.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - count synonyms per valid species
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- count synonyms per valid species"))
+
+df_nv <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3-useful-col.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv")
+df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+# csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
+
+# Synonym
+df_s <- df_nv[status=="Synonym",]
+df_s[, N_synonyms := length(idx), by=c("genus", "correct_synonym")]
+synonym_count <- unique(df_s[,c("genus", "correct_synonym", "N_synonyms")])
+
+df <- merge(df, synonym_count, by.x=c("genus", "species"), by.y=c("genus", "correct_synonym"), all.x=T, all.y=F)
+df <- df[order(as.numeric(idx))]
+df[is.na(N_synonyms)]$N_synonyms <- 0
+rm(synonym_count)
+
+# Valid subspecies
+df_s <- df_nv[status=="Valid subspecies",]
+df_s[, N_subspecies := length(idx), by=c("genus", "correct_synonym")]
+ss_count <- unique(df_s[,c("genus", "correct_synonym", "N_subspecies")])
+
+df <- merge(df, ss_count, by.x=c("genus", "species"), by.y=c("genus", "correct_synonym"), all.x=T, all.y=F)
+df <- df[order(as.numeric(idx))]
+df[is.na(N_subspecies)]$N_subspecies <- 0
+rm(ss_count)
+
+# Valid subspecies
+df_s <- df_nv[status=="Infrasubspecific",]
+df_s[, N_var := length(idx), by=c("genus", "correct_synonym")]
+var_count <- unique(df_s[,c("genus", "correct_synonym", "N_var")])
+
+df <- merge(df, var_count, by.x=c("genus", "species"), by.y=c("genus", "correct_synonym"), all.x=T, all.y=F)
+df <- df[order(as.numeric(idx))]
+df[is.na(N_var)]$N_var <- 0
+
+rm(var_count, df_s)
+
+write.csv(setcolorder(df, c(3, 4:6, 1, 7, 2, 8:length(names(df)))), 
+          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - create collector and describer raw dataset

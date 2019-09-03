@@ -262,8 +262,6 @@ cols <- c("idx", "REALM_E", "date.n", "full.name.of.describer", "countries", "co
 write.csv(df_mapper5[order(as.numeric(idx))][,..cols],
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4-species-cty4-biogeo.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-
-
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - by biogeographic region Holt
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -281,8 +279,6 @@ df_mapper8 <- df_mapper8[duplicated.row == FALSE]
 cols <- c("idx", "Realm", "date.n", "full.name.of.describer", "countries", "countries_n")
 write.csv(df_mapper8[order(as.numeric(idx))][,..cols],
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4-species-cty5-biogeo-holt.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
-
 
 # Countries to clean specifically
 # AT/PA: MLI, NER, TCD, SDN, YEM, SAU
