@@ -180,6 +180,8 @@ dod = describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dob.describ
 describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dod.describer.n"] = dod
 describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dob.describer.n"] = dob
 
+describers[full.name.of.describer.n=="Moses Harris", "dod.describer.n"] = 1788
+
 describers_idx$idx_auth <- 1:dim(describers_idx)[1]
 
 write.csv(describers_idx, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_3.0-by-author.csv"), na='', row.names=F, fileEncoding="UTF-8")
