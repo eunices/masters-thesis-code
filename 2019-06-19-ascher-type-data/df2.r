@@ -5,8 +5,8 @@ library(dplyr)
 library(tidyr)
 
 # Parameters
-# loop <- 'Y'
-loop <- 'N'
+loop <- 'Y'
+# loop <- 'N'
 
 # Describers dataset
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -16,6 +16,15 @@ print(paste0(Sys.time(), " --- 'describers': individual author species rows"))
 
 describers_info <- fread(
     paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+
+
+# A loop was written because currently this doesn't really work!~
+# describers <- describers_info %>% separate_rows(full.name.of.describer, 
+#                                                 describer.gender, dob.describer,
+#                                                 dod.describer, origin.country.describer,
+#                                                 residence.country.describer, institution.of.describer, 
+#                                                 sep=";|,", convert=T)
+
 
 # # =================
 # # DONE ONCE ONLY ##

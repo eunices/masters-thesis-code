@@ -1,6 +1,5 @@
 library(data.table)
-library(ggplot2)
-library(gridExtra)
+library(tidyr)
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Read datasets
@@ -11,7 +10,7 @@ print(paste0(Sys.time(), " --- Read datasets"))
 dir <- 'data/01-in/ascher-bee-data/'
 
 
-df <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-synonyms.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 print(paste0("Read df"))
 df <- df[date.n<2019]
@@ -69,18 +68,23 @@ df_trop_type2 <- df_trop_type2[date.n<2019]
 
 
 
-taxonomic_effort <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.4-describers_by_year.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+taxonomic_effort <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_6.0-active-by-year.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
-print(paste0("Read taxonomic_effort"))
+taxonomic_effort_long <- data.table(taxonomic_effort %>% gather(type, N, N_describers:N_synonyms))
+
+print(paste0("Read taxonomic_effort / taxonomic_effort_long"))
 
 
-df_describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.3-describers_minmax.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df_describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 print(paste0("Read df_describers"))
 
-df_species_describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2.2-describers.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df_species_describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_4.0-denormalised2.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df_species_describers[,N_authors:=length(unique(idx_auth)), by=c("idxes")]
+df_species_describers_sum <- unique(df_species_describers[,c("idxes", "N_authors", "date.n")])
+df_species_describers$N_authors <- NULL
 
-print(paste0("Read df_species_describers"))
+print(paste0("Read df_species_describers / df_species_describers_sum"))
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
