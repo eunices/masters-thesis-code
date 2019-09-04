@@ -1,9 +1,13 @@
 source('2019-06-19-ascher-type-data/init.r')
+
+# Scripts
+#############
 source('2019-06-19-ascher-type-data/clean.r')
 source('2019-06-19-ascher-type-data/df1.r')
 source('2019-06-19-ascher-type-data/df2.r')
 
 # Libraries
+#############
 library(ggplot2)
 library(grid); library(gridExtra)
 
