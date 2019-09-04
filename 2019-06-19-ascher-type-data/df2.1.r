@@ -15,7 +15,6 @@ describers_info[, names(describers_info) := lapply(.SD, function(x) gsub('\\"\\"
 #                                                 residence.country.describer, institution.of.describer, 
 #                                                 sep=";|,", convert=T)
 
-
 # # =================
 # # DONE ONCE ONLY ##
 # # =================

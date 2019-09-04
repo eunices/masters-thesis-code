@@ -11,6 +11,10 @@ source('2019-06-19-ascher-type-data/df2.r')
 library(ggplot2)
 library(grid); library(gridExtra)
 
+
+# Exploratory analysis
+#############
+
 # Plot world object
 # pdf('plots/2019-06-19-type-data-map.pdf', width=21, height=10)
 # ggplot() +
@@ -18,7 +22,6 @@ library(grid); library(gridExtra)
 #   geom_sf(data = ll, colour = "slategray3") + theme_minimal()
 # dev.off()
 
-# Exploratory analysis
 df[,.(.N), by=.(host.plant)][order(-N)]               # not useful
 df[,.(.N), by=.(host.insect.or.prey)][order(-N)]      # not useful
 df[,.(.N), by=.(type.status)][order(-N)]              # not useful

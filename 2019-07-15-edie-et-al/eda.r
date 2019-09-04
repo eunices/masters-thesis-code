@@ -204,3 +204,6 @@ summary(as.numeric(df_describers[prop_species_described_as_last_author>=.9]$dob.
 summary(as.numeric(df_describers[prop_species_described_as_last_author<0.9]$max))
 summary(as.numeric(df_describers[prop_species_described_as_last_author>=.9]$max))
 # Seem that those with higher proportion of species described as last author are more recent
+
+
+# histogram of species / author
