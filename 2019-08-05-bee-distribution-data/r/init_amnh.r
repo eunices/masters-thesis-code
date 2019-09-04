@@ -1,7 +1,7 @@
 # Load libraries
 library(data.table)
 
-data_dir <- 'data/2018-08-05-amnh-bees/' 
+data_dir <- 'data/2019-08-05-amnh-bees/' 
 files <- list.files(data_dir, full.names=T)
 
 # Read dataset

@@ -7,7 +7,7 @@ library(tidyr)
 print(paste0(Sys.time(), " --- Read datasets"))
 
 
-dir <- 'data/01-in/ascher-bee-data/'
+dir <- 'data/2018-05-23-ascher-bee-data/'
 
 
 df <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-synonyms.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
