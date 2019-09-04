@@ -129,7 +129,6 @@ describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted 
 
 describers[, names(describers) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-
 # Merge back the other columns
 describers_merged <- data.table(describers)
 cols <- c("idx", "author", "full.name.of.describer", "describer.gender", 
@@ -155,7 +154,7 @@ describers_idx <- describers_idx[,c("full.name.of.describer.n",
 
 # Order and leave out blanks
 describers_idx$describer.gender.n <- factor(describers_idx$describer.gender.n, levels=c("F", "M", "U"), ordered=T)
-d1 <- describers_idx[describer.gender.n != "U", c("full.name.of.describer.n", "describer.gender.n")][
+d1 <- describers_idx[, c("full.name.of.describer.n", "describer.gender.n", "idxes", "idxes_author.order")][
         order(full.name.of.describer.n, describer.gender.n)][!duplicated(full.name.of.describer.n)]
 d2 <- describers_idx[!dob.describer.n %in% c("U", " "), c("full.name.of.describer.n", "dob.describer.n")][
         order(full.name.of.describer.n, dob.describer.n)][!duplicated(full.name.of.describer.n)]
@@ -176,18 +175,29 @@ describers_idx <- data.table(describers_idx)
 describers_idx <- describers_idx[order(full.name.of.describer.n),]
 
 # Modify DOB
-describers$dob.describer.original <- describers$dob.describer.n 
-describers$dod.describer.original <- describers$dod.describer.n 
-describers$dob.describer.n <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
-                                   describers$origin.country.describer.n)
-describers$dod.describer.n <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
-                                   describers$origin.country.describer.n)
+describers_idx$dob.describer.original <- describers_idx$dob.describer.n 
+describers_idx$dod.describer.original <- describers_idx$dod.describer.n 
+describers_idx$dob.describer.n <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
+                                   describers_idx$dob.describer.n)
+describers_idx$dod.describer.n <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
+                                   describers_idx$dod.describer.n)
 describers_idx$dob.describer.n <- gsub(";| ", "", describers_idx$dob.describer.n)
 describers_idx$dod.describer.n <- gsub(";| ", "", describers_idx$dod.describer.n)
 
+
+describers_idx$origin.country.describer.original <- describers_idx$origin.country.describer.n
+describers_idx$residence.country.describer.original <- describers_idx$residence.country.describer.n
+describers_idx$origin.country.describer.n <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
+                                   describers_idx$origin.country.describer.n)
+describers_idx$residence.country.describer.n <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
+                                   describers_idx$residence.country.describer.n)
+describers_idx$origin.country.describer.n <- gsub(";| ", "", describers_idx$origin.country.describer.n)
+describers_idx$residence.country.describer.n <- gsub(" ", "; ", describers_idx$residence.country.describer.n)
+describers_idx$residence.country.describer.n <- gsub("; $", "", describers_idx$residence.country.describer.n) # remove trailing ; 
+
 # Check whether alive
-describers$alive <- "N"
-describers[grepl(describers$dod.describer.original, "\\[alive in 2019\\]")]$alive <- "Y"
+describers_idx$alive <- "N"
+describers_idx[grepl("\\[alive in 2019\\]", describers_idx$dod.describer.original)]$alive <- "Y"
 
 # Single row modifications
 describers_idx[full.name.of.describer.n=="Haroldo Toro [Guttierez]"]$dob.describer.n <- ""
@@ -196,7 +206,7 @@ dob = describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dod.describ
 dod = describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dob.describer.n"]
 describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dod.describer.n"] = dod
 describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dob.describer.n"] = dob
-describers[full.name.of.describer.n=="Moses Harris", "dod.describer.n"] = 1788
+describers[full.name.of.describer.n=="Moses Harris", "dod.describer.n"] = "1788"
 
 #  Create index
 describers_idx$idx_auth <- 1:dim(describers_idx)[1]
@@ -236,7 +246,9 @@ subsp_idxes <- synonyms[status=="Valid subspecies",]$idx
 var_idxes <- synonyms[status=="Infrasubspecific",]$idx
 rm(synonyms)
 
-describers_template <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_3.0-by-author.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[, c(1:7, 10)]
+describers_template <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_3.0-by-author.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[
+    ,c("idx_auth", "full.name.of.describer.n", "describer.gender.n", "dob.describer.n", "dod.describer.n", "alive",
+       "origin.country.describer.n", "residence.country.describer.n", "institution.of.describer.n")]
 describers_template[, names(describers_template) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
 describers_all <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_4.0-denormalised2.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
@@ -275,11 +287,11 @@ cols <- c("idx_auth", "full.name.of.describer.n",
 describers_a <- data.table(unique(describers_a[,..cols]))
 
 # Row by row discrepancies
-describers_a[full.name.of.describer.n=="Ismael Alejandro Hinojosa-Díaz", "min"] = 2003
-describers_a[full.name.of.describer.n=="Johan Christian Fabricius", "max"] = 1804  
-describers_a[full.name.of.describer.n=="Michael Kuhlmann", "min"] = 1998  
-describers_a[full.name.of.describer.n=="Eduardo Andrade Botelho de Almeida", "min"] = 2008 # should be modified in original file
-describers_a[full.name.of.describer.n=="Michael Scott Engel", "min"] = 1995 # should be modified in original file
+describers_a[full.name.of.describer.n=="Ismael Alejandro Hinojosa-Díaz", "min"] = "2003"
+describers_a[full.name.of.describer.n=="Johan Christian Fabricius", "max"] = "1804"
+describers_a[full.name.of.describer.n=="Michael Kuhlmann", "min"] = "1998"
+describers_a[full.name.of.describer.n=="Eduardo Andrade Botelho de Almeida", "min"] = "2008" # should be modified in original file
+describers_a[full.name.of.describer.n=="Michael Scott Engel", "min"] = "1995" # should be modified in original file
 
 # Synonyms
 describers_s <- describers_all[idxes %in% synonym_idxes]
@@ -319,11 +331,8 @@ for (col in numeric_cols) describers[is.na(get(col)), (col) := 0]
 # Metrics
 describers$years_active <- as.numeric(describers$max) - as.numeric(describers$min) +1
 describers$years_alive <- as.numeric(describers$dod.describer.n) - as.numeric(describers$dob.describer.n) + 1
-describers$years_active_likely <- ifelse(is.na(describers$years_alive), describers$min, describers$years_alive - 25) # use min publication date or after PhD
-
-describers$max_corrected <- ifelse(describer$alive =='Y', 2019, describer$max)
-# to account for whether alive or not 
-
+describers$years_active_likely <- ifelse(is.na(describers$years_alive), describers$years_active, describers$years_alive - 25) # use min publication date or after PhD
+describers$max_corrected <- ifelse(describers$alive =='Y', 2019, describers$max) # to account for whether alive or not 
 describers$years_discrepancy <- describers$years_alive - describers$years_active
 
 describers$ns_species_per_year_active <- round(describers$ns_spp_N / describers$years_active, 2)
@@ -337,83 +346,60 @@ describers$prop_species_as_1st_author_s <- round(describers$spp_N_1st_auth_s
 describers$prop_species_syn <- round(describers$syn_spp_N
 / describers$spp_N,2)
 
-# clean countries
-describers$origin.country.describer.n2 <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
-                                               describers$origin.country.describer.n)
-describers$residence.country.describer.n2 <-  gsub(" ", ", ", gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
-                                                  describers$residence.country.describer.n)) 
+describers[, origin.country.describer.n := gsub('UK', 'GB', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('EZ', 'CZ', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('SW', 'SE', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('UP', 'UA', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('CS', 'CR', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('PO', 'PT', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('DA', 'DK', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('JA', 'JP', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('TU', 'TR', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('KS', 'KR', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('SF', 'ZA', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('SP', 'ES', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('EN', 'EE', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('EI', 'IE', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('LO', 'SK', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('RP', 'PH', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('DA', 'DK', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('AS', 'AU', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('GM', 'DE', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('PM', 'PA', origin.country.describer.n)]
+
+describers[, residence.country.describer.n := gsub('UK', 'GB', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('EZ', 'CZ', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('SW', 'SE', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('UP', 'UA', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('CS', 'CR', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('PO', 'PT', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('DA', 'DK', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('JA', 'JP', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('TU', 'TR', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('KS', 'KR', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('SF', 'ZA', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('SP', 'ES', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('EN', 'EE', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('EI', 'IE', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('LO', 'SK', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('RP', 'PH', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('DA', 'DK', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('AS', 'AU', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('GM', 'DE', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('PM', 'PA', residence.country.describer.n)]
 
 
-describers[, origin.country.describer.n2 := gsub('UK', 'GB', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('EZ', 'CZ', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('SW', 'SE', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('UP', 'UA', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('CS', 'CR', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('PO', 'PT', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('DA', 'DK', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('JA', 'JP', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('TU', 'TR', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('KS', 'KR', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('SF', 'ZA', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('SP', 'ES', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('EN', 'EE', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('EI', 'IE', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('LO', 'SK', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('RP', 'PH', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('DA', 'DK', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('AS', 'AU', origin.country.describer.n2)]
-describers[, origin.country.describer.n2 := gsub('GM', 'DE', origin.country.describer.n2)]
-
-
-describers[, residence.country.describer.n2 := gsub('UK', 'GB', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('EZ', 'CZ', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('SW', 'SE', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('UP', 'UA', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('CS', 'CR', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('PO', 'PT', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('DA', 'DK', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('JA', 'JP', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('TU', 'TR', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('KS', 'KR', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('SF', 'ZA', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('SP', 'ES', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('EN', 'EE', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('EI', 'IE', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('LO', 'SK', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('RP', 'PH', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('DA', 'DK', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('AS', 'AU', residence.country.describer.n2)]
-describers[, residence.country.describer.n2 := gsub('GM', 'DE', residence.country.describer.n2)]
-
-
-describers.origin.cty <- data.table(describers[,c("idx_auth", "origin.country.describer.n2")] %>% separate_rows(origin.country.describer.n2), " ")[order(as.numeric(idx_auth))]
-describers.res.cty <- data.table(describers[,c("idx_auth", "residence.country.describer.n2")] %>% separate_rows(residence.country.describer.n2), " ")[order(as.numeric(idx_auth))]
+describers.origin.cty <- data.table(describers[,c("idx_auth", "origin.country.describer.n")] %>% separate_rows(origin.country.describer.n), " ")[order(as.numeric(idx_auth))] # technically no need for this
+describers.res.cty <- data.table(describers[,c("idx_auth", "residence.country.describer.n")] %>% separate_rows(residence.country.describer.n, sep="; "))[order(as.numeric(idx_auth))]
 
 lookup <- data.table(lookup.cty)
-describers.origin.cty <- describers.origin.cty[origin.country.describer.n2 != ""]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('UK', 'GB', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('EZ', 'CZ', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('SW', 'SE', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('UP', 'UA', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('CS', 'CR', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('PO', 'PT', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('DA', 'DK', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('JA', 'JP', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('TU', 'TR', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('KS', 'KR', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('SF', 'ZA', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('SP', 'ES', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('EN', 'EE', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('EI', 'IE', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('LO', 'SK', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('RP', 'PH', x))]
-# describers.origin.cty[, names(describers.origin.cty) := lapply(.SD, function(x) gsub('DA', 'DK', x))]
+describers.origin.cty <- describers.origin.cty[origin.country.describer.n != ""]
 describers.origin.cty <- merge(describers.origin.cty, 
                                lookup[,c("Country", "A.2")],
-                               by.x="origin.country.describer.n2", 
+                               by.x="origin.country.describer.n", 
                                by.y="A.2", all.x=T, all.y=F)
 describers.origin.cty <-  data.table(describers.origin.cty)[order(as.numeric(idx_auth))]
-describers.origin.cty[is.na(origin.country.describer.n2)]$Country <- NA
+describers.origin.cty[is.na(origin.country.describer.n)]$Country <- NA
 dup <- describers.origin.cty[duplicated(idx_auth)]$idx_auth
 describers.origin.cty[idx_auth %in% dup] # CHECK
 
@@ -422,46 +408,50 @@ describers.origin.cty <- describers.origin.cty[!duplicated(idx_auth)][,c("idx_au
 names(describers.origin.cty) <- c("idx_auth", "origin.country.describer.full")
 
 
-describers.res.cty <- describers.res.cty[residence.country.describer.n2 != ""]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('UK', 'GB', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('EZ', 'CZ', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('SW', 'SE', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('UP', 'UA', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('CS', 'CR', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('PO', 'PT', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('DA', 'DK', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('JA', 'JP', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('TU', 'TR', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('KS', 'KR', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('SF', 'ZA', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('SP', 'ES', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('EN', 'EE', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('EI', 'IE', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('LO', 'SK', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('RP', 'PH', x))]
-# describers.res.cty[, names(describers.res.cty) := lapply(.SD, function(x) gsub('DA', 'DK', x))]
+describers.res.cty <- describers.res.cty[residence.country.describer.n != ""]
+describers.res.cty[, order:=.N, by="idx_auth"] # retain order
 describers.res.cty <- merge(describers.res.cty, 
                             lookup[,c("Country", "A.2")],
-                            by.x="residence.country.describer.n2", 
+                            by.x="residence.country.describer.n", 
                             by.y="A.2", all.x=T, all.y=F)
-describers.res.cty <-  data.table(describers.res.cty)[order(as.numeric(idx_auth))]
-describers.res.cty[is.na(residence.country.describer.n2)]$Country <- NA
+describers.res.cty <-  data.table(describers.res.cty)
+describers.res.cty[is.na(residence.country.describer.n)]$Country <- NA
 describers.res.cty$idx_auth <- as.numeric(describers.res.cty$idx_auth)
 
-describers.res.cty <- describers.res.cty[!is.na(Country)][,c("idx_auth", "Country")]
+describers.res.cty <- describers.res.cty[!is.na(Country)][,c("idx_auth", "Country", "order")][
+    order(as.numeric(idx_auth), order)]
 
-describers.res.cty.grp <- data.table(describers.res.cty %>%
+
+describers.res.cty.grp <- data.table(describers.res.cty[,c("idx_auth", "Country")] %>%
   group_by(idx_auth) %>%
   summarise(residence.country.describer.full=paste0(Country,collapse='; ')))
 describers.res.cty.grp$idx_auth <- as.character(describers.res.cty.grp$idx_auth)
+
+describers.res.cty.first <- data.table(describers.res.cty[order==1,c("idx_auth", "Country")])
+describers.res.cty.first$idx_auth <- as.character(describers.res.cty.first$idx_auth )
 
 rm(lookup)
 
 describers <- merge(describers, describers.origin.cty, by='idx_auth', all.x=T, all.y=F)
 describers <- merge(describers, describers.res.cty.grp, by='idx_auth', all.x=T, all.y=F)
-
+describers <- merge(describers, describers.res.cty.first, by='idx_auth', all.x=T, all.y=F)
 
 write.csv(describers[order(as.numeric(idx_auth))], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - creating dataset for network
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- 'describers': creating dataset for network"))
+
+# dataset needs to be
+# N papers between two person
+
+#  create pairs
+# https://stackoverflow.com/questions/30702191/
+
+# count pairs
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -567,8 +557,6 @@ described_per_year_final3[is.na(described_per_year_final3)] <- 0
 
 write.csv(described_per_year_final3[years<=2018], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_6.0-active-by-year.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-# Other metrics
-# Number of taxonomists active per year DONE
-# Number as first author DONE
-# Number as last author DONE
-# Ratio of synonym v valid name
+
+# TODO: create network dataframe; to examine collaborativeness 
+# TODO: further cleaning on whether currently alive
