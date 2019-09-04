@@ -105,6 +105,6 @@ run_loop <- function() {
     write.csv(describers, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_2.0-denormalised.csv"), na='', row.names=F, fileEncoding="UTF-8")
 }
 
-if (loop=='Y') {
+if (loop_2=='Y') {
     run_loop()
 }

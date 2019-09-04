@@ -8,8 +8,8 @@ library(tidyr)
 # Parameters
 #############
 
-# loop <- 'Y'
-loop <- 'N'
+# loop_2 <- 'Y'
+loop_2 <- 'N'
 
 # Scripts
 #############
