@@ -155,12 +155,18 @@ describers_idx <- describers_idx[,c("full.name.of.describer.n",
 
 # Order and leave out blanks
 describers_idx$describer.gender.n <- factor(describers_idx$describer.gender.n, levels=c("F", "M", "U"), ordered=T)
-d1 <- describers_idx[order(full.name.of.describer.n, describer.gender.n)]][!duplicated(full.name.of.describer.n)]
-d2 <- describers_idx[order(full.name.of.describer.n, -dob.describer.n)]][!duplicated(full.name.of.describer.n)]
-d3 <- describers_idx[order(full.name.of.describer.n, -dod.describer.n)]][!duplicated(full.name.of.describer.n)]
-d4 <- describers_idx[order(full.name.of.describer.n, -origin.country.describer.n)]][!duplicated(full.name.of.describer.n)]
-d5 <- describers_idx[order(full.name.of.describer.n, -residence.country.describer.n)]][!duplicated(full.name.of.describer.n)]
-d6 <- describers_idx[order(full.name.of.describer.n, -institution.of.describer.n)]][!duplicated(full.name.of.describer.n)]
+d1 <- describers_idx[describer.gender.n != "U", c("full.name.of.describer.n", "describer.gender.n")][
+        order(full.name.of.describer.n, describer.gender.n)][!duplicated(full.name.of.describer.n)]
+d2 <- describers_idx[!dob.describer.n %in% c("U", " "), c("full.name.of.describer.n", "dob.describer.n")][
+        order(full.name.of.describer.n, dob.describer.n)][!duplicated(full.name.of.describer.n)]
+d3 <- describers_idx[!dod.describer.n %in% c("U", " "), c("full.name.of.describer.n", "dod.describer.n")][
+        order(full.name.of.describer.n, dod.describer.n)][!duplicated(full.name.of.describer.n)]
+d4 <- describers_idx[!origin.country.describer.n %in% c("U", " "), c("full.name.of.describer.n", "origin.country.describer.n")][
+        order(full.name.of.describer.n, -origin.country.describer.n)][!duplicated(full.name.of.describer.n)]
+d5 <- describers_idx[!residence.country.describer.n %in% c("U", " "), c("full.name.of.describer.n", "residence.country.describer.n")][
+        order(full.name.of.describer.n, -residence.country.describer.n)][!duplicated(full.name.of.describer.n)]
+d6 <- describers_idx[!institution.of.describer.n %in% c("U", " "), c("full.name.of.describer.n", "institution.of.describer.n")][
+        order(full.name.of.describer.n, -institution.of.describer.n)][!duplicated(full.name.of.describer.n)]
 describers_idx <-  merge(d1, d2, all.x=T, all.y=F, by="full.name.of.describer.n")
 describers_idx <-  merge(describers_idx, d3, all.x=T, all.y=F, by="full.name.of.describer.n")
 describers_idx <-  merge(describers_idx, d4, all.x=T, all.y=F, by="full.name.of.describer.n")
@@ -356,6 +362,7 @@ describers[, origin.country.describer.n2 := gsub('LO', 'SK', origin.country.desc
 describers[, origin.country.describer.n2 := gsub('RP', 'PH', origin.country.describer.n2)]
 describers[, origin.country.describer.n2 := gsub('DA', 'DK', origin.country.describer.n2)]
 describers[, origin.country.describer.n2 := gsub('AS', 'AU', origin.country.describer.n2)]
+describers[, origin.country.describer.n2 := gsub('GM', 'DE', origin.country.describer.n2)]
 
 
 describers[, residence.country.describer.n2 := gsub('UK', 'GB', residence.country.describer.n2)]
@@ -376,6 +383,7 @@ describers[, residence.country.describer.n2 := gsub('LO', 'SK', residence.countr
 describers[, residence.country.describer.n2 := gsub('RP', 'PH', residence.country.describer.n2)]
 describers[, residence.country.describer.n2 := gsub('DA', 'DK', residence.country.describer.n2)]
 describers[, residence.country.describer.n2 := gsub('AS', 'AU', residence.country.describer.n2)]
+describers[, residence.country.describer.n2 := gsub('GM', 'DE', residence.country.describer.n2)]
 
 
 describers.origin.cty <- data.table(describers[,c("idx_auth", "origin.country.describer.n2")] %>% separate_rows(origin.country.describer.n2), " ")[order(as.numeric(idx_auth))]
