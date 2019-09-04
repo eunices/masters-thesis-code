@@ -4,12 +4,13 @@ source('2019-06-19-ascher-type-data/init.r')
 #############
 library(dplyr)
 library(tidyr)
+library(data.table)
 
 # Parameters
 #############
 
-# loop_2 <- 'Y'
-loop_2 <- 'N'
+loop_2 <- 'Y'
+# loop_2 <- 'N'
 
 # Scripts
 #############
