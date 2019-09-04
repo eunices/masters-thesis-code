@@ -1,11 +1,13 @@
 source('2019-07-15-edie-et-al/init.r')
 
 # Libraries
+#############
 library(tidyr)
 library(ggplot2)
 library(grid); library(gridExtra)
 
 # Analyses
+#############
 
 # Cumulative bee species across years
 
