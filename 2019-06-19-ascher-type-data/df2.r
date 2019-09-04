@@ -151,32 +151,27 @@ describers_idx <- describers_idx[,c("full.name.of.describer.n",
                                     "residence.country.describer.n",
                                     "institution.of.describer.n", 
                                     "idxes", "idxes_author.order")]
-describers_idx <- describers_idx[order(full.name.of.describer.n,
-                                       describer.gender.n,
-                                       -dob.describer.n, 
-                                       -dod.describer.n,
-                                       -origin.country.describer.n,
-                                       -residence.country.describer.n,
-                                       -institution.of.describer.n),]
-describers_idx <- describers_idx[!duplicated(full.name.of.describer.n)]
-describers_idx[] <- lapply(describers_idx, as.character)
+
+
+# Order and leave out blanks
+describers_idx$describer.gender.n <- factor(describers_idx$describer.gender.n, levels=c("F", "M", "U"), ordered=T)
+d1 <- describers_idx[order(full.name.of.describer.n, describer.gender.n)]][!duplicated(full.name.of.describer.n)]
+d2 <- describers_idx[order(full.name.of.describer.n, -dob.describer.n)]][!duplicated(full.name.of.describer.n)]
+d3 <- describers_idx[order(full.name.of.describer.n, -dod.describer.n)]][!duplicated(full.name.of.describer.n)]
+d4 <- describers_idx[order(full.name.of.describer.n, -origin.country.describer.n)]][!duplicated(full.name.of.describer.n)]
+d5 <- describers_idx[order(full.name.of.describer.n, -residence.country.describer.n)]][!duplicated(full.name.of.describer.n)]
+d6 <- describers_idx[order(full.name.of.describer.n, -institution.of.describer.n)]][!duplicated(full.name.of.describer.n)]
+describers_idx <-  merge(d1, d2, all.x=T, all.y=F, by="full.name.of.describer.n")
+describers_idx <-  merge(describers_idx, d3, all.x=T, all.y=F, by="full.name.of.describer.n")
+describers_idx <-  merge(describers_idx, d4, all.x=T, all.y=F, by="full.name.of.describer.n")
+describers_idx <-  merge(describers_idx, d5, all.x=T, all.y=F, by="full.name.of.describer.n")
+describers_idx <-  merge(describers_idx, d6, all.x=T, all.y=F, by="full.name.of.describer.n")
 describers_idx <- data.table(describers_idx)
 describers_idx <- describers_idx[order(full.name.of.describer.n),]
 
-# Prioritize based on gender
-describers_idx$describer.gender.n <- factor(describers_idx$describer.gender.n, levels=c("F", "M", "U"), ordered=T)
-describers_idx <- describers_idx[order(full.name.of.describer.n, describer.gender.n)]
-dim(describers_idx)
-describers_idx <- describers_idx[!duplicated(full.name.of.describer.n)]
-dim(describers_idx)
-describers_idx$describer.gender.n <- as.character(describers_idx$describer.gender.n)
-
+# Modify DOB
 describers$dob.describer.original <- describers$dob.describer.n 
 describers$dod.describer.original <- describers$dod.describer.n 
-
-describers$alive <- "N"
-describers[grepl(describers$dod.describer.original, "\\[alive in 2019\\]")]$alive <- "Y"
-
 describers$dob.describer.n <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
                                    describers$origin.country.describer.n)
 describers$dod.describer.n <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
@@ -184,15 +179,20 @@ describers$dod.describer.n <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "",
 describers_idx$dob.describer.n <- gsub(";| ", "", describers_idx$dob.describer.n)
 describers_idx$dod.describer.n <- gsub(";| ", "", describers_idx$dod.describer.n)
 
+# Check whether alive
+describers$alive <- "N"
+describers[grepl(describers$dod.describer.original, "\\[alive in 2019\\]")]$alive <- "Y"
+
+# Single row modifications
 describers_idx[full.name.of.describer.n=="Haroldo Toro [Guttierez]"]$dob.describer.n <- ""
 describers_idx[full.name.of.describer.n=="Suzanne Willington Tubby Batra"]$dob.describer.n <- "1937"
 dob = describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dod.describer.n"]
 dod = describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dob.describer.n"]
 describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dod.describer.n"] = dod
 describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dob.describer.n"] = dob
-
 describers[full.name.of.describer.n=="Moses Harris", "dod.describer.n"] = 1788
 
+#  Create index
 describers_idx$idx_auth <- 1:dim(describers_idx)[1]
 
 write.csv(describers_idx, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_3.0-by-author.csv"), na='', row.names=F, fileEncoding="UTF-8")
@@ -313,6 +313,11 @@ for (col in numeric_cols) describers[is.na(get(col)), (col) := 0]
 # Metrics
 describers$years_active <- as.numeric(describers$max) - as.numeric(describers$min) +1
 describers$years_alive <- as.numeric(describers$dod.describer.n) - as.numeric(describers$dob.describer.n) + 1
+describers$years_active_likely <- ifelse(is.na(describers$years_alive), describers$min, describers$years_alive - 25) # use min publication date or after PhD
+
+describers$max_corrected <- ifelse(describer$alive =='Y', 2019, describer$max)
+# to account for whether alive or not 
+
 describers$years_discrepancy <- describers$years_alive - describers$years_active
 
 describers$ns_species_per_year_active <- round(describers$ns_spp_N / describers$years_active, 2)
@@ -551,7 +556,8 @@ described_per_year_final3 <- merge(described_per_year_final2, described_species_
 
 
 described_per_year_final3[is.na(described_per_year_final3)] <- 0
-write.csv(described_per_year_final3, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_6.0-active-by-year.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+write.csv(described_per_year_final3[years<=2018], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_6.0-active-by-year.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # Other metrics
 # Number of taxonomists active per year DONE
