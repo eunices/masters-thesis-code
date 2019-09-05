@@ -45,5 +45,4 @@ p1_names <- names(ps3)[grepl("_p1", names(ps3))]
 p2_names <- names(ps3)[grepl("_p2", names(ps3))]
 col_order <- c("N", "p1", "p2", p1_names, p2_names)
 
-
 write.csv(ps3[order(-N), ..col_order], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), na='', row.names=F, fileEncoding="UTF-8")

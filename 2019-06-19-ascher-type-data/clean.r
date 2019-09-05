@@ -547,9 +547,29 @@ df$years.lag <- df$date.n - df$date.of.type.yyyy
 print(paste0(Sys.time(), " --- quick fixes (only on useful columns)"))
 
 # 2019-08-27: discovered when cleaning author dates 
-df[idx %in% c(12335, 12337, 12338, 12341, 12346)]$date <- 2008
-df[idx %in% c(13187)]$date <- 2018
+df[idx %in% c(12335, 12337, 12338, 12341, 12346)]$date <- "2008"
+df[idx %in% c(13187)]$date <- "2018"
 df[idx %in% c(502)]$full.name.of.describer <- "Osamu Tadauchi; Ryôichi Miyanaga; Ahmatjan Dawut"
+
+# missing full names
+filepath <- paste0(dir, "clean/missing_authors_edit.csv")
+missing_auth <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+missing_auth[, names(missing_auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+
+df1 <- df[is.na(full.name.of.describer)]
+df2 <- df[!is.na(full.name.of.describer)]
+
+tmp <- merge(df1, missing_auth, 
+      by.x="author",
+      by.y="author", all.x=T, all.y=F)
+
+tmp$full.name.of.describer.x <- NULL
+names(tmp)[length(tmp)] <- 'full.name.of.describer'
+
+df <- rbind(df2, tmp)
+rm(tmp, df1, df2)
+
+# TODO: find mismatch between authors
 
 # df[df$type.locality.updated == "0"]$type.locality.updated <- ''
 df <- df[order(as.numeric(idx))]
@@ -633,16 +653,34 @@ if (any(grepl("full.name.a.e", names(df_s)))) {
 # modifications
 df_s[idx==22782]$full.name.of.describer <- 'G. Yang; B. Kuang'
 df_s[idx==24236]$full.name.of.describer.n <- 'A. Ruskowski'
-df_s[idx==28627]$date <- 1913
-df_s[idx==24091]$date <- 1894
-df_s[idx==24209]$date <- 1894
-df_s[idx==23324]$date <- 1948
+df_s[idx==28627]$date <- "1913"
+df_s[idx==24091]$date <- "1894"
+df_s[idx==24209]$date <- "1894"
+df_s[idx==23324]$date <- "1948"
 
 # date
 df_s$date.n <- as.numeric(gsub("\\[.*\\]", "", df_s$date)) # remove square brackets
 
 # date of type
 df_s$date.of.type.yyyy <- as.numeric(sub('.*(\\d{4}).*', '\\1', df_s$date.of.type))
+
+# missing full names
+filepath <- paste0(dir, "clean/missing_authors_edit.csv")
+missing_auth <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+missing_auth[, names(missing_auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+
+df1 <- df_s[is.na(full.name.of.describer)]
+df2 <- df_s[!is.na(full.name.of.describer)]
+
+tmp <- merge(df1, missing_auth, 
+      by.x="author",
+      by.y="author", all.x=T, all.y=F)
+
+tmp$full.name.of.describer.x <- NULL
+names(tmp)[length(tmp)] <- 'full.name.of.describer'
+
+df_s <- rbind(df2, tmp)
+rm(tmp, df1, df2)
 
 write.csv(df_s[order(idx)], 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
@@ -668,6 +706,8 @@ df_s[status=="Valid subspecies"]$correct_synonym <- gsub("([A-Za-z]+).*", "\\1",
 
 # remove irrelevant columns
 df_s$taxonomicnotes.subspecies.synonyms.etc <- NULL
+
+
 
 write.csv(df_s[order(idx)], 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3-useful-col.csv"), na='', row.names=F, fileEncoding="UTF-8")
@@ -717,6 +757,7 @@ rm(var_count, df_s)
 
 write.csv(setcolorder(df, c(3, 4:6, 1, 7, 2, 8:length(names(df)))), 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - create collector and describer raw dataset
