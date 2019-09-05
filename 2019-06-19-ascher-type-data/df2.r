@@ -9,8 +9,8 @@ library(data.table)
 # Parameters
 #############
 
-# loop_2 <- 'Y'
-loop_2 <- 'N'
+loop_2 <- 'Y'
+# loop_2 <- 'N'
 
 # Scripts
 #############
@@ -21,6 +21,5 @@ source('2019-06-19-ascher-type-data/df2.4.r', local=T)
 source('2019-06-19-ascher-type-data/df2.5.r', local=T)
 source('2019-06-19-ascher-type-data/df2.6.r', local=T)
 
-# TODO: create network dataframe; to examine collaborativeness 
-# TODO: further cleaning on whether currently alive
-# TODO: write generic code to merge differences
+# TODO: N species / publications
+# TODO: count number of publications per authors

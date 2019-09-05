@@ -15,6 +15,34 @@ describers_template <- fread(paste0(dir, "2019-05-23-Apoidea world consensus fil
        "origin.country.describer.n", "residence.country.describer.n", "institution.of.describer.n")]
 describers_template[, names(describers_template) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
+
+describers_template_edits <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final_edit.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+describers_template_edits[, names(describers_template_edits) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+describers_template_edits <- describers_template_edits[rowSums(is.na(describers_template_edits)) != ncol(describers_template_edits)-1, ] # remove rows with all NAs
+describers_template_edits$alive_certainty <- NULL
+
+merge_column <- function(df, df_change, by) {
+    # get column name to modify
+    col_change <- names(df_change)[names(df_change) != by]
+    names(df_change)[names(df_change) == col_change] <- "modify"
+    print(paste0("Column to be changed: ", col_change))
+
+    # modify column 
+    df <- merge(df, df_change, by=by, all.x=T, all.y=F)
+    df[!is.na(modify), col_change] <- df[!is.na(modify),]$modify
+    df$modify <- NULL
+    df
+}
+
+for (i in 2:length(names(describers_template_edits))) {
+    col_name <- names(describers_template_edits)[i]
+    cols <- c("full.name.of.describer.n", col_name)
+    describers_template <- merge_column(describers_template, describers_template_edits[,..cols], "full.name.of.describer.n")
+}
+
+names(describers_template_edits)
+
+
 describers_all <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_4.0-denormalised2.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 describers_all[, names(describers_all) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
@@ -214,8 +242,5 @@ rm(lookup)
 describers_final <- merge(describers, describers.origin.cty, by='idx_auth', all.x=T, all.y=F)
 describers_final <- merge(describers_final, describers.res.cty.grp, by='idx_auth', all.x=T, all.y=F)
 describers_final <- merge(describers_final, describers.res.cty.first, by='idx_auth', all.x=T, all.y=F)
-
-# TODO: N species for publications
-# TODO: count number of publications per authorw
 
 write.csv(describers_final[order(as.numeric(idx_auth))], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), na='', row.names=F, fileEncoding="UTF-8")
