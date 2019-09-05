@@ -127,12 +127,15 @@ describers[, origin.country.describer.n := gsub('EI', 'IE', origin.country.descr
 describers[, origin.country.describer.n := gsub('LO', 'SK', origin.country.describer.n)]
 describers[, origin.country.describer.n := gsub('RP', 'PH', origin.country.describer.n)]
 describers[, origin.country.describer.n := gsub('DA', 'DK', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('AU', 'AT', origin.country.describer.n)]
 describers[, origin.country.describer.n := gsub('AS', 'AU', origin.country.describer.n)]
 describers[, origin.country.describer.n := gsub('GM', 'DE', origin.country.describer.n)]
 describers[, origin.country.describer.n := gsub('PM', 'PA', origin.country.describer.n)]
 describers[, origin.country.describer.n := gsub('CH', 'CN', origin.country.describer.n)]
 describers[, origin.country.describer.n := gsub('SZ', 'CH', origin.country.describer.n)]
 describers[, origin.country.describer.n := gsub('CI', 'CL', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('IS', 'IL', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('RS', 'RU', origin.country.describer.n)]
 
 
 describers[, residence.country.describer.n := gsub('UK', 'GB', residence.country.describer.n)]
@@ -152,12 +155,15 @@ describers[, residence.country.describer.n := gsub('EI', 'IE', residence.country
 describers[, residence.country.describer.n := gsub('LO', 'SK', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('RP', 'PH', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('DA', 'DK', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('AU', 'AT', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('AS', 'AU', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('GM', 'DE', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('PM', 'PA', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('CH', 'CN', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('SZ', 'CH', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('CI', 'CL', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('IS', 'IL', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('RS', 'RU', residence.country.describer.n)]
 
 
 describers.origin.cty <- data.table(describers[,c("idx_auth", "origin.country.describer.n")] %>% separate_rows(origin.country.describer.n), " ")[order(as.numeric(idx_auth))] # technically no need for this
@@ -210,6 +216,6 @@ describers_final <- merge(describers_final, describers.res.cty.grp, by='idx_auth
 describers_final <- merge(describers_final, describers.res.cty.first, by='idx_auth', all.x=T, all.y=F)
 
 # TODO: N species for publications
-# TODO: count number of publications per author
+# TODO: count number of publications per authorw
 
 write.csv(describers_final[order(as.numeric(idx_auth))], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), na='', row.names=F, fileEncoding="UTF-8")

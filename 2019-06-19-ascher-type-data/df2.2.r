@@ -37,9 +37,9 @@ describers_idx <- describers_idx[,c("full.name.of.describer.n",
 describers_idx$describer.gender.n <- factor(describers_idx$describer.gender.n, levels=c("F", "M", "U"), ordered=T)
 d1 <- describers_idx[, c("full.name.of.describer.n", "describer.gender.n", "idxes", "idxes_author.order")][
         order(full.name.of.describer.n, describer.gender.n)][!duplicated(full.name.of.describer.n)]
-d2 <- describers_idx[!dob.describer.n %in% c("U", " "), c("full.name.of.describer.n", "dob.describer.n")][
+d2 <- describers_idx[!dob.describer.n %in% c("U", ""), c("full.name.of.describer.n", "dob.describer.n")][
         order(full.name.of.describer.n, dob.describer.n)][!duplicated(full.name.of.describer.n)]
-d3 <- describers_idx[!dod.describer.n %in% c("U", " "), c("full.name.of.describer.n", "dod.describer.n")][
+d3 <- describers_idx[!dod.describer.n %in% c("U", ""), c("full.name.of.describer.n", "dod.describer.n")][
         order(full.name.of.describer.n, dod.describer.n)][!duplicated(full.name.of.describer.n)]
 d4 <- describers_idx[!origin.country.describer.n %in% c("U", " "), c("full.name.of.describer.n", "origin.country.describer.n")][
         order(full.name.of.describer.n, -origin.country.describer.n)][!duplicated(full.name.of.describer.n)]

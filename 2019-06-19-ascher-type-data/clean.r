@@ -549,6 +549,7 @@ print(paste0(Sys.time(), " --- quick fixes (only on useful columns)"))
 # 2019-08-27: discovered when cleaning author dates 
 df[idx %in% c(12335, 12337, 12338, 12341, 12346)]$date <- 2008
 df[idx %in% c(13187)]$date <- 2018
+df[idx %in% c(502)]$full.name.of.describer <- "Osamu Tadauchi; Ryôichi Miyanaga; Ahmatjan Dawut"
 
 # df[df$type.locality.updated == "0"]$type.locality.updated <- ''
 df <- df[order(as.numeric(idx))]

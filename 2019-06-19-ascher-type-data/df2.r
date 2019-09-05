@@ -23,3 +23,4 @@ source('2019-06-19-ascher-type-data/df2.6.r', local=T)
 
 # TODO: create network dataframe; to examine collaborativeness 
 # TODO: further cleaning on whether currently alive
+# TODO: write generic code to merge differences
