@@ -243,4 +243,14 @@ describers_final <- merge(describers, describers.origin.cty, by='idx_auth', all.
 describers_final <- merge(describers_final, describers.res.cty.grp, by='idx_auth', all.x=T, all.y=F)
 describers_final <- merge(describers_final, describers.res.cty.first, by='idx_auth', all.x=T, all.y=F)
 
+# Quick fixes
+cockerell <- strsplit(describers_final[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$spp_idxes, ", ")[[1]]
+cockerell <- data.frame(cockerell_idx=cockerell)
+write.csv(cockerell,
+          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final-cockerell.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
 write.csv(describers_final[order(as.numeric(idx_auth))], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+describers_final[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$spp_idxes <- "Check 2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final-cockerell.csv"
+
+write.csv(describers_final[order(as.numeric(idx_auth))], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final-view.csv"), na='', row.names=F, fileEncoding="UTF-8")
