@@ -252,9 +252,7 @@ ln[, names(ln) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread doe
 ln <- ln[change != "",][, c("full.name.of.describer.n", "last.name")]
 
 describers_final <- merge(describers_final, ln, by="full.name.of.describer.n", all.x=T, all.y=F)
-
-describers_final <- describers_final[, c(2, 1, 3:length(names(describers_final)))]
-
+setcolorder(describers_final, c(2, 1, 3:length(names(describers_final))))
 # TODO: write code
 # 1. get last word 
 # 2. for those containing special characters, get second last word
