@@ -20,6 +20,3 @@ source('2019-06-19-ascher-type-data/df2.3.r', local=T)
 source('2019-06-19-ascher-type-data/df2.4.r', local=T)
 source('2019-06-19-ascher-type-data/df2.5.r', local=T)
 source('2019-06-19-ascher-type-data/df2.6.r', local=T)
-
-# TODO: N species / publications
-# TODO: count number of publications per authors

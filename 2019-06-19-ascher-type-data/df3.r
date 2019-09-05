@@ -52,4 +52,6 @@ test <- dfx[, .N, by=c("authors.fn", "author", "date.n", "journal", "volume")][o
 write.csv(test, 'test.csv')
 
 
-
+# TODO: cross checking of authors: find mismatch between authors
+# TODO: N species / publications
+# TODO: count number of publications per authors

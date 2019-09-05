@@ -569,7 +569,6 @@ names(tmp)[length(tmp)] <- 'full.name.of.describer'
 df <- rbind(df2, tmp)
 rm(tmp, df1, df2)
 
-# TODO: find mismatch between authors
 
 # df[df$type.locality.updated == "0"]$type.locality.updated <- ''
 df <- df[order(as.numeric(idx))]
