@@ -23,7 +23,10 @@ filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 df$idxes <- as.numeric(df$idxes)
-df <- df[order(idxes, full.name.of.describer.n)]
+df$idxes_author.order <- factor(df$didxes_author.order, 
+                                levels=c("1", "S", "2", "3", "L"), ordered=T)
+
+df <- df[order(idxes, idxes_author.order)]
 df2 <- data.table(df[,c("idxes", "full.name.of.describer.n")] %>%
   group_by(idxes) %>%
   summarise(authors.fn=paste0(full.name.of.describer.n,collapse='; ')))\
@@ -37,7 +40,6 @@ dfx1[, names(dfx1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))]
 filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv")
 dfx2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-
 
 cols <- c("idx", "genus", "species", "date.n", "author", "paper.type", 
           "title", "journal", "volume", "issue", 
@@ -53,5 +55,12 @@ write.csv(test, 'test.csv')
 
 
 # TODO: cross checking of authors: find mismatch between authors
+# create last name reference for finalised author list in 2.4
+# combine authors in 3
+# use 2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final_edit.csv
+
 # TODO: N species / publications
+# use abovementioned but with authors in order
+
 # TODO: count number of publications per authors
+
