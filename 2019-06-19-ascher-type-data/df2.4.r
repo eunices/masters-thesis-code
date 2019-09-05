@@ -243,6 +243,23 @@ describers_final <- merge(describers, describers.origin.cty, by='idx_auth', all.
 describers_final <- merge(describers_final, describers.res.cty.grp, by='idx_auth', all.x=T, all.y=F)
 describers_final <- merge(describers_final, describers.res.cty.first, by='idx_auth', all.x=T, all.y=F)
 
+# Get last name
+# describers_final$last.name <- sapply(
+#     strsplit(as.character(describers_final$full.name.of.describer.n), " "), tail, 1)
+
+ln <- fread(paste0(dir, "clean/last_name.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+ln[, names(ln) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+ln <- ln[change != "",][, c("full.name.of.describer.n", "last.name")]
+
+describers_final <- merge(describers_final, ln, by="full.name.of.describer.n", all.x=T, all.y=F)
+
+describers_final <- describers_final[, c(2, 1, 3:length(names(describers_final)))]
+
+# TODO: write code
+# 1. get last word 
+# 2. for those containing special characters, get second last word
+# 3. for those with duplicated surname, abbrev. name and add in sq brackets
+
 # Quick fixes
 cockerell <- strsplit(describers_final[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$spp_idxes, ", ")[[1]]
 cockerell <- data.frame(cockerell_idx=cockerell)

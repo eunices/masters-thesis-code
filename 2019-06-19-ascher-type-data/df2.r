@@ -9,8 +9,8 @@ library(data.table)
 # Parameters
 #############
 
-loop_2 <- 'Y'
-# loop_2 <- 'N'
+# loop_2 <- 'Y'
+loop_2 <- 'N'
 
 # Scripts
 #############

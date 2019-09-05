@@ -53,14 +53,13 @@ dfx <- merge(dfx, df2, by.x="idx", by.y="idxes", all.x=T, all.y=F)
 test <- dfx[, .N, by=c("authors.fn", "author", "date.n", "journal", "volume")][order(authors.fn,  date.n, journal, volume)]
 write.csv(test, 'test.csv')
 
-
 # TODO: cross checking of authors: find mismatch between authors
 # create last name reference for finalised author list in 2.4
 # combine authors in 3
 # use 2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final_edit.csv
 
 # TODO: N species / publications
-# use abovementioned but with authors in order
+# use abovementioned code
 
-# TODO: count number of publications per authors
-
+# TODO: count number of publications per author
+# add on above code
