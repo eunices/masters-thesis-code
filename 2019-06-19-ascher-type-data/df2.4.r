@@ -130,6 +130,10 @@ describers[, origin.country.describer.n := gsub('DA', 'DK', origin.country.descr
 describers[, origin.country.describer.n := gsub('AS', 'AU', origin.country.describer.n)]
 describers[, origin.country.describer.n := gsub('GM', 'DE', origin.country.describer.n)]
 describers[, origin.country.describer.n := gsub('PM', 'PA', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('CH', 'CN', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('SZ', 'CH', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('CI', 'CL', origin.country.describer.n)]
+
 
 describers[, residence.country.describer.n := gsub('UK', 'GB', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('EZ', 'CZ', residence.country.describer.n)]
@@ -151,6 +155,10 @@ describers[, residence.country.describer.n := gsub('DA', 'DK', residence.country
 describers[, residence.country.describer.n := gsub('AS', 'AU', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('GM', 'DE', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('PM', 'PA', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('CH', 'CN', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('SZ', 'CH', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('CI', 'CL', residence.country.describer.n)]
+
 
 describers.origin.cty <- data.table(describers[,c("idx_auth", "origin.country.describer.n")] %>% separate_rows(origin.country.describer.n), " ")[order(as.numeric(idx_auth))] # technically no need for this
 describers.res.cty <- data.table(describers[,c("idx_auth", "residence.country.describer.n")] %>% separate_rows(residence.country.describer.n, sep="; "))[order(as.numeric(idx_auth))]
@@ -200,5 +208,8 @@ rm(lookup)
 describers_final <- merge(describers, describers.origin.cty, by='idx_auth', all.x=T, all.y=F)
 describers_final <- merge(describers_final, describers.res.cty.grp, by='idx_auth', all.x=T, all.y=F)
 describers_final <- merge(describers_final, describers.res.cty.first, by='idx_auth', all.x=T, all.y=F)
+
+# TODO: N species for publications
+# TODO: count number of publications per author
 
 write.csv(describers_final[order(as.numeric(idx_auth))], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), na='', row.names=F, fileEncoding="UTF-8")
