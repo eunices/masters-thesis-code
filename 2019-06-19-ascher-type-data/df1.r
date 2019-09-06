@@ -11,7 +11,7 @@ loop_1 <- 'N'
 source('2019-06-19-ascher-type-data/df1.1.r', local=T)
 source('2019-06-19-ascher-type-data/df1.2.r', local=T)
 
-# TODO: Find a logical way to clean countries below
+# *TODO: Find a logical way to clean countries below
 
 # Countries to clean specifically
 # AT/PA: MLI, NER, TCD, SDN, YEM, SAU

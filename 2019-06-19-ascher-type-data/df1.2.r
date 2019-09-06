@@ -91,7 +91,7 @@ df_mapper4[A.3=="KIR",]$REALM_E = "OC" # Kiribati
 df_mapper4[A.3=="MAF",]$REALM_E = "NT" # Saint Martin (French part)
 df_mapper4[A.3=="PCN",]$REALM_E = "OC" # Pitcairn
 df_mapper4[A.3=="SXM",]$REALM_E = "OC" # Sint Maarten
-# TODO: check islands why missing in 2019-06-24-spatial-join.R
+# *TODO: check islands why missing in 2019-06-24-spatial-join.R
 
 no_data <- fread(paste0(dir, "clean/countries_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 no_data <- merge(no_data, lookup.cty[c("A.2", "A.3")], all.x=T, all.y=F, by.x="corrected.global.mapper", by.y="A.2")
