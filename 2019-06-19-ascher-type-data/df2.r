@@ -2,9 +2,8 @@ source('2019-06-19-ascher-type-data/init.r')
 
 # Libraries
 #############
-library(dplyr)
-library(tidyr)
-library(data.table)
+
+# NONE
 
 # Parameters
 #############

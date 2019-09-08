@@ -173,8 +173,7 @@ flag <- "LOCALITY_MANUALLY_CHECKED_AMENDED_LOCALITY_GEOCODED_AGAIN" # for this f
 # geocoded_na[geocoded_na$flag==flag,]$lon <- geocoded_na_geocoded$lon
 # write.csv(geocoded_na, paste0(dir, "clean/", "geocoded_na2.csv"),
 #           fileEncoding="UTF-8" ) # manual edits required to check again for unsuccessful cases
-geocoded_na <- read.csv(paste0(dir, "clean/", "geocoded_na2_edit.csv"), stringsAsFactors=F,
-                        encoding="UTF-8")
+geocoded_na <- read.csv(paste0(dir, "clean/", "geocoded_na2_edit.csv"), stringsAsFactors=F, encoding="UTF-8")
 
 # 2. for NAs - geocode those with COUNTRY AND PRI DIV ONLY
 flag <- "COUNTRY_AND_PRI_DIV_ONLY"
@@ -569,51 +568,17 @@ names(tmp)[length(tmp)] <- 'full.name.of.describer'
 df <- rbind(df2, tmp)
 rm(tmp, df1, df2)
 
-
 # df[df$type.locality.updated == "0"]$type.locality.updated <- ''
 df <- df[order(as.numeric(idx))]
+
+# duplicates rows
+gs <- paste0(df$genus, df$species)
+df$duplicated.row <- duplicated(gs)
+df <- df[duplicated.row == "FALSE"][order(as.numeric(idx))]
+
 write.csv(df, 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv"),
           na='', row.names=F, fileEncoding="UTF-8")
-
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - useful columns
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- subset useful columns"))
-
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv")
-df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-
-# Subset useful columns
-main <- c('idx',                                       # identifier
-          'family', 'subfamily', 'tribe',              # taxonomic info
-          'genus', 'subgenus', 'species', 'full.name',
-          'author', 'date.n', 'full.name.of.describer',  # description info
-          'collector.of.type', 'date.of.type.string',    # collector info      
-          'date.of.type.yyyy', 'date.of.type.mm', 'date.of.type.dd',
-          'years.lag',
-          'lat', 'lon',                                  # georeference
-          'type.repository', 'country.of.type.repository', 'status', # type info
-          'flag', 'duplicated.row') 
-
-loc <- c('type.country', 'type.state',     # locality info
-         'type.locality.verbatim', 'type.locality.updated', 'elev.m',
-         'source.of.latlon')
-
-checks <- c('other.names', 'original.genus',                          # synonyms
-            'type.status', 'type.depository.notes', # specimen status
-            'title', 'journal', 'volume', 'issue', 'paper.type',      # publication info
-            'global.mapper', 'distributional.footnotes', 'notes')     # distribution info
-
-nat_hist <- c('host.plant', 'host.plant.of.type', 'host.insect.or.prey', 'type.sex', # life history info
-            'sociality')
-
-cols <- c(main, loc, checks, nat_hist)
-
-df <- df[duplicated.row == "FALSE"][order(as.numeric(idx))]
-write.csv(df[,..cols], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - modify synonym data
@@ -651,7 +616,7 @@ if (any(grepl("full.name.a.e", names(df_s)))) {
 
 # modifications
 df_s[idx==22782]$full.name.of.describer <- 'G. Yang; B. Kuang'
-df_s[idx==24236]$full.name.of.describer.n <- 'A. Ruskowski'
+df_s[idx==24236]$full.name.of.describer <- 'A. Ruskowski'
 df_s[idx==28627]$date <- "1913"
 df_s[idx==24091]$date <- "1894"
 df_s[idx==24209]$date <- "1894"
@@ -681,11 +646,20 @@ names(tmp)[length(tmp)] <- 'full.name.of.describer'
 df_s <- rbind(df2, tmp)
 rm(tmp, df1, df2)
 
+# duplicates rows
+gs <- paste0(df_s$genus, df_s$species)
+df_s$duplicated.row <- duplicated(gs)
+df_s <- df_s[duplicated.row == "FALSE"][order(as.numeric(idx))]
+
 write.csv(df_s[order(idx)], 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-df_s <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - subset useful col
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- count synonyms per valid species"))
 
+df_s <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 
 describer_cols <- c("idx", "author", "full.name.of.describer", "describer.gender", 
           "dob.describer", "dod.describer",
@@ -699,14 +673,13 @@ cols <- cols[cols %in% names(df_s)]
 
 df_s <- df_s[,..cols]
 
+
 # genus/ species combination
 df_s$correct_synonym <- gsub('=', '', df_s$taxonomicnotes.subspecies.synonyms.etc)
 df_s[status=="Valid subspecies"]$correct_synonym <- gsub("([A-Za-z]+).*", "\\1", df_s[status=="Valid subspecies"]$correct_synonym)
 
 # remove irrelevant columns
 df_s$taxonomicnotes.subspecies.synonyms.etc <- NULL
-
-
 
 write.csv(df_s[order(idx)], 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3-useful-col.csv"), na='', row.names=F, fileEncoding="UTF-8")
@@ -718,7 +691,7 @@ print(paste0(Sys.time(), " --- count synonyms per valid species"))
 
 df_nv <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3-useful-col.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv")
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 # csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
@@ -754,35 +727,7 @@ df[is.na(N_var)]$N_var <- 0
 
 rm(var_count, df_s)
 
-write.csv(setcolorder(df, c(3, 4:6, 1, 7, 2, 8:length(names(df)))), 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(df, 
+          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - create collector and describer raw dataset
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- collector and describer raw dataset"))
-
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3-useful-col.csv")
-df_s <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv")
-df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-
-describers_info_valid_species <- df[,..describer_cols]
-describers_info_synonyms <- df_s[,..describer_cols]
-describers_info <- rbind(describers_info_valid_species, describers_info_synonyms)
-
-write.csv(describers_info[order(author)], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
-# write.csv(describers_info_synonyms[order(author)], 
-#           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
-collectors_info_valid_species <- df[,..collector_cols]
-collectors_info_synonyms <- df_s[,..collector_cols]
-collectors_info <- rbind(collectors_info_valid_species, collectors_info_synonyms)
-
-write.csv(collectors_info[order(full.name.of.collector)], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_1.0-all.csv"), na='', row.names=F, fileEncoding="UTF-8")

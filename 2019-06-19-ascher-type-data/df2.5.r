@@ -7,7 +7,7 @@ ps <- fread(
     paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 ps[, names(ps) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-dfx1 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-useful-col.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+dfx1 <- fread(paste0(dir, ".csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx2 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3-useful-col.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx <- rbind(dfx1[,c("idx", "date.n")], dfx2[,c("idx", "date.n")])
 dfx <- dfx[date.n <=2018]$idx # limit to 2018
