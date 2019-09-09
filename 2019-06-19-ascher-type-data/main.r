@@ -89,3 +89,17 @@ cols <- c(main, loc, checks, nat_hist)
 
 write.csv(df[,..cols], 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-useful-col.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+
+
+
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_1-idx.csv")
+df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+
+
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3-useful-col")
+dfs <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+dfs[, names(dfs) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+
+dfx[idx==28366]$page.numbers.publication

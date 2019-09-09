@@ -11,6 +11,12 @@ filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
+describer_cols <- c("idx", "author", "full.name.of.describer", "describer.gender", 
+          "dob.describer", "dod.describer",
+          "origin.country.describer", "residence.country.describer", "institution.of.describer")
+collector_cols <- c("idx", "collector.of.type", "full.name.of.collector",
+          "title.of.collector", "collector.gender", "info.about.collector", "date.of.type.yyyy")
+
 describers_info_valid_species <- df[,..describer_cols]
 describers_info_synonyms <- df_s[,..describer_cols]
 describers_info <- rbind(describers_info_valid_species, describers_info_synonyms)

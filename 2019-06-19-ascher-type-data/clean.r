@@ -647,9 +647,10 @@ df_s <- rbind(df2, tmp)
 rm(tmp, df1, df2)
 
 # duplicates rows
-gs <- paste0(df_s$genus, df_s$species)
+gs <- paste0(df_s$genus, " ", df_s$subgenus, " ", df_s$species, " ", 
+             df_s$author.date)
 df_s$duplicated.row <- duplicated(gs)
-df_s <- df_s[duplicated.row == "FALSE"][order(as.numeric(idx))]
+df_s <- df_s[gs %in% gs[duplicated(gs)] & duplicated.row == "FALSE"][order(as.numeric(idx))]
 
 write.csv(df_s[order(idx)], 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")

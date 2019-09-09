@@ -12,35 +12,43 @@ describers_info <- fread(
 
 describers_info[, names(describers_info) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-check <- fread(
-    paste0(dir, "clean/missing_authors_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# merging manual edits
+# # =================
+# # DONE ONCE ONLY ##
+# # =================
 
-check[, names(check) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+# check <- fread(
+#     paste0(dir, "clean/missing_authors_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
-describers_info2 <- merge(describers_info, check, by='author', suffixes=c('_old', '_new'), all.x=T, all.y=F)
-describers_info2$check <- describers_info2$full.name.of.describer_old == describers_info2$full.name.of.describer_new
+# check[, names(check) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-write.csv(describers_info2[check==FALSE | is.na(check),c("idx", "author", "full.name.of.describer_old", "full.name.of.describer_new", "check")], paste0(dir, "clean/describers_info.csv"), na='', row.names=F, fileEncoding="UTF-8")
+# describers_info2 <- merge(describers_info, check, by='author', suffixes=c('_old', '_new'), all.x=T, all.y=F)
+# describers_info2$check <- describers_info2$full.name.of.describer_old == describers_info2$full.name.of.describer_new
 
-describers_info2 <- fread(
-    paste0(dir, "clean/describers_info_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# write.csv(describers_info2[check==FALSE | is.na(check),c("idx", "author", "full.name.of.describer_old", "full.name.of.describer_new", "check")], paste0(dir, "clean/describers_info.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-describers_info2[, names(describers_info2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+# describers_info2 <- fread(
+#     paste0(dir, "clean/describers_info_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
-remove_idx <- describers_info2$idx
-describers_info.1 <- describers_info[idx %in% remove_idx]
-describers_info.2 <- describers_info[!idx %in% remove_idx]
+# describers_info2[, names(describers_info2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-describers_info.1 <- merge(describers_info.1, describers_info2[,c("idx",
-                           "full.name.of.describer_new", "author")], by.x="idx", by.y="idx",
-                           suffixes=c("", "_new"))
+# remove_idx <- describers_info2$idx
+# describers_info.1 <- describers_info[idx %in% remove_idx]
+# describers_info.2 <- describers_info[!idx %in% remove_idx]
 
-describers_info.1$full.name.of.describer <- describers_info.1$full.name.of.describer_new
-describers_info.1$author <- describers_info.1$author_new
-describers_info.1$author_new <- NULL
-describers_info.1$full.name.of.describer_new <- NULL
+# describers_info.1 <- merge(describers_info.1, describers_info2[,c("idx",
+#                            "full.name.of.describer_new", "author")], by.x="idx", by.y="idx",
+#                            suffixes=c("", "_new"))
 
-describers_info <- rbind(describers_info.1, describers_info.2)
+# describers_info.1$full.name.of.describer <- describers_info.1$full.name.of.describer_new
+# describers_info.1$author <- describers_info.1$author_new
+# describers_info.1$author_new <- NULL
+# describers_info.1$full.name.of.describer_new <- NULL
+
+# describers_info <- rbind(describers_info.1, describers_info.2)
+
+# write.csv(describers_info[order(type, idx),], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all_edit.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
 
 # Merge back the other columns
 describers_merged <- data.table(describers)
@@ -96,7 +104,6 @@ describers_idx$dod.describer.n <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "",
                                    describers_idx$dod.describer.n)
 describers_idx$dob.describer.n <- gsub(";| ", "", describers_idx$dob.describer.n)
 describers_idx$dod.describer.n <- gsub(";| ", "", describers_idx$dod.describer.n)
-
 
 describers_idx$origin.country.describer.original <- describers_idx$origin.country.describer.n
 describers_idx$residence.country.describer.original <- describers_idx$residence.country.describer.n
