@@ -1,4 +1,10 @@
-# TODO: create dataframes that are persistent
+# TODO: create dataframes that are persistent and make checks
+
+
+# TODO: author - dominant countries of work
+# TODO: author - count number of publications per author 
+
+
 
 source('2019-06-19-ascher-type-data/init.r')
 

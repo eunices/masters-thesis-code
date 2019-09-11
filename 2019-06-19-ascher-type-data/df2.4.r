@@ -260,12 +260,6 @@ setcolorder(describers_final, c(2, 1, 3:length(names(describers_final))))
 # 2. for those containing special characters, get second last word
 # 3. for those with duplicated surname, abbrev. name and add in sq brackets
 
-# TODO: author - dominant countries of work
-# TODO: author - count number of publications per author 
-
-# 
-
-
 # Quick fixes
 cockerell <- strsplit(describers_final[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$spp_idxes, ", ")[[1]]
 cockerell <- data.frame(cockerell_idx=cockerell)
