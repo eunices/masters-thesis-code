@@ -61,7 +61,7 @@ run_loop <- function() {
     df_mapper2[country=="RS"]$Country1 <- "Russian Federation"
 
     write.csv(df_mapper2[,c("country", "idx", "Country1", "Country2")], 
-            paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4-species-cty1.csv"), na='', row.names=F, fileEncoding="UTF-8")
+            paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty1.csv"), na='', row.names=F, fileEncoding="UTF-8")
 }
 
 if (loop_1 == 'Y'){

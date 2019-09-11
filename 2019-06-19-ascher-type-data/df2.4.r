@@ -164,6 +164,7 @@ describers[, origin.country.describer.n := gsub('SZ', 'CH', origin.country.descr
 describers[, origin.country.describer.n := gsub('CI', 'CL', origin.country.describer.n)]
 describers[, origin.country.describer.n := gsub('IS', 'IL', origin.country.describer.n)]
 describers[, origin.country.describer.n := gsub('RS', 'RU', origin.country.describer.n)]
+describers[, origin.country.describer.n := gsub('SG', 'SN', origin.country.describer.n)]
 
 
 describers[, residence.country.describer.n := gsub('UK', 'GB', residence.country.describer.n)]
@@ -192,6 +193,7 @@ describers[, residence.country.describer.n := gsub('SZ', 'CH', residence.country
 describers[, residence.country.describer.n := gsub('CI', 'CL', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('IS', 'IL', residence.country.describer.n)]
 describers[, residence.country.describer.n := gsub('RS', 'RU', residence.country.describer.n)]
+describers[, residence.country.describer.n := gsub('SG', 'SN', residence.country.describer.n)]
 
 
 describers.origin.cty <- data.table(describers[,c("idx_auth", "origin.country.describer.n")] %>% separate_rows(origin.country.describer.n), " ")[order(as.numeric(idx_auth))] # technically no need for this

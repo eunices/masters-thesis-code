@@ -650,30 +650,7 @@ rm(tmp, df1, df2)
 gs <- paste0(df_s$genus, " ", df_s$subgenus, " ", df_s$species, " ", 
              df_s$author.date)
 df_s$duplicated.row <- duplicated(gs)
-df_s <- df_s[gs %in% gs[duplicated(gs)] & duplicated.row == "FALSE"][order(as.numeric(idx))]
-
-write.csv(df_s[order(idx)], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - subset useful col
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- count synonyms per valid species"))
-
-df_s <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
-
-describer_cols <- c("idx", "author", "full.name.of.describer", "describer.gender", 
-          "dob.describer", "dod.describer",
-          "origin.country.describer", "residence.country.describer", "institution.of.describer")
-collector_cols <- c("idx", "collector.of.type", "full.name.of.collector",
-          "title.of.collector", "collector.gender", "info.about.collector", "date.of.type.yyyy")
-relevant_cols <- c('idx', 'genus', 'original.genus', 'species', 'status', 'taxonomicnotes.subspecies.synonyms.etc', 'date.n')
-
-cols <- unique(c(relevant_cols, describer_cols, collector_cols))
-cols <- cols[cols %in% names(df_s)]
-
-df_s <- df_s[,..cols]
-
+df_s <- df_s[duplicated.row == "FALSE"][order(as.numeric(idx))]
 
 # genus/ species combination
 df_s$correct_synonym <- gsub('=', '', df_s$taxonomicnotes.subspecies.synonyms.etc)
@@ -683,7 +660,7 @@ df_s[status=="Valid subspecies"]$correct_synonym <- gsub("([A-Za-z]+).*", "\\1",
 df_s$taxonomicnotes.subspecies.synonyms.etc <- NULL
 
 write.csv(df_s[order(idx)], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3-useful-col.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - count synonyms per valid species
