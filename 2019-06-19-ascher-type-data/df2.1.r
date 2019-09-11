@@ -1,4 +1,3 @@
-
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - create collector and describer raw dataset
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -14,8 +13,6 @@ df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))]
 describer_cols <- c("idx", "author", "full.name.of.describer", "describer.gender", 
           "dob.describer", "dod.describer",
           "origin.country.describer", "residence.country.describer", "institution.of.describer")
-collector_cols <- c("idx", "collector.of.type", "full.name.of.collector",
-          "title.of.collector", "collector.gender", "info.about.collector", "date.of.type.yyyy")
 
 describers_info_valid_species <- df[,..describer_cols]
 describers_info_synonyms <- df_s[,..describer_cols]
@@ -26,14 +23,6 @@ write.csv(describers_info[order(author)],
 
 # write.csv(describers_info_synonyms[order(author)], 
 #           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
-collectors_info_valid_species <- df[,..collector_cols]
-collectors_info_synonyms <- df_s[,..collector_cols]
-collectors_info <- rbind(collectors_info_valid_species, collectors_info_synonyms)
-
-write.csv(collectors_info[order(full.name.of.collector)], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_1.0-all.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section -  individual author species rows 
