@@ -229,8 +229,23 @@ dfx1 <- merge(dfx1, auth, by="author", all.x=T, all.y=F, suffixes=c("", "_new"))
 table(is.na(dfx1$full.name.of.describer_new))
 dfx1 <- data.table(dfx1)
 
-dfx1[full.name.of.describer != full.name.of.describer_new]$full.name.of.describer <- dfx1[full.name.of.describer != full.name.of.describer_new]$full.name.of.describer_new
+dfx1$full.name.of.describer <- dfx1$full.name.of.describer_new
 dfx1$full.name.of.describer_new <- NULL
+
+# dfx1[full.name.of.describer != full.name.of.describer_new]$full.name.of.describer <- dfx1[full.name.of.describer != full.name.of.describer_new]$full.name.of.describer_new
+# dfx1$full.name.of.describer_new <- NULL
+
+
+dfx2 <- merge(dfx2, auth, by="author", all.x=T, all.y=F, suffixes=c("", "_new"))
+table(is.na(dfx2$full.name.of.describer_new))
+dfx2 <- data.table(dfx2)
+
+dfx2$full.name.of.describer <- dfx2$full.name.of.describer_new
+dfx2$full.name.of.describer_new <- NULL
+
+# dfx2[full.name.of.describer != full.name.of.describer_new]$full.name.of.describer <- dfx2[full.name.of.describer != full.name.of.describer_new]$full.name.of.describer_new
+# dfx2$full.name.of.describer_new <- NULL
+
 
 dfx1[idx==14019]$author = "Sakagami and Ebmer"
 dfx1[idx==14019]$full.name.of.describer = "Andreas Werner Ebmer; Yasuo Maeta"
@@ -240,18 +255,12 @@ dfx1[idx %in% c(18134, 16712)]$full.name.of.describer = "Ze-qing Niu; Yan-ru Wu;
 dfx1[idx==18134]$species = "guangxiense"
 dfx1[idx==3839]$full.name.of.describer = "Wang S.-f."
 dfx1[idx==7360]$full.name.of.describer = "Maximilian Schwarz; Fritz Josef [Friedrich] Gusenleitner; Karl Mazzucco"
+dfx1[idx==7360]$full.name.of.describer = "Maximilian Schwarz; Fritz Josef [Friedrich] Gusenleitner; Karl Mazzucco"
 
 
 dfx2[idx==24043]$date.n = "1900"
 dfx2[idx==24113]$date.n = "1900"
 
-
-dfx2 <- merge(dfx2, auth, by="author", all.x=T, all.y=F, suffixes=c("", "_new"))
-table(is.na(dfx2$full.name.of.describer_new))
-dfx2 <- data.table(dfx2)
-
-dfx2[full.name.of.describer != full.name.of.describer_new]$full.name.of.describer <- dfx2[full.name.of.describer != full.name.of.describer_new]$full.name.of.describer_new
-dfx2$full.name.of.describer_new <- NULL
 
 
 write.csv(dfx1, 
@@ -259,7 +268,6 @@ write.csv(dfx1,
 
 write.csv(dfx2, 
         paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.2-clean-auth-full-name.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - count number of species in publication

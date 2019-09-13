@@ -8,10 +8,12 @@ start <- proc.time()
 source('2019-06-19-ascher-type-data/init.r')
 source('2019-06-19-ascher-type-data/clean.r')
 source('2019-06-19-ascher-type-data/df1.r')
-source('2019-06-19-ascher-type-data/df2.r')
 source('2019-06-19-ascher-type-data/df3.r')
+source('2019-06-19-ascher-type-data/df2.r')
 source('2019-06-19-ascher-type-data/df4.r')
 print(proc.time()-start)
+
+rm(list=ls())
 
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("BEE TYPE DATA CLEANING COMPLETE.")

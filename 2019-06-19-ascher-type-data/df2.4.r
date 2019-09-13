@@ -84,8 +84,8 @@ describers_a[full.name.of.describer.n=="Johan Christian Fabricius", "max"] = "18
 describers_a[full.name.of.describer.n=="Michael Kuhlmann", "min"] = "1998"
 describers_a[full.name.of.describer.n=="Eduardo Andrade Botelho de Almeida", "min"] = "2008" # should be modified in original file
 describers_a[full.name.of.describer.n=="Michael Scott Engel", "min"] = "1995" # should be modified in original file
-describers_a[full.name.of.describer.n=="[Carl Eduard] Adolph Gerstaecker", "full.name.of.describer.n"] == "[Carl Eduard] Adolph Gerstäcker"
-describers_a[full.name.of.describer.n=="Francisco Javier Ortiz-Sanchez", "full.name.of.describer.n"] == "Francisco Javier Ortiz-Sánche"
+describers_a[full.name.of.describer.n=="[Carl Eduard] Adolph Gerstaecker", "full.name.of.describer.n"] = "[Carl Eduard] Adolph Gerstäcker"
+describers_a[full.name.of.describer.n=="Francisco Javier Ortiz-Sanchez", "full.name.of.describer.n"] = "Francisco Javier Ortiz-Sánche"
 
 
 

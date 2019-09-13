@@ -1,4 +1,3 @@
-source('2019-06-19-ascher-type-data/init.r')
 
 # Purpose of this is to test if foreign keys match
 # Figure out the optimal way to decrease dependencies [change in one place doesn't affect the other]
@@ -7,35 +6,7 @@ source('2019-06-19-ascher-type-data/init.r')
 # Section - read all "source" dataframes
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- read all source dataframes"))
-
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_3.0-collectors.csv")
-coll <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
-coll[, names(coll) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv")
-des <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
-des[, names(des) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-col.csv")
-df1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df1[, names(df1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv")
-df2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df2[, names(df2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_1-idx.csv")
-df1o <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df1o[, names(df1o) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-idx.csv")
-df2o <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df2o[, names(df2o) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv")
-pub <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
-pub[, names(pub) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-
+source('2019-06-19-ascher-type-data/read_final_df.r')
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - checks
@@ -54,7 +25,7 @@ check1 <- merge(dfx1, dfx2, by.x=c("genus", "species"),
                 all.x=F, all.y=T)
 
 table(is.na(check1$idx.x))
-table(is.na(check1$idx.y))
+# table(is.na(check1$idx.y))
 # all synonyms have a valid species
 
 # publication and (species + invalid_species)
@@ -96,7 +67,6 @@ dim(df2_pub[grepl("^'", page.numbers.publication.y) | page.numbers.publication.y
 
 # test that the describer full names are the same
 dess <- des[,c('full.name.of.describer.n', 'last.name', 'spp_idxes')] %>% separate_rows(spp_idxes)
-dess
 dess <- data.table(dess %>% 
     group_by(spp_idxes) %>%
     summarise(full.name.of.describer=paste0(sort(unique((full.name.of.describer.n))), collapse="; ")))
@@ -112,12 +82,16 @@ dfx1$idx <- as.integer(dfx1$idx)
 dfx1 <- dfx1[order(idx)]
 
 df1_des <- merge(dfx1, dess, by.x='idx', by.y='spp_idxes', all.x=T, all.y=F)
+table(df1_des$full.name.of.describer == df1_des$full.name.of.describer_sorted)
+
+test <- df1_des[full.name.of.describer != full.name.of.describer_sorted]
+write.csv(test, 'tmp/test.csv')
 
 df1$idx <- as.numeric(df1$idx)
 df1_des <- merge(df1, dess, by.x='idx', by.y='spp_idxes', all.x=T, all.y=F)
 table(df1_des$full.name.of.describer.x == df1_des$full.name.of.describer.y)
-
 # test that the author (short form) is the same as the full.name
+
 
 fn <- des$last.name
 names(fn) <- des$full.name.of.describer.n

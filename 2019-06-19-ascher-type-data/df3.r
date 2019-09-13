@@ -137,7 +137,7 @@ run_loop <- function() {
             collectors <- rbind(collectors, to_merge)
         }
         percent <- round(i/n_rows*100, 2)
-        if(percent %% 25 == 0) {
+        if(percent %% 10 == 0) {
             print(paste0(percent , "% completed"))
         }
     }
@@ -273,9 +273,10 @@ if(any(names(dfx1) %in% c('collector.of.type.n_new', 'full.name.of.collector.n_n
     dfx1$uncertain_new <- NULL
     dfx1$collector.gender.n_new <- NULL
     dfx1$title.of.collector.n_new <- NULL
-    dfx1 <- merge(dfx1, collectors2, all.x=T, all.y=F, by.x='idx', by.y='idxes',
-              suffixes=c("", "_new"))
 }
+
+dfx1 <- merge(dfx1, collectors2, all.x=T, all.y=F, by.x='idx', by.y='idxes',
+            suffixes=c("", "_new"))
 
 table(is.na(dfx1$collector.of.type.n))
 table(is.na(dfx1$full.name.of.collector.n))
@@ -291,15 +292,18 @@ if(any(names(dfx2) %in% c('collector.of.type.n_new', 'full.name.of.collector.n_n
     dfx2$uncertain_new <- NULL
     dfx2$collector.gender.n_new <- NULL
     dfx2$title.of.collector.n_new <- NULL
-    dfx2 <- merge(dfx2, collectors2, all.x=T, all.y=F, by.x='idx', by.y='idxes',
-              suffixes=c("", "_new"))
 }
+
+dfx2 <- merge(dfx2, collectors2, all.x=T, all.y=F, by.x='idx', by.y='idxes',
+            suffixes=c("", "_new"))
 
 table(is.na(dfx2$collector.of.type.n))
 table(is.na(dfx2$full.name.of.collector.n))
 table(is.na(dfx2$uncertain))
 table(is.na(dfx2$collector.gender.n))
 table(is.na(dfx2$title.of.collector.n))
+
+
 
 write.csv(dfx1, 
         paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-col.csv"), na='', row.names=F, fileEncoding="UTF-8")

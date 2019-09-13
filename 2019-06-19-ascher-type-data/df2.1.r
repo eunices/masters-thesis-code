@@ -126,7 +126,7 @@ run_loop <- function() {
             describers <- rbind(describers, to_merge)
         }
         percent <- round(i/n_rows*100, 2)
-        if(percent %% 25 == 0) {
+        if(percent %% 10 == 0) {
             print(paste0(percent , "% completed"))
         }
     }
