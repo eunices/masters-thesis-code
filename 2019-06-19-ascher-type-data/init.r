@@ -1,11 +1,11 @@
 # Libraries
-library(data.table)
-library(ggplot2)
-library(sf)
-library(anytime)
-library(ggmap)
-library(dplyr)
-library(tidyr)
+suppressMessages(library(data.table))
+suppressMessages(library(ggplot2))
+suppressMessages(library(sf))
+suppressMessages(library(anytime))
+suppressMessages(library(ggmap))
+suppressMessages(library(dplyr))
+suppressMessages(library(tidyr))
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Initializing

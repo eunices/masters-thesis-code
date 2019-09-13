@@ -141,6 +141,7 @@ run_loop <- function() {
             print(paste0(percent , "% completed"))
         }
     }
+    collectors
 
 }
 
@@ -151,7 +152,7 @@ collectors_unique[200]$collector.gender.n[[1]][[1]]
 collectors_unique[200]$info.about.collector.n[[1]][[1]]
 
 if (loop_3 == "Y") {
-    run_loop()
+    collectors <- run_loop()
     collectors <- data.table(collectors %>% separate_rows(idxes))
     collectors <- data.table(collectors %>%
     group_by(collector.of.type.n, full.name.of.collector.n,
@@ -266,7 +267,7 @@ filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 
 dfx2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-if(any(names(dfx1) %in% c('collector.of.type.n_new', 'full.name.of.collector.n_new', 'uncertain_new', 'collector.gender.n_new', 'title.of.collector.n_new'))) >=3) {
+if(any(names(dfx1) %in% c('collector.of.type.n_new', 'full.name.of.collector.n_new', 'uncertain_new', 'collector.gender.n_new', 'title.of.collector.n_new'))) {
     dfx1$collector.of.type.n_new <- NULL
     dfx1$full.name.of.collector.n_new <- NULL
     dfx1$uncertain_new <- NULL
@@ -284,7 +285,7 @@ table(is.na(dfx1$title.of.collector.n))
 
 # logic in having df3.r here is a little odd, as cleaning is cyclical
 # if collector-variable_new exist in the dataframe, then do not run this code
-if(any(names(dfx2) %in% c('collector.of.type.n_new', 'full.name.of.collector.n_new', 'uncertain_new', 'collector.gender.n_new', 'title.of.collector.n_new'))) >=3) {
+if(any(names(dfx2) %in% c('collector.of.type.n_new', 'full.name.of.collector.n_new', 'uncertain_new', 'collector.gender.n_new', 'title.of.collector.n_new'))) {
     dfx2$collector.of.type.n_new <- NULL
     dfx2$full.name.of.collector.n_new <- NULL
     dfx2$uncertain_new <- NULL
