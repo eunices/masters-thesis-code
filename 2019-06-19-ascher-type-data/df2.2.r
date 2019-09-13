@@ -120,6 +120,7 @@ describers_idx$alive <- "N"
 describers_idx[grepl("\\[alive in 2019\\]", describers_idx$dod.describer.original)]$alive <- "Y"
 
 # Single row modifications
+describers_idx[full.name.of.describer.n=="Bronisl[slash]aw"]$full.name.of.describer.n <- "Bronisl[slash]aw Debski"
 describers_idx[full.name.of.describer.n=="Haroldo Toro [Guttierez]"]$dob.describer.n <- ""
 describers_idx[full.name.of.describer.n=="Suzanne Willington Tubby Batra"]$dob.describer.n <- "1937"
 dob = describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dod.describer.n"]

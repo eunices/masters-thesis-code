@@ -435,9 +435,11 @@ df$idx <- as.numeric(df$idx)
 search$idx <- as.numeric(search$idx)
 df_merged <- merge(df, search, by="idx", all.x=T, all.y=T, suffix=c('', '_MERGED'))
 df_merged$lat_MERGED <- as.numeric(df_merged$lat_MERGED)
+
+
 df_merged[!is.na(df_merged$lat_MERGED)]$flag <- df_merged[!is.na(df_merged$lat_MERGED)]$flag_MERGED
-df_merged[!is.na(df_merged$lat_MERGED)]$lat <- df_merged[!is.na(df_merged$lat_MERGED)]$lat_MERGED
-df_merged[!is.na(df_merged$lat_MERGED)]$lon <- df_merged[!is.na(df_merged$lat_MERGED)]$lon_MERGED
+df_merged[!is.na(df_merged$lat_MERGED)]$lat <- as.character(df_merged[!is.na(df_merged$lat_MERGED)]$lat_MERGED)
+df_merged[!is.na(df_merged$lat_MERGED)]$lon <- as.character(df_merged[!is.na(df_merged$lat_MERGED)]$lon_MERGED)
 df_merged[!is.na(df_merged$lat_MERGED)]$type.state <- df_merged[!is.na(df_merged$lat_MERGED)]$type.state_MERGED
 df_merged[!is.na(df_merged$lat_MERGED)]$type.country <- df_merged[!is.na(df_merged$lat_MERGED)]$type.country_MERGED
 
@@ -453,8 +455,8 @@ modify_lat_lon_idxs <- checks[comment == "Geocode modified"]$idx
 for (i in length(modify_lat_lon_idxs)) {
     id <- modify_lat_lon_idxs[i]
     print(paste0("Modifying idx ", id))
-    df[idx==id]$lat <- checks[idx==id]$lat
-    df[idx==id]$lon <- checks[idx==id]$lon
+    df[idx==id]$lat <- as.character(checks[idx==id]$lat)
+    df[idx==id]$lon <- as.character(checks[idx==id]$lon)
 }
 
 # check1 <- 
@@ -529,12 +531,12 @@ df$date.of.type.mm <-
     gsub(".*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec).*", "\\1", df$date.of.type)
 df[!df$date.of.type.mm %in% c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),]$date.of.type.mm <- ""
 
-df$date.of.type.yyyy <- as.numeric(sub('.*(\\d{4}).*', '\\1', df$date.of.type))
+df$date.of.type.yyyy <- sub('.*(\\d{4}).*', '\\1', df$date.of.type)
 
 paste_nine = function(numeric){
     char <- strsplit(as.character(numeric), "")[[1]]
     word <- paste0(char[1], "9", char[3], char[4])
-    as.numeric(word)
+    as.character(word)
 }
 
 df[df$date.of.type.yyyy<1200]$date.of.type.yyyy[] <- 

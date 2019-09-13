@@ -7,3 +7,7 @@
 2. Figure out biogeographical regions
 3. Data exploration for Ascher's type database
 4. Create pipeline for pulling data in analyses 1 and 2
+
+## Read up on
+
+[Testing](https://towardsdatascience.com/unit-testing-in-r-68ab9cc8d211)

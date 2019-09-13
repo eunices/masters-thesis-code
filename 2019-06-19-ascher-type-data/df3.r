@@ -16,8 +16,8 @@ source('2019-06-19-ascher-type-data/init.r')
 # Parameters
 #############
 
-# loop_3 <- "Y"
-loop_3 <- "N"
+loop_3 <- "Y"
+# loop_3 <- "N"
 
 # Scripts
 #############
@@ -136,7 +136,10 @@ run_loop <- function() {
                             info.about.collector.n=NA)
             collectors <- rbind(collectors, to_merge)
         }
-        print(paste0("Row ", i , " completed of ", n_rows))
+        percent <- round(i/n_rows*100, 2)
+        if(percent %% 25 == 0) {
+            print(paste0(percent , "% completed"))
+        }
     }
 
 }
@@ -233,7 +236,6 @@ print(paste0("There are ", sum(collectors_grouped2$N), " uncertain rows."))
 
 write.csv(collectors_grouped[order(uncertain, -N, full.name.of.collector.n)], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_3.0-collectors.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - merge back into main dataframe
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -256,11 +258,11 @@ collectors2 <- collectors[order(uncertain)] %>%
     )
 table(duplicated(collectors2$idxes))
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-col.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.2-clean-auth-full-name.csv")
 dfx1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx1[, names(dfx1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.2-clean-auth-full-name.csv")
 dfx2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -274,9 +276,12 @@ table(is.na(dfx1$uncertain))
 table(is.na(dfx1$collector.gender.n))
 table(is.na(dfx1$title.of.collector.n))
 
-
-dfx2 <- merge(dfx2, collectors2, all.x=T, all.y=F, by.x='idx', by.y='idxes',
+# logic in having df3.r here is a little odd, as cleaning is cyclical
+# if collector-variable_new exist in the dataframe, then do not run this code
+if(!sum(grepl("_new", names(dfx2))) >=3) {
+    dfx2 <- merge(dfx2, collectors2, all.x=T, all.y=F, by.x='idx', by.y='idxes',
               suffixes=c("", "_new"))
+}
 
 table(is.na(dfx2$collector.of.type.n))
 table(is.na(dfx2$full.name.of.collector.n))

@@ -4,6 +4,8 @@
 # TODO: author - dominant countries of work
 # TODO: author - count number of publications per author 
 
+# TODO: clear up error messages in clean.r
+
 
 print("######################################################")
 print("######################################################")
@@ -178,6 +180,22 @@ dfx2[idx=="32004", ]$author <- 'White [J. R.]'
 dfx2[idx=="32030", ]$author <- 'White [J. R.]'
 dfx2[idx=="33101", ]$author <- 'Cockerell'
 
+# dfx1$volume <- paste0("'", gsub("^'", "", gsub("^'", "", dfx1$volume)))
+# dfx1$issue <- paste0("'", gsub("^'", "", gsub("^'", "", dfx1$issue)))
+# dfx1$page.numbers.publication <- paste0("'", gsub("^'", "", gsub("^'", "", dfx1$page.numbers.publication)))
+
+# dfx1[volume=="'"]$volume <- ""
+# dfx1[issue=="'"]$volume <- ""
+# dfx1[page.numbers.publication=="'"]$volume <- ""
+
+# dfx2$volume <- paste0("'", gsub("^'", "", gsub("^'", "", dfx2$volume)))
+# dfx2$issue <- paste0("'", gsub("^'", "", gsub("^'", "", dfx2$issue)))
+# dfx2$page.numbers.publication <- paste0("'", gsub("^'", "", gsub("^'", "", dfx2$page.numbers.publication)))
+
+# dfx2[volume=="'"]$volume <- ""
+# dfx2[issue=="'"]$volume <- ""
+# dfx2[page.numbers.publication=="'"]$volume <- ""
+
 write.csv(dfx1, 
         paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.1-clean-journals_species.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
@@ -217,10 +235,16 @@ dfx1$full.name.of.describer_new <- NULL
 dfx1[idx==14019]$author = "Sakagami and Ebmer"
 dfx1[idx==14019]$full.name.of.describer = "Andreas Werner Ebmer; Yasuo Maeta"
 dfx1[idx==15197]$author = "Astafurova and Proshchalykin"
-dfx1[idx==15197]$full.name.of.describer = "Yulia V. Astafurova; Maxim Yurievich Proshchalykin"
+dfx1[idx==16275]$full.name.of.describer = "Victor Hugo Gonzalez [Betancourt]; Michael Scott Engel; Terry L. Griswold"
+dfx1[idx %in% c(18134, 16712)]$full.name.of.describer = "Ze-qing Niu; Yan-ru Wu; Chao-dong Zhu"
+dfx1[idx==18134]$species = "guangxiense"
+dfx1[idx==3839]$full.name.of.describer = "Wang S.-f."
+dfx1[idx==7360]$full.name.of.describer = "Maximilian Schwarz; Fritz Josef [Friedrich] Gusenleitner; Karl Mazzucco"
+
 
 dfx2[idx==24043]$date.n = "1900"
 dfx2[idx==24113]$date.n = "1900"
+
 
 dfx2 <- merge(dfx2, auth, by="author", all.x=T, all.y=F, suffixes=c("", "_new"))
 table(is.na(dfx2$full.name.of.describer_new))

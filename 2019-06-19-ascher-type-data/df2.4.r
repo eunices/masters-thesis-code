@@ -84,6 +84,10 @@ describers_a[full.name.of.describer.n=="Johan Christian Fabricius", "max"] = "18
 describers_a[full.name.of.describer.n=="Michael Kuhlmann", "min"] = "1998"
 describers_a[full.name.of.describer.n=="Eduardo Andrade Botelho de Almeida", "min"] = "2008" # should be modified in original file
 describers_a[full.name.of.describer.n=="Michael Scott Engel", "min"] = "1995" # should be modified in original file
+describer_a[full.name.of.describer.n=="[Carl Eduard] Adolph Gerstaecker", "full.name.of.describer.n"] == "[Carl Eduard] Adolph Gerstäcker"
+describer_a[full.name.of.describer.n=="Francisco Javier Ortiz-Sanchez", "full.name.of.describer.n"] == "Francisco Javier Ortiz-Sánche"
+
+
 
 # Synonyms
 describers_s <- describers_all[idxes %in% synonym_idxes]
@@ -251,7 +255,11 @@ describers_final <- merge(describers_final, describers.res.cty.first, by='idx_au
 
 ln <- fread(paste0(dir, "clean/last_name.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 ln[, names(ln) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
-ln <- ln[change != "",][, c("full.name.of.describer.n", "last.name")]
+ln <- ln[, c("full.name.of.describer.n", "last.name", "last.name.no.initials")]
+# ln$last.name.no.initials <- gsub(" ", "", gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", ln$last.name)) 
+
+# write.csv(ln,
+#           paste0(dir, "clean/last_name2.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 describers_final <- merge(describers_final, ln, by="full.name.of.describer.n", all.x=T, all.y=F)
 setcolorder(describers_final, c(2, 1, 3:length(names(describers_final))))
