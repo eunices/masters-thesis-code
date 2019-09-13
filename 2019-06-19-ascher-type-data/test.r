@@ -110,7 +110,7 @@ format_short <- function(x){
         string <- auths[1]
         for (i in 2:(len-1)) {
             string <- paste0(string, ", ", auths[i])
-        }
+        }#
         string <- paste0(string, ", and ", auths[len])
     }
     string
