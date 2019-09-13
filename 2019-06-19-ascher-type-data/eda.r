@@ -5,13 +5,6 @@ source('2019-06-19-ascher-type-data/main.r')
 library(ggplot2)
 library(grid); library(gridExtra)
 
-# Main dataframes to be formed
-# species level
-species_cols <- c("")
-# author level
-# publication level 
-
-
 # Exploratory analysis
 #############
 
