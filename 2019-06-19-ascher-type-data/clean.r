@@ -1,3 +1,11 @@
+print("######################################################")
+print("######################################################")
+print("######################################################")
+print(paste0(Sys.time(), " --- starting clean.r"))
+print("######################################################")
+print("######################################################")
+print("######################################################")
+
 source('2019-06-19-ascher-type-data/init.R')
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -24,7 +32,7 @@ if (any(grepl("full.name.a.e", names(df)))) {
     names(df)[which(grepl("full.name.a.e", names(df)))] <- 'full.name' # renaming this long name
 }
 
-print(paste0(Sys.time(), " --- Dataset read is ", dim(df)[1], " rows and ", dim(df)[2], " cols"))
+print(paste0(Sys.time(), " --- dataset read is ", dim(df)[1], " rows and ", dim(df)[2], " cols"))
 
 # initialize flag column
 df$flag <- '' 
@@ -36,8 +44,8 @@ df_original_cols <- names(df) # should be 94 cols
 df[] <- lapply(df, gsub, pattern='[\r\n]', replacement=' ')
 
 # check number of NA
-na_count <- data.frame(names=names(df), N=sapply(df, function(x) sum(length(which(is.na(x))))), row.names=NULL)
-print(paste0(Sys.time(), " --- Number of NA")); print(na_count[order(-na_count$N), c("names", "N")][1:10,])
+# na_count <- data.frame(names=names(df), N=sapply(df, function(x) sum(length(which(is.na(x))))), row.names=NULL)
+# print(paste0(Sys.time(), " --- Number of NA")); print(na_count[order(-na_count$N), c("names", "N")][1:10,])
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - geocoding + quick lat lon checks
@@ -426,6 +434,7 @@ search <- read.csv(paste0(dir, "clean/geocoded2.csv"), encoding="UTF-8", strings
 df$idx <- as.numeric(df$idx)
 search$idx <- as.numeric(search$idx)
 df_merged <- merge(df, search, by="idx", all.x=T, all.y=T, suffix=c('', '_MERGED'))
+df_merged$lat_MERGED <- as.numeric(df_merged$lat_MERGED)
 df_merged[!is.na(df_merged$lat_MERGED)]$flag <- df_merged[!is.na(df_merged$lat_MERGED)]$flag_MERGED
 df_merged[!is.na(df_merged$lat_MERGED)]$lat <- df_merged[!is.na(df_merged$lat_MERGED)]$lat_MERGED
 df_merged[!is.na(df_merged$lat_MERGED)]$lon <- df_merged[!is.na(df_merged$lat_MERGED)]$lon_MERGED
@@ -653,10 +662,34 @@ df_s$duplicated.row <- duplicated(gs)
 df_s <- df_s[duplicated.row == "FALSE"][order(as.numeric(idx))]
 
 # genus/ species combination
-df_s$correct_synonym <- gsub('=', '', df_s$taxonomicnotes.subspecies.synonyms.etc)
-df_s[status=="Valid subspecies"]$correct_synonym <- gsub("([A-Za-z]+).*", "\\1", df_s[status=="Valid subspecies"]$correct_synonym)
+# df_s$correct_synonym <- gsub('=', '', df_s$taxonomicnotes.subspecies.synonyms.etc)
+# df_s[status=="Valid subspecies"]$correct_synonym <- gsub("([A-Za-z]+).*", "\\1", df_s[status=="Valid subspecies"]$correct_synonym)
 
-# remove irrelevant columns
+# clean genus and species relationships
+filepath <- paste0(dir, "clean/idx-idx_original.csv")
+idxdf <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+idxdf[, names(idxdf) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+
+idxdf$correct_synonym <- gsub('=', '', idxdf$taxonomic_notes)
+idxdf[status=="Valid subspecies"]$correct_synonym <- gsub("([A-Za-z]+).*", "\\1", idxdf[status=="Valid subspecies"]$correct_synonym)
+idxdf$taxonomic_notes <- NULL
+
+# max of idx that is green for each row
+idxdf$idx_original <- as.numeric(idxdf$idx_original)
+idxdf$idx <- as.numeric(idxdf$idx)
+
+idx_y <- idxdf[colour!="green" | is.na(colour)]
+idx_g <- idxdf[colour=="green"]
+idx2 <- idx_g[idx_y, on = .(idx_original), roll = Inf, rollends=c(T, T)]
+idx2 <- idx2[, c("i.idx", "genus", "species")]
+names(idx2) <- c("idx", "genus_new", "correct_synonym")
+
+df_s$idx <- as.numeric(df_s$idx)
+idx2$idx <- as.numeric(idx2$idx)
+df_s <- merge(df_s, idx2, by='idx', all.x=T, all.y=F)
+
+df_s[genus != genus_new]$genus <- df_s[genus != genus_new]$genus_new
+df_s$genus_new <- NULL
 df_s$taxonomicnotes.subspecies.synonyms.etc <- NULL
 
 write.csv(df_s[order(idx)], 
@@ -667,7 +700,7 @@ write.csv(df_s[order(idx)],
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- count synonyms per valid species"))
 
-df_nv <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3-useful-col.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+df_nv <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 
 filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv")
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')

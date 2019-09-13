@@ -1,12 +1,12 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - create collector and describer raw dataset
+# Section - create describer raw dataset
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- collector and describer raw dataset"))
+print(paste0(Sys.time(), " --- describer raw dataset"))
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3-useful-col.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv")
 df_s <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-col.csv")
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -73,7 +73,8 @@ run_loop <- function() {
                             describer.gender.n=character(), dob.describer.n=character(),
                             dod.describer.n=character(), origin.country.describer.n=character(),
                             residence.country.describer.n=character(), institution.of.describer.n=character(), author.order=integer())
-    for (i in 1:dim(describers_info)[1]) {
+    n_rows <- dim(describers_info)[1]
+    for (i in 1:nrows) {
     # for (i in 1:2) {
         idx_row <- describers_info[i]$idx
         describer_row <- describers_info[i]$full.name.of.describer.n[[1]][[1]]
@@ -124,7 +125,7 @@ run_loop <- function() {
                             author.order=NA)
             describers <- rbind(describers, to_merge)
         }
-        print(paste0("Row ", i , " completed for ", idx_row))
+        print(paste0("Row ", i , " completed of ", n_rows))
     }
 
     write.csv(describers, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_2.0-denormalised.csv"), na='', row.names=F, fileEncoding="UTF-8")

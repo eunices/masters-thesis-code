@@ -1,3 +1,11 @@
+print("######################################################")
+print("######################################################")
+print("######################################################")
+print(paste0(Sys.time(), " --- starting df3.r"))
+print("######################################################")
+print("######################################################")
+print("######################################################")
+
 source('2019-06-19-ascher-type-data/init.r')
 
 # Libraries
@@ -8,7 +16,8 @@ source('2019-06-19-ascher-type-data/init.r')
 # Parameters
 #############
 
-loop_3 <- "Y"
+# loop_3 <- "Y"
+loop_3 <- "N"
 
 # Scripts
 #############
@@ -18,11 +27,11 @@ loop_3 <- "Y"
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- collector raw dataset"))
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3-useful-col.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv")
 df_s <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df_s[, names(df_s) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv")
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -42,7 +51,7 @@ write.csv(collectors_info[order(full.name.of.collector)],
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- denormalise collector dataset"))
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_1.0-all.csv")
 collectors_info <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 collectors_info[, names(collectors_info) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -82,7 +91,8 @@ run_loop <- function() {
                             info.about.collector.n=character()
                             )
 
-    for (i in 1:dim(collectors_unique)[1]) {
+    n_rows = dim(collectors_unique)[1]
+    for (i in 1:n_rows) {
     # for (i in 1:2) {
         idx_row <- collectors_unique[i]$idxes
         collector_row <- collectors_unique[i]$collector.of.type.n[[1]][[1]]
@@ -126,7 +136,7 @@ run_loop <- function() {
                             info.about.collector.n=NA)
             collectors <- rbind(collectors, to_merge)
         }
-        print(paste0("Row ", i , " completed of ", dim(collectors_unique)[1]))
+        print(paste0("Row ", i , " completed of ", n_rows))
     }
 
 }
@@ -146,11 +156,12 @@ if (loop_3 == "Y") {
   summarise(idxes=paste0(idxes,collapse='; ')))
 #   summarise(idxes=paste0(idxes,collapse='; ')))
     collectors$idxes <- gsub("; $", "", collectors$idxes)
+    
+    write.csv(collectors[order(full.name.of.collector.n)], 
+          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_2.0-denormalised.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
 }
 
-
-write.csv(collectors[order(full.name.of.collector.n)], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_2.0-denormalised.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # these excludes rows with no collector information
 
@@ -245,11 +256,11 @@ collectors2 <- collectors[order(uncertain)] %>%
     )
 table(duplicated(collectors2$idxes))
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.2-clean-auth-full-name.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-col.csv")
 dfx1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx1[, names(dfx1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.2-clean-auth-full-name.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv")
 dfx2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 

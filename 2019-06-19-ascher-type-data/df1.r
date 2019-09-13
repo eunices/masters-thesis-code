@@ -1,10 +1,17 @@
-# TODO: create dataframes that are persistent and make checks
-
+# TODO: make checks to decide on which columns for persistent dataset
+# TODO: shift derived variables/dataframes to a different script?
 
 # TODO: author - dominant countries of work
 # TODO: author - count number of publications per author 
 
 
+print("######################################################")
+print("######################################################")
+print("######################################################")
+print(paste0(Sys.time(), " --- starting df1.r"))
+print("######################################################")
+print("######################################################")
+print("######################################################")
 
 source('2019-06-19-ascher-type-data/init.r')
 
@@ -25,7 +32,7 @@ source('2019-06-19-ascher-type-data/init.r')
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - clean  journal names
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- clean  journal names"))
+print(paste0(Sys.time(), " --- clean journal names"))
 
 filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-synonyms.csv")
 dfx1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
@@ -94,10 +101,6 @@ dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))]
 # write.csv(auth, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean4.csv"), na='', row.names=F, fileEncoding="UTF-8")
 # # = old name journal_details*.csv
 
-
-
-
-
 filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv")
 auth <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 auth[, names(auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
@@ -163,6 +166,18 @@ dfx2[!is.na(city.of.publication_new)]$city.of.publication <- dfx2[!is.na(city.of
 dfx2[!is.na(paper.authors_new)]$paper.authors <- dfx2[!is.na(paper.authors_new)]$paper.authors_new; dfx2$paper.authors_new <- NULL
 dim(dfx2)
 
+dfx2[idx=="21229", ]$author <- 'Linnaeus'
+dfx2[idx=="22983", ]$author <- 'Verhoeff [C.]'
+dfx2[idx=="23832", ]$author <- 'Evans [W.]'
+dfx2[idx=="23865", ]$author <- 'White [A.]'
+dfx2[idx=="24018", ]$author <- 'Fox [W. J.]'
+dfx2[idx=="27625", ]$author <- 'Smith [F.]'
+dfx2[idx=="30048", ]$author <- 'Cockerell and Porter'
+dfx2[idx=="31671", ]$author <- 'Linnaeus'
+dfx2[idx=="32004", ]$author <- 'White [J. R.]'
+dfx2[idx=="32030", ]$author <- 'White [J. R.]'
+dfx2[idx=="33101", ]$author <- 'Cockerell'
+
 write.csv(dfx1, 
         paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.1-clean-journals_species.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
@@ -204,6 +219,8 @@ dfx1[idx==14019]$full.name.of.describer = "Andreas Werner Ebmer; Yasuo Maeta"
 dfx1[idx==15197]$author = "Astafurova and Proshchalykin"
 dfx1[idx==15197]$full.name.of.describer = "Yulia V. Astafurova; Maxim Yurievich Proshchalykin"
 
+dfx2[idx==24043]$date.n = "1900"
+dfx2[idx==24113]$date.n = "1900"
 
 dfx2 <- merge(dfx2, auth, by="author", all.x=T, all.y=F, suffixes=c("", "_new"))
 table(is.na(dfx2$full.name.of.describer_new))
@@ -225,15 +242,15 @@ write.csv(dfx2,
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- count number of species in publication"))
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv")
 auth <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 auth[, names(auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.1-clean-journals_species.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.2-clean-auth-full-name.csv")
 dfx1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')[,c("idx", "status")]
 dfx1$idx <- as.numeric(dfx1$idx)
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.1-clean-journals_species.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.2-clean-auth-full-name.csv")
 dfx2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')[,c("idx", "status")]
 dfx2$idx <- as.numeric(dfx2$idx)
 
@@ -245,6 +262,7 @@ min3 <- min(dfx2[status=="Infrasubspecific"]$idx); max3 <- max(dfx2[status=="Inf
 auth2 <- data.table(auth %>% separate_rows(idxes, sep="; "))
 dim(auth2); auth2 <- unique(auth2); dim(auth2)
 
+# TODO: move this elsewhere as it's derived
 summarise <- auth2[, list(idxes=paste0(idxes,collapse='; '), 
             N_species=length(unique(idxes)), 
             N_species_valid=sum(unique(idxes) %in% 1:max0), 

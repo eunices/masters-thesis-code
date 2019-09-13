@@ -10,8 +10,8 @@ describers[, names(describers) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', 
 describers <- describers %>% separate_rows(idxes, idxes_author.order)
 
 # Joining with dates
-dfx1 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.0-clean-journals.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-dfx2 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.0-clean-journals.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+dfx1 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-col.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+dfx2 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx <- rbind(dfx1[,c("idx", "date.n")], dfx2[,c("idx", "date.n")])
 dfx <- dfx[!duplicated(idx)]
 
