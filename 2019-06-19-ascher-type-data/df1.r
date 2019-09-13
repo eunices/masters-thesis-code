@@ -256,8 +256,9 @@ dfx1[idx==18134]$species = "guangxiense"
 dfx1[idx==3839]$full.name.of.describer = "Wang S.-f."
 dfx1[idx==7360]$full.name.of.describer = "Maximilian Schwarz; Fritz Josef [Friedrich] Gusenleitner; Karl Mazzucco"
 dfx1[idx==7360]$full.name.of.describer = "Maximilian Schwarz; Fritz Josef [Friedrich] Gusenleitner; Karl Mazzucco"
-dfx1[idx==14019]$full.name.of.describer = "Shôichi F. Sakagami; Andreas Werner Ebmer"
+dfx1[idx==14019]$full.name.of.describer = auth[author=="Sakagami and Ebmer"]$full.name.of.describer
 dfx1[idx==14306]$full.name.of.describer = "Rui Zhang; Ze-qing Niu; Qiang Li"
+dfx1[idx==1790]$full.name.of.describer = "Sébastien Patiny; Francisco Javier Ortiz-Sánchez; Denis Michez"
 
 
 dfx2[idx==24043]$date.n = "1900"
