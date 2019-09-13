@@ -539,8 +539,8 @@ paste_nine = function(numeric){
     as.character(word)
 }
 
-df[df$date.of.type.yyyy<1200]$date.of.type.yyyy[] <- 
-    lapply(df[df$date.of.type.yyyy<1200]$date.of.type.yyyy, function(x) paste_nine(x)[1])
+df[as.numeric(df$date.of.type.yyyy)<1200]$date.of.type.yyyy[] <- 
+    lapply(df[as.numeric(df$date.of.type.yyyy)<1200]$date.of.type.yyyy, function(x) paste_nine(x)[1])
 
 # checks
 # date_cols <- names(df)[grepl("date.of.type", names(df))]

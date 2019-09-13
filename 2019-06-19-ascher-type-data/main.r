@@ -1,7 +1,5 @@
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("WELCOME TO CLEANING SCRIPTS FOR BEE TYPE DATA")
-print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 # Scripts
@@ -14,3 +12,7 @@ source('2019-06-19-ascher-type-data/df2.r')
 source('2019-06-19-ascher-type-data/df3.r')
 source('2019-06-19-ascher-type-data/df4.r')
 print(proc.time()-start)
+
+print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+print("BEE TYPE DATA CLEANING COMPLETE.")
+print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
