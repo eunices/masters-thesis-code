@@ -531,7 +531,7 @@ df$date.of.type.mm <-
     gsub(".*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec).*", "\\1", df$date.of.type)
 df[!df$date.of.type.mm %in% c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),]$date.of.type.mm <- ""
 
-df$date.of.type.yyyy <- sub('.*(\\d{4}).*', '\\1', df$date.of.type)
+df$date.of.type.yyyy <- as.character(as.numeric(sub('.*(\\d{4}).*', '\\1', df$date.of.type)))
 
 paste_nine = function(numeric){
     char <- strsplit(as.character(numeric), "")[[1]]
@@ -539,8 +539,8 @@ paste_nine = function(numeric){
     as.character(word)
 }
 
-df[as.numeric(df$date.of.type.yyyy)<1200]$date.of.type.yyyy[] <- 
-    lapply(df[as.numeric(df$date.of.type.yyyy)<1200]$date.of.type.yyyy, function(x) paste_nine(x)[1])
+df[as.numeric(df$date.of.type.yyyy) <1200]$date.of.type.yyyy[] <- 
+    lapply(df[as.numeric(df$date.of.type.yyyy) < 1200]$date.of.type.yyyy, function(x) paste_nine(x)[1])
 
 # checks
 # date_cols <- names(df)[grepl("date.of.type", names(df))]
@@ -549,7 +549,7 @@ df[as.numeric(df$date.of.type.yyyy)<1200]$date.of.type.yyyy[] <-
 # tmp$check2 <- ifelse(!is.na(tmp$date.of.type.mm) & tmp$date.of.type.mm %in% c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), 1, 0)
 
 # date differences
-df$years.lag <- df$date.n - df$date.of.type.yyyy
+df$years.lag <- as.numeric(df$date.n) - as.numeric(df$date.of.type.yyyy)
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - quick fixes

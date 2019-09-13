@@ -26,10 +26,10 @@ register_google(key = geocode_api)
 # shp2$GID_NAME_FINAL <- ifelse(is.na(shp2$NAME_2), as.character(shp2$NAME_1), as.character(shp2$NAME_2))
 # shp2 <- sf::st_write(shp2, 'data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo2.shp', driver="ESRI Shapefile", delete_layer=T)
 if(!exists("shp")) {
-    shp <- sf::st_read('data/geo/1_separate/gadm/shp_all_levels/gadm36_0.shp')
+    shp <- sf::st_read('data/geo/1_separate/gadm/shp_all_levels/gadm36_0.shp', quiet=T)
 }
 if(!exists("shp2")) {
-    shp2 <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo2.shp')
+    shp2 <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo2.shp', quiet=T)
 }
 if(!exists("shp3")){
     shp3 <- shp2
@@ -37,7 +37,7 @@ if(!exists("shp3")){
     write.csv(shp3, 'data/lookup/2019-07-12-gadm-countries-biogeo.csv')
 }
 if(!exists("shp4")){
-    shp4 <- sf::st_read('data/geo_processed/gadm/gadm36_0_utf8_continents.shp')
+    shp4 <- sf::st_read('data/geo_processed/gadm/gadm36_0_utf8_continents.shp', quiet=T)
 }
 if(!exists("shp5")){
     shp5 <- shp4
@@ -51,7 +51,7 @@ if(!exists("shp5")){
 # sf::st_write(shp2, 'data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_holt2.shp', driver="ESRI Shapefile", delete_layer=T)
 
 if(!exists("shp6")) {
-    shp6 <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_holt2.shp')
+    shp6 <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_holt2.shp', quiet=T)
 }
 if(!exists("shp7")){
     shp7 <- shp6
