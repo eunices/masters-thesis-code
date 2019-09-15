@@ -110,7 +110,7 @@ format_short <- function(x){
         string <- auths[1]
         for (i in 2:(len-1)) {
             string <- paste0(string, ", ", auths[i])
-        }#
+        }
         string <- paste0(string, ", and ", auths[len])
     }
     string
@@ -132,11 +132,26 @@ table(df1$author == df1$authors_redone)
 test <- df1[author != authors_redone, c('idx', 'full.name.of.describer', 'author', 'authors_redone')]
 write.csv(test, 'tmp/test.csv')
 
+
+
+
+authors_redone <- lapply(df2$full.name.of.describer, format_short)
+authors_redone <- as.data.frame(do.call(rbind, authors_redone), stringAsFactors=F)
+names(authors_redone) <- "x"
+authors_redone$x <- as.character(authors_redone$x)
+
+df2$authors_redone <- authors_redone$x
+table(df2$author == df2$authors_redone)
+
+test <- df2[author != authors_redone, c('idx', 'full.name.of.describer', 'author', 'authors_redone')]
+write.csv(test, 'tmp/test.csv')
+
+
 df2[idx %in% c(26814, 29874), c('idx', 'author')]
+
 # collectors and (species + invalid_species)
 
 
 # variable checks
-
 df1[host.plant.of.type != "",.(.N), by=.(host.plant.of.type)][order(-N)][,sum(N)]
 df2[host.plant.of.type != "",.(.N), by=.(host.plant.of.type)][order(-N)]

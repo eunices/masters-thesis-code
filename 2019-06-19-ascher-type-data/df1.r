@@ -1,10 +1,8 @@
-# TODO: make checks to decide on which columns for persistent dataset
+# TODO: make checks to decide on which columns for persistent dataset and make persistent dataset
 # TODO: shift derived variables/dataframes to a different script?
 
 # TODO: author - dominant countries of work
 # TODO: author - count number of publications per author 
-
-# TODO: clear up error messages in clean.r
 
 
 print("######################################################")
@@ -260,10 +258,49 @@ dfx1[idx==14019]$full.name.of.describer = auth[author=="Sakagami and Ebmer"]$ful
 dfx1[idx==14306]$full.name.of.describer = "Rui Zhang; Ze-qing Niu; Qiang Li"
 dfx1[idx==1790]$full.name.of.describer = "Sébastien Patiny; Francisco Javier Ortiz-Sánchez; Denis Michez"
 
-
 dfx2[idx==24043]$date.n = "1900"
 dfx2[idx==24113]$date.n = "1900"
+dfx2[idx==22919]$full.name.of.describer = "Joseph Bequaert"
+dfx2[idx %in% c(29157, 29158)]$full.name.of.describer = "Bronislaw Debski"
+dfx2[idx == 30619]$full.name.of.describer = "James R. Baker"
+dfx2[idx == 22956]$full.name.of.describer = "G. Trautmann; Woldemar Trautmann"
 
+# Clean short names from full names
+filepath <- paste0(dir, "clean/last_name.csv")
+ln <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
+fn <- ln$last.name
+names(fn) <- ln$full.name.of.describer.n
+
+format_short <- function(x){
+    auths <- strsplit(x, split="; ")[[1]]
+    len <- length(auths)
+    auths <- fn[auths]
+
+    if(len==1) {
+        string <- auths
+    } else if(len==2) {
+        string <- paste0(auths[1], " and ", auths[2])
+    } else if(len>=3) {
+        string <- auths[1]
+        for (i in 2:(len-1)) {
+            string <- paste0(string, ", ", auths[i])
+        }
+        string <- paste0(string, ", and ", auths[len])
+    }
+    string
+}
+
+authors_redone <- lapply(dfx1$full.name.of.describer, format_short)
+authors_redone <- as.data.frame(do.call(rbind, authors_redone), stringAsFactors=F)
+names(authors_redone) <- "x"
+authors_redone$x <- as.character(authors_redone$x)
+dfx1$author <- authors_redone$x
+
+authors_redone <- lapply(dfx2$full.name.of.describer, format_short)
+authors_redone <- as.data.frame(do.call(rbind, authors_redone), stringAsFactors=F)
+names(authors_redone) <- "x"
+authors_redone$x <- as.character(authors_redone$x)
+dfx2$author <- authors_redone$x
 
 
 write.csv(dfx1, 

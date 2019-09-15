@@ -32,7 +32,7 @@ if (any(grepl("full.name.a.e", names(df)))) {
     names(df)[which(grepl("full.name.a.e", names(df)))] <- 'full.name' # renaming this long name
 }
 
-print(paste0(Sys.time(), " --- dataset read is ", dim(df)[1], " rows and ", dim(df)[2], " cols"))
+print(paste0("Dataset read is ", dim(df)[1], " rows and ", dim(df)[2], " cols."))
 
 # initialize flag column
 df$flag <- '' 
