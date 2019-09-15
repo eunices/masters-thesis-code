@@ -1,4 +1,4 @@
-# TODO: make checks to decide on which columns for persistent dataset and make persistent dataset
+# TODO: ensure that all
 # TODO: shift derived variables/dataframes to a different script?
 
 # TODO: author - dominant countries of work

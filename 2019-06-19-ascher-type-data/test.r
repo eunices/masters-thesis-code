@@ -6,7 +6,7 @@
 # Section - read all "source" dataframes
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- read all source dataframes"))
-source('2019-06-19-ascher-type-data/read_final_df.r')
+source('2019-06-19-ascher-type-data/test-read-data.r')
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - checks
@@ -131,9 +131,7 @@ table(df1$author == df1$authors_redone)
 
 test <- df1[author != authors_redone, c('idx', 'full.name.of.describer', 'author', 'authors_redone')]
 write.csv(test, 'tmp/test.csv')
-
-
-
+df1$authors_redone <- NULL
 
 authors_redone <- lapply(df2$full.name.of.describer, format_short)
 authors_redone <- as.data.frame(do.call(rbind, authors_redone), stringAsFactors=F)
@@ -142,14 +140,45 @@ authors_redone$x <- as.character(authors_redone$x)
 
 df2$authors_redone <- authors_redone$x
 table(df2$author == df2$authors_redone)
+df2$authors_redone <- NULL
 
 test <- df2[author != authors_redone, c('idx', 'full.name.of.describer', 'author', 'authors_redone')]
 write.csv(test, 'tmp/test.csv')
 
-
 df2[idx %in% c(26814, 29874), c('idx', 'author')]
 
 # collectors and (species + invalid_species)
+colls <- coll %>% separate_rows(idxes, sep="; ")
+colls <- colls %>% 
+    group_by(idxes) %>%
+    summarise(collector.of.type.n = paste0(collector.of.type.n, collapse="; "),
+              full.name.of.collector.n = paste0(full.name.of.collector.n, collapse="; "),
+              uncertain = paste0(uncertain, collapse="; "),
+              collector.gender.n = paste0(collector.gender.n, collapse="; "),
+              title.of.collector.n = paste0(title.of.collector.n, collapse="; ")
+              )
+
+colls$idxes <- as.numeric(colls$idxes)
+df1_coll <- merge(df1, colls, by.x="idx", by.y="idxes", all.x=T, all.y=F, 
+                  suffixes=c("", "2"))
+
+table(df1_coll$collector.of.type.n == df1_coll$collector.of.type.n2)
+table(df1_coll$full.name.of.collector.n == df1_coll$full.name.of.collector.n2)
+table(df1_coll$uncertain == df1_coll$uncertain2)
+table(df1_coll$collector.gender.n == df1_coll$collector.gender.n2)
+table(df1_coll$title.of.collector.n == df1_coll$title.of.collector.n)
+
+colls$idxes <- as.character(colls$idxes)
+df2_coll <- merge(df2, colls, by.x="idx", by.y="idxes", all.x=T, all.y=F, 
+                  suffixes=c("", "2"))
+
+table(df2_coll$collector.of.type.n == df2_coll$collector.of.type.n2)
+table(df2_coll$full.name.of.collector.n == df2_coll$full.name.of.collector.n2)
+table(df2_coll$uncertain == df2_coll$uncertain2)
+table(df2_coll$collector.gender.n == df2_coll$collector.gender.n2)
+table(df2_coll$title.of.collector.n == df2_coll$title.of.collector.n)
+
+
 
 
 # variable checks
