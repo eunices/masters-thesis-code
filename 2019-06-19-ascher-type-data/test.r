@@ -1,6 +1,9 @@
 
-# Purpose of this is to test if foreign keys match
-# Figure out the optimal way to decrease dependencies [change in one place doesn't affect the other]
+# Purpose of this is to test 1) if foreign keys match and 2) if rows are consistent
+
+# Specific aims:
+# - Do not repeat variables between dataframes
+# - Reduce variable dependences, and if there is ensure they are consistent
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - read all "source" dataframes
@@ -13,10 +16,17 @@ source('2019-06-19-ascher-type-data/test-read-data.r')
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- checks"))
 
-# invalid_species and species
-# df1 and df2
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# test 1) if foreign keys match 
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+#############################
+# invalid_species and species - df1 and df2
+#############################
+
 dfx1 <- df1[,c("idx", "genus", "species")]
-dfx2 <- df2[status=="Synonym",c("idx", "genus", "correct_synonym")]
+dfx2 <- df2[status=="Synonym", c("idx", "genus", "correct_synonym")]
 
 df1o[Genus=="Allodape" & Species=="mucronota"]
 
@@ -26,7 +36,7 @@ check1 <- merge(dfx1, dfx2, by.x=c("genus", "species"),
 
 table(is.na(check1$idx.x))
 # table(is.na(check1$idx.y))
-# all synonyms have a valid species
+# TEST THAT all synonyms have a valid species
 
 # publication and (species + invalid_species)
 # pub and (df1 and df2)
@@ -62,8 +72,9 @@ dim(df2_pub[grepl("^'", page.numbers.publication.y) | page.numbers.publication.y
 # df* = author as a key
 # pub = publication info as key without author
 
-# describers and (species + invalid_species)
-# des and (df1 and df2) 
+#############################
+# describers and (species + invalid_species) - des and (df1 and df2) 
+#############################
 
 # test that the describer full names are the same
 dess <- des[,c('full.name.of.describer.n', 'last.name', 'spp_idxes')] %>% separate_rows(spp_idxes)
@@ -146,8 +157,10 @@ test <- df2[author != authors_redone, c('idx', 'full.name.of.describer', 'author
 write.csv(test, 'tmp/test.csv')
 
 df2[idx %in% c(26814, 29874), c('idx', 'author')]
-
+#############################
 # collectors and (species + invalid_species)
+#############################
+
 colls <- coll %>% separate_rows(idxes, sep="; ")
 colls <- colls %>% 
     group_by(idxes) %>%
@@ -178,9 +191,15 @@ table(df2_coll$uncertain == df2_coll$uncertain2)
 table(df2_coll$collector.gender.n == df2_coll$collector.gender.n2)
 table(df2_coll$title.of.collector.n == df2_coll$title.of.collector.n)
 
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# test 2) if variables are consistent within data frame
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# country variables v lat lon
 
 
 
-# variable checks
+
+# NANs 
 df1[host.plant.of.type != "",.(.N), by=.(host.plant.of.type)][order(-N)][,sum(N)]
 df2[host.plant.of.type != "",.(.N), by=.(host.plant.of.type)][order(-N)]

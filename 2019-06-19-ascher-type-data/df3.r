@@ -240,7 +240,7 @@ write.csv(collectors_grouped[order(uncertain, -N, full.name.of.collector.n)], pa
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - merge back into main dataframe
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- clean collector dataset"))
+print(paste0(Sys.time(), " --- merge back into main dataframe"))
 
 filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_3.0-collectors.csv")
 collectors <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')

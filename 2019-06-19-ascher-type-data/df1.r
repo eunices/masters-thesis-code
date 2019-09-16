@@ -1,9 +1,9 @@
-# TODO: ensure that all
+# TODO: ensure that all checks are done
+# TODO: persist dataframes
 # TODO: shift derived variables/dataframes to a different script?
 
 # TODO: author - dominant countries of work
 # TODO: author - count number of publications per author 
-
 
 print("######################################################")
 print("######################################################")
@@ -291,13 +291,13 @@ format_short <- function(x){
 }
 
 authors_redone <- lapply(dfx1$full.name.of.describer, format_short)
-authors_redone <- as.data.frame(do.call(rbind, authors_redone), stringAsFactors=F)
+authors_redone <- as.data.frame(do.call(rbind, authors_redone), stringsAsFactors=F)
 names(authors_redone) <- "x"
 authors_redone$x <- as.character(authors_redone$x)
 dfx1$author <- authors_redone$x
 
 authors_redone <- lapply(dfx2$full.name.of.describer, format_short)
-authors_redone <- as.data.frame(do.call(rbind, authors_redone), stringAsFactors=F)
+authors_redone <- as.data.frame(do.call(rbind, authors_redone), stringsAsFactors=F)
 names(authors_redone) <- "x"
 authors_redone$x <- as.character(authors_redone$x)
 dfx2$author <- authors_redone$x

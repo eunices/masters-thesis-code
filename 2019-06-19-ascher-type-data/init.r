@@ -58,16 +58,19 @@ if(!exists("shp7")){
     st_geometry(shp7) <- NULL
     write.csv(shp7, 'data/lookup/2019-07-15-gadm-countries-biogeo-holt.csv')
 }
-
+if(!exists("shp8")) {
+    shp8 <- sf::st_read('data/geo/1_separate/gadm/shp_all_levels/gadm36_1.shp', quiet=T)
+}
 # Read lookup tables
 lookup.cty <- read.csv('data/lookup/2019-05-29-statoid-country-codes.csv', encoding="UTF-8",
                        stringsAsFactors=F)
 names(lookup.cty)[1] <- "Country"
+
 lookup.pri_div <- read.csv('data/lookup/2019-06-27-gadm-pri-div.csv', encoding="UTF-8",
                            stringsAsFactors=F)
 lookup.pri_div$CTY.STATE.CODE <- paste0(lookup.pri_div$GEC, ".", lookup.pri_div$STATE_CODE)
 
-# Read dataset
+# Read daitaset
 dir <- 'data/2019-05-23-ascher-bee-data/'
 files <- list.files(dir, full.names=T, pattern='csv')
 files

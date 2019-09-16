@@ -496,18 +496,157 @@ for (i in length(modify_lat_lon_idxs)) {
 # df[check1]$lat <- NA
 # df[check1]$lon <- NA
 
-check0 <- df$flag == "" | is.na(df$flag)
-check1 <- df$country == "" | is.na(df$country)
-check2 <- is.na(df$lat) | is.na(df$lon)
-check3 <- df$type.state == "" | is.na(df$type.state)
-check4 <- grepl("CN|AS|BR|CA", df$type.country)
-df[check0&check1&!check2]$flag <- "NO_COUNTRY"
-df[check0&check1&check2&check3]$flag <- "COUNTRY ONLY"
-df[check0&check1&check2&!check3&check4]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_LRG_DIV"
-df[check0&check1&check2&!check3&!check4]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_SML_DIV"
-
 df[idx==16354]$lat <- NA # modify for Kimberly
 df[idx==16354]$lon <- NA
+df[idx==652]$lat <- NA # modify for country only
+df[idx==652]$lon <- NA
+
+df[idx==12550]$lat
+df[idx==12550]$lon
+df[idx==12550]$source.of.latlon
+df[idx==12550]$type.country.n
+df[idx==12550]$type.country
+
+df$type.country.n <- trimws(gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", df$type.country), which="both")
+df$type.country.n[grepl("\\?", df$type.country)] <- NA
+
+df$type.state.n <- trimws(gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", df$type.state), which="both")
+df$type.state.n[grepl("\\?", df$type.state.n)] <- NA
+
+df <- merge(df, lookup.cty[,c("GEC", "Country")], 
+                      all.x=T, all.y=F, by.x="type.country.n", by.y="GEC")
+df <- merge(df, lookup.cty[,c("A.2", "Country")], 
+                      all.x=T, all.y=F, by.x="type.country.n", by.y="A.2", suffixes=c("1", "2"))
+
+df$Country.final <- ifelse(is.na(df$Country1), df$Country2, df$Country1)
+df$Country1 <- NULL; df$Country2 <- NULL
+df <- merge(df, lookup.cty[, c("Country", "GEC")], 
+            all.x=T, all.y=F, by.x="Country.final", by.y="Country")
+df$type.country.n <- df$GEC
+df$GEC <- NULL
+
+df$cty.state <- ifelse(
+    is.na(df$type.state.n) | df$type.state.n == "" | is.na(df$type.country.n), NA, 
+        paste0(df$type.country.n, ".", df$type.state.n))
+                    
+df <- merge(df, lookup.pri_div[,c("CTY.STATE.CODE", "NAME_1")], by.x="cty.state", 
+            by.y="CTY.STATE.CODE", all.x=T, all.y=F)
+df[is.na(NAME_1)]$type.state.n <- NA
+names(df)[which(names(df) == "Country.final")] <- "type.country.n.full"
+names(df)[which(names(df) == "NAME_1")] <- "type.state.n.full"
+
+# check0 <- df$flag == "" | is.na(df$flag)
+check1 <- is.na(df$lat) | is.na(df$lon) | df$lat == " " | df$lon == " " | df$lat == "" | df$lon == ""
+df[check1]$lat <- NA; df[check1]$lon <- NA
+check1 <- is.na(df$lat) | is.na(df$lon) 
+check2 <- df$flag %in% c("LOCALITY_MANUALLY_CHECKED_AMENDED_LOCALITY_GEOCODED_AGAIN")
+df[check1 & check2]$flag <- ""
+
+check0 <- df$flag == "" | df$flag == " " | is.na(df$flag)
+check1 <- is.na(df$lat) | is.na(df$lon)
+cty_raw <- gsub(" ", "", gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", df$type.country)) 
+check2 <- cty_raw == "" | is.na(df$type.country) | grepl("\\?", cty_raw)
+check3 <- df$type.state == "" | is.na(df$type.state) | grepl("\\[|unknown|\\?", df$type.state)
+check4 <- grepl("CN|AS|BR|CA", df$type.country)
+
+df[check0&check1&check2]$flag <- "NO_COUNTRY"
+df[check0&check1&!check2&check3]$flag <- "COUNTRY_ONLY"
+
+df[check0&check1&!check2&!check3&check4]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_LRG_DIV"
+df[check0&check1&!check2&!check3&!check4]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_SML_DIV"
+
+check0 <- grepl("GEOCODED_GOOGLE_MAPS_API", df$flag)
+check1 <- is.na(df$lat) | is.na(df$lon)
+check2 <- df$type.country.n == "" | is.na(df$type.country.n) 
+check3 <- df$type.state.n == "" | is.na(df$type.state.n) 
+check4 <- grepl("CN|AS|BR|CA", df$type.country.n)
+
+df[check0&check1&!check2&check3]$flag <- "COUNTRY_ONLY"
+df[check0&check1&!check2&!check3&check4]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_LRG_DIV"
+df[check0&check1&!check2&!check3&!check4]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_SML_DIV"
+
+# Double check lat lon and country
+# df_original <- df
+# df <- df[!(is.na(lat) | is.na(lon))]
+# # Create sf point object
+# ll <- sf::st_as_sf(df[,c("idx", "lat", "lon", "type.country.n", "type.locality.verbatim")], 
+#                    coords = c('lon', 'lat'),
+#                    crs = "+init=epsg:4326")
+
+# # derive new columns
+# countries <- sf::st_join(ll, shp, join = st_intersects)
+
+# names(countries)
+
+# countries <- merge(countries, lookup.cty[,c("GEC", "A.3")], by.x="GID_0", by.y="GEC")
+# # check country
+# cols <- c("idx", "GID_0", "A.3") # GID_0 is geospatial, A.3 is from data
+# check <- countries[,cols]
+# check[,cols] <- lapply(check[,cols], as.character)
+# check$checks <- check$GID_0 == check$A.3
+# discrepancies <- check[!(check$checks | is.na(check$checks)),]; discrepancies
+# table(discrepancies$checks)
+# to_write <- countries[countries$idx %in% discrepancies$idx,]
+# write.csv(to_write, paste0(dir, "clean/", "check2.csv"), row.names=F)
+
+# Double check lat lon and state
+df_original <- df
+df <- df[!(is.na(lat) | is.na(lon) | is.na(type.state.n))]
+# Create sf point object
+ll <- sf::st_as_sf(df[,c("idx", "lat", "lon", "type.country.n", "type.state.n", 
+                         "type.state.n.full", "type.locality.verbatim")], 
+                   coords = c('lon', 'lat'),
+                   crs = "+init=epsg:4326")
+df <- df_original 
+
+# derive new columns
+countries <- sf::st_join(ll, shp8, join = st_intersects)
+# check state
+countries <- merge(countries, lookup.pri_div[,c("HASC_1", "CTY.STATE.CODE")],
+                    by="HASC_1", all.x=T, all.y=F)
+
+
+cols <- c("idx", "type.country.n", "type.state.n", "CTY.STATE.CODE", "type.locality.verbatim") # type.country.n and type state n is from data, HASC_1 is from spatial layer
+check <- as.data.frame(countries[,cols])
+
+check[,cols] <- lapply(check[,cols], as.character)
+check$checks <- paste0(check$type.country.n, ".", check$type.state.n) == check$CTY.STATE.CODE
+setDT(check)[, c("country", "state") := tstrsplit(CTY.STATE.CODE, "\\.")]
+
+# Remove those whose lat lon were added if country was wrong
+remove_ll <- check[check$type.country.n != check$country & !check$type.country.n %in% c("EG", "IS")]$idx
+check1 <- grepl("CN|AS|BR|CA", df$type.country.n)
+df[idx %in% remove_ll]$lat <- NA
+df[idx %in% remove_ll]$lon <- NA
+df[idx %in% remove_ll & !check1]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_SML_DIV"
+df[idx %in% remove_ll & check1]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_LRG_DIV"
+
+discrepancies <- check[!(check$checks | is.na(check$checks)) & !(idx %in% remove_ll) & !check$type.country.n %in% c("EG", "IS"),]; table(discrepancies$checks)
+
+# Remove those whose lat lon were added by me if state was wrong
+flag_list <- c("COUNTRY_AND_PRI_DIV_ONLY_LRG_DIV",
+               "COUNTRY_AND_PRI_DIV_ONLY_SML_DIV",
+               "GEOCODE_ERRONEOUS_LAT_LONG_ADDED_MANUALLY",
+               "GEOCODED_GOOGLE_MAPS_API", 
+               "LOCALITY_MANUALLY_CHECKED_AMENDED_LOCALITY_GEOCODED_AGAIN",
+               "LOCALITY_MANUALLY_CHECKED_LAT_LONG_ADDED",
+               "MAY_2019_DATASET_LAT_LON_ERRONEOUS_ADDED_MANUALLY")
+check1 <- grepl("CN|AS|BR|CA", df$type.country.n)
+df[idx %in% to_write$idx & flag %in% flag_list]$lat <- NA
+df[idx %in% to_write$idx & flag %in% flag_list]$lon <- NA
+df[idx %in% to_write$idx & flag %in% flag_list & !check1]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_SML_DIV"
+df[idx %in% to_write$idx & flag %in% flag_list & check1]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_LRG_DIV"
+idxes <- df[idx %in% to_write$idx & !flag %in% flag_list]$idx
+
+to_write <- countries[countries$idx %in% idxes,]
+write.csv(to_write, paste0(dir, "clean/", "check2.csv"), row.names=F)
+# TODO: when done one day, to merge. named as "georeference_slowly.xlsx on desktop"
+
+df[idx %in% idxes]$flag <- "COORDINATES_STILL_CHECKING"
+
+table(is.na(df$lat) | is.na(df$lon) | df$flag == "COORDINATES_STILL_CHECKING")
+
+
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - check duplicated rows & make new cols

@@ -16,8 +16,8 @@ source('2019-06-19-ascher-type-data/init.r')
 # Parameters
 #############
 
-# loop_1 <- 'Y'
-loop_1 <- 'N'
+# loop_4 <- 'Y'
+loop_4 <- 'N'
 
 # Scripts
 #############
