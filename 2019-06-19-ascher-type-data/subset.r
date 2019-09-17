@@ -54,7 +54,7 @@ c_pub_i <- c( "paper.authors", "title", "journal", "volume", "issue",
             "paper.type", "country.of.publication", "city.of.publication")
 
 # Load dataframes
-fn_df1 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-col.csv"
+fn_df1 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"
 # fn_df2 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"
 
 filepath <- function(filename) {paste0(dir, filename)}

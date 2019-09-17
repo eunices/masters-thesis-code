@@ -623,6 +623,11 @@ df[idx %in% remove_ll & check1]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_LRG_DIV"
 
 discrepancies <- check[!(check$checks | is.na(check$checks)) & !(idx %in% remove_ll) & !check$type.country.n %in% c("EG", "IS"),]; table(discrepancies$checks)
 
+to_write <- countries[countries$idx %in% discrepancies$idx,]
+write.csv(to_write, paste0(dir, "clean/", "check2.csv"), row.names=F)
+# TODO: when done one day, to merge. named as "georeference_slowly.xlsx on desktop"
+
+
 # Remove those whose lat lon were added by me if state was wrong
 flag_list <- c("COUNTRY_AND_PRI_DIV_ONLY_LRG_DIV",
                "COUNTRY_AND_PRI_DIV_ONLY_SML_DIV",
@@ -638,14 +643,262 @@ df[idx %in% to_write$idx & flag %in% flag_list & !check1]$flag <- "COUNTRY_AND_P
 df[idx %in% to_write$idx & flag %in% flag_list & check1]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_LRG_DIV"
 idxes <- df[idx %in% to_write$idx & !flag %in% flag_list]$idx
 
-to_write <- countries[countries$idx %in% idxes,]
-write.csv(to_write, paste0(dir, "clean/", "check2.csv"), row.names=F)
-# TODO: when done one day, to merge. named as "georeference_slowly.xlsx on desktop"
+df$cty.state <- NULL
 
-df[idx %in% idxes]$flag <- "COORDINATES_STILL_CHECKING"
+# df_original <- df
 
-table(is.na(df$lat) | is.na(df$lon) | df$flag == "COORDINATES_STILL_CHECKING")
+filepath <- paste0(dir, "clean/georeference_slowly.csv")
+add <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+new_cols <- c("idx", "type.country.full.CORRECT", "type.state.full.CORRECT", 
+                                 "type.lat.CORRECT", "type.lon.CORRECT",
+                                 "type.country.CORRECT", "type.state.CORRECT")
+add <- add[!duplicated(idx)][, ..new_cols]
+add$idx <- as.numeric(add$idx)
+df <- merge(df, add, by='idx', all.x=T, all.y=F)
+names(df)[grepl("type", names(df))]
 
+df[!is.na(type.country.CORRECT)]$type.country.n.full <- df[!is.na(type.country.CORRECT)]$type.country.full.CORRECT
+df[!is.na(type.country.CORRECT)]$type.state.n.full <- df[!is.na(type.country.CORRECT)]$type.state.full.CORRECT
+df[!is.na(type.country.CORRECT)]$type.country.n <- df[!is.na(type.country.CORRECT)]$type.country.CORRECT
+df[!is.na(type.country.CORRECT)]$type.state.n <- df[!is.na(type.country.CORRECT)]$type.state.CORRECT
+df[!is.na(type.country.CORRECT)]$lat <- df[!is.na(type.country.CORRECT)]$type.lat.CORRECT
+df[!is.na(type.country.CORRECT)]$lon <- df[!is.na(type.country.CORRECT)]$type.lon.CORRECT
+df[!is.na(type.country.CORRECT)]$flag <- "COORDINATES_DOUBLE_CHECKED_TO_STATE_COUNTRY_MANUAL"
+
+df[,c("type.country.full.CORRECT", "type.state.full.CORRECT", 
+      "type.lat.CORRECT", "type.lon.CORRECT",
+      "type.country.CORRECT", "type.state.CORRECT"):=NULL]
+
+print(table(is.na(df$lat) | is.na(df$lon)))
+
+# type.country.n is consistent with GEC
+# type.state.n is consistent with HASC_1 second part after dot
+
+table(is.na(df$type.country.n)); table(is.na(df$type.country.n.full))
+table(is.na(df$type.state.n)); table(is.na(df$type.state.n.full))
+
+table(check0, check1)
+table(check0, check2)
+check0 <- is.na(df$lat) | is.na(df$lon)
+check1 <- is.na(df$type.country.n)
+write.csv(df[!check0 & check1], paste0(dir, 'clean/country-latloncheck_old.csv'))
+
+filepath <- paste0(dir, "clean/country-latloncheck.csv")
+add <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+new_cols <- c("idx", "type.country.n.CORRECT", "type.state.n.CORRECT", 
+             "type.lat.CORRECT", "type.lon.CORRECT",
+             "type.country.full.n.CORRECT", "type.state.full.n.CORRECT")
+add <- add[!duplicated(idx)][, ..new_cols]
+add$idx <- as.numeric(add$idx)
+df <- merge(df, add, by='idx', all.x=T, all.y=F)
+
+df[!is.na(type.country.n.CORRECT)]$type.country.n.full <- df[!is.na(type.country.n.CORRECT)]$type.country.full.n.CORRECT
+df[!is.na(type.country.n.CORRECT)]$type.state.n.full <- df[!is.na(type.country.n.CORRECT)]$type.state.full.n.CORRECT
+df[!is.na(type.country.n.CORRECT)]$type.country.n <- df[!is.na(type.country.n.CORRECT)]$type.country.n.CORRECT
+df[!is.na(type.country.n.CORRECT)]$type.state.n <- df[!is.na(type.country.n.CORRECT)]$type.state.n.CORRECT
+df[!is.na(type.country.n.CORRECT)]$lat <- df[!is.na(type.country.n.CORRECT)]$type.lat.CORRECT
+df[!is.na(type.country.n.CORRECT)]$lon <- df[!is.na(type.country.n.CORRECT)]$type.lon.CORRECT
+df[!is.na(type.country.n.CORRECT) & !(is.na(lat)|is.na(lon))]$flag <- "COORDINATES_DOUBLE_CHECKED_TO_STATE_COUNTRY_MANUAL"
+df[type.country.n.CORRECT == "REMOVE"]$type.country.n <- ""
+
+df[,c("type.country.n.CORRECT", "type.state.n.CORRECT", 
+      "type.lat.CORRECT", "type.lon.CORRECT",
+      "type.country.full.n.CORRECT", "type.state.full.n.CORRECT"):=NULL]
+
+df$source.of.latlon.n <- ""
+check0 <- is.na(df$lat) | is.na(df$lon)
+check1 <- is.na(df$type.country.n) | df$type.country.n == ""
+check2 <- is.na(df$type.state.n) | df$type.state.n == ""
+check3 <- grepl("plotted at|Geohack|Google", df$source.of.latlon) 
+check4 <- is.na(df$source.of.latlon)  | df$source.of.latlon == ""
+check5 <- is.na(df$flag) | df$flag == ""
+
+write.csv(df[check0==F & check1 ==T], paste0(dir, 'clean/country-latloncheck2.csv'))
+
+filepath <- paste0(dir, "clean/country-latloncheck2_edit.csv")
+add <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+new_cols <- c("idx", "type.country.n.CORRECT", "type.state.n.CORRECT", 
+             "type.lat.CORRECT", "type.lon.CORRECT",
+             "type.country.n.full.CORRECT", "type.state.n.full.CORRECT")
+add <- add[!duplicated(idx)][, ..new_cols]
+add$idx <- as.numeric(add$idx)
+df <- merge(df, add, by='idx', all.x=T, all.y=F)
+
+df[!is.na(type.country.n.CORRECT)]$type.country.n.full <- df[!is.na(type.country.n.CORRECT)]$type.country.n.full.CORRECT
+df[!is.na(type.country.n.CORRECT)]$type.state.n.full <- df[!is.na(type.country.n.CORRECT)]$type.state.n.full.CORRECT
+df[!is.na(type.country.n.CORRECT)]$type.country.n <- df[!is.na(type.country.n.CORRECT)]$type.country.n.CORRECT
+df[!is.na(type.country.n.CORRECT)]$type.state.n <- df[!is.na(type.country.n.CORRECT)]$type.state.n.CORRECT
+df[!is.na(type.country.n.CORRECT)]$lat <- df[!is.na(type.country.n.CORRECT)]$type.lat.CORRECT
+df[!is.na(type.country.n.CORRECT)]$lon <- df[!is.na(type.country.n.CORRECT)]$type.lon.CORRECT
+df[!is.na(type.country.n.CORRECT) & !(is.na(lat)|is.na(lon))]$flag <- "COORDINATES_DOUBLE_CHECKED_TO_STATE_COUNTRY_MANUAL"
+df[type.country.n.CORRECT == "REMOVE"]$type.country.n <- ""
+
+df[,c("type.country.n.CORRECT", "type.state.n.CORRECT", 
+      "type.lat.CORRECT", "type.lon.CORRECT",
+      "type.country.n.full.CORRECT", "type.state.n.full.CORRECT"):=NULL]
+
+
+
+
+df$source.of.latlon.n <- ""
+check0 <- is.na(df$lat) | is.na(df$lon)
+check1 <- is.na(df$type.country.n) | df$type.country.n == ""
+check2 <- is.na(df$type.state.n) | df$type.state.n == ""
+check3 <- grepl("plotted at|Geohack|Google", df$source.of.latlon) 
+check4 <- is.na(df$source.of.latlon)  | df$source.of.latlon == ""
+check5 <- is.na(df$flag) | df$flag == ""
+
+# TODO: for NA locations, remove lat, lon, country, state
+
+get_state <- df[!check0 & check2]
+
+ll <- sf::st_as_sf(get_state[,c("idx", "lat", "lon", "type.country.n", "type.state.n", 
+                         "type.state.n.full", "type.locality.verbatim", "type.locality.updated", "flag")], 
+                   coords = c('lon', 'lat'),
+                   crs = "+init=epsg:4326")
+
+# derive new columns
+countries <- sf::st_join(ll, shp8, join = st_intersects)
+# check state
+countries <- merge(countries, lookup.pri_div[,c("HASC_1", "CTY.STATE.CODE")],
+                    by="HASC_1", all.x=T, all.y=F)
+
+cols <- c("idx", "type.country.n", "type.state.n", "CTY.STATE.CODE", "type.locality.verbatim", "NAME_0", "NAME_1") # type.country.n and type state n is from data, HASC_1 is from spatial layer
+check <- as.data.frame(countries[,cols])
+check[,cols] <- lapply(check[,cols], as.character)
+setDT(check)[, c("country", "state") := tstrsplit(CTY.STATE.CODE, "\\.")]
+
+write.csv(as.data.frame(countries[,c("idx","type.locality.verbatim", "type.locality.updated",
+                                     "type.country.n", "type.state.n", 
+                                     "NAME_0", "NAME_1", "CTY.STATE.CODE", "flag")]), 
+          paste0(dir, "clean/include_state.csv"),
+          row.names=F)
+
+# include_states.csv
+
+# df <- df2
+df2 <- df
+
+filepath <- paste0(dir, "clean/include_state_edit.csv")
+add <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')
+add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+new_cols <- c("idx", "type.country.CORRECTED", "type.state.CORRECTED", 
+             "lat.CORRECTED", "lon.CORRECTED",
+             "type.country.full.CORRECTED", "type.state.full.CORRECTED")
+add <- add[!duplicated(idx)][, ..new_cols]
+add$idx <- as.numeric(add$idx)
+df <- merge(df, add, by='idx', all.x=T, all.y=F)
+
+df[!is.na(type.country.CORRECTED)]$type.country.n.full <- df[!is.na(type.country.CORRECTED)]$type.country.full.CORRECTED
+df[!is.na(type.country.CORRECTED)]$type.state.n.full <- df[!is.na(type.country.CORRECTED)]$type.state.full.CORRECTED
+df[!is.na(type.country.CORRECTED)]$type.country.n <- df[!is.na(type.country.CORRECTED)]$type.country.CORRECTED
+df[!is.na(type.country.CORRECTED)]$type.state.n <- df[!is.na(type.country.CORRECTED)]$type.state.CORRECTED
+df[!is.na(type.country.CORRECTED)]$lat <- df[!is.na(type.country.CORRECTED)]$lat.CORRECTED
+df[!is.na(type.country.CORRECTED)]$lon <- df[!is.na(type.country.CORRECTED)]$lon.CORRECTED
+df[!is.na(type.country.CORRECTED) & !(is.na(lat)|is.na(lon))]$flag <- "COORDINATES_DOUBLE_CHECKED_TO_STATE_COUNTRY_MANUAL"
+df[type.country.CORRECTED == "REMOVE"]$type.country.n <- ""
+
+df[,c("type.country.CORRECTED", "type.state.CORRECTED", 
+      "lat.CORRECTED", "lon.CORRECTED",
+      "type.country.full.CORRECTED", "type.state.full.CORRECTED"):=NULL]
+
+check1 <- df$type.locality.verbatim == "NA" | is.na(df$type.locality.verbatim) | 
+    grepl("unknown", df$type.locality.verbatim)
+check2 <- df$type.locality.updated == "NA" | is.na(df$type.locality.updated) | 
+    grepl("unknown", df$type.locality.updated)
+check3 <- is.na(df$lat) | is.na(df$lon)
+
+df[check1 & check2 & !check3]$lat <- NA
+df[check1 & check2 & !check3]$lon <- NA
+
+
+# Check that country and state are consistent
+check0 <- is.na(df$lat) | is.na(df$lon)
+check1 <- is.na(df$type.country.n) | df$type.country.n == ""
+check2 <- (is.na(df$type.state.n) | df$type.state.n == "") & (is.na(df$type.state.n.full) | df$type.state.n.full == "")
+
+check_state <- df[!check0 & !check1 & !check2]
+
+
+ll <- sf::st_as_sf(check_state[,c("idx", "lat", "lon", "type.country.n", "type.state.n", 
+                         "type.state.n.full", "type.locality.verbatim", "type.locality.updated", "flag")], 
+                   coords = c('lon', 'lat'),
+                   crs = "+init=epsg:4326")
+
+# derive new columns
+countries <- sf::st_join(ll, shp8, join = st_intersects)
+# check state
+countries <- merge(countries, lookup.pri_div[,c("HASC_1", "CTY.STATE.CODE")],
+                    by="HASC_1", all.x=T, all.y=F)
+
+countries2 <- data.frame(countries)
+
+setDT(countries)[, c("country", "state") := tstrsplit(CTY.STATE.CODE, "\\.")]
+
+countries$check1 <- countries$country ==  countries$type.country.n
+countries$check2 <- countries$state ==  countries$type.state.n
+
+write.csv(as.data.frame(countries[,c("idx","type.locality.verbatim", "type.locality.updated",
+                                     "type.country.n", "type.state.n", "type.state.n.full", "country", "state",
+                                     "NAME_0", "NAME_1", "flag",
+                                     "check1", "check2", "geometry")]), 
+          paste0(dir, "clean/check_state.csv"), na="NAN",
+          row.names=F)
+
+
+
+
+
+
+filepath <- paste0(dir, "clean/check_state_edit.csv")
+add <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')
+add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+add$idx <- as.numeric(add$idx)
+df <- merge(df, add, by='idx', all.x=T, all.y=F, suffixes=c("", "_new"))
+
+df[!is.na(state)]$type.state.n <- df[!is.na(state)]$state
+df[!is.na(state)]$type.state.n.full <- df[!is.na(state)]$state.full
+df[!is.na(state)]$lat <- df[!is.na(state)]$lat_new
+df[!is.na(state)]$lon <- df[!is.na(state)]$lon_new
+df[!is.na(state) & !(is.na(lat)|is.na(lon))]$flag <- "COORDINATES_DOUBLE_CHECKED_TO_STATE_COUNTRY_MANUAL"
+df[,c("state.full", "state", "lat_new", "lon_new"):=NULL]
+
+
+# table(check0) # missing lat lon
+# table(check0 == F & check1 == T) # all with lat and long should have country
+# table(check0 == F & check1 == F & check2 == T) # all with lat and long should have country except those countries with no secondary divisions
+# df[!check0 & !check1 & check2]$type.country.n
+
+# table(check0 & check1)
+# table(check0 & !check1 & check2)
+# table(check0 & !check1 & !check2)
+
+df$source.of.latlon.n <- ""
+check0 <- is.na(df$lat) | is.na(df$lon)
+check1 <- is.na(df$type.country.n) | df$type.country.n == ""
+check2 <- (is.na(df$type.state.n) | df$type.state.n == "") & 
+          (is.na(df$type.state.n.full) | df$type.state.n.full == "")
+check3 <- is.na(df$source.of.latlon)  | df$source.of.latlon == ""
+check4 <- is.na(df$flag) | df$flag == ""
+check5 <- grepl("GEOCODED_GOOGLE_MAPS_API", df$flag)
+
+df[check0 & check1]$source.of.latlon.n <- "0_NO_LAT_LON_AND_COUNTRY"
+df[check0 & !check1 & check2]$source.of.latlon.n <- "1_NO_LAT_LON_AND_COUNTRY_ONLY"
+df[check0 & !check1 & !check2]$source.of.latlon.n <- "2_NO_LAT_LON_AND_COUNTRY_AND_STATE"
+df[!check0]$source.of.latlon.n <- "3_WITH_LAT_LON"
+
+df[!check0 & !check3]$source.of.latlon.n <- 
+    paste0(df[!check0 & !check3]$source.of.latlon.n, " & JSASCHER_ADDED")
+df[!check0 & check3 & !check4 & check5]$source.of.latlon.n <- 
+    paste0(df[!check0 & check3 & !check4 & check5]$source.of.latlon.n, " & EJYSOH_ADDED_GMAPS_API")
+df[!check0 & check3 & !check4 & !check5]$source.of.latlon.n <- 
+    paste0(df[!check0 & check3 & !check4 & !check5]$source.of.latlon.n, " & EJYSOH_ADDED_MANUAL")
+
+# STB = St Barthelemy; not in the lookup doc
+# WEG = areas of conflict (Bethlehem, Jericho, Gaza) as GZ
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -700,6 +953,9 @@ df[idx %in% c(12335, 12337, 12338, 12341, 12346)]$date <- "2008"
 df[idx %in% c(13187)]$date <- "2018"
 df[idx %in% c(502)]$full.name.of.describer <- "Osamu Tadauchi; Ryôichi Miyanaga; Ahmatjan Dawut"
 
+# flags
+df[idx==3335 & idx==9456]$flag = "IGNORE_COUNTRY_DISCREPANCY_ERRONEOUS_GADM_BOUNDARY"
+
 # missing full names
 filepath <- paste0(dir, "clean/missing_authors_edit.csv")
 missing_auth <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
@@ -725,6 +981,15 @@ df <- df[order(as.numeric(idx))]
 gs <- paste0(df$genus, df$species)
 df$duplicated.row <- duplicated(gs)
 df <- df[duplicated.row == "FALSE"][order(as.numeric(idx))]
+
+df[idx==6804]$family <- "Megachilidae"
+df[genus=="Nomada" & subfamily=="Apinae"]$subfamily <- "Nomadinae"
+
+table(df$family)
+table(is.na(df$genus) | df$genus== "")
+table(is.na(df$species) | df$species== "")
+
+write.csv(df[,c("idx", "family", "subfamily", "genus")], 'tmp/test.csv')
 
 write.csv(df, 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv"),

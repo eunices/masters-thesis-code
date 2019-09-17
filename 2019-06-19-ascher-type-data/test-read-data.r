@@ -8,7 +8,7 @@ filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 
 des <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 des[, names(des) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-col.csv")
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv")
 # filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.1-clean-journals_species.csv")
 # filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.2-clean-auth-full-name.csv")
 df1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')

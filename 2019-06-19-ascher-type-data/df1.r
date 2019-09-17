@@ -1,6 +1,9 @@
 # TODO: ensure that all checks are done
 # TODO: persist dataframes
 # TODO: shift derived variables/dataframes to a different script?
+# TODO: full confidence in lat, lon, country and state * 
+    # - whether georeferenced or not
+    # - whether to ignore discrepancy between country and state
 
 # TODO: author - dominant countries of work
 # TODO: author - count number of publications per author 
