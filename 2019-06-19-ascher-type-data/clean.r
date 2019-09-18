@@ -509,9 +509,11 @@ df[idx==12550]$type.country
 
 df$type.country.n <- trimws(gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", df$type.country), which="both")
 df$type.country.n[grepl("\\?", df$type.country)] <- NA
+df[type.country.n=="UR"]$type.country.n <- "UY" 
 
 df$type.state.n <- trimws(gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", df$type.state), which="both")
 df$type.state.n[grepl("\\?", df$type.state.n)] <- NA
+
 
 df <- merge(df, lookup.cty[,c("GEC", "Country")], 
                       all.x=T, all.y=F, by.x="type.country.n", by.y="GEC")
@@ -528,7 +530,7 @@ df$GEC <- NULL
 df$cty.state <- ifelse(
     is.na(df$type.state.n) | df$type.state.n == "" | is.na(df$type.country.n), NA, 
         paste0(df$type.country.n, ".", df$type.state.n))
-                    
+
 df <- merge(df, lookup.pri_div[,c("CTY.STATE.CODE", "NAME_1")], by.x="cty.state", 
             by.y="CTY.STATE.CODE", all.x=T, all.y=F)
 df[is.na(NAME_1)]$type.state.n <- NA
@@ -867,6 +869,13 @@ df[!is.na(state) & !(is.na(lat)|is.na(lon))]$flag <- "COORDINATES_DOUBLE_CHECKED
 df[,c("state.full", "state", "lat_new", "lon_new"):=NULL]
 
 
+table(df$flag)
+table(grepl("COUNTRY_AND_PRI_DIV_ONLY", df$flag))
+
+df[grepl("COUNTRY_AND_PRI_DIV_ONLY", flag)]$lat <- NA
+df[grepl("COUNTRY_AND_PRI_DIV_ONLY", flag)]$lon <- NA
+# this is done so that a lookup table later can be used 
+
 # table(check0) # missing lat lon
 # table(check0 == F & check1 == T) # all with lat and long should have country
 # table(check0 == F & check1 == F & check2 == T) # all with lat and long should have country except those countries with no secondary divisions
@@ -899,7 +908,6 @@ df[!check0 & check3 & !check4 & !check5]$source.of.latlon.n <-
 
 # STB = St Barthelemy; not in the lookup doc
 # WEG = areas of conflict (Bethlehem, Jericho, Gaza) as GZ
-
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - check duplicated rows & make new cols

@@ -5,7 +5,7 @@ library(raster)
 library(spatialEco)
 
 
-filepath <- 'data/geo_processed/gadm/gadm36_boundaries_utf8.shp'
+filepath <- 'data/geo_processed/gadm/gadm36_1_utf8.shp'
 shp.pol_boundaries <- rgdal::readOGR(filepath, use_iconv=TRUE, encoding = "UTF-8")
 shp.pol_boundaries@data$idx <- 1:dim(shp.pol_boundaries@data)[1]
 
@@ -53,6 +53,8 @@ shp.pol_boundaries.cen <- sp::spTransform(shp.pol_boundaries_moll.cen, raster::c
 shp.pol_boundaries.cen <- SpatialPointsDataFrame(shp.pol_boundaries.cen, 
                                                  shp.pol_boundaries@data,
                                                  match.ID=F)
+
+
 
 
 #################### For WWF's ecoregions
@@ -116,7 +118,7 @@ data[is.na(data$REALM_EDIT) & data$GID_0 == 'VUT',]$REALM_EDIT <- 'AA'
 data[is.na(data$REALM_EDIT) & data$GID_0 == 'WLF',]$REALM_EDIT <- 'OC'
 table(is.na(data$REALM_EDIT))
 
-data$NAME_CONCAT_1.2 <- ifelse(is.na(data$NAME_2), data$NAME_1, paste0(data$NAME_1, ", ", data$NAME_2))
+# data$NAME_CONCAT_1.2 <- ifelse(is.na(data$NAME_2), data$NAME_1, paste0(data$NAME_1, ", ", data$NAME_2))
 
 shp.pol_boundaries@data <- data
 shp.pol_boundaries.cen@data <- data
@@ -255,7 +257,7 @@ table(data[is.na(data$Realm),]$GID_0)
 unique(data[is.na(data$Realm),]$GID_0)
 length(unique(data[is.na(data$Realm),]$GID_0))
 
-data$NAME_CONCAT_1.2 <- ifelse(is.na(data$NAME_2), data$NAME_1, paste0(data$NAME_1, ", ", data$NAME_2))
+# data$NAME_CONCAT_1.2 <- ifelse(is.na(data$NAME_2), data$NAME_1, paste0(data$NAME_1, ", ", data$NAME_2))
 
 shp.pol_boundaries@data <- data
 shp.pol_boundaries.cen@data <- data

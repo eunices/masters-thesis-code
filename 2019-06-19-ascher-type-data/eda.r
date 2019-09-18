@@ -1,3 +1,5 @@
+source('2019-06-19-ascher-type-data/main.r')
+
 # Libraries
 #############
 library(ggplot2)
