@@ -11,13 +11,8 @@ library(xlsx)
 var <- data.table(read.xlsx2(paste0(dir, '2019-09-16-metadata.xlsx'), sheetIndex=1, stringsAsFactors=F), as.data.frame=T)
 names(var)
 var$order <- as.integer(var$order)
-tn <- unique(var$table_name); print(tn)
-var2 <- var[!grepl("remove|derived", key_status)]
-var_df1 <- var2[table_name=="species"][order(order)]; dim(var_df1)
-var_df2 <- var2[table_name=="invalid_species"][order(order)]; dim(var_df2)
-var_pub <- var2[table_name=="publication"][order(order)]; dim(var_pub)
-var_des <- var2[table_name=="describer"][order(order)]; dim(var_des)
-var_col <- var2[table_name=="collector"][order(order)]; dim(var_col)
+var_f <- var[!grepl("remove|derived", key_status)]
+
 
 # Subset useful columns
 c_main <- c('idx', 'genus', 'species', 'status', 
@@ -54,18 +49,52 @@ c_pub_i <- c( "paper.authors", "title", "journal", "volume", "issue",
             "paper.type", "country.of.publication", "city.of.publication")
 
 # Load dataframes
-fn_df1 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"
-# fn_df2 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"
-
 filepath <- function(filename) {paste0(dir, filename)}
-df1 <- fread(filepath(fn_df1), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+subset_df <- function(filepath, table, write=T) {
 
-classes <- sapply(df1, class)
-df1 <- as.data.table(lapply(df1, function(x) { if(is.character(x)) gsub('\\"\\"', '\\"', x) else x }))
-cols <- c(var_df1$column)
-df1 <- df1[, ..cols]
+    # fn_df2 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"
 
-write.csv(df1[order(idx)], paste0(dir, "final/SPECIES.csv"), na='', row.names=F, fileEncoding="UTF-8")
+    df <- fread(filepath(filepath), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+    vars <- var_f[table_name==table][order(order)]
+
+    classes <- sapply(df, class)
+    df <- as.data.table(lapply(df, function(x) { 
+        if(is.character(x)) {
+            gsub("[\r\n]", " ", gsub('\\"\\"', '\\"', x))
+        } else {x}
+    }))
+    cols <- c(vars$column)
+    df <- df[, ..cols]
+
+    if (write == T) {
+        w_filepath <- paste0('final/', toupper(table), ".csv")
+        if('idx' %in% names(df)) {
+            df <- df[order(idx)]
+        }
+        write.csv(df, filepath(w_filepath), na='', row.names=F, fileEncoding="UTF-8")
+        print(paste0(Sys.time(), " --- data written to ", filepath(w_filepath)))
+    } else {
+        df
+    }
+}
+
+tn <- unique(var$table_name); print(tn)
+
+fn_df1 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"
+subset_df(fn_df1, "species")
+fn_df2 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"
+subset_df(fn_df2, "invalid_species")
+fn_pub <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv"
+subset_df(fn_pub, "publication")
+fn_des <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"
+subset_df(fn_des, "describer")
+
+# df <- subset_df(fn_df2, "invalid_species", write=F)
+# df[idx==27576]
+
+
+
+########################################################
 
 
 # What the various flag means for geocoding

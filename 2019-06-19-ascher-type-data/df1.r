@@ -1,9 +1,6 @@
 # TODO: ensure that all checks are done
 # TODO: persist dataframes
 # TODO: shift derived variables/dataframes to a different script?
-# TODO: full confidence in lat, lon, country and state * 
-    # - whether georeferenced or not
-    # - whether to ignore discrepancy between country and state
 
 # TODO: author - dominant countries of work
 # TODO: author - count number of publications per author 
@@ -337,7 +334,6 @@ min3 <- min(dfx2[status=="Infrasubspecific"]$idx); max3 <- max(dfx2[status=="Inf
 auth2 <- data.table(auth %>% separate_rows(idxes, sep="; "))
 dim(auth2); auth2 <- unique(auth2); dim(auth2)
 
-# TODO: move this elsewhere as it's derived
 summarise <- auth2[, list(idxes=paste0(idxes,collapse='; '), 
             N_species=length(unique(idxes)), 
             N_species_valid=sum(unique(idxes) %in% 1:max0), 
