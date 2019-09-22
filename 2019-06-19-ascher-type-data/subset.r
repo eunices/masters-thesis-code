@@ -49,12 +49,12 @@ c_pub_i <- c( "paper.authors", "title", "journal", "volume", "issue",
             "paper.type", "country.of.publication", "city.of.publication")
 
 # Load dataframes
-filepath <- function(filename) {paste0(dir, filename)}
+construct_filepath <- function(filename) {paste0(dir, filename)}
 subset_df <- function(filepath, table, write=T) {
 
     # fn_df2 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"
 
-    df <- fread(filepath(filepath), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+    df <- fread(construct_filepath(filepath), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
     vars <- var_f[table_name==table][order(order)]
 
     classes <- sapply(df, class)
@@ -71,8 +71,8 @@ subset_df <- function(filepath, table, write=T) {
         if('idx' %in% names(df)) {
             df <- df[order(idx)]
         }
-        write.csv(df, filepath(w_filepath), na='', row.names=F, fileEncoding="UTF-8")
-        print(paste0(Sys.time(), " --- data written to ", filepath(w_filepath)))
+        write.csv(df, construct_filepath(w_filepath), na='', row.names=F, fileEncoding="UTF-8")
+        print(paste0(Sys.time(), " --- data written to ", construct_filepath(w_filepath)))
     } else {
         df
     }
@@ -80,19 +80,39 @@ subset_df <- function(filepath, table, write=T) {
 
 tn <- unique(var$table_name); print(tn)
 
-fn_df1 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"
-subset_df(fn_df1, "species")
-fn_df2 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"
-subset_df(fn_df2, "invalid_species")
-fn_pub <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv"
-subset_df(fn_pub, "publication")
-fn_des <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"
-subset_df(fn_des, "describer")
+get_df1 <- function(write=T) {
+    fn_df1 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"
+    subset_df(fn_df1, "species", write=write)
+}
+
+get_df2 <- function(write=T) {
+    fn_df2 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"
+    subset_df(fn_df2, "invalid_species", write=write)
+}
+
+get_pub <- function(write=T) {
+    fn_pub <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv"
+    subset_df(fn_pub, "publication", write=write)
+}
+
+get_des <- function(write=T) {
+    fn_des <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"
+    subset_df(fn_des, "describer", write=write)
+}
+
+get_col <- function(write=T) {
+    fn_col <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_3.0-collectors.csv"
+    subset_df(fn_col, "collector", write=write)
+}
+
+get_dis <- function(write=T) {
+    fn_dis <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty2-cty.csv"
+    subset_df(fn_dis, "distribution", write=write)
+}
+
 
 # df <- subset_df(fn_df2, "invalid_species", write=F)
 # df[idx==27576]
-
-
 
 ########################################################
 

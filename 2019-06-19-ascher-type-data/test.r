@@ -195,10 +195,13 @@ table(df2_coll$title.of.collector.n == df2_coll$title.of.collector.n)
 # test 2) if variables are consistent within data frame
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-# country variables v lat lon
-
-
-
+# publication date v date.n
+dfx_dates <- rbind(df1[, c('idx', 'date.n')], df2[, c('idx', 'date.n')])
+pubs <- pub %>% separate_rows(idxes)
+pubs <- data.table(pubs)[, c("idxes", "date.n")]
+dfx_dates <- merge(dfx_dates, pubs, by.x="idx", by.y="idxes", all.x=T, all.y=F, 
+                   suffixes=c("", "_pub"))
+dfx_dates$check <- dfx_dates$date.n == dfx_dates$date.n_pub
 
 # NANs 
 df1[host.plant.of.type != "",.(.N), by=.(host.plant.of.type)][order(-N)][,sum(N)]

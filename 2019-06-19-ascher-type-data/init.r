@@ -13,6 +13,7 @@ suppressMessages(library(tidyr))
 print(paste0(Sys.time(), " --- init setup"))
 
 # Setup
+setwd('C:/Dev/msc-thesis-code')
 source('keys.R')
 
 

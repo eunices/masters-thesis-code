@@ -5,7 +5,8 @@ library(raster)
 library(spatialEco)
 
 
-filepath <- 'data/geo_processed/gadm/gadm36_1_utf8.shp'
+filepath <- 'data/geo_processed/gadm/gadm36_0_utf8_continents.shp'
+# filepath <- 'data/geo_processed/gadm/gadm36_1_utf8.shp'
 shp.pol_boundaries <- rgdal::readOGR(filepath, use_iconv=TRUE, encoding = "UTF-8")
 shp.pol_boundaries@data$idx <- 1:dim(shp.pol_boundaries@data)[1]
 

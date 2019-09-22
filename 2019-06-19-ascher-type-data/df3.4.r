@@ -249,6 +249,35 @@ describers_final <- merge(describers, describers.origin.cty, by='idx_auth', all.
 describers_final <- merge(describers_final, describers.res.cty.grp, by='idx_auth', all.x=T, all.y=F)
 describers_final <- merge(describers_final, describers.res.cty.first, by='idx_auth', all.x=T, all.y=F)
 
+
+# Count pub/author metrics
+pub <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+df1 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
+df2 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
+
+pub <- pub %>% separate_rows(idxes)
+pub <- unique(pub)
+pubs <- pub %>% 
+    group_by(date.n, author, title, journal, volume,
+             issue, page.numbers.publication) %>% summarise(idx=paste0(idxes, collapse=", "))
+pubs <- pubs %>% separate_rows(idx)
+df <- rbind(df1, df2)
+df$full.name.of.describer <- gsub('\\"\\"', '\\"', df$full.name.of.describer )
+df <- data.table(df %>% separate_rows(full.name.of.describer, sep="; "))
+df$idx <- as.integer(df$idx); pubs$idx <- as.integer(pubs$idx)
+df_pub <- merge(df, pubs, by.x="idx", by.y="idx", all.x=T, all.y=T)
+# Count mean/SD number of species described per publication
+df_sp_per_pub <- df_pub[, .N, by=c("full.name.of.describer", "date.n", "author", "title",
+                  "journal", "volume", "issue", "page.numbers.publication")]
+author_ss <- df_sp_per_pub[, list(spp_per_pub_mean=mean(N),
+                     spp_per_pub_sd=sd(N),
+                     n_pubs=.N), by="full.name.of.describer"]
+
+describers_final$full.name.of.describer.n <- gsub('\\"\\"', '\\"', describers_final$full.name.of.describer.n)
+describers_final <- merge(describers_final, author_ss, 
+      by.x="full.name.of.describer.n",
+      by.y="full.name.of.describer", all.x=T, all.y=F)
+
 # Get last name
 # describers_final$last.name <- sapply(
 #     strsplit(as.character(describers_final$full.name.of.describer.n), " "), tail, 1)
@@ -260,6 +289,7 @@ ln <- ln[, c("full.name.of.describer.n", "last.name", "last.name.no.initials")]
 
 # write.csv(ln,
 #           paste0(dir, "clean/last_name2.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
 
 describers_final <- merge(describers_final, ln, by="full.name.of.describer.n", all.x=T, all.y=F)
 setcolorder(describers_final, c(2, 1, 3:length(names(describers_final))))

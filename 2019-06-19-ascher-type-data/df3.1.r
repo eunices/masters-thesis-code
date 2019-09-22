@@ -98,8 +98,7 @@ run_loop <- function() {
                     dob <- ifelse(is.na(dob_row[j]) || identical(dob_row[j], logical(0)), NA, dob_row[j])
                     dod <- ifelse(is.na(dod_row[j]) || identical(dod_row[j], logical(0)), NA, dod_row[j])
                     origin <- ifelse(is.na(origin_row[j]) || identical(origin_row[j], logical(0)), NA, origin_row[j])
-                    residence <- ifelse(is.na(residence_row[j]) || identical(residence_row[j], logical(0)), 
-                                        NA, residence_row[j])
+                    residence <- ifelse(is.na(residence_row[j]) || identical(residence_row[j], logical(0)), NA, residence_row[j])
                     inst <- ifelse(is.na(inst_row[j]) || identical(inst_row[j], logical(0)), NA, inst_row[j])
                     order <- ifelse(j==1, 1, 
                         ifelse(j==length(describer_row) & length(describer_row) != 2, "L", 
@@ -130,11 +129,24 @@ run_loop <- function() {
             print(paste0(percent , "% completed"))
         }
     }
-
-    write.csv(describers, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_2.0-denormalised.csv"), na='', row.names=F, fileEncoding="UTF-8")
+    describers
 }
 
 if (loop_3=='Y') {
-    run_loop()
+    describers <- run_loop()
+    describers <- data.table(describers)
+    describers$dob.describer.n <- gsub("[^0-9]", "", describers$dob.describer.n)
+    describers$dob.describer.n <- as.numeric(describers$dob.describer.n)
+    describers[dob.describer.n>3000]$dob.describer.n <- NA
+
+    describers$dod.describer.n <- gsub("[^0-9]", "", describers$dod.describer.n)
+    describers$dod.describer.n <- as.numeric(describers$dod.describer.n)
+    describers[dob.describer.n>3000]$dob.describer.n <- NA
+
+    describers[!describer.gender.n %in% c("M", "F")]$describer.gender.n <- ""
+
+    describers$institution.of.describer.n <- gsub("[[:digit:]]", "",        describers$institution.of.describer.n)
+
+    write.csv(describers, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_2.0-denormalised.csv"), na='', row.names=F, fileEncoding="UTF-8")
 }
 

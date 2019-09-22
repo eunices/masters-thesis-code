@@ -1,9 +1,6 @@
-# TODO: ensure that all checks are done
-# TODO: persist dataframes
 # TODO: shift derived variables/dataframes to a different script?
-
-# TODO: author - dominant countries of work
-# TODO: author - count number of publications per author 
+# TODO: author - dominant countries of work *tomorrow
+# TODO: author - count number of publications per author *tomorrow
 
 print("######################################################")
 print("######################################################")
@@ -194,6 +191,8 @@ dfx2[idx=="33101", ]$author <- 'Cockerell'
 # dfx2[issue=="'"]$volume <- ""
 # dfx2[page.numbers.publication=="'"]$volume <- ""
 
+dfx1$idxes <- gsub(';$', '', dfx$idxes) # remove trailing ;
+
 write.csv(dfx1, 
         paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.1-clean-journals_species.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
@@ -301,6 +300,7 @@ authors_redone <- as.data.frame(do.call(rbind, authors_redone), stringsAsFactors
 names(authors_redone) <- "x"
 authors_redone$x <- as.character(authors_redone$x)
 dfx2$author <- authors_redone$x
+
 
 
 write.csv(dfx1, 

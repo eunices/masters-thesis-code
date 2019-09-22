@@ -7,10 +7,18 @@ describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted 
 
 describers[, names(describers) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-describers_info <- fread(
-    paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# Quick fixes
+describers[idx==6415 & full.name.of.describer.n=="Charles Duncan Michener"]$origin.country.describer.n <- "US"
+describers[idx==6415 & full.name.of.describer.n=="Charles Duncan Michener"]$residence.country.describer.n <- "US"
 
-describers_info[, names(describers_info) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+describers[idx==6415 & full.name.of.describer.n=="Yuvarin [Rak] Boontop"]$origin.country.describer.n <- "TH"
+describers[idx==6415 & full.name.of.describer.n=="Yuvarin [Rak] Boontop"]$residence.country.describer.n <- "TH"
+
+describers[idx==16869 & full.name.of.describer.n=="Daniele R. Parizotto"]$origin.country.describer.n <- "BR"
+describers[idx==16869 & full.name.of.describer.n=="Daniele R. Parizotto"]$residence.country.describer.n <- "BR"
+
+describers[idx==16869 & grepl("Urban", full.name.of.describer.n)]$origin.country.describer.n <- "BR"
+describers[idx==16869 & grepl("Urban", full.name.of.describer.n)]$residence.country.describer.n <- "BR"
 
 # merging manual edits
 # # =================
@@ -52,12 +60,7 @@ describers_info[, names(describers_info) := lapply(.SD, function(x) gsub('\\"\\"
 
 # Merge back the other columns
 describers_merged <- data.table(describers)
-cols <- c("idx", "author", "full.name.of.describer", "describer.gender", 
-          "dob.describer", "dod.describer",
-          "origin.country.describer", "residence.country.describer", "institution.of.describer")
 describers_merged[] <- lapply(describers_merged, as.character)
-describers_info[] <- lapply(describers_info, as.character)
-describers_merged <- merge(describers_merged, describers_info[,..cols], by='idx', all.x=T, all.y=F)
 
 # Summarize by idx
 describers_idx <- describers_merged[, idxes:=paste0(idx, collapse=', '), by=c('full.name.of.describer.n')]
@@ -95,7 +98,8 @@ describers_idx <-  merge(describers_idx, d6, all.x=T, all.y=F, by="full.name.of.
 describers_idx <- data.table(describers_idx)
 describers_idx <- describers_idx[order(full.name.of.describer.n),]
 
-# Modify DOB
+
+
 describers_idx$dob.describer.original <- describers_idx$dob.describer.n 
 describers_idx$dod.describer.original <- describers_idx$dod.describer.n 
 describers_idx$dob.describer.n <- gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", 
@@ -123,13 +127,42 @@ describers_idx[grepl("\\[alive in 2019\\]", describers_idx$dod.describer.origina
 describers_idx[full.name.of.describer.n=="Bronisl[slash]aw"]$full.name.of.describer.n <- "Bronisl[slash]aw Debski"
 describers_idx[full.name.of.describer.n=="Haroldo Toro [Guttierez]"]$dob.describer.n <- ""
 describers_idx[full.name.of.describer.n=="Suzanne Willington Tubby Batra"]$dob.describer.n <- "1937"
-dob = describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dod.describer.n"]
-dod = describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dob.describer.n"]
-describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dod.describer.n"] = dod
-describers[full.name.of.describer.n=="Wilhelm Albert Schulz", "dob.describer.n"] = dob
-describers[full.name.of.describer.n=="Moses Harris", "dod.describer.n"] = "1788"
+dob = describers_idx[full.name.of.describer.n=="Wilhelm Albert Schulz", "dod.describer.n"]
+dod = describers_idx[full.name.of.describer.n=="Wilhelm Albert Schulz", "dob.describer.n"]
+describers_idx[full.name.of.describer.n=="Wilhelm Albert Schulz", "dod.describer.n"] = dod
+describers_idx[full.name.of.describer.n=="Wilhelm Albert Schulz", "dob.describer.n"] = dob
+describers_idx[full.name.of.describer.n=="Moses Harris", "dod.describer.n"] = "1788"
+
+describers_idx[full.name.of.describer.n=="Barry James Donovan"]$residence.country.describer.n = "US; NZ"
+describers_idx[full.name.of.describer.n=="David Ward Roubik"]$residence.country.describer.n = "PA; CR"
+describers_idx[full.name.of.describer.n=="Thomas Blackburn"]$residence.country.describer.n = "US; AU"
+describers_idx[full.name.of.describer.n=="Yuriy Andreyevich Pesenko"]$residence.country.describer.n = "RU"
+
+describers_idx[full.name.of.describer.n == "Marco A. Gaiani"]$alive = 'Y'
+describers_idx[full.name.of.describer.n == "Marco Antônio Costa"]$alive = 'Y'
+describers_idx[full.name.of.describer.n == "Spencer K. Monckton"]$alive = 'Y'
 
 #  Create index
 describers_idx$idx_auth <- 1:dim(describers_idx)[1]
+
+
+edit <- fread(paste0(dir, "clean/author_country_edit.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+
+edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+edit$residence.country.describer.comment <- NULL
+
+describers_idx <- merge(describers_idx, edit, by="full.name.of.describer.n", all.x=T, all.y=F,
+                        suffixes=c("", "_new"))
+
+describers_idx[!is.na(origin.country.describer.n_new)]$origin.country.describer.n <- describers_idx[!is.na(origin.country.describer.n_new)]$origin.country.describer.n_new
+
+describers_idx[!is.na(residence.country.describer.n_new)]$residence.country.describer.n <- describers_idx[!is.na(residence.country.describer.n_new)]$residence.country.describer.n_new
+
+describers_idx[!is.na(dob.describer.n_new)]$dob.describer.n <- describers_idx[!is.na(dob.describer.n_new)]$dob.describer.n_new
+
+describers_idx[!is.na(dod.describer.n_new)]$dod.describer.n <- describers_idx[!is.na(dod.describer.n_new)]$dod.describer.n_new
+
+describers_idx[,c("residence.country.describer.n_new", "dob.describer.n_new", 
+        "dod.describer.n_new", "origin.country.describer.n_new" ):=NULL]
 
 write.csv(describers_idx, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_3.0-by-author.csv"), na='', row.names=F, fileEncoding="UTF-8")
