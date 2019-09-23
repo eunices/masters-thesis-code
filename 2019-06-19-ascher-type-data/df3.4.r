@@ -16,7 +16,7 @@ describers_template <- fread(paste0(dir, "2019-05-23-Apoidea world consensus fil
 describers_template[, names(describers_template) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
 
-describers_template_edits <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final_edit.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+describers_template_edits <- fread(paste0(dir, "clean/describer_edits.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 describers_template_edits[, names(describers_template_edits) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 describers_template_edits <- describers_template_edits[rowSums(is.na(describers_template_edits)) != ncol(describers_template_edits)-1, ] # remove rows with all NAs
 describers_template_edits$alive_certainty <- NULL

@@ -946,6 +946,17 @@ df[as.numeric(df$date.of.type.yyyy) <1200]$date.of.type.yyyy[] <-
 # date differences
 df$years.lag <- as.numeric(df$date.n) - as.numeric(df$date.of.type.yyyy)
 
+filepath <- paste0(dir, "clean/date_discrepancy.csv")
+# those which have unresolved discrepancies (-ve date with no reason), will be changed to NA
+# field to merge is "date.of.type.corrected" (it is in YYYY format)
+date_discrepancy <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')[, c("idx", "date.of.type.corrected")]
+date_discrepancy[, names(date_discrepancy) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+date_discrepancy$idx <- as.numeric(date_discrepancy$idx)
+df <- merge(df, date_discrepancy, by="idx", all.x=T, all.y=F)
+df[!is.na(date.of.type.corrected)]$date.of.type.yyyy <- df[!is.na(date.of.type.corrected)]$date.of.type.corrected
+df$date.of.type.corrected <- NULL
+
+
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - quick fixes
@@ -1365,7 +1376,6 @@ df_s[!check0 & check3 & !check4 & check5]$source.of.latlon.n <-
     paste0(df_s[!check0 & check3 & !check4 & check5]$source.of.latlon.n, " & EJYSOH_ADDED_GMAPS_API")
 df_s[!check0 & check3 & !check4 & !check5]$source.of.latlon.n <- 
     paste0(df_s[!check0 & check3 & !check4 & !check5]$source.of.latlon.n, " & EJYSOH_ADDED_MANUAL")
-
 
 
 

@@ -16,12 +16,29 @@ library(plyr); library(maptools)
 #   geom_sf(data = ll, colour = "slategray3") + theme_minimal()
 # dev.off()
 
-# Heatmap of types described by?
+# Flag
 spp <- get_df1(write=F)
-spp <- spp[,c("idx", "type.country.n", "full.name.of.describer")]
-spp <- data.table(spp %>% separate_rows(full.name.of.describer, sep="; "))
+spp_s <- spp[,c("idx", "type.country.n", "full.name.of.describer")]
+spp_s <- data.table(spp_s %>% separate_rows(full.name.of.describer, sep="; "))
 
 spp2 <- get_df2(write=F)
+
+flag <- rbind(
+    data.frame(table(spp$source.of.latlon.n)),
+    data.frame(table(spp2$source.of.latlon.n))
+)
+
+
+write.csv(flag,
+          paste0(dir, "eda/2019-09-22-type-data-quality2.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+
+# Diff
+spp$diff <- as.numeric(spp$date.n) - as.numeric(spp$date.of.type.yyyy)
+write.csv(spp[diff<0], 'tmp/test.csv', row.names=F)
+
+# Heatmap of types described by?
+
 
 fn_des <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"
 des <- get_des(write=F)
@@ -29,25 +46,24 @@ des <- des[, c("full.name.of.describer.n", "residence.country.describer.n")]
 des <- data.table(des %>% separate_rows(residence.country.describer.n, sep="; "))
 des <- des[, id := seq_len(.N), by = full.name.of.describer.n][order(full.name.of.describer.n, id),][!duplicated(full.name.of.describer.n)]
 
-spp2 <- merge(spp, des, by.x="full.name.of.describer", by.y="full.name.of.describer.n",
+spp_s <- merge(spp_s, des, by.x="full.name.of.describer", by.y="full.name.of.describer.n",
       all.x=T, all.y=F)
 
-t <- table(spp2$type.country.n, spp2$residence.country.describer.n)
+t <- table(spp_s$type.country.n, spp_s$residence.country.describer.n)
 t <- data.table(t)
-t <- t[N!=0]
+dim(t); t <- t[N!=0]; dim(t)
 names(t) <- c("type.country", "residence.country", "N")
+dim(t); t <- t[!(type.country == "" | residence.country=="[unknown]")]; dim(t)
 
 # ggplot(t[type.country != "US" & residence.country != "US"], aes(type.country, residence.country, fill= N)) + 
 #   geom_tile()
 
 # merge t with lat and lon
-dim(t); t <- t[!(is.na(residence.country) | residence.country=="" | is.na(type.country) | type.country=="")]; dim(t)
 to_merge1 <- lookup.cty[, c("GEC", "centroid_lat", "centroid_lon")]
 to_merge2 <- lookup.cty[, c("A.2", "GEC", "centroid_lat", "centroid_lon")]
 t <- merge(t, to_merge1, by.x="type.country", by.y="GEC", all.x=T, all.y=F)
 t <- merge(t, to_merge2, by.x="residence.country", by.y="A.2", all.x=T, all.y=F,
            suffixes=c("_type.country", "_residence.country"))
-t$A.2 <- NULL
 t$residence.country <- NULL
 
 t[is.na(centroid_lat_type.country)]
@@ -62,7 +78,21 @@ t$no_flow <- t$res == t$des
 
 
 write.csv(t,
-          paste0(dir, "eda/2019-09-22-flow-map.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir, "eda/2019-09-22-flow-map-type-loc-des-country.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+
+table(t$no_flow)
+s1 <- t[, list(N=sum(N)), by='des']
+s2 <- t[no_flow==TRUE, list(N=sum(N)), by='des']
+ss <- merge(s1, s2, by='des', all.x=T, all.y=F, suffixes=c("_total", "_cty"))
+ss$prop <- ss$N_cty/ss$N_total
+ss <- merge(ss, lookup.cty[, c("GEC", "Country", "A.3")], 
+      by.x="des", by.y="GEC", 
+      all.x=T, all.y=F)
+
+
+write.csv(ss[order(-prop)],
+          paste0(dir, "eda/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 map <- geom_sf(data = shp, colour = "white", fill = NA, size=0.02) 

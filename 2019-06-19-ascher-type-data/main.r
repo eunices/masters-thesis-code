@@ -2,6 +2,7 @@ print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("WELCOME TO CLEANING SCRIPTS FOR BEE TYPE DATA")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
+# setwd("C:/Dev/msc-thesis-code/")
 # source('2019-06-19-ascher-type-data/main.r')
 
 # Scripts

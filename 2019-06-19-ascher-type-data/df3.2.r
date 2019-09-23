@@ -138,9 +138,15 @@ describers_idx[full.name.of.describer.n=="David Ward Roubik"]$residence.country.
 describers_idx[full.name.of.describer.n=="Thomas Blackburn"]$residence.country.describer.n = "US; AU"
 describers_idx[full.name.of.describer.n=="Yuriy Andreyevich Pesenko"]$residence.country.describer.n = "RU"
 
-describers_idx[full.name.of.describer.n == "Marco A. Gaiani"]$alive = 'Y'
-describers_idx[full.name.of.describer.n == "Marco Antônio Costa"]$alive = 'Y'
-describers_idx[full.name.of.describer.n == "Spencer K. Monckton"]$alive = 'Y'
+describers_idx[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$describer.gender.n
+ = "M"
+describers_idx[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$dob.describer.n = "1866"
+describers_idx[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$dod.describer.n = "1948"
+
+
+# describers_idx[full.name.of.describer.n == "Marco A. Gaiani"]$alive = 'Y'
+# describers_idx[full.name.of.describer.n == "Marco Antônio Costa"]$alive = 'Y'
+# describers_idx[full.name.of.describer.n == "Spencer K. Monckton"]$alive = 'Y'
 
 #  Create index
 describers_idx$idx_auth <- 1:dim(describers_idx)[1]
