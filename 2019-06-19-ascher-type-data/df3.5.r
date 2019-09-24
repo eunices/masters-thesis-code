@@ -58,4 +58,4 @@ ps2 <- rbind(ps2, ps4)
 
 # write.csv(ps3[order(-N), ..col_order], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-write.csv(ps3[order(-N)], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(ps2[order(-N)], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), na='', row.names=F, fileEncoding="UTF-8")
