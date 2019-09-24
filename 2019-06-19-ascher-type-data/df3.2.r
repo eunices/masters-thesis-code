@@ -138,10 +138,29 @@ describers_idx[full.name.of.describer.n=="David Ward Roubik"]$residence.country.
 describers_idx[full.name.of.describer.n=="Thomas Blackburn"]$residence.country.describer.n = "US; AU"
 describers_idx[full.name.of.describer.n=="Yuriy Andreyevich Pesenko"]$residence.country.describer.n = "RU"
 
-describers_idx[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$describer.gender.n
- = "M"
+describers_idx[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$describer.gender.n = "M"
 describers_idx[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$dob.describer.n = "1866"
 describers_idx[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$dod.describer.n = "1948"
+
+
+describers_idx[full.name.of.describer.n=="Chang-Whan Kim"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="Coert Smit Grobbelaar"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="Eduard Heinrich Graeffe"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="Erkki Valkeila"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="T. C. Narendran"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="Alexander Lall"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="M. L. Thakur"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="M. L. Thakur"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="Maria Cristina Arias"]$describer.gender.n = "F"
+describers_idx[full.name.of.describer.n=="Marina D. Meixner"]$describer.gender.n = "F"
+describers_idx[full.name.of.describer.n=="Philippe James Baldensperger"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="Sarah E. Radloff"]$describer.gender.n = "F"
+describers_idx[full.name.of.describer.n=="Neno Atanassov"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="Shashidhar Viraktamath"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="Stefan Fuchs"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="Sydney Cameron"]$describer.gender.n = "F"
+describers_idx[full.name.of.describer.n=="Walter S. Sheppard"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="Zewdu Ararso Hora"]$describer.gender.n = "M"
 
 
 # describers_idx[full.name.of.describer.n == "Marco A. Gaiani"]$alive = 'Y'

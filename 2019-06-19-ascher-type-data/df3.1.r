@@ -143,7 +143,7 @@ if (loop_3=='Y') {
     describers$dod.describer.n <- as.numeric(describers$dod.describer.n)
     describers[dob.describer.n>3000]$dob.describer.n <- NA
 
-    describers[!describer.gender.n %in% c("M", "F")]$describer.gender.n <- ""
+    describers[!describer.gender.n %in% c("M", "F", "U")]$describer.gender.n <- ""
 
     describers$institution.of.describer.n <- gsub("[[:digit:]]", "",        describers$institution.of.describer.n)
 
