@@ -150,7 +150,6 @@ describers_idx[full.name.of.describer.n=="Erkki Valkeila"]$describer.gender.n = 
 describers_idx[full.name.of.describer.n=="T. C. Narendran"]$describer.gender.n = "M"
 describers_idx[full.name.of.describer.n=="Alexander Lall"]$describer.gender.n = "M"
 describers_idx[full.name.of.describer.n=="M. L. Thakur"]$describer.gender.n = "M"
-describers_idx[full.name.of.describer.n=="M. L. Thakur"]$describer.gender.n = "M"
 describers_idx[full.name.of.describer.n=="Maria Cristina Arias"]$describer.gender.n = "F"
 describers_idx[full.name.of.describer.n=="Marina D. Meixner"]$describer.gender.n = "F"
 describers_idx[full.name.of.describer.n=="Philippe James Baldensperger"]$describer.gender.n = "M"
@@ -161,7 +160,22 @@ describers_idx[full.name.of.describer.n=="Stefan Fuchs"]$describer.gender.n = "M
 describers_idx[full.name.of.describer.n=="Sydney Cameron"]$describer.gender.n = "F"
 describers_idx[full.name.of.describer.n=="Walter S. Sheppard"]$describer.gender.n = "M"
 describers_idx[full.name.of.describer.n=="Zewdu Ararso Hora"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=="Daniele R. Parizotto"]$describer.gender.n = "F"
+describers_idx[full.name.of.describer.n=="Ernst Clément"]$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=='Gard W. Otis']$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=='Gaurav Sharma']$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=='Jir[diacritic]í Hadrava']$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=='K. Sajan Jose']$describer.gender.n = "M"
+describers_idx[full.name.of.describer.n=='P. Girish Kumar']$describer.gender.n = "M"
 
+describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$residence.country.describer.n = "IT"
+describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$dob.describer.n = "1881"
+describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$dod.describer.n = "1942"
+
+describers_idx[full.name.of.describer.n=='André Nemésio']$dob.describer.n = ""
+describers_idx[full.name.of.describer.n=='André Nemésio']$dod.describer.n = ""
+describers_idx[full.name.of.describer.n=='Haroldo Toro [Guttierez]']$dod.describer.n = ""
 
 # describers_idx[full.name.of.describer.n == "Marco A. Gaiani"]$alive = 'Y'
 # describers_idx[full.name.of.describer.n == "Marco Antônio Costa"]$alive = 'Y'
