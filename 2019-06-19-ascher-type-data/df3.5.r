@@ -46,14 +46,16 @@ ps4 <- ps4[, .N, by=c("p1")]; ps4$p2 <- NA
 ps2 <- rbind(ps2, ps4)
 
 # Join with author information
-cols <- c('idx_auth', 'full.name.of.describer.n', 'describer.gender.n',
-          'origin.country.describer.n', 'residence.country.describer.first', 'spp_N')
-de <- des[,..cols]
-ps3 <- merge(ps2, de, by.x='p1', by.y='full.name.of.describer.n', all.x=T, all.y=F)
-ps3 <- merge(ps3, de, by.x='p2', by.y='full.name.of.describer.n', suffixes=c('_p1', '_p2'), all.x=T, all.y=F)
+# cols <- c('idx_auth', 'full.name.of.describer.n', 'describer.gender.n',
+#           'origin.country.describer.n', 'residence.country.describer.first', 'spp_N')
+# de <- des[,..cols]
+# ps3 <- merge(ps2, de, by.x='p1', by.y='full.name.of.describer.n', all.x=T, all.y=F)
+# ps3 <- merge(ps3, de, by.x='p2', by.y='full.name.of.describer.n', suffixes=c('_p1', '_p2'), all.x=T, all.y=F)
 
-p1_names <- names(ps3)[grepl("_p1", names(ps3))]
-p2_names <- names(ps3)[grepl("_p2", names(ps3))]
-col_order <- c("N", "p1", "p2", p1_names, p2_names)
+# p1_names <- names(ps3)[grepl("_p1", names(ps3))]
+# p2_names <- names(ps3)[grepl("_p2", names(ps3))]
+# col_order <- c("N", "p1", "p2", p1_names, p2_names)
 
-write.csv(ps3[order(-N), ..col_order], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), na='', row.names=F, fileEncoding="UTF-8")
+# write.csv(ps3[order(-N), ..col_order], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+write.csv(ps3[order(-N)], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), na='', row.names=F, fileEncoding="UTF-8")

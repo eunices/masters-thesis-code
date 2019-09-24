@@ -79,17 +79,17 @@ describers_idx <- describers_idx[,c("full.name.of.describer.n",
 # Order and leave out blanks
 describers_idx$describer.gender.n <- factor(describers_idx$describer.gender.n, levels=c("F", "M", "U"), ordered=T)
 d1 <- describers_idx[, c("full.name.of.describer.n", "describer.gender.n", "idxes", "idxes_author.order")][
-        order(full.name.of.describer.n, describer.gender.n)][!duplicated(full.name.of.describer.n)]
+        ,list(count=.N), by=c("full.name.of.describer.n", "describer.gender.n", "idxes", "idxes_author.order")][order(full.name.of.describer.n, -count)][!duplicated(full.name.of.describer.n)]; d1$count <- NULL
 d2 <- describers_idx[!dob.describer.n %in% c("U", ""), c("full.name.of.describer.n", "dob.describer.n")][
-        order(full.name.of.describer.n, dob.describer.n)][!duplicated(full.name.of.describer.n)]
+        ,list(count=.N), by=c("full.name.of.describer.n", "dob.describer.n")][order(full.name.of.describer.n, -count)][!duplicated(full.name.of.describer.n)]; d2$count <- NULL
 d3 <- describers_idx[!dod.describer.n %in% c("U", ""), c("full.name.of.describer.n", "dod.describer.n")][
-        order(full.name.of.describer.n, dod.describer.n)][!duplicated(full.name.of.describer.n)]
+        ,list(count=.N), by=c("full.name.of.describer.n", "dod.describer.n")][order(full.name.of.describer.n, -count)][!duplicated(full.name.of.describer.n)]; d3$count <- NULL
 d4 <- describers_idx[!origin.country.describer.n %in% c("U", " "), c("full.name.of.describer.n", "origin.country.describer.n")][
-        order(full.name.of.describer.n, -origin.country.describer.n)][!duplicated(full.name.of.describer.n)]
+        ,list(count=.N), by=c("full.name.of.describer.n", "origin.country.describer.n")][order(full.name.of.describer.n, -count)][!duplicated(full.name.of.describer.n)]; d4$count <- NULL
 d5 <- describers_idx[!residence.country.describer.n %in% c("U", " "), c("full.name.of.describer.n", "residence.country.describer.n")][
-        order(full.name.of.describer.n, -residence.country.describer.n)][!duplicated(full.name.of.describer.n)]
+        ,list(count=.N), by=c("full.name.of.describer.n", "residence.country.describer.n")][order(full.name.of.describer.n, -count)][!duplicated(full.name.of.describer.n)]; d5$count <- NULL
 d6 <- describers_idx[!institution.of.describer.n %in% c("U", " "), c("full.name.of.describer.n", "institution.of.describer.n")][
-        order(full.name.of.describer.n, -institution.of.describer.n)][!duplicated(full.name.of.describer.n)]
+        ,list(count=.N), by=c("full.name.of.describer.n", "institution.of.describer.n")][order(full.name.of.describer.n, -count)][!duplicated(full.name.of.describer.n)]; d6$count <- NULL
 describers_idx <-  merge(d1, d2, all.x=T, all.y=F, by="full.name.of.describer.n")
 describers_idx <-  merge(describers_idx, d3, all.x=T, all.y=F, by="full.name.of.describer.n")
 describers_idx <-  merge(describers_idx, d4, all.x=T, all.y=F, by="full.name.of.describer.n")
@@ -97,8 +97,6 @@ describers_idx <-  merge(describers_idx, d5, all.x=T, all.y=F, by="full.name.of.
 describers_idx <-  merge(describers_idx, d6, all.x=T, all.y=F, by="full.name.of.describer.n")
 describers_idx <- data.table(describers_idx)
 describers_idx <- describers_idx[order(full.name.of.describer.n),]
-
-
 
 describers_idx$dob.describer.original <- describers_idx$dob.describer.n 
 describers_idx$dod.describer.original <- describers_idx$dod.describer.n 
@@ -176,6 +174,12 @@ describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$d
 describers_idx[full.name.of.describer.n=='André Nemésio']$dob.describer.n = ""
 describers_idx[full.name.of.describer.n=='André Nemésio']$dod.describer.n = ""
 describers_idx[full.name.of.describer.n=='Haroldo Toro [Guttierez]']$dod.describer.n = ""
+
+
+describers_idx[full.name.of.describer.n=='Alain Pauly']$origin.country.describer.n = "BE"
+describers_idx[full.name.of.describer.n=='Carlos Hernan Vergara']$origin.country.describer.n = "MX"
+describers_idx[full.name.of.describer.n=='Charles Duncan Michener']$dod.describer.n = "US"
+describers_idx[full.name.of.describer.n=='Ricardo Ayala Barajas']$dod.describer.n = "MX"
 
 # describers_idx[full.name.of.describer.n == "Marco A. Gaiani"]$alive = 'Y'
 # describers_idx[full.name.of.describer.n == "Marco Antônio Costa"]$alive = 'Y'

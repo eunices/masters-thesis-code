@@ -17,7 +17,7 @@ p1 <- ggplot(species_per_year, aes(x=date.n, y=N)) +
     geom_line(size=1) + 
         xlab("") + ylab("Number of species") + 
             theme_minimal() +
-                ggtitle("Number of species described per year")
+                ggtitle("Number of species described per year") + geom_smooth()
 
 # Per decade
 species_per_decade <- df[,.(.N), by=.(date.decade)]
@@ -31,15 +31,16 @@ p2 <- ggplot(species_per_decade, aes(x=date.decade, y=N)) +
 ## Number of publications
 
 # Per year
-df_publications <- unique(df[,c("date.n", "date.decade", "TE")])
+
 publications_per_year <- df_publications[,.(.N), by=.(date.n)]
 p3 <- ggplot(publications_per_year, aes(x=date.n, y=N)) + 
     geom_line(size=1) + 
         xlab("") + ylab("Number of publications") + 
             theme_minimal() +
-                ggtitle("Number of publications per year")
+                ggtitle("Number of publications per year") + geom_smooth()
 
 # Per decade
+df_publications$date.decade <- paste0(substr(df_publications$date.n, 1, 3), "0s")
 publications_per_decade <- df_publications[,.(.N), by=.(date.decade)]
 p4 <- ggplot(publications_per_decade, aes(x=date.decade, y=N)) + 
     geom_bar(stat="identity") + 
@@ -59,12 +60,14 @@ p5 <- ggplot(species_and_pub_per_year, aes(x=date.n, y=species_per_publication))
 
 
 ## Correlation between species and publications per year
+c <- cor.test(species_and_pub_per_year$N_publications, species_and_pub_per_year$N_species, method = c("pearson"))
+corr <- round(c$estimate^2, 2)
+
 p6 <- ggplot(species_and_pub_per_year, aes(x=N_publications, y=N_species)) + 
     geom_point(alpha=0.5) + 
         xlab("Number of publications") + ylab("Number of species") +
             theme_minimal()  +
-                ggtitle("Correlation between publications \nand species per year")
-cor.test(species_and_pub_per_year$N_publications, species_and_pub_per_year$N_species, method = c("pearson"))
+                ggtitle(paste0("Correlation between publications \nand species per year (Rsq=", corr, ")"))
 
 
 ## Histogram of number of species per year
@@ -87,9 +90,3 @@ dev.off()
 
 grid.arrange(p1, p3, p7, p6, nrow = 2, ncol=2)
 
-# df_country
-# df_continent
-# df_biogeo
-df_biogeo_holt
-
-names(df_biogeo_holt)

@@ -22,6 +22,12 @@ plot_year + geom_point() + geom_line() +
     xlab("Year") + ylab("Cumulative number of species")  + theme_minimal() +
         ggtitle("Cumulative number of bee species time series (1758-2018)") + 
              theme(plot.title = element_text(lineheight=.8, face="bold"))
+plot_year <- ggplot(data = summary_year, aes(x=date.n, y=N)) 
+plot_year + geom_point() + geom_line() + 
+    xlab("Year") + ylab("Number of species described in a year")  + theme_minimal() +
+        ggtitle("Number of species described time series (1758-2018)") + 
+             theme(plot.title = element_text(lineheight=.8, face="bold")) +  geom_smooth()
+
 
 ## By family
 df_country2 <- merge(df_country, df[,c("idx", "family")], by="idx", all.x=T, all.y=F)
@@ -45,6 +51,73 @@ plot_year_fam + geom_point() + geom_line() +
         facet_wrap(. ~ family, ncol=3) +
         ggtitle("Cumulative number of bee species time series for each family (1758-2018)") + 
              theme(plot.title = element_text(lineheight=.8, face="bold"))
+plot_year_fam <- ggplot(data = summary_year_fam, aes(x=date.n, y=N, c=family)) 
+plot_year_fam + geom_point() + geom_line() + 
+    xlab("Year") + ylab("Number of species described in a year")  + theme_minimal() +
+        facet_wrap(. ~ family, ncol=3, scales="free_y") +
+        ggtitle("Number of species described time series (1758-2018)") + 
+             theme(plot.title = element_text(lineheight=.8, face="bold"))  +  geom_smooth()
+
+
+
+## By tropics etc
+get_first_type <- function(x) {
+    strsplit(x, "/")[[1]][1]
+}
+df_country2 <- df_country
+df_country2$Latitude_type3 <- sapply(df_country2$Latitude_type, get_first_type)
+
+summary_year_trop <- df_country2[,.(.N), by=c("date.n", "Latitude_type3")]
+template_year_trop <- expand.grid(
+        date.n=min(summary_year_fam$date.n):max(summary_year_fam$date.n),
+        Latitude_type3=unique(df_country2$Latitude_type3))
+summary_year_trop <- merge(template_year_trop, summary_year_trop,
+                          by=c("date.n", "Latitude_type3"), all.x=T, all.y=F)
+summary_year_trop[is.na(summary_year_trop$N),]$N <- 0
+summary_year_trop <- data.table(summary_year_trop)
+summary_year_trop[, N_cumsum := cumsum(N), by="Latitude_type3"]
+
+plot_year_fam <- ggplot(data = summary_year_trop, aes(x=date.n, y=N_cumsum, col=Latitude_type3)) 
+plot_year_fam + geom_point() + geom_line() +
+    xlab("Year") + ylab("Cumulative number of species") + theme_minimal() +
+        ggtitle("Cumulative number of bee species time series for each family (1758-2018)") + 
+             theme(plot.title = element_text(lineheight=.8, face="bold"))
+
+plot_year_fam <- ggplot(data = summary_year_trop, aes(x=date.n, y=N, col=Latitude_type3)) 
+plot_year_fam + 
+    # geom_point() + geom_line() +
+    xlab("Year") + ylab("Cumulative number of species") + theme_minimal() +
+        ggtitle("Cumulative number of bee species time series for each family (1758-2018)") + 
+             theme(plot.title = element_text(lineheight=.8, face="bold")) + geom_smooth()
+
+## By family and tropics/ not 
+df_country2 <- merge(df_country, df[,c("idx", "family")], by="idx", all.x=T, all.y=F)
+df_country2$Latitude_type3 <- sapply(df_country2$Latitude_type, get_first_type)
+summary_year_fam_trop <- df_country2[,.(.N), by=c("date.n", "family", "Latitude_type3")]
+template_year_fam_trop <- expand.grid(
+    date.n=min(summary_year_fam$date.n):max(summary_year_fam$date.n),
+    family=unique(df_country2$family), Latitude_type3=unique(df_country2$Latitude_type3))
+summary_year_fam_trop <- merge(template_year_fam_trop, summary_year_fam_trop,
+                          by=c("date.n", "family", "Latitude_type3"), all.x=T, all.y=F)
+summary_year_fam_trop[is.na(summary_year_fam_trop$N),]$N <- 0
+summary_year_fam_trop <- data.table(summary_year_fam_trop)
+summary_year_fam_trop[, N_cumsum := cumsum(N), by=c("family", "Latitude_type3")]
+
+plot_year_fam_trop <- ggplot(data = summary_year_fam_trop, aes(x=date.n, y=N_cumsum, 
+                          col=Latitude_type3)) 
+plot_year_fam_trop + geom_point() + geom_line() +
+    xlab("Year") + ylab("Cumulative number of species") + theme_minimal() +
+        facet_wrap(. ~ family, ncol=3, scales = "free_y") +
+        ggtitle("Cumulative number of bee species time series for each family (1758-2018)") + 
+             theme(plot.title = element_text(lineheight=.8, face="bold"))
+plot_year_fam_trop <- ggplot(data = summary_year_fam_trop, aes(x=date.n, y=N, 
+                          col=Latitude_type3)) 
+plot_year_fam_trop + 
+    # geom_point() + geom_line() +
+    xlab("Year") + ylab("Cumulative number of species") + theme_minimal() +
+        facet_wrap(. ~ family, ncol=3, scales = "free_y") +
+        ggtitle("Cumulative number of bee species time series for each family (1758-2018)") + 
+             theme(plot.title = element_text(lineheight=.8, face="bold")) + geom_smooth()
 
 # # Map by country
 # summary_country <- df_country[,.(.N), by="A.3"][order(A.3)]

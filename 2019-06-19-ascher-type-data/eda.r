@@ -119,3 +119,5 @@ nw
 nw_cty <- nw[, list(sum(as.numeric(N))), by=c("residence.country.describer.first_p1", "residence.country.describer.first_p2")]
 
 write.csv(nw_cty, paste0(dir, 'eda/2019-09-22-auth-country-network.csv'), na='', row.names=F, fileEncoding="UTF-8")
+
+# Taxonomic effort over time
