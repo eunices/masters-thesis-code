@@ -1,6 +1,3 @@
-# TODO: first author publications only
-# TODO: watch lectures on probability
-
 source('2019-07-15-edie-et-al/init.r')
 
 df$date.decade <- paste0(substr(df$date.n, 1, 3), "0s")
@@ -50,8 +47,17 @@ p4 <- ggplot(publications_per_decade, aes(x=date.decade, y=N)) +
 
 
 ## Species per publication
-species_and_pub_per_year <- merge(species_per_year, publications_per_year, by.x="date.n", by.y="date.n", suffix=c("_species", "_publications"))
-species_and_pub_per_year[, species_per_publication := N_species/N_publications]
+# Old code
+# species_and_pub_per_year <- merge(species_per_year, publications_per_year, by.x="date.n", by.y="date.n", suffix=c("_species", "_publications"))
+# species_and_pub_per_year[, species_per_publication := N_species/N_publications]
+df_pubs <- data.table(df_publications %>% separate_rows(idxes, sep="; "))[!is.na]
+df_pubs <- df_pubs[as.numeric(idxes) <= 20699]
+df_pubs2 <- df_pubs[, list(species=.N), by=c("date.n", "paper.authors", 
+                                                             "journal", "title", 
+                                                             "volume", "issue", "page.numbers.publication")]
+species_and_pub_per_year <- df_pubs2[, list(species_per_publication=mean(species)), by="date.n"]
+
+
 p5 <- ggplot(species_and_pub_per_year, aes(x=date.n, y=species_per_publication)) + 
     geom_line(size=1) +
         xlab("") + ylab("Species per publication") + 

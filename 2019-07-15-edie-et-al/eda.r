@@ -280,3 +280,8 @@ summary(as.numeric(df_describers[prop_species_described_as_last_author>=.9]$max)
 
 
 # histogram of species / author
+
+
+
+# Russian and type localities
+

@@ -1004,8 +1004,6 @@ table(df$family)
 table(is.na(df$genus) | df$genus== "")
 table(is.na(df$species) | df$species== "")
 
-write.csv(df[,c("idx", "family", "subfamily", "genus")], 'tmp/test.csv')
-
 write.csv(df, 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv"),
           na='', row.names=F, fileEncoding="UTF-8")
@@ -1388,7 +1386,7 @@ write.csv(df_s[order(idx)],
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- count synonyms per valid species"))
 
-df_nv <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+df_nv <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 
 filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv")
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
@@ -1429,4 +1427,67 @@ rm(var_count, df_s)
 write.csv(df, 
           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - clean repository
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- clean repository"))
+
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-synonyms.csv")
+df1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df1[, names(df1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+
+filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv")
+df2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df2[, names(df2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+check <- rbind(df1[, c("idx", "type.repository", "country.of.type.repository")], 
+               df2[, c("idx", "type.repository", "country.of.type.repository")])
+
+check$type.repository.n <- gsub(" ", "", gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", check$type.repository)) 
+check$country.of.type.repository.n <- gsub(" ", "", gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", check$country.of.type.repository)) 
+
+
+check2 <- data.table(check %>% group_by(type.repository, country.of.type.repository, type.repository.n, country.of.type.repository.n) %>%
+    summarise(idxes=paste0(idx,collapse='; ')))
+
+write.csv(check2[order(type.repository, country.of.type.repository)], 
+          paste0(dir, "clean/", "check-type-repo.csv"),
+          fileEncoding="UTF-8")
+
+
+filepath <- paste0(dir, "clean/check-type-repo_edit.csv")
+edit <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+
+edit <- edit %>% separate_rows(idxes, sep="; ") %>%
+    group_by(type.repository.n.CORRECTED, country.of.type.repository.n.CORRECTED.A2) %>%
+    summarise(idxes=paste0(idxes, collapse='; '))
+edit <- data.table(edit)
+
+write.csv(edit[order(type.repository.n.CORRECTED, country.of.type.repository.n.CORRECTED.A2)], 
+          paste0(dir, "clean/", "check-type-repo2.csv"),
+          fileEncoding="UTF-8")
+
+filepath <- paste0(dir, "clean/check-type-repo2_edit.csv")
+edit <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+
+dim(edit[country.of.type.repository.n_short != "[unknown]"][duplicated(country.of.type.repository.n_short)])
+
+edit <- edit[, c("country.of.type.repository.n_short", "country.of.type.repository.n_long",
+                 "type.repository.n_short", "type.repository.n_long", "idxes")]
+
+edit <- edit %>% separate_rows(idxes, sep="; ")
+df1 <- merge(df1, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
+df2 <- merge(df2, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
+
+
+
+write.csv(df1, 
+          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-clean-repository.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+
+write.csv(df2, 
+          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv"), na='', row.names=F, fileEncoding="UTF-8")
 

@@ -4,7 +4,7 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': summarizing describer information"))
 
-synonyms <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+synonyms <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 synonym_idxes <- synonyms[status=="Synonym",]$idx
 subsp_idxes <- synonyms[status=="Valid subspecies",]$idx
 var_idxes <- synonyms[status=="Infrasubspecific",]$idx

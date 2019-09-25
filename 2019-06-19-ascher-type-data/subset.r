@@ -53,6 +53,7 @@ construct_filepath <- function(filename) {paste0(dir, filename)}
 subset_df <- function(filepath, table, write=T) {
 
     # fn_df2 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"
+    print(paste0("Reading ", table, " from ", filepath))
 
     df <- fread(construct_filepath(filepath), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
     vars <- var_f[table_name==table][order(order)]

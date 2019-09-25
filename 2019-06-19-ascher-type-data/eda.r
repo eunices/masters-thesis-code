@@ -5,6 +5,7 @@ source('2019-06-19-ascher-type-data/subset.r')
 library(ggplot2)
 library(grid); library(gridExtra)
 library(plyr); library(maptools)
+library(reshape)
 
 # Exploratory analysis
 #############
@@ -38,9 +39,8 @@ spp$diff <- as.numeric(spp$date.n) - as.numeric(spp$date.of.type.yyyy)
 write.csv(spp[diff<0], 'tmp/test.csv', row.names=F)
 
 # Heatmap of types described by?
+# TODO: fix russia!!!
 
-
-fn_des <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"
 des <- get_des(write=F)
 des <- des[, c("full.name.of.describer.n", "residence.country.describer.n")]
 des <- data.table(des %>% separate_rows(residence.country.describer.n, sep="; "))
@@ -120,4 +120,25 @@ nw_cty <- nw[, list(sum(as.numeric(N))), by=c("residence.country.describer.first
 
 write.csv(nw_cty, paste0(dir, 'eda/2019-09-22-auth-country-network.csv'), na='', row.names=F, fileEncoding="UTF-8")
 
-# Taxonomic effort over time
+# Russian taxonomist
+
+tc <- get_df1(write=F)[,c("idx", "full.name.of.describer", "type.country.n")]
+ru <- get_des(write=F)[grepl("RU", residence.country.describer.n)]
+
+tc2 <- data.table(tc %>% separate_rows(full.name.of.describer, sep="; "))
+tc2 <- tc2[full.name.of.describer %in% ru$full.name.of.describer.n]
+tc2 <- tc2[, list(N_spp=.N), by=c("full.name.of.describer", "type.country.n")]
+
+tc3 <- dcast(tc2, full.name.of.describer ~ type.country.n, value.var="N_spp", fun.aggregate=sum)
+fi <- merge(ru, tc3, by.y="full.name.of.describer", by.x="full.name.of.describer.n", all.x=F, all.y=T)
+
+write.csv(fi,
+          paste0(dir, "eda/2019-09-25-russians.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+
+
+
+
+# type country n = GEC
+# publication country = A2
+# type.repository.country = A2
