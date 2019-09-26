@@ -8,8 +8,8 @@ library(xlsx)
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 # Variables
-# to_subset <- "Y"
-to_subset <- "N"
+to_subset <- "Y"
+# to_subset <- "N"
 
 
 # Load data.frame variable names
