@@ -3,7 +3,7 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': summarizing describer information"))
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-clean.csv")
 synonyms <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 synonym_idxes <- synonyms[status=="Synonym",]$idx
 subsp_idxes <- synonyms[status=="Valid subspecies",]$idx

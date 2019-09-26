@@ -8,44 +8,44 @@ print("######################################################")
 
 source('2019-06-19-ascher-type-data/init.R')
 
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - initial formatting
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- initial formatting"))
+# # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# # Section - initial formatting
+# # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# print(paste0(Sys.time(), " --- initial formatting"))
 
-# read dataset with index
-filepath <- paste0(dir_data, '2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_1-idx.csv')
-df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
-# csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
+# # read dataset with index
+# filepath <- paste0(dir_data, '2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_1-idx.csv')
+# df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+# # csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
 
-# replace unknown values with NA
-replace_na <- c('other,_unknown,_or none', 'other,_unknown,_or_other', 'other,_unknown,_or_none')
-for (i in 1:length(replace_na)){
-    df[, names(df) := lapply(.SD, function(x) gsub(replace_na[i], NA, x))]
-}
+# # replace unknown values with NA
+# replace_na <- c('other,_unknown,_or none', 'other,_unknown,_or_other', 'other,_unknown,_or_none')
+# for (i in 1:length(replace_na)){
+#     df[, names(df) := lapply(.SD, function(x) gsub(replace_na[i], NA, x))]
+# }
 
-# rename column names
-names(df) <- gsub("\\.\\.", "\\.", gsub(" ", ".", gsub("[[:punct:]]", "", tolower(names(df)))))
-names(df) <- iconv(names(df), from = 'UTF-8', to = 'ASCII//TRANSLIT')
-if (any(grepl("full.name.a.e", names(df)))) {
-    names(df)[which(grepl("full.name.a.e", names(df)))] <- 'full.name' # renaming this long name
-}
+# # rename column names
+# names(df) <- gsub("\\.\\.", "\\.", gsub(" ", ".", gsub("[[:punct:]]", "", tolower(names(df)))))
+# names(df) <- iconv(names(df), from = 'UTF-8', to = 'ASCII//TRANSLIT')
+# if (any(grepl("full.name.a.e", names(df)))) {
+#     names(df)[which(grepl("full.name.a.e", names(df)))] <- 'full.name' # renaming this long name
+# }
 
-print(paste0("Dataset read is ", dim(df)[1], " rows and ", dim(df)[2], " cols."))
+# print(paste0("Dataset read is ", dim(df)[1], " rows and ", dim(df)[2], " cols."))
 
-# initialize flag column
-df$flag <- '' 
+# # initialize flag column
+# df$flag <- '' 
 
-# keep a list of original column names
-df_original_cols <- names(df) # should be 94 cols
+# # keep a list of original column names
+# df_original_cols <- names(df) # should be 94 cols
 
-# remove line carriages (otherwise funky things will happen with write.csv)
-df[] <- lapply(df, gsub, pattern='[\r\n]', replacement=' ')
+# # remove line carriages (otherwise funky things will happen with write.csv)
+# df[] <- lapply(df, gsub, pattern='[\r\n]', replacement=' ')
 
-# check number of NA
-# na_count <- data.frame(names=names(df), N=sapply(df, function(x) sum(length(which(is.na(x))))), row.names=NULL)
-# print(paste0(Sys.time(), " --- Number of NA")); print(na_count[order(-na_count$N), c("names", "N")][1:10,])
+# # check number of NA
+# # na_count <- data.frame(names=names(df), N=sapply(df, function(x) sum(length(which(is.na(x))))), row.names=NULL)
+# # print(paste0(Sys.time(), " --- Number of NA")); print(na_count[order(-na_count$N), c("names", "N")][1:10,])
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - geocoding + quick lat lon checks
@@ -272,38 +272,36 @@ df_merged <- merge(df, no_geocode, by='idx', suffix=c('', '_new'), all.x=T, all.
 df_merged[!is.na(df_merged$flag_new),]$flag <- df_merged[!is.na(df_merged$flag_new),]$flag_new
 df <- df_merged[, ..df_original_cols]; dim(df)
 
+# # + clean lat long
 
-# + clean lat long
+# # convert to numeric
+# df$lat.n <- as.numeric(df$lat); df$lon.n <- as.numeric(df$lon)
+# # write.csv(df, 'tmp/test.csv', fileEncoding="UTF-8") # looks good
 
-# convert to numeric
-df$lat.n <- as.numeric(df$lat); df$lon.n <- as.numeric(df$lon)
-# write.csv(df, 'tmp/test.csv', fileEncoding="UTF-8") # looks good
+# # NOTE: This section is manual - requires visual checks!
+# # checking why NA coercion was necessary
+# df[is.na(lat.n) & (is.na(flag) | flag ==""), "lat"]
+# df[is.na(lat.n) & (is.na(flag) | flag ==""), "lat.n"] <- c(NA, 34.0751, 45.146) # manual correction
+# df$lat <- df$lat.n; df[, lat.n:=NULL]
+# df[is.na(lon.n) & (is.na(flag) | flag ==""), "lon"]
+# df[is.na(lon.n) & (is.na(flag) | flag ==""), "lon.n"] <- c(NA) # manual correction
+# df$lon <- df$lon.n; df[, lon.n:=NULL]
 
-# NOTE: This section is manual - requires visual checks!
-# checking why NA coercion was necessary
-df[is.na(lat.n) & (is.na(flag) | flag ==""), c("idx", "lat")]
-df[idx==18963]$lat.n <- NA
-df[idx==20365]$lat.n <- 34.0751
-df[idx==20571]$lat.n <- 45.146
+# # checking for out of range lat long
+# df[df$lon < -180, c("idx", "lon")] 
+# df[idx==1530, "lon"] <- -70.617721 # manual correction
+# df[df$lat < -90, c("idx", "lat")]
+# df[idx %in% c(10061, 10076, 10133, 10143, 10146, 9762, 9825 ), c("idx", "lat")] <- -21.3558    # manual correction
 
-df$lat <- df$lat.n; df[, lat.n:=NULL]
-df[is.na(lon.n) & (is.na(flag) | flag ==""), c("idx", "lon")]
-df[idx==18963, "lon.n"] <- c(NA) # manual correction
-df$lon <- df$lon.n; df[, lon.n:=NULL]
-
-# checking for out of range lat long
-df[df$lon < -180, "lon"] <- -70.617721 # manual correction
-df[df$lat < -90, "lat"] <- -21.3558    # manual correction
-
-df <- df[order(as.numeric(idx))]
+# df <- df[order(as.numeric(idx))]
 write.csv(df, 
           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_2-geocoded.csv"),
           na='', row.names=F, fileEncoding="UTF-8") # write.csv escapes double quotes PROPERLY
 
 
-df <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_2-geocoded.csv"),
-            na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
-df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+# df <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_2-geocoded.csv"),
+#             na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+# df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 # csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
 
 # + check country and lat lon
@@ -918,57 +916,57 @@ df[!check0 & check3 & !check4 & !check5]$source.of.latlon.n <-
 # STB = St Barthelemy; not in the lookup doc
 # WEG = areas of conflict (Bethlehem, Jericho, Gaza) as GZ
 
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - check duplicated rows & make new cols
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- clean date column"))
+# # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# # Section - check duplicated rows & make new cols
+# # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# print(paste0(Sys.time(), " --- clean date column"))
 
-# duplicates rows
-gs <- paste0(df$genus, df$species)
-df$duplicated.row <- duplicated(gs)
+# # duplicates rows
+# gs <- paste0(df$genus, df$species)
+# df$duplicated.row <- duplicated(gs)
 
-# date
-df$date.n <- as.numeric(gsub("\\[.*\\]", "", df$date)) # remove square brackets
-df[is.na(date.n)]$date.n <- as.numeric(sub("\\D*(\\d+).*", "\\1", df[is.na(date.n)]$author.date))
+# # date
+# df$date.n <- as.numeric(gsub("\\[.*\\]", "", df$date)) # remove square brackets
+# df[is.na(date.n)]$date.n <- as.numeric(sub("\\D*(\\d+).*", "\\1", df[is.na(date.n)]$author.date))
 
-# date.of.type
-df$date.of.type.string <- paste0("'", df$date.of.type)
-df$date.of.type.dd <- as.numeric(sub("\\D*(\\d+).*", "\\1", df$date.of.type))
-df[df$date.of.type.dd>31,]$date.of.type.dd <- NA
+# # date.of.type
+# df$date.of.type.string <- paste0("'", df$date.of.type)
+# df$date.of.type.dd <- as.numeric(sub("\\D*(\\d+).*", "\\1", df$date.of.type))
+# df[df$date.of.type.dd>31,]$date.of.type.dd <- NA
 
-df$date.of.type.mm <- 
-    gsub(".*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec).*", "\\1", df$date.of.type)
-df[!df$date.of.type.mm %in% c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),]$date.of.type.mm <- ""
+# df$date.of.type.mm <- 
+#     gsub(".*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec).*", "\\1", df$date.of.type)
+# df[!df$date.of.type.mm %in% c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),]$date.of.type.mm <- ""
 
-df$date.of.type.yyyy <- as.character(as.numeric(sub('.*(\\d{4}).*', '\\1', df$date.of.type)))
+# df$date.of.type.yyyy <- as.character(as.numeric(sub('.*(\\d{4}).*', '\\1', df$date.of.type)))
 
-paste_nine = function(numeric){
-    char <- strsplit(as.character(numeric), "")[[1]]
-    word <- paste0(char[1], "9", char[3], char[4])
-    as.character(word)
-}
+# paste_nine = function(numeric){
+#     char <- strsplit(as.character(numeric), "")[[1]]
+#     word <- paste0(char[1], "9", char[3], char[4])
+#     as.character(word)
+# }
 
-df[as.numeric(df$date.of.type.yyyy) <1200]$date.of.type.yyyy[] <- 
-    as.character(lapply(df[as.numeric(df$date.of.type.yyyy) < 1200]$date.of.type.yyyy, function(x) paste_nine(x)[1]))
+# df[as.numeric(df$date.of.type.yyyy) <1200]$date.of.type.yyyy[] <- 
+#     as.character(lapply(df[as.numeric(df$date.of.type.yyyy) < 1200]$date.of.type.yyyy, function(x) paste_nine(x)[1]))
 
-# checks
-# date_cols <- names(df)[grepl("date.of.type", names(df))]
-# tmp <- df[,..date_cols]
-# tmp$check <- ifelse(tmp$date.of.type.yyyy == tmp$date.of.type.yyyy2, 1, 0)
-# tmp$check2 <- ifelse(!is.na(tmp$date.of.type.mm) & tmp$date.of.type.mm %in% c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), 1, 0)
+# # checks
+# # date_cols <- names(df)[grepl("date.of.type", names(df))]
+# # tmp <- df[,..date_cols]
+# # tmp$check <- ifelse(tmp$date.of.type.yyyy == tmp$date.of.type.yyyy2, 1, 0)
+# # tmp$check2 <- ifelse(!is.na(tmp$date.of.type.mm) & tmp$date.of.type.mm %in% c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), 1, 0)
 
-# date differences
-df$years.lag <- as.numeric(df$date.n) - as.numeric(df$date.of.type.yyyy)
+# # date differences
+# df$years.lag <- as.numeric(df$date.n) - as.numeric(df$date.of.type.yyyy)
 
-filepath <- paste0(dir_data, "clean/date_discrepancy.csv")
-# those which have unresolved discrepancies (-ve date with no reason), will be changed to NA
-# field to merge is "date.of.type.corrected" (it is in YYYY format)
-date_discrepancy <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')[, c("idx", "date.of.type.corrected")]
-date_discrepancy[, names(date_discrepancy) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-date_discrepancy$idx <- as.numeric(date_discrepancy$idx)
-df <- merge(df, date_discrepancy, by="idx", all.x=T, all.y=F)
-df[!is.na(date.of.type.corrected)]$date.of.type.yyyy <- df[!is.na(date.of.type.corrected)]$date.of.type.corrected
-df$date.of.type.corrected <- NULL
+# filepath <- paste0(dir_data, "clean/date_discrepancy.csv")
+# # those which have unresolved discrepancies (-ve date with no reason), will be changed to NA
+# # field to merge is "date.of.type.corrected" (it is in YYYY format)
+# date_discrepancy <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')[, c("idx", "date.of.type.corrected")]
+# date_discrepancy[, names(date_discrepancy) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+# date_discrepancy$idx <- as.numeric(date_discrepancy$idx)
+# df <- merge(df, date_discrepancy, by="idx", all.x=T, all.y=F)
+# df[!is.na(date.of.type.corrected)]$date.of.type.yyyy <- df[!is.na(date.of.type.corrected)]$date.of.type.corrected
+# df$date.of.type.corrected <- NULL
 
 
 
@@ -977,46 +975,46 @@ df$date.of.type.corrected <- NULL
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- quick fixes (only on useful columns)"))
 
-# 2019-08-27: discovered when cleaning author dates 
-df[idx %in% c(12335, 12337, 12338, 12341, 12346)]$date <- "2008"
-df[idx %in% c(13187)]$date <- "2018"
-df[idx %in% c(502)]$full.name.of.describer <- "Osamu Tadauchi; Ryôichi Miyanaga; Ahmatjan Dawut"
+# # 2019-08-27: discovered when cleaning author dates 
+# df[idx %in% c(12335, 12337, 12338, 12341, 12346)]$date <- "2008"
+# df[idx %in% c(13187)]$date <- "2018"
+# df[idx %in% c(502)]$full.name.of.describer <- "Osamu Tadauchi; Ryôichi Miyanaga; Ahmatjan Dawut"
 
-# flags
-df[idx==3335 & idx==9456]$flag = "IGNORE_COUNTRY_DISCREPANCY_ERRONEOUS_GADM_BOUNDARY"
+# # flags
+# df[idx==3335 & idx==9456]$flag = "IGNORE_COUNTRY_DISCREPANCY_ERRONEOUS_GADM_BOUNDARY"
 
-# missing full names
-filepath <- paste0(dir_data, "clean/missing_authors_edit.csv")
-missing_auth <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-missing_auth[, names(missing_auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+# # missing full names
+# filepath <- paste0(dir_data, "clean/missing_authors_edit.csv")
+# missing_auth <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# missing_auth[, names(missing_auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-df1 <- df[is.na(full.name.of.describer)]
-df2 <- df[!is.na(full.name.of.describer)]
+# df1 <- df[is.na(full.name.of.describer)]
+# df2 <- df[!is.na(full.name.of.describer)]
 
-tmp <- merge(df1, missing_auth, 
-      by.x="author",
-      by.y="author", all.x=T, all.y=F)
+# tmp <- merge(df1, missing_auth, 
+#       by.x="author",
+#       by.y="author", all.x=T, all.y=F)
 
-tmp$full.name.of.describer.x <- NULL
-names(tmp)[length(tmp)] <- 'full.name.of.describer'
+# tmp$full.name.of.describer.x <- NULL
+# names(tmp)[length(tmp)] <- 'full.name.of.describer'
 
-df <- rbind(df2, tmp)
-rm(tmp, df1, df2)
+# df <- rbind(df2, tmp)
+# rm(tmp, df1, df2)
 
-# df[df$type.locality.updated == "0"]$type.locality.updated <- ''
-df <- df[order(as.numeric(idx))]
+# # df[df$type.locality.updated == "0"]$type.locality.updated <- ''
+# df <- df[order(as.numeric(idx))]
 
-# duplicates rows
-gs <- paste0(df$genus, df$species)
-df$duplicated.row <- duplicated(gs)
-df <- df[duplicated.row == "FALSE"][order(as.numeric(idx))]
+# # duplicates rows
+# gs <- paste0(df$genus, df$species)
+# df$duplicated.row <- duplicated(gs)
+# df <- df[duplicated.row == "FALSE"][order(as.numeric(idx))]
 
-df[idx==6804]$family <- "Megachilidae"
-df[genus=="Nomada" & subfamily=="Apinae"]$subfamily <- "Nomadinae"
+# df[idx==6804]$family <- "Megachilidae"
+# df[genus=="Nomada" & subfamily=="Apinae"]$subfamily <- "Nomadinae"
 
-table(df$family)
-table(is.na(df$genus) | df$genus== "")
-table(is.na(df$species) | df$species== "")
+# table(df$family)
+# table(is.na(df$genus) | df$genus== "")
+# table(is.na(df$species) | df$species== "")
 
 write.csv(df, 
           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv"),
@@ -1036,94 +1034,87 @@ write.csv(df,
 # --> Clean the year date fields
 # --> Ensure consistency in authorship
 
-print(paste0(Sys.time(), " --- modify synonym data"))
+# print(paste0(Sys.time(), " --- modify synonym data"))
 
-df_s <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-idx.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+# df_s <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-idx.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 
-df_s[, names(df_s) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
-# csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
+# df_s[, names(df_s) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+# # csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
 
-# replace unknown values with NA
-replace_na <- c('other,_unknown,_or none', 'other,_unknown,_or_other', 'other,_unknown,_or_none')
-for (i in 1:length(replace_na)){
-    df_s[, names(df_s) := lapply(.SD, function(x) gsub(replace_na[i], NA, x))]
-}
+# # replace unknown values with NA
+# replace_na <- c('other,_unknown,_or none', 'other,_unknown,_or_other', 'other,_unknown,_or_none')
+# for (i in 1:length(replace_na)){
+#     df_s[, names(df_s) := lapply(.SD, function(x) gsub(replace_na[i], NA, x))]
+# }
 
-# rename column names
-names(df_s) <- gsub("\\.\\.", "\\.", gsub(" ", ".", gsub("[[:punct:]]", "", tolower(names(df_s)))))
-names(df_s) <- iconv(names(df_s), from = 'UTF-8', to = 'ASCII//TRANSLIT')
-if (any(grepl("full.name.a.e", names(df_s)))) {
-    names(df_s)[which(grepl("full.name.a.e", names(df_s)))] <- 'full.name' # renaming this long name
-}
+# # rename column names
+# names(df_s) <- gsub("\\.\\.", "\\.", gsub(" ", ".", gsub("[[:punct:]]", "", tolower(names(df_s)))))
+# names(df_s) <- iconv(names(df_s), from = 'UTF-8', to = 'ASCII//TRANSLIT')
+# if (any(grepl("full.name.a.e", names(df_s)))) {
+#     names(df_s)[which(grepl("full.name.a.e", names(df_s)))] <- 'full.name' # renaming this long name
+# }
 
-# modifications
-df_s[idx==22782]$full.name.of.describer <- 'G. Yang; B. Kuang'
-df_s[idx==24236]$full.name.of.describer <- 'A. Ruskowski'
-df_s[idx==28627]$date <- "1913"
-df_s[idx==24091]$date <- "1894"
-df_s[idx==24209]$date <- "1894"
-df_s[idx==23324]$date <- "1948"
 
-# date
-df_s$date.n <- as.numeric(gsub("\\[.*\\]", "", df_s$date)) # remove square brackets
+# # date
+# df_s$date.n <- as.numeric(gsub("\\[.*\\]", "", df_s$date)) # remove square brackets
 
-# date of type
-df_s$date.of.type.yyyy <- as.numeric(sub('.*(\\d{4}).*', '\\1', df_s$date.of.type))
+# # date of type
+# df_s$date.of.type.yyyy <- as.numeric(sub('.*(\\d{4}).*', '\\1', df_s$date.of.type))
 
-# missing full names
-filepath <- paste0(dir_data, "clean/missing_authors_edit.csv")
-missing_auth <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-missing_auth[, names(missing_auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+# # missing full names
+# filepath <- paste0(dir_data, "clean/missing_authors_edit.csv")
+# missing_auth <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# missing_auth[, names(missing_auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-df1 <- df_s[is.na(full.name.of.describer)]
-df2 <- df_s[!is.na(full.name.of.describer)]
+# df1 <- df_s[is.na(full.name.of.describer)]
+# df2 <- df_s[!is.na(full.name.of.describer)]
 
-tmp <- merge(df1, missing_auth, 
-      by.x="author",
-      by.y="author", all.x=T, all.y=F)
+# tmp <- merge(df1, missing_auth, 
+#       by.x="author",
+#       by.y="author", all.x=T, all.y=F)
 
-tmp$full.name.of.describer.x <- NULL
-names(tmp)[length(tmp)] <- 'full.name.of.describer'
+# tmp$full.name.of.describer.x <- NULL
+# names(tmp)[length(tmp)] <- 'full.name.of.describer'
 
-df_s <- rbind(df2, tmp)
-rm(tmp, df1, df2)
+# df_s <- rbind(df2, tmp)
+# rm(tmp, df1, df2)
 
-# duplicates rows
-gs <- paste0(df_s$genus, " ", df_s$subgenus, " ", df_s$species, " ", 
-             df_s$author.date)
-df_s$duplicated.row <- duplicated(gs)
-df_s <- df_s[duplicated.row == "FALSE"][order(as.numeric(idx))]
+# # duplicates rows
+# gs <- paste0(df_s$genus, " ", df_s$subgenus, " ", df_s$species, " ", 
+#              df_s$author.date)
+# df_s$duplicated.row <- duplicated(gs)
+# df_s <- df_s[duplicated.row == "FALSE"][order(as.numeric(idx))]
 
 # genus/ species combination
 # df_s$correct_synonym <- gsub('=', '', df_s$taxonomicnotes.subspecies.synonyms.etc)
 # df_s[status=="Valid subspecies"]$correct_synonym <- gsub("([A-Za-z]+).*", "\\1", df_s[status=="Valid subspecies"]$correct_synonym)
 
-# clean genus and species relationships
-filepath <- paste0(dir_data, "clean/idx-idx_original.csv")
-idxdf <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-idxdf[, names(idxdf) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+# # clean genus and species relationships
+# filepath <- paste0(dir_data, "clean/idx-idx_original.csv")
+# idxdf <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# idxdf[, names(idxdf) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-idxdf$correct_synonym <- gsub('=', '', idxdf$taxonomic_notes)
-idxdf[status=="Valid subspecies"]$correct_synonym <- gsub("([A-Za-z]+).*", "\\1", idxdf[status=="Valid subspecies"]$correct_synonym)
-idxdf$taxonomic_notes <- NULL
+# idxdf$correct_synonym <- gsub('=', '', idxdf$taxonomic_notes)
+# idxdf[status=="Valid subspecies"]$correct_synonym <- gsub("([A-Za-z]+).*", "\\1", idxdf[status=="Valid subspecies"]$correct_synonym)
+# idxdf$taxonomic_notes <- NULL
 
-# max of idx that is green for each row
-idxdf$idx_original <- as.numeric(idxdf$idx_original)
-idxdf$idx <- as.numeric(idxdf$idx)
+# # max of idx that is green for each row
+# idxdf$idx_original <- as.numeric(idxdf$idx_original)
+# idxdf$idx <- as.numeric(idxdf$idx)
 
-idx_y <- idxdf[colour!="green" | is.na(colour)]
-idx_g <- idxdf[colour=="green"]
-idx2 <- idx_g[idx_y, on = .(idx_original), roll = Inf, rollends=c(T, T)]
-idx2 <- idx2[, c("i.idx", "genus", "species")]
-names(idx2) <- c("idx", "genus_new", "correct_synonym")
+# idx_y <- idxdf[colour!="green" | is.na(colour)]
+# idx_g <- idxdf[colour=="green"]
+# idx2 <- idx_g[idx_y, on = .(idx_original), roll = Inf, rollends=c(T, T)]
+# idx2 <- idx2[, c("i.idx", "genus", "species")]
+# names(idx2) <- c("idx", "genus_new", "correct_synonym")
 
-df_s$idx <- as.numeric(df_s$idx)
-idx2$idx <- as.numeric(idx2$idx)
-df_s <- merge(df_s, idx2, by='idx', all.x=T, all.y=F)
+# df_s$idx <- as.numeric(df_s$idx)
+# idx2$idx <- as.numeric(idx2$idx)
+# df_s <- merge(df_s, idx2, by='idx', all.x=T, all.y=F)
 
-df_s[genus != genus_new]$genus <- df_s[genus != genus_new]$genus_new
-df_s$genus_new <- NULL
-df_s$taxonomicnotes.subspecies.synonyms.etc <- NULL
+# df_s[genus != genus_new]$genus <- df_s[genus != genus_new]$genus_new
+# df_s$genus_new <- NULL
+# df_s$taxonomicnotes.subspecies.synonyms.etc <- NULL
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - clean geographic features
@@ -1142,7 +1133,6 @@ df_s[type.country.n=="UR"]$type.country.n <- "UY"
 
 df_s$type.state.n <- trimws(gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", df_s$type.state), which="both")
 df_s$type.state.n[grepl("\\?", df_s$type.state.n)] <- NA
-
 
 country_check1 <- merge(df_s[, c("idx", "type.country.n")], lookup.cty[, c("DL", "Country")],
                        all.x=T, all.y=F, by.x="type.country.n", by.y="DL")
@@ -1295,7 +1285,6 @@ check1 <- is.na(df_s$type.country.n.full) | df_s$type.country.n.full == ""
 check2 <- is.na(df_s$type.state.n.full) | df_s$type.state.n.full == ""
 check3 <- df_s$flag == "GEOCODED_GOOGLE_MAPS_API"
 
-
 # 7. check one last time that state/country + lat lon matches
 # may omit
 
@@ -1417,46 +1406,46 @@ write.csv(df_s[order(idx)],
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- count synonyms per valid species"))
 
-df_nv <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-clean.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+# df_nv <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-clean.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv")
-df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
-# csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
+# filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv")
+# df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+# # csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
 
-# Synonym
-df_s <- df_nv[status=="Synonym",]
-df_s[, N_synonyms := length(idx), by=c("genus", "correct_synonym")]
-synonym_count <- unique(df_s[,c("genus", "correct_synonym", "N_synonyms")])
+# # Synonym
+# df_s <- df_nv[status=="Synonym",]
+# df_s[, N_synonyms := length(idx), by=c("genus", "correct_synonym")]
+# synonym_count <- unique(df_s[,c("genus", "correct_synonym", "N_synonyms")])
 
-df <- merge(df, synonym_count, by.x=c("genus", "species"), by.y=c("genus", "correct_synonym"), all.x=T, all.y=F)
-df <- df[order(as.numeric(idx))]
-df[is.na(N_synonyms)]$N_synonyms <- 0
-rm(synonym_count)
+# df <- merge(df, synonym_count, by.x=c("genus", "species"), by.y=c("genus", "correct_synonym"), all.x=T, all.y=F)
+# df <- df[order(as.numeric(idx))]
+# df[is.na(N_synonyms)]$N_synonyms <- 0
+# rm(synonym_count)
 
-# Valid subspecies
-df_s <- df_nv[status=="Valid subspecies",]
-df_s[, N_subspecies := length(idx), by=c("genus", "correct_synonym")]
-ss_count <- unique(df_s[,c("genus", "correct_synonym", "N_subspecies")])
+# # Valid subspecies
+# df_s <- df_nv[status=="Valid subspecies",]
+# df_s[, N_subspecies := length(idx), by=c("genus", "correct_synonym")]
+# ss_count <- unique(df_s[,c("genus", "correct_synonym", "N_subspecies")])
 
-df <- merge(df, ss_count, by.x=c("genus", "species"), by.y=c("genus", "correct_synonym"), all.x=T, all.y=F)
-df <- df[order(as.numeric(idx))]
-df[is.na(N_subspecies)]$N_subspecies <- 0
-rm(ss_count)
+# df <- merge(df, ss_count, by.x=c("genus", "species"), by.y=c("genus", "correct_synonym"), all.x=T, all.y=F)
+# df <- df[order(as.numeric(idx))]
+# df[is.na(N_subspecies)]$N_subspecies <- 0
+# rm(ss_count)
 
-# Valid subspecies
-df_s <- df_nv[status=="Infrasubspecific",]
-df_s[, N_var := length(idx), by=c("genus", "correct_synonym")]
-var_count <- unique(df_s[,c("genus", "correct_synonym", "N_var")])
+# # Valid subspecies
+# df_s <- df_nv[status=="Infrasubspecific",]
+# df_s[, N_var := length(idx), by=c("genus", "correct_synonym")]
+# var_count <- unique(df_s[,c("genus", "correct_synonym", "N_var")])
 
-df <- merge(df, var_count, by.x=c("genus", "species"), by.y=c("genus", "correct_synonym"), all.x=T, all.y=F)
-df <- df[order(as.numeric(idx))]
-df[is.na(N_var)]$N_var <- 0
+# df <- merge(df, var_count, by.x=c("genus", "species"), by.y=c("genus", "correct_synonym"), all.x=T, all.y=F)
+# df <- df[order(as.numeric(idx))]
+# df[is.na(N_var)]$N_var <- 0
 
-rm(var_count, df_s)
+# rm(var_count, df_s)
 
-write.csv(df, 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
+# write.csv(df, 
+#           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 
@@ -1465,15 +1454,15 @@ write.csv(df,
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- clean repository"))
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-synonyms.csv")
-df1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df1[, names(df1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+# filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-synonyms.csv")
+# df1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# df1[, names(df1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv")
-df2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df2[, names(df2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
-# check <- rbind(df1[, c("idx", "type.repository", "country.of.type.repository")], 
-#                df2[, c("idx", "type.repository", "country.of.type.repository")])
+# filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv")
+# df2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# df2[, names(df2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+# # check <- rbind(df1[, c("idx", "type.repository", "country.of.type.repository")], 
+# #                df2[, c("idx", "type.repository", "country.of.type.repository")])
 
 # check$type.repository.n <- gsub(" ", "", gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", check$type.repository)) 
 # check$country.of.type.repository.n <- gsub(" ", "", gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", check$country.of.type.repository)) 
@@ -1498,22 +1487,22 @@ df2[, names(df2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread d
 #           paste0(dir_data, "clean/", "check-type-repo2.csv"),
 #           fileEncoding="UTF-8")
 
-filepath <- paste0(dir_data, "clean/check-type-repo2_edit.csv")
-edit <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+# filepath <- paste0(dir_data, "clean/check-type-repo2_edit.csv")
+# edit <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-dim(edit[country.of.type.repository.n_short != "[unknown]"][duplicated(country.of.type.repository.n_short)])
+# dim(edit[country.of.type.repository.n_short != "[unknown]"][duplicated(country.of.type.repository.n_short)])
 
-edit <- edit[, c("country.of.type.repository.n_short", "country.of.type.repository.n_long",
-                 "type.repository.n_short", "type.repository.n_long", "idxes")]
+# edit <- edit[, c("country.of.type.repository.n_short", "country.of.type.repository.n_long",
+#                  "type.repository.n_short", "type.repository.n_long", "idxes")]
 
-edit <- edit %>% separate_rows(idxes, sep="; ")
-df1 <- merge(df1, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
-df2 <- merge(df2, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
+# edit <- edit %>% separate_rows(idxes, sep="; ")
+# df1 <- merge(df1, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
+# df2 <- merge(df2, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
 
-write.csv(df1, 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_1-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
+# write.csv(df1, 
+#           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_1-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-write.csv(df2, 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
+# write.csv(df2, 
+#           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
