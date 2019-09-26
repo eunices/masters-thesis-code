@@ -525,8 +525,11 @@ country_check$Country.final_long <- ifelse(is.na(country_check$Country),
 country_check <- merge(country_check, lookup.cty[, c("DL", "Country")], 
                        all.x=T, all.y=F, by.x="Country.final_long", by.y="Country")
 
-df <- merge(df, country_check[, c("idx", "DL")], by="idx", all.x=T, all.y=F)
-df$type.country.n <- df$DL; df$DL <- NULL
+df <- merge(df, country_check[, c("idx", "DL", "Country.final_long")], 
+            by="idx", all.x=T, all.y=F)
+df$type.country.n <- df$DL; df$type.country.n.full <- df$Country.final_long
+df$DL <- NULL; df$Country.final_long <- NULL
+
 
 df$cty.state <- ifelse(
     is.na(df$type.state.n) | df$type.state.n == "" | is.na(df$type.country.n), NA, 
@@ -654,12 +657,12 @@ filepath <- paste0(dir_data, "clean/georeference_slowly.csv")
 add <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 new_cols <- c("idx", "type.country.full.CORRECT", "type.state.full.CORRECT", 
-                                 "type.lat.CORRECT", "type.lon.CORRECT",
-                                 "type.country.CORRECT", "type.state.CORRECT")
+              "type.lat.CORRECT", "type.lon.CORRECT",
+              "type.country.CORRECT", "type.state.CORRECT")
 add <- add[!duplicated(idx)][, ..new_cols]
 add$idx <- as.numeric(add$idx)
 df <- merge(df, add, by='idx', all.x=T, all.y=F)
-names(df)[grepl("type", names(df))]
+# names(df)[grepl("type", names(df))]
 
 df[!is.na(type.country.CORRECT)]$type.country.n.full <- df[!is.na(type.country.CORRECT)]$type.country.full.CORRECT
 df[!is.na(type.country.CORRECT)]$type.state.n.full <- df[!is.na(type.country.CORRECT)]$type.state.full.CORRECT
@@ -1150,8 +1153,9 @@ country_check$Country.final_long <- ifelse(is.na(country_check$Country),
 country_check <- merge(country_check, lookup.cty[, c("DL", "Country")], 
                        all.x=T, all.y=F, by.x="Country.final_long", by.y="Country")
 
-df <- merge(df, country_check[, c("idx", "DL")], by="idx", all.x=T, all.y=F)
-df$type.country.n <- df$DL; df$DL <- NULL
+df_s <- merge(df_s, country_check[, c("idx", "DL", "Country.final_long")], by="idx", all.x=T, all.y=F)
+df_s$type.country.n <- df_s$DL; df_s$type.country.n.full <- df_s$Country.final_long
+df_s$DL <- NULL; df_s$Country.final_long <- NULL
 
 df_s$cty.state <- ifelse(
     is.na(df_s$type.state.n) | df_s$type.state.n == "" | is.na(df_s$type.country.n), NA, 
@@ -1471,27 +1475,25 @@ check <- rbind(df1[, c("idx", "type.repository", "country.of.type.repository")],
 check$type.repository.n <- gsub(" ", "", gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", check$type.repository)) 
 check$country.of.type.repository.n <- gsub(" ", "", gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", check$country.of.type.repository)) 
 
+# check2 <- data.table(check %>% group_by(type.repository, country.of.type.repository, type.repository.n, country.of.type.repository.n) %>%
+#     summarise(idxes=paste0(idx,collapse='; ')))
 
-check2 <- data.table(check %>% group_by(type.repository, country.of.type.repository, type.repository.n, country.of.type.repository.n) %>%
-    summarise(idxes=paste0(idx,collapse='; ')))
+# write.csv(check2[order(type.repository, country.of.type.repository)], 
+#           paste0(dir_data, "clean/", "check-type-repo.csv"),
+#           fileEncoding="UTF-8")
 
-write.csv(check2[order(type.repository, country.of.type.repository)], 
-          paste0(dir_data, "clean/", "check-type-repo.csv"),
-          fileEncoding="UTF-8")
+# filepath <- paste0(dir_data, "clean/check-type-repo_edit.csv")
+# edit <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
+# edit <- edit %>% separate_rows(idxes, sep="; ") %>%
+#     group_by(type.repository.n.CORRECTED, country.of.type.repository.n.CORRECTED.A2) %>%
+#     summarise(idxes=paste0(idxes, collapse='; '))
+# edit <- data.table(edit)
 
-filepath <- paste0(dir_data, "clean/check-type-repo_edit.csv")
-edit <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
-
-edit <- edit %>% separate_rows(idxes, sep="; ") %>%
-    group_by(type.repository.n.CORRECTED, country.of.type.repository.n.CORRECTED.A2) %>%
-    summarise(idxes=paste0(idxes, collapse='; '))
-edit <- data.table(edit)
-
-write.csv(edit[order(type.repository.n.CORRECTED, country.of.type.repository.n.CORRECTED.A2)], 
-          paste0(dir_data, "clean/", "check-type-repo2.csv"),
-          fileEncoding="UTF-8")
+# write.csv(edit[order(type.repository.n.CORRECTED, country.of.type.repository.n.CORRECTED.A2)], 
+#           paste0(dir_data, "clean/", "check-type-repo2.csv"),
+#           fileEncoding="UTF-8")
 
 filepath <- paste0(dir_data, "clean/check-type-repo2_edit.csv")
 edit <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
@@ -1508,7 +1510,6 @@ df2 <- merge(df2, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
 
 write.csv(df1, 
           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-clean-repository.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
 
 write.csv(df2, 
           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv"), na='', row.names=F, fileEncoding="UTF-8")

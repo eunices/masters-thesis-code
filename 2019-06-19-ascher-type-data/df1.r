@@ -175,22 +175,6 @@ dfx2[idx=="32004", ]$author <- 'White [J. R.]'
 dfx2[idx=="32030", ]$author <- 'White [J. R.]'
 dfx2[idx=="33101", ]$author <- 'Cockerell'
 
-# dfx1$volume <- paste0("'", gsub("^'", "", gsub("^'", "", dfx1$volume)))
-# dfx1$issue <- paste0("'", gsub("^'", "", gsub("^'", "", dfx1$issue)))
-# dfx1$page.numbers.publication <- paste0("'", gsub("^'", "", gsub("^'", "", dfx1$page.numbers.publication)))
-
-# dfx1[volume=="'"]$volume <- ""
-# dfx1[issue=="'"]$volume <- ""
-# dfx1[page.numbers.publication=="'"]$volume <- ""
-
-# dfx2$volume <- paste0("'", gsub("^'", "", gsub("^'", "", dfx2$volume)))
-# dfx2$issue <- paste0("'", gsub("^'", "", gsub("^'", "", dfx2$issue)))
-# dfx2$page.numbers.publication <- paste0("'", gsub("^'", "", gsub("^'", "", dfx2$page.numbers.publication)))
-
-# dfx2[volume=="'"]$volume <- ""
-# dfx2[issue=="'"]$volume <- ""
-# dfx2[page.numbers.publication=="'"]$volume <- ""
-
 dfx1$idxes <- gsub(';$', '', dfx$idxes) # remove trailing ;
 
 write.csv(dfx1, 
