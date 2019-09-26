@@ -1,4 +1,3 @@
-
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - no of taxonomist active per year
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -64,12 +63,8 @@ describers <- describers %>% unnest(years)
 describers[,  N_weighted_real_describers := sum(as.numeric(ns_species_per_year_active)), by="years"]
 describers_weighted_by_year <- unique(describers[,c("years", "N_weighted_real_describers")])[order(as.numeric(years))]
 
-
-
-
 taxonomic_effort2 <- merge(describers_active_by_year, describers_weighted_by_year, by="years", all.x=T, all.y=T)
 taxonomic_effort <- merge(taxonomic_effort1, taxonomic_effort2, by="years", all.x=T, all.y=F)
-
 
 # number of species
 described_species_by_year <- describer_date[]
@@ -97,8 +92,6 @@ described_species_by_year <- unique(
 
 described_per_year_final3 <- merge(described_per_year_final2, described_species_by_year,
                                    by.x="years", by.y="date.n", all.x=T, all.y=F)
-
-
 
 described_per_year_final3[is.na(described_per_year_final3)] <- 0
 described_per_year_final3 <- data.table(described_per_year_final3)

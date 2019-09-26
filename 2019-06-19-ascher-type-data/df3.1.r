@@ -54,19 +54,20 @@ split_gender <- function(x) {
 }
 
 run_loop <- function() {
-    describers_info$full.name.of.describer.n <- lapply(describers_info$full.name.of.describer, split_semicolon)
-    describers_info$describer.gender.n <- lapply(describers_info$describer.gender,
-                                                split_gender)
-    describers_info$dob.describer.n <- lapply(describers_info$dob.describer,
-                                            split_semicolon)
-    describers_info$dod.describer.n <- lapply(describers_info$dod.describer,
-                                            split_semicolon)
-    describers_info$origin.country.describer.n <- lapply(describers_info$origin.country.describer,
-                                                        split_semicolon)
-    describers_info$residence.country.describer.n <- lapply(describers_info$residence.country.describer,
-                                                        split_semicolon)
-    describers_info$institution.of.describer.n <- lapply(describers_info$institution.of.describer,
-                                                        split_semicolon)
+    describers_info$full.name.of.describer.n <- 
+        lapply(describers_info$full.name.of.describer, split_semicolon)
+    describers_info$describer.gender.n <-
+        lapply(describers_info$describer.gender, split_gender)
+    describers_info$dob.describer.n <- 
+        lapply(describers_info$dob.describer, split_semicolon)
+    describers_info$dod.describer.n <- 
+        lapply(describers_info$dod.describer,split_semicolon)
+    describers_info$origin.country.describer.n <- 
+        lapply(describers_info$origin.country.describer,split_semicolon)
+    describers_info$residence.country.describer.n <- 
+        lapply(describers_info$residence.country.describer, split_semicolon)
+    describers_info$institution.of.describer.n <- 
+        lapply(describers_info$institution.of.describer, split_semicolon)
 
     # Create a new row for each author
     describers <- data.frame(idx=character(), full.name.of.describer.n=character(),
