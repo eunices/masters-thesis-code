@@ -7,6 +7,11 @@ library(xlsx)
 # Load clean data frames (useful columns only)
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+# Variables
+# to_subset <- "Y"
+to_subset <- "N"
+
+
 # Load data.frame variable names
 var <- data.table(read.xlsx2(paste0(dir, '2019-09-16-metadata.xlsx'), sheetIndex=1, stringsAsFactors=F), as.data.frame=T)
 names(var)
@@ -112,6 +117,20 @@ get_dis <- function(write=T) {
 }
 
 
+write_datasets <- function() {
+    get_df1()
+    get_df2()
+    get_pub()
+    get_des()
+    get_col()
+    get_dis()
+}
+
+if (to_subset=="Y") {
+    write_datasets()
+}
+
+
 # df <- subset_df(fn_df2, "invalid_species", write=F)
 # df[idx==27576]
 
@@ -132,3 +151,5 @@ manual_ll <- c("LOCALITY_MANUALLY_CHECKED_LAT_LONG_ADDED",
 ignore_ll_mismatch <- c("IGNORE_COUNTRY_DISCREPANCY_ERRONEOUS_GADM_BOUNDARY")
 # use country field as GADM boundaries are wrong
 
+# df1 <- get_df1(write=F)
+# df2 <- get_df2(write=F)

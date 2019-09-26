@@ -136,9 +136,20 @@ write.csv(fi,
           paste0(dir, "eda/2019-09-25-russians.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
+df_ll <- rbind(
+    get_df1(write=F)[, c("idx", "lat", "lon")], get_df2(write=F)[, c("idx", "lat", "lon")])
+x <- dim(df_ll); df_ll <- df_ll[!(is.na(lat) | is.na(lon))]; y <- dim(df_ll)
+round(y/x*100, 2)
+
+summary(df_ll)
+
+write.csv(df_ll[order(as.numeric(idx))], 
+          paste0(dir, "eda/2019-09-26-lat-lon.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 
-# type country n = GEC
+# type country n = A2
+# global.mapper = A2
 # publication country = A2
 # type.repository.country = A2
+# residence/origin country of describer = A2

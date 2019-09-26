@@ -64,13 +64,16 @@ if(!exists("shp8")) {
 }
 # Read lookup tables
 lookup.cty <- read.csv('data/lookup/2019-05-29-statoid-country-codes.csv', encoding="UTF-8",
-                       stringsAsFactors=F)
+                       stringsAsFactors=F, na=c(""))
 names(lookup.cty)[1] <- "Country"
 
 lookup.pri_div <- read.csv('data/lookup/2019-06-27-gadm-pri-div.csv', encoding="UTF-8",
-                           stringsAsFactors=F)
+                           stringsAsFactors=F, na=c(""))
 lookup.pri_div$CTY.STATE.CODE <- paste0(lookup.pri_div$GEC, ".", lookup.pri_div$STATE_CODE)
 
+lookup.loc <- read.csv('data/lookup/2019-09-26-location-codes.csv', encoding="UTF-8",
+                           stringsAsFactors=F, na=c(""))
+                           
 # Read daitaset
 dir <- 'data/2019-05-23-ascher-bee-data/'
 files <- list.files(dir, full.names=T, pattern='csv')

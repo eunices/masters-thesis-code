@@ -59,6 +59,10 @@ run_loop <- function() {
     df_mapper2[country=="UR"]$Country1 <- "Ukraine"
     df_mapper2[country=="AY"]$Country1 <- "Armenia"
     df_mapper2[country=="RS"]$Country1 <- "Russian Federation"
+    df_mapper2[country=="AS"]$Country1 <- "Australia"
+    df_mapper2[country=="AU"]$Country1 <- "Austria"
+    df_mapper2[country=="CH"]$Country1 <- "China"
+    df_mapper2[country=="CN"]$Country1 <- "Comoros"
 
     write.csv(df_mapper2[,c("country", "idx", "Country1", "Country2")], 
             paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty1.csv"), na='', row.names=F, fileEncoding="UTF-8")

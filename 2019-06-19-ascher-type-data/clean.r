@@ -170,6 +170,7 @@ geocode_lat_long <- function(to_geocode) {
     geocoded
 }
 
+
 # 1. for NAs - look through NAs and apply flags and try to recover more lat long
 flag <- "LOCALITY_MANUALLY_CHECKED_AMENDED_LOCALITY_GEOCODED_AGAIN" # for this flag, all should lack lat lon
 # # =================
@@ -509,23 +510,23 @@ df[idx==12550]$type.country
 
 df$type.country.n <- trimws(gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", df$type.country), which="both")
 df$type.country.n[grepl("\\?", df$type.country)] <- NA
-df[type.country.n=="UR"]$type.country.n <- "UY" 
-
 df$type.state.n <- trimws(gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", df$type.state), which="both")
 df$type.state.n[grepl("\\?", df$type.state.n)] <- NA
 
 
-df <- merge(df, lookup.cty[,c("GEC", "Country")], 
-                      all.x=T, all.y=F, by.x="type.country.n", by.y="GEC")
-df <- merge(df, lookup.cty[,c("A.2", "Country")], 
-                      all.x=T, all.y=F, by.x="type.country.n", by.y="A.2", suffixes=c("1", "2"))
+country_check1 <- merge(df[, c("idx", "type.country.n")], lookup.cty[, c("DL", "Country")],
+                       all.x=T, all.y=F, by.x="type.country.n", by.y="DL")
+country_check2 <- merge(df[, c("idx", "type.country.n")], lookup.loc[, c("DL", "NAME_0_owner")],
+                       all.x=T, all.y=F, by.x="type.country.n", by.y="DL")
+country_check <- merge(country_check1, country_check2, all.x=T, all.y=T, by=c("idx", "type.country.n"))
 
-df$Country.final <- ifelse(is.na(df$Country1), df$Country2, df$Country1)
-df$Country1 <- NULL; df$Country2 <- NULL
-df <- merge(df, lookup.cty[, c("Country", "GEC")], 
-            all.x=T, all.y=F, by.x="Country.final", by.y="Country")
-df$type.country.n <- df$GEC
-df$GEC <- NULL
+country_check$Country.final_long <- ifelse(is.na(country_check$Country),
+                                           country_check$NAME_0_owner, country_check$Country)
+country_check <- merge(country_check, lookup.cty[, c("DL", "Country")], 
+                       all.x=T, all.y=F, by.x="Country.final_long", by.y="Country")
+
+df <- merge(df, country_check[, c("idx", "DL")], by="idx", all.x=T, all.y=F)
+df$type.country.n <- df$DL; df$DL <- NULL
 
 df$cty.state <- ifelse(
     is.na(df$type.state.n) | df$type.state.n == "" | is.na(df$type.country.n), NA, 
@@ -871,6 +872,13 @@ df[grepl("COUNTRY_AND_PRI_DIV_ONLY", flag)]$lat <- NA
 df[grepl("COUNTRY_AND_PRI_DIV_ONLY", flag)]$lon <- NA
 # this is done so that a lookup table later can be used 
 
+# convert GEC countries to A2
+type_country_A2 <- merge(df[, c("idx", "type.country.n")], lookup.cty[, c("GEC", "A.2")], 
+                         all.x=T, all.y=F, by.x="type.country.n", by.y="GEC")
+names(type_country_A2)[which(names(type_country_A2)=="A.2")] <- "type.country.n_GEC"
+df <- merge(df, type_country_A2[, c("idx", "type.country.n_GEC")], by="idx", all.x=T, all.y=F)
+df$type.country.n <- df$type.country.n_GEC; df$type.country.n_GEC <- NULL
+
 # table(check0) # missing lat lon
 # table(check0 == F & check1 == T) # all with lat and long should have country
 # table(check0 == F & check1 == F & check2 == T) # all with lat and long should have country except those countries with no secondary divisions
@@ -1129,17 +1137,21 @@ df_s[type.country.n=="UR"]$type.country.n <- "UY"
 df_s$type.state.n <- trimws(gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", df_s$type.state), which="both")
 df_s$type.state.n[grepl("\\?", df_s$type.state.n)] <- NA
 
-df_s <- merge(df_s, lookup.cty[,c("GEC", "Country")], 
-                      all.x=T, all.y=F, by.x="type.country.n", by.y="GEC")
-df_s <- merge(df_s, lookup.cty[,c("A.2", "Country")], 
-                      all.x=T, all.y=F, by.x="type.country.n", by.y="A.2", suffixes=c("1", "2"))
 
-df_s$Country.final <- ifelse(is.na(df_s$Country1), df_s$Country2, df_s$Country1)
-df_s$Country1 <- NULL; df_s$Country2 <- NULL
-df_s <- merge(df_s, lookup.cty[, c("Country", "GEC")], 
-            all.x=T, all.y=F, by.x="Country.final", by.y="Country")
-df_s$type.country.n <- df_s$GEC
-df_s$GEC <- NULL
+country_check1 <- merge(df_s[, c("idx", "type.country.n")], lookup.cty[, c("DL", "Country")],
+                       all.x=T, all.y=F, by.x="type.country.n", by.y="DL")
+country_check2 <- merge(df_s[, c("idx", "type.country.n")], 
+                        lookup.loc[, c("DL", "NAME_0_owner")],
+                        all.x=T, all.y=F, by.x="type.country.n", by.y="DL")
+country_check <- merge(country_check1, country_check2, all.x=T, all.y=T, by=c("idx", "type.country.n"))
+
+country_check$Country.final_long <- ifelse(is.na(country_check$Country),
+                                           country_check$NAME_0_owner, country_check$Country)
+country_check <- merge(country_check, lookup.cty[, c("DL", "Country")], 
+                       all.x=T, all.y=F, by.x="Country.final_long", by.y="Country")
+
+df <- merge(df, country_check[, c("idx", "DL")], by="idx", all.x=T, all.y=F)
+df$type.country.n <- df$DL; df$DL <- NULL
 
 df_s$cty.state <- ifelse(
     is.na(df_s$type.state.n) | df_s$type.state.n == "" | is.na(df_s$type.country.n), NA, 
@@ -1353,6 +1365,18 @@ df_s[idx==31321]$lon = "33.033333"
 df_s[idx==22114]$type.state.n <- "SM"
 df_s[idx==22114]$type.state.n.full <- "Souss - Massa - Draâ"
 
+
+check0 <- df_s$lat < -90 | df_s$lat > 90
+
+df_s[check0, c("flag", "genus", "species", "type.country.n")]
+
+# convert GEC countries to A2
+type_country_A2 <- merge(df_s[, c("idx", "type.country.n")], lookup.cty[, c("GEC", "A.2")], 
+                         all.x=T, all.y=F, by.x="type.country.n", by.y="GEC")
+names(type_country_A2)[which(names(type_country_A2)=="A.2")] <- "type.country.n_GEC"
+df_s <- merge(df_s, type_country_A2[, c("idx", "type.country.n_GEC")], by="idx", all.x=T, all.y=F)
+df_s$type.country.n <- df_s$type.country.n_GEC; df_s$type.country.n_GEC <- NULL
+
 # 8. add source.of.latlon.n column to see data quality
 df_s$source.of.latlon.n <- ""
 check0 <- is.na(df_s$lat) | is.na(df_s$lon)
@@ -1481,6 +1505,8 @@ edit <- edit[, c("country.of.type.repository.n_short", "country.of.type.reposito
 edit <- edit %>% separate_rows(idxes, sep="; ")
 df1 <- merge(df1, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
 df2 <- merge(df2, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
+
+
 
 
 

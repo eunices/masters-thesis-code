@@ -269,3 +269,24 @@ rgdal::writeOGR(obj=shp.pol_boundaries, dsn="data/geo_processed/gadm/gadm36_boun
 rgdal::writeOGR(obj=shp.pol_boundaries.cen, 
                 dsn="data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_cen_holt.shp",
                 layer='boundaries', driver="ESRI Shapefile", encoding='UTF-8')
+
+
+
+
+
+
+# joins
+
+filepath <- 'data/geo/1_separate/gadm/shp_all_levels/gadm36_0.shp'
+poly <- rgdal::readOGR(filepath, use_iconv=TRUE, encoding = "UTF-8")
+filepath <- 'tmp/pt.shp'
+pt <- rgdal::readOGR(filepath, use_iconv=TRUE, encoding = "UTF-8")
+
+pt.poly <- spatialEco::point.in.poly(pt, poly)
+
+
+rgdal::writeOGR(obj=pt.poly, 
+                dsn="tmp/pt.shp",
+                layer='boundaries', driver="ESRI Shapefile", encoding='UTF-8')
+
+write.csv(data.frame(pt.poly), 'tmp/test.csv')
