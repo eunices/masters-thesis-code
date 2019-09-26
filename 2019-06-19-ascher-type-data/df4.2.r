@@ -6,55 +6,24 @@ print(paste0(Sys.time(), " --- by country"))
 df <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df$idx <- as.integer(df$idx)
 
-df_mapper2 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty1.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df_mapper2 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty1.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')[, c("idx", "A.3")]
+
 df_mapper2$idx <- as.integer(df_mapper2$idx)
 
-
-df_mapper2$Country.final <- ifelse(is.na(df_mapper2$Country1), df_mapper2$Country2, df_mapper2$Country1)
-df_mapper2$Country1 <- NULL; df_mapper2$Country2 <- NULL
-
-missing <- unique(df_mapper2[is.na(df_mapper2$Country.final)]$idx)
-not_missing <- unique(df_mapper2[!is.na(df_mapper2$Country.final)]$idx)
-
-# no distribution data
-
-no_data <- df[idx %in% as.character(missing) & !(idx %in% as.character(not_missing)), c("idx", "global.mapper")]
-write.csv(no_data[order(global.mapper)], 
-          paste0(dir_data, "clean/countries.csv"), row.names=F)
-
-# manually modify and merge back results
-no_data <- fread(paste0(dir_data, "clean/countries_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')[, c("corrected.global.mapper", "idx")]
-names(no_data) <- c("country", "idx")
-no_data <- merge(no_data, lookup.cty[c("A.2", "Country")], all.x=T, all.y=F, by.x="country", by.y="A.2")
-no_data[] <- lapply(no_data, as.character)
-to_join <- no_data[, c("country", "idx", "Country")]
-names(no_data) <- c("country", "idx", "Country.final")
-df_mapper2 <- rbind(df_mapper2, to_join, fill=T)
-
-# separate those with no distribution at all
-df_mapper2[(is.na(Country.final) || Country.final==" ")]$Country.final <- "DISTRIBUTION_UNKNOWN"
-df_mapper3 <- df_mapper2[,c("idx", "Country.final")]
-
-df_mapper3 <- unique(df_mapper3)
-df_mapper3[Country.final == "C<f4>te d'Ivoire", ]$Country.final <- "Côte d'Ivoire"
-df_mapper3[Country.final == "Cura<e7>ao",]$Country.final <- "Curaçao"
-df_mapper3[Country.final == "Saint Barth<e9>lemy",]$Country.final <- "Saint Barthélemy"
-
-df_mapper3 <- merge(df_mapper3, lookup.cty[,c("Country", "A.3", "Latitude_type", "Latitude_type2")], 
-                    by.x="Country.final", by.y="Country", all.x=T, all.y=F)
-
+df_mapper2 <- merge(df_mapper2, 
+                    lookup.cty[,c("A.3", "Latitude_type", "Latitude_type2")], 
+                    by.x="A.3", by.y="A.3", all.x=T, all.y=F)
 
 df_merge <- df[,c("idx", "duplicated.row", "date.n", "full.name.of.describer")]
-df_mapper3$idx <- as.integer(df_mapper3$idx)
-df_mapper3 <- merge(df_mapper3, df_merge, by.x="idx", by.y="idx", all.x=T, all.y=F)
-df_mapper3 <- df_mapper3[date.n <=2018][duplicated.row=="FALSE"][order(as.numeric(idx))]
+df_mapper2 <- merge(df_mapper2, df_merge, by.x="idx", by.y="idx", all.x=T, all.y=F)
+df_mapper2 <- df_mapper2[date.n <=2018][duplicated.row=="FALSE"][order(as.numeric(idx))]
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - by tropical/not
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- by tropical/not [using countries]"))
 
-df_mapper9 <- copy(df_mapper3)
+df_mapper9 <- copy(df_mapper2)
 df_mapper9[] <- lapply(df_mapper9, as.character)
 
 # By type1 of trop/sub tropical
@@ -90,7 +59,7 @@ countries_biogeo <- countries_biogeo[, no_states_in_realm:=.N, by=c("GID_0", "RE
 countries_biogeo <- countries_biogeo[,c("GID_0", "no_states_in_realm", "REALM_E")][order(GID_0, -no_states_in_realm)]
 countries_biogeo <- countries_biogeo[!duplicated(countries_biogeo$GID_0),]
 
-df_mapper3 <- merge(df_mapper3, countries_biogeo, by.x="A.3", by.y="GID_0", all.x=T, all.y=F)
+df_mapper3 <- merge(df_mapper2, countries_biogeo, by.x="A.3", by.y="GID_0", all.x=T, all.y=F)
 
 df_mapper4 <- df_mapper3[,c("idx", "full.name.of.describer", "date.n", "duplicated.row", "A.3", "REALM_E", "Latitude_type", "Latitude_type2")]
 df_mapper4[] <- lapply(df_mapper4, as.character)

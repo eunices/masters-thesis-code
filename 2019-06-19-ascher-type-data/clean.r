@@ -1506,10 +1506,6 @@ edit <- edit %>% separate_rows(idxes, sep="; ")
 df1 <- merge(df1, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
 df2 <- merge(df2, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
 
-
-
-
-
 write.csv(df1, 
           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-clean-repository.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
