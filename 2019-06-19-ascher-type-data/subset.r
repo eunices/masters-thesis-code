@@ -151,11 +151,3 @@ manual_ll <- c("LOCALITY_MANUALLY_CHECKED_LAT_LONG_ADDED",
 ignore_ll_mismatch <- c("IGNORE_COUNTRY_DISCREPANCY_ERRONEOUS_GADM_BOUNDARY")
 # use country field as GADM boundaries are wrong
 
-
-
-df1 <- get_df1(write=F)
-df2 <- get_df2(write=F)
-col <- c("idx", "lat", "lon", "flag", "source.of.latlon.n",
-         "source.of.latlon", "type.locality.updated", "type.locality.verbatim",
-         "type.country.n", "type.state.n")
-df_write <- rbind(df1[, ..col], df2[, ..col])
