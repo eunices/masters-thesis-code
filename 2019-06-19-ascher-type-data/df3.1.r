@@ -3,10 +3,10 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- describer raw dataset"))
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv")
 df_s <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv")
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -19,10 +19,10 @@ describers_info_synonyms <- df_s[,..describer_cols]
 describers_info <- rbind(describers_info_valid_species, describers_info_synonyms)
 
 write.csv(describers_info[order(author)], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # write.csv(describers_info_synonyms[order(author)], 
-#           paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
+#           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section -  individual author species rows 
@@ -30,7 +30,7 @@ write.csv(describers_info[order(author)],
 print(paste0(Sys.time(), " --- 'describers': individual author species rows"))
 
 describers_info <- fread(
-    paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+    paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 describers_info[, names(describers_info) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape 
 
@@ -147,6 +147,6 @@ if (loop_3=='Y') {
 
     describers$institution.of.describer.n <- gsub("[[:digit:]]", "",        describers$institution.of.describer.n)
 
-    write.csv(describers, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_2.0-denormalised.csv"), na='', row.names=F, fileEncoding="UTF-8")
+    write.csv(describers, paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_2.0-denormalised.csv"), na='', row.names=F, fileEncoding="UTF-8")
 }
 

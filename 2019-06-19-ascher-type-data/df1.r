@@ -31,11 +31,11 @@ source('2019-06-19-ascher-type-data/init.r')
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- clean journal names"))
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-clean-repository.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-clean-repository.csv")
 dfx1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx1[, names(dfx1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv")
 dfx2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -49,9 +49,9 @@ df_n <- data.table(dfx %>%
   group_by(date.n, author, title, journal,  volume,  issue, page.numbers.publication) %>%
   summarise(idxes=paste0(idx, collapse='; ')))
 
-write.csv(df_n, paste0(dir, "clean/journal_details.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(df_n, paste0(dir_data, "clean/journal_details.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-filepath <- paste0(dir, "clean/journal_names_edit.csv")
+filepath <- paste0(dir_data, "clean/journal_names_edit.csv")
 df_n <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')[,c(  "journal_new", "idxes")]
 
 df_n <- df_n %>% separate_rows(idxes)
@@ -65,10 +65,10 @@ dfx2$journal <- dfx2$journal_new
 dfx2$journal_new <- NULL
 
 write.csv(dfx1, 
-        paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.0-clean-journals.csv"), na='', row.names=F, fileEncoding="UTF-8")
+        paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.0-clean-journals.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 write.csv(dfx2, 
-        paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.0-clean-journals.csv"), na='', row.names=F, fileEncoding="UTF-8")
+        paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.0-clean-journals.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - clean journal fields
@@ -76,16 +76,16 @@ write.csv(dfx2,
 print(paste0(Sys.time(), " --- clean other publication fields"))
 # "publication.type", "country.of.publication", "city.of.publication", "paper.authors"
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.0-clean-journals.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.0-clean-journals.csv")
 dfx1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx1[, names(dfx1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.0-clean-journals.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.0-clean-journals.csv")
 dfx2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
 # # Iterative cleaning process
-# filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean3.csv")
+# filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean3.csv")
 # auth <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')
 # auth[, names(auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -95,10 +95,10 @@ dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))]
 #   group_by(date.n, author, title, journal, volume, issue, page.numbers.publication, paper.type, country.of.publication, city.of.publication, paper.authors) %>%
 #   summarise(idxes=paste0(idxes,collapse='; ')))
 
-# write.csv(auth, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean4.csv"), na='', row.names=F, fileEncoding="UTF-8")
+# write.csv(auth, paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean4.csv"), na='', row.names=F, fileEncoding="UTF-8")
 # # = old name journal_details*.csv
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv")
 auth <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 auth[, names(auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -194,10 +194,10 @@ dfx2[idx=="33101", ]$author <- 'Cockerell'
 dfx1$idxes <- gsub(';$', '', dfx$idxes) # remove trailing ;
 
 write.csv(dfx1, 
-        paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.1-clean-journals_species.csv"), na='', row.names=F, fileEncoding="UTF-8")
+        paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.1-clean-journals_species.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 write.csv(dfx2, 
-        paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.1-clean-journals_species.csv"), na='', row.names=F, fileEncoding="UTF-8")
+        paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.1-clean-journals_species.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # *TODO: Missing records
 auth[author=="Yasumatsu" & date.n=="1937"]
@@ -210,15 +210,15 @@ dfx2[idx==23429][,c("genus", "species", "author.date")]
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- ensuring author name and full name are consistent"))
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.1-clean-journals_species.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.1-clean-journals_species.csv")
 dfx1 <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 dfx1[, names(dfx1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.1-clean-journals_species.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.1-clean-journals_species.csv")
 dfx2 <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-filepath <- paste0(dir, "clean/missing_authors_edit.csv")
+filepath <- paste0(dir_data, "clean/missing_authors_edit.csv")
 auth <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 auth[, names(auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -265,7 +265,7 @@ dfx2[idx == 30619]$full.name.of.describer = "James R. Baker"
 dfx2[idx == 22956]$full.name.of.describer = "G. Trautmann; Woldemar Trautmann"
 
 # Clean short names from full names
-filepath <- paste0(dir, "clean/last_name.csv")
+filepath <- paste0(dir_data, "clean/last_name.csv")
 ln <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 fn <- ln$last.name
 names(fn) <- ln$full.name.of.describer.n
@@ -304,25 +304,25 @@ dfx2$author <- authors_redone$x
 
 
 write.csv(dfx1, 
-        paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.2-clean-auth-full-name.csv"), na='', row.names=F, fileEncoding="UTF-8")
+        paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.2-clean-auth-full-name.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 write.csv(dfx2, 
-        paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.2-clean-auth-full-name.csv"), na='', row.names=F, fileEncoding="UTF-8")
+        paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.2-clean-auth-full-name.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - count number of species in publication
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- count number of species in publication"))
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv")
 auth <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 auth[, names(auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.2-clean-auth-full-name.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.2-clean-auth-full-name.csv")
 dfx1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')[,c("idx", "status")]
 dfx1$idx <- as.numeric(dfx1$idx)
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.2-clean-auth-full-name.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.2-clean-auth-full-name.csv")
 dfx2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')[,c("idx", "status")]
 dfx2$idx <- as.numeric(dfx2$idx)
 
@@ -343,4 +343,4 @@ summarise <- auth2[, list(idxes=paste0(idxes,collapse='; '),
         by=c("date.n", "author", "title", "journal", "volume", "issue", "page.numbers.publication", "paper.type", "country.of.publication", "city.of.publication", "paper.authors")]
 
 write.csv(summarise, 
-        paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_2.0-metrics.csv"), na='', row.names=F, fileEncoding="UTF-8")
+        paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_2.0-metrics.csv"), na='', row.names=F, fileEncoding="UTF-8")

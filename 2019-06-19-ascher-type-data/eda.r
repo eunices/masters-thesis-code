@@ -31,7 +31,7 @@ flag <- rbind(
 
 
 write.csv(flag,
-          paste0(dir, "eda/2019-09-22-type-data-quality2.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda/2019-09-22-type-data-quality2.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 # Diff
@@ -78,7 +78,7 @@ t$no_flow <- t$res == t$des
 
 
 write.csv(t,
-          paste0(dir, "eda/2019-09-22-flow-map-type-loc-des-country.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda/2019-09-22-flow-map-type-loc-des-country.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 table(t$no_flow)
@@ -92,7 +92,7 @@ ss <- merge(ss, lookup.cty[, c("GEC", "Country", "A.3")],
 
 
 write.csv(ss[order(-prop)],
-          paste0(dir, "eda/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 map <- geom_sf(data = shp, colour = "white", fill = NA, size=0.02) 
@@ -112,13 +112,13 @@ dev.off()
 
 # Network of authors
 nw <- fread(
-    paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+    paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 nw[, names(nw) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
 nw
 nw_cty <- nw[, list(sum(as.numeric(N))), by=c("residence.country.describer.first_p1", "residence.country.describer.first_p2")]
 
-write.csv(nw_cty, paste0(dir, 'eda/2019-09-22-auth-country-network.csv'), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(nw_cty, paste0(dir_data, 'eda/2019-09-22-auth-country-network.csv'), na='', row.names=F, fileEncoding="UTF-8")
 
 # Russian taxonomist
 
@@ -133,7 +133,7 @@ tc3 <- dcast(tc2, full.name.of.describer ~ type.country.n, value.var="N_spp", fu
 fi <- merge(ru, tc3, by.y="full.name.of.describer", by.x="full.name.of.describer.n", all.x=F, all.y=T)
 
 write.csv(fi,
-          paste0(dir, "eda/2019-09-25-russians.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda/2019-09-25-russians.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 df_ll <- rbind(
@@ -144,7 +144,7 @@ round(y/x*100, 2)
 summary(df_ll)
 
 write.csv(df_ll[order(as.numeric(idx))], 
-          paste0(dir, "eda/2019-09-26-lat-lon.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda/2019-09-26-lat-lon.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 

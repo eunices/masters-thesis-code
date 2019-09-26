@@ -4,13 +4,13 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': number of taxonomist active per year"))
 
-describer_date <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_4.0-denormalised2.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+describer_date <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_4.0-denormalised2.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 describer_date[, names(describer_date) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-describer_data <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+describer_data <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 describer_data[, names(describer_data) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-synonyms <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+synonyms <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 synonyms[, names(synonyms) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
 # Get dataset
@@ -103,4 +103,4 @@ described_per_year_final3 <- merge(described_per_year_final2, described_species_
 described_per_year_final3[is.na(described_per_year_final3)] <- 0
 described_per_year_final3 <- data.table(described_per_year_final3)
 
-write.csv(described_per_year_final3[years<=2018], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_6.0-active-by-year.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(described_per_year_final3[years<=2018], paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_6.0-active-by-year.csv"), na='', row.names=F, fileEncoding="UTF-8")

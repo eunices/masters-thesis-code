@@ -14,7 +14,10 @@ print(paste0(Sys.time(), " --- init setup"))
 
 # Setup
 setwd('C:/Dev/msc-thesis-code')
+dir_data <- 'data/2019-05-23-ascher-bee-data/'
+dir_script <- '2019-06-19-ascher-type-data/'
 source('keys.R')
+source(paste0(dir_script, 'helper.R'))
 
 
 # Initialize google api for geocoding
@@ -73,8 +76,4 @@ lookup.pri_div$CTY.STATE.CODE <- paste0(lookup.pri_div$GEC, ".", lookup.pri_div$
 
 lookup.loc <- read.csv('data/lookup/2019-09-26-location-codes.csv', encoding="UTF-8",
                            stringsAsFactors=F, na=c(""))
-                           
-# Read daitaset
-dir <- 'data/2019-05-23-ascher-bee-data/'
-files <- list.files(dir, full.names=T, pattern='csv')
-files
+

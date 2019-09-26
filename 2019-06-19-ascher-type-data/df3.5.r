@@ -4,11 +4,11 @@
 print(paste0(Sys.time(), " --- 'describers': creating dataset for network"))
 
 ps <- fread(
-    paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+    paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 ps[, names(ps) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-dfx1 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-dfx2 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+dfx1 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+dfx2 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx <- rbind(dfx1[,c("idx", "date.n")], dfx2[,c("idx", "date.n")])
 dfx <- dfx[date.n <=2018]$idx # limit to 2018
 rm(dfx1, dfx2)
@@ -16,7 +16,7 @@ rm(dfx1, dfx2)
 ps <- ps[idx %in% dfx]
 
 des <- fread(
-    paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+    paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 des[, names(des) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
 # Create pairs
@@ -56,6 +56,6 @@ ps2 <- rbind(ps2, ps4)
 # p2_names <- names(ps3)[grepl("_p2", names(ps3))]
 # col_order <- c("N", "p1", "p2", p1_names, p2_names)
 
-# write.csv(ps3[order(-N), ..col_order], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), na='', row.names=F, fileEncoding="UTF-8")
+# write.csv(ps3[order(-N), ..col_order], paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-write.csv(ps2[order(-N)], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(ps2[order(-N)], paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), na='', row.names=F, fileEncoding="UTF-8")

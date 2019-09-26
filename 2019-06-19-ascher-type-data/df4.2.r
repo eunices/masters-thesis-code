@@ -3,10 +3,10 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- by country"))
 
-df <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df$idx <- as.integer(df$idx)
 
-df_mapper2 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty1.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df_mapper2 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty1.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df_mapper2$idx <- as.integer(df_mapper2$idx)
 
 
@@ -20,10 +20,10 @@ not_missing <- unique(df_mapper2[!is.na(df_mapper2$Country.final)]$idx)
 
 no_data <- df[idx %in% as.character(missing) & !(idx %in% as.character(not_missing)), c("idx", "global.mapper")]
 write.csv(no_data[order(global.mapper)], 
-          paste0(dir, "clean/countries.csv"), row.names=F)
+          paste0(dir_data, "clean/countries.csv"), row.names=F)
 
 # manually modify and merge back results
-no_data <- fread(paste0(dir, "clean/countries_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')[, c("corrected.global.mapper", "idx")]
+no_data <- fread(paste0(dir_data, "clean/countries_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')[, c("corrected.global.mapper", "idx")]
 names(no_data) <- c("country", "idx")
 no_data <- merge(no_data, lookup.cty[c("A.2", "Country")], all.x=T, all.y=F, by.x="country", by.y="A.2")
 no_data[] <- lapply(no_data, as.character)
@@ -66,7 +66,7 @@ cols <- c("idx", "Latitude_type", "no_cty_in_trop", "cty_in_trop",
 df_mapper10 <- df_mapper10[,..cols]
 df_mapper10 <- unique(df_mapper10)
 
-write.csv(df_mapper10, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty6-trop-type1.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(df_mapper10, paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty6-trop-type1.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # By type2 of trop/sub tropical
 df_mapper11 <- copy(df_mapper9)
@@ -77,7 +77,7 @@ cols <- c("idx", "Latitude_type2", "no_cty_in_trop", "cty_in_trop",
 df_mapper11 <- df_mapper11[, ..cols]
 df_mapper11 <- unique(df_mapper11)
 
-write.csv(df_mapper11, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty7-trop-type2.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(df_mapper11, paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty7-trop-type2.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - appending WWF's ecoregions
@@ -124,7 +124,7 @@ df_mapper4[grepl(paste(c(AA_IM), collapse='|'), A.3),]$REALM_E <- "AA_IM"
 df_mapper4[grepl(paste(c(NA_NT), collapse='|'), A.3),]$REALM_E <- "NA_NT"
 df_mapper4[grepl(paste(c(AT_PA, IM_PA, AA_IM, NA_NT), collapse='|'), A.3),]$BIOGEO_OVERLAP_CTY <- "TRUE"
 
-# no_data <- fread(paste0(dir, "clean/countries_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+# no_data <- fread(paste0(dir_data, "clean/countries_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 # no_data <- merge(no_data, lookup.cty[c("A.2", "A.3")], all.x=T, all.y=F, by.x="corrected.global.mapper", by.y="A.2")
 # no_data[] <- lapply(no_data, as.character)
 # df_mapper4 <- rbind(df_mapper4, no_data[,c("idx", "A.3", "REALM_E")])
@@ -190,7 +190,7 @@ df_mapper4b[A.3=="BLM",]$CONTINENT <- "North America"
 df_mapper4b[A.3=="SXM",]$CONTINENT <- "North America"
 df_mapper4b[A.3=="MAF",]$CONTINENT <- "North America"
 
-write.csv(df_mapper4b[order(as.numeric(idx))], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty2-cty.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(df_mapper4b[order(as.numeric(idx))], paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty2-cty.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 df_mapper5b <- copy(df_mapper4b)
 df_mapper5b[,countries:=paste(unique(A.3), collapse=', '), by=c("idx", "CONTINENT")]
@@ -198,7 +198,7 @@ df_mapper5b[,countries_n:=length(unique(A.3)), by=c("idx", "CONTINENT")]
 df_mapper5b <- unique(df_mapper5b[,c("idx", "full.name.of.describer", "date.n", "duplicated.row", "countries", "CONTINENT", "countries_n")])
 df_mapper5b[,no_continents:=length(unique(CONTINENT)), by=c("idx")]
 
-write.csv(df_mapper5b, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty3-continent.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(df_mapper5b, paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty3-continent.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - by biogeographic region WWF
@@ -216,7 +216,7 @@ df_mapper6b <- merge(df_mapper6b, unique(df_mapper6b[BIOGEO_OVERLAP_CTY != "FALS
 cols <- c("idx", "REALM_E", "date.n", "full.name.of.describer", "countries", "countries_n", "BIOGEO_OVERLAP_CTY_row", "BIOGEO_OVERLAP_CTY_idx")
 
 write.csv(df_mapper6b[order(as.numeric(idx))][,..cols],
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty4-biogeo.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty4-biogeo.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - by biogeographic region Holt
@@ -231,5 +231,5 @@ df_mapper6[,no_realms:=length(unique(Realm)), by=c("idx")]
 
 cols <- c("idx", "Realm", "date.n", "full.name.of.describer", "countries", "countries_n")
 write.csv(df_mapper6[order(as.numeric(idx))][,..cols],
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty5-biogeo-holt.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty5-biogeo-holt.csv"), na='', row.names=F, fileEncoding="UTF-8")
 

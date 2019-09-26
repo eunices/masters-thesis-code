@@ -14,7 +14,7 @@ source('2019-06-19-ascher-type-data/init.R')
 print(paste0(Sys.time(), " --- initial formatting"))
 
 # read dataset with index
-filepath <- paste0(dir, '2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_1-idx.csv')
+filepath <- paste0(dir_data, '2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_1-idx.csv')
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 # csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
@@ -57,7 +57,7 @@ missing_lat_long_check <- is.na(df$lat) | is.na(df$lon)
 table(is.na(df$lat)); table(is.na(df$lon)); table(missing_lat_long_check)
 
 # write to view data
-write.csv(df[missing_lat_long_check], paste0(dir, "clean/", "check1.csv"),
+write.csv(df[missing_lat_long_check], paste0(dir_data, "clean/", "check1.csv"),
            fileEncoding="UTF-8")
 
 # subset data to geocode
@@ -137,11 +137,11 @@ no_geocode <- no_geocode[,c('idx', 'flag')]
 # to_geocode$lat <- geocoded$lat; to_geocode$lon <- geocoded$lon
 # to_geocode$flag <- "GEOCODED_GOOGLE_MAPS_API"
 # # persist so that geocoding is only done once!
-# write.csv(to_geocode, paste0(dir, "clean/", "geocoded.csv"), fileEncoding="UTF-8")
+# write.csv(to_geocode, paste0(dir_data, "clean/", "geocoded.csv"), fileEncoding="UTF-8")
 
 # merge from geocoding
-geocoded_all <- read.csv(paste0(dir, "clean/", "geocoded.csv"), stringsAsFactors=F, encoding='UTF-8')
-geocoded_na <- read.csv(paste0(dir, "clean/", "geocoded_na_edit.csv"), stringsAsFactors=F, encoding="UTF-8")
+geocoded_all <- read.csv(paste0(dir_data, "clean/", "geocoded.csv"), stringsAsFactors=F, encoding='UTF-8')
+geocoded_na <- read.csv(paste0(dir_data, "clean/", "geocoded_na_edit.csv"), stringsAsFactors=F, encoding="UTF-8")
 # files with "_edit" suffix means they have gone through manual editing
 # geocoded_na were the na lat long with locality modified
 
@@ -180,9 +180,9 @@ flag <- "LOCALITY_MANUALLY_CHECKED_AMENDED_LOCALITY_GEOCODED_AGAIN" # for this f
 # geocoded_na_geocoded <- geocode_lat_long(geocoded_na_to_geocode)
 # geocoded_na[geocoded_na$flag==flag,]$lat <- geocoded_na_geocoded$lat
 # geocoded_na[geocoded_na$flag==flag,]$lon <- geocoded_na_geocoded$lon
-# write.csv(geocoded_na, paste0(dir, "clean/", "geocoded_na2.csv"),
+# write.csv(geocoded_na, paste0(dir_data, "clean/", "geocoded_na2.csv"),
 #           fileEncoding="UTF-8" ) # manual edits required to check again for unsuccessful cases
-geocoded_na <- read.csv(paste0(dir, "clean/", "geocoded_na2_edit.csv"), stringsAsFactors=F, encoding="UTF-8")
+geocoded_na <- read.csv(paste0(dir_data, "clean/", "geocoded_na2_edit.csv"), stringsAsFactors=F, encoding="UTF-8")
 
 # 2. for NAs - geocode those with COUNTRY AND PRI DIV ONLY
 flag <- "COUNTRY_AND_PRI_DIV_ONLY"
@@ -196,8 +196,8 @@ flag <- "COUNTRY_AND_PRI_DIV_ONLY"
 # table(is.na(geocoded_na_pri_div_geocoded$lat)); table(is.na(geocoded_na_pri_div_geocoded$lon))
 # geocoded_na[grepl(flag, geocoded_na$flag),]$lat <- geocoded_na_pri_div_geocoded$lat
 # geocoded_na[grepl(flag, geocoded_na$flag),]$lon <- geocoded_na_pri_div_geocoded$lon
-# write.csv(geocoded_na, paste0(dir, "clean/", "geocoded_na3.csv"), fileEncoding="UTF-8")
-geocoded_na <- read.csv(paste0(dir, "clean/", "geocoded_na3.csv"), stringsAsFactors=F, 
+# write.csv(geocoded_na, paste0(dir_data, "clean/", "geocoded_na3.csv"), fileEncoding="UTF-8")
+geocoded_na <- read.csv(paste0(dir_data, "clean/", "geocoded_na3.csv"), stringsAsFactors=F, 
                         encoding="UTF-8")
                         
 
@@ -294,11 +294,11 @@ df[df$lat < -90, "lat"] <- -21.3558    # manual correction
 
 df <- df[order(as.numeric(idx))]
 write.csv(df, 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_2-geocoded.csv"),
+          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_2-geocoded.csv"),
           na='', row.names=F, fileEncoding="UTF-8") # write.csv escapes double quotes PROPERLY
 
 
-df <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_2-geocoded.csv"),
+df <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_2-geocoded.csv"),
             na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 # csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
@@ -325,10 +325,10 @@ df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread doe
 # to_write <- countries[countries$idx %in% discrepancies$idx, 
 #                       c('idx', 'NAME_0', 'Country', 'type.locality.verbatim', 'type.locality.updated',
 #                         'lat', 'lon', 'flag')]
-# write.csv(to_write, paste0(dir, "clean/", "check2.csv"), row.names=F, fileEncoding='UTF-8')
+# write.csv(to_write, paste0(dir_data, "clean/", "check2.csv"), row.names=F, fileEncoding='UTF-8')
 
 # integrate discrepancies
-corrected <- fread(paste0(dir, "clean/", "check2_edit.csv"), 
+corrected <- fread(paste0(dir_data, "clean/", "check2_edit.csv"), 
                    encoding='UTF-8', stringsAsFactors=F); dim(corrected)
 corrected[, names(corrected) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 unique(corrected$flag.country)
@@ -427,10 +427,10 @@ df <- df_merge[,..df_original_cols]
 # search[is.na(search$NAME_0)]$flag <- "COUNTRY_ONLY"
 
 # write.csv(search, 
-#           paste0(dir, "clean/geocoded2.csv"), 
+#           paste0(dir_data, "clean/geocoded2.csv"), 
 #           fileEncoding="UTF-8", row.names=F)
 
-search <- read.csv(paste0(dir, "clean/geocoded2.csv"), encoding="UTF-8", stringsAsFactors=F)
+search <- read.csv(paste0(dir_data, "clean/geocoded2.csv"), encoding="UTF-8", stringsAsFactors=F)
 
 df$idx <- as.numeric(df$idx)
 search$idx <- as.numeric(search$idx)
@@ -447,7 +447,7 @@ df_merged[!is.na(df_merged$lat_MERGED)]$type.country <- df_merged[!is.na(df_merg
 # done merging
 df <- df_merged[,..df_original_cols]
 
-checks <- fread(paste0(dir, "clean/lat_long_check.csv"))
+checks <- fread(paste0(dir_data, "clean/lat_long_check.csv"))
 remove_lat_long_idxs <- checks[comment == "Lat long removed"]$idx
 df[idx %in% remove_lat_long_idxs]$lat <- ""
 df[idx %in% remove_lat_long_idxs]$lon <- ""
@@ -590,7 +590,7 @@ df[check0&check1&!check2&!check3&!check4]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_SML_
 # discrepancies <- check[!(check$checks | is.na(check$checks)),]; discrepancies
 # table(discrepancies$checks)
 # to_write <- countries[countries$idx %in% discrepancies$idx,]
-# write.csv(to_write, paste0(dir, "clean/", "check2.csv"), row.names=F)
+# write.csv(to_write, paste0(dir_data, "clean/", "check2.csv"), row.names=F)
 
 # Double check lat lon and state
 df_original <- df
@@ -627,7 +627,7 @@ df[idx %in% remove_ll & check1]$flag <- "COUNTRY_AND_PRI_DIV_ONLY_LRG_DIV"
 discrepancies <- check[!(check$checks | is.na(check$checks)) & !(idx %in% remove_ll) & !check$type.country.n %in% c("EG", "IS"),]; table(discrepancies$checks)
 
 to_write <- countries[countries$idx %in% discrepancies$idx,]
-write.csv(to_write, paste0(dir, "clean/", "check2.csv"), row.names=F)
+write.csv(to_write, paste0(dir_data, "clean/", "check2.csv"), row.names=F)
 # named as "georeference_slowly.xlsx on desktop"
 
 
@@ -650,7 +650,7 @@ df$cty.state <- NULL
 
 # df_original <- df
 
-filepath <- paste0(dir, "clean/georeference_slowly.csv")
+filepath <- paste0(dir_data, "clean/georeference_slowly.csv")
 add <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 new_cols <- c("idx", "type.country.full.CORRECT", "type.state.full.CORRECT", 
@@ -685,9 +685,9 @@ table(check0, check1)
 table(check0, check2)
 check0 <- is.na(df$lat) | is.na(df$lon)
 check1 <- is.na(df$type.country.n)
-write.csv(df[!check0 & check1], paste0(dir, 'clean/country-latloncheck_old.csv'))
+write.csv(df[!check0 & check1], paste0(dir_data, 'clean/country-latloncheck_old.csv'))
 
-filepath <- paste0(dir, "clean/country-latloncheck.csv")
+filepath <- paste0(dir_data, "clean/country-latloncheck.csv")
 add <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 new_cols <- c("idx", "type.country.n.CORRECT", "type.state.n.CORRECT", 
@@ -718,9 +718,9 @@ check3 <- grepl("plotted at|Geohack|Google", df$source.of.latlon)
 check4 <- is.na(df$source.of.latlon)  | df$source.of.latlon == ""
 check5 <- is.na(df$flag) | df$flag == ""
 
-write.csv(df[check0==F & check1 ==T], paste0(dir, 'clean/country-latloncheck2.csv'))
+write.csv(df[check0==F & check1 ==T], paste0(dir_data, 'clean/country-latloncheck2.csv'))
 
-filepath <- paste0(dir, "clean/country-latloncheck2_edit.csv")
+filepath <- paste0(dir_data, "clean/country-latloncheck2_edit.csv")
 add <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 new_cols <- c("idx", "type.country.n.CORRECT", "type.state.n.CORRECT", 
@@ -772,7 +772,7 @@ setDT(check)[, c("country", "state") := tstrsplit(CTY.STATE.CODE, "\\.")]
 write.csv(as.data.frame(countries[,c("idx","type.locality.verbatim", "type.locality.updated",
                                      "type.country.n", "type.state.n", 
                                      "NAME_0", "NAME_1", "CTY.STATE.CODE", "flag")]), 
-          paste0(dir, "clean/include_state.csv"),
+          paste0(dir_data, "clean/include_state.csv"),
           row.names=F)
 
 # include_states.csv
@@ -780,7 +780,7 @@ write.csv(as.data.frame(countries[,c("idx","type.locality.verbatim", "type.local
 # df <- df2
 df2 <- df
 
-filepath <- paste0(dir, "clean/include_state_edit.csv")
+filepath <- paste0(dir_data, "clean/include_state_edit.csv")
 add <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')
 add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 new_cols <- c("idx", "type.country.CORRECTED", "type.state.CORRECTED", 
@@ -843,7 +843,7 @@ write.csv(as.data.frame(countries[,c("idx","type.locality.verbatim", "type.local
                                      "type.country.n", "type.state.n", "type.state.n.full", "country", "state",
                                      "NAME_0", "NAME_1", "flag",
                                      "check1", "check2", "geometry")]), 
-          paste0(dir, "clean/check_state.csv"), na="NAN",
+          paste0(dir_data, "clean/check_state.csv"), na="NAN",
           row.names=F)
 
 
@@ -851,7 +851,7 @@ write.csv(as.data.frame(countries[,c("idx","type.locality.verbatim", "type.local
 
 
 
-filepath <- paste0(dir, "clean/check_state_edit.csv")
+filepath <- paste0(dir_data, "clean/check_state_edit.csv")
 add <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')
 add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 add$idx <- as.numeric(add$idx)
@@ -954,7 +954,7 @@ df[as.numeric(df$date.of.type.yyyy) <1200]$date.of.type.yyyy[] <-
 # date differences
 df$years.lag <- as.numeric(df$date.n) - as.numeric(df$date.of.type.yyyy)
 
-filepath <- paste0(dir, "clean/date_discrepancy.csv")
+filepath <- paste0(dir_data, "clean/date_discrepancy.csv")
 # those which have unresolved discrepancies (-ve date with no reason), will be changed to NA
 # field to merge is "date.of.type.corrected" (it is in YYYY format)
 date_discrepancy <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')[, c("idx", "date.of.type.corrected")]
@@ -980,7 +980,7 @@ df[idx %in% c(502)]$full.name.of.describer <- "Osamu Tadauchi; Ryôichi Miyanaga
 df[idx==3335 & idx==9456]$flag = "IGNORE_COUNTRY_DISCREPANCY_ERRONEOUS_GADM_BOUNDARY"
 
 # missing full names
-filepath <- paste0(dir, "clean/missing_authors_edit.csv")
+filepath <- paste0(dir_data, "clean/missing_authors_edit.csv")
 missing_auth <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 missing_auth[, names(missing_auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -1013,7 +1013,7 @@ table(is.na(df$genus) | df$genus== "")
 table(is.na(df$species) | df$species== "")
 
 write.csv(df, 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv"),
+          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv"),
           na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1032,7 +1032,7 @@ write.csv(df,
 
 print(paste0(Sys.time(), " --- modify synonym data"))
 
-df_s <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-idx.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+df_s <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-idx.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 
 df_s[, names(df_s) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 # csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
@@ -1065,7 +1065,7 @@ df_s$date.n <- as.numeric(gsub("\\[.*\\]", "", df_s$date)) # remove square brack
 df_s$date.of.type.yyyy <- as.numeric(sub('.*(\\d{4}).*', '\\1', df_s$date.of.type))
 
 # missing full names
-filepath <- paste0(dir, "clean/missing_authors_edit.csv")
+filepath <- paste0(dir_data, "clean/missing_authors_edit.csv")
 missing_auth <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 missing_auth[, names(missing_auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -1093,7 +1093,7 @@ df_s <- df_s[duplicated.row == "FALSE"][order(as.numeric(idx))]
 # df_s[status=="Valid subspecies"]$correct_synonym <- gsub("([A-Za-z]+).*", "\\1", df_s[status=="Valid subspecies"]$correct_synonym)
 
 # clean genus and species relationships
-filepath <- paste0(dir, "clean/idx-idx_original.csv")
+filepath <- paste0(dir_data, "clean/idx-idx_original.csv")
 idxdf <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 idxdf[, names(idxdf) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -1195,10 +1195,10 @@ setDT(countries)[, c("country", "state") := tstrsplit(CTY.STATE.CODE, "\\.")]
 cols <- c("idx", "type.country.n", "type.state.n", "type.country.n.full",
           "type.state.n.full", "type.country", "type.state", "country", "state",
           "type.locality.verbatim", "type.locality.updated", "check1", "check2", "geometry")
-write.csv(countries[, ..cols], paste0(dir, 'clean/oth-check.csv')) 
+write.csv(countries[, ..cols], paste0(dir_data, 'clean/oth-check.csv')) 
 
 
-filepath <- paste0(dir, "clean/oth-check_edit.csv")
+filepath <- paste0(dir_data, "clean/oth-check_edit.csv")
 add <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')
 add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 new_cols <- c("idx", "type.country.n.CORRECT", "type.state.n.CORRECT", 
@@ -1267,10 +1267,10 @@ df_s[,c("type.country.n.CORRECT", "type.state.n.CORRECT",
 # geocoded <- geocode_lat_long(to_geocode$search_locality)
 # geocoded2 <- cbind(to_geocode, geocoded)
 
-# write.csv(geocoded2, paste0(dir, 'clean/oth-geocoded.csv'), row.names=F)
+# write.csv(geocoded2, paste0(dir_data, 'clean/oth-geocoded.csv'), row.names=F)
 
 
-filepath <- paste0(dir, "clean/oth-geocoded_edit.csv")
+filepath <- paste0(dir_data, "clean/oth-geocoded_edit.csv")
 add <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 new_cols <- c("idx", "lat.CORRECT", "lon.CORRECT")
@@ -1316,7 +1316,7 @@ countries$check.country2 <- countries$type.country.n == countries$country
 countries$check.state <- countries$NAME_1 == countries$type.state.n.full
 
 write.csv(countries[!(check.country | check.country2) | !check.state],
-          paste0(dir, "clean/oth-country-state-check.csv"), row.names=F)
+          paste0(dir_data, "clean/oth-country-state-check.csv"), row.names=F)
 
 table(is.na(countries$type.country.n.full))
 
@@ -1329,7 +1329,7 @@ df_s[!is.na(NAME_0)]$type.state.n.full <- as.character(df_s[!is.na(NAME_0)]$NAME
 
 
 
-filepath <- paste0(dir, "clean/oth-country-state-check_edit.csv")
+filepath <- paste0(dir_data, "clean/oth-country-state-check_edit.csv")
 add <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')
 add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 new_cols <- c("idx", "type.country.n.CORRECT", "type.state.n.CORRECT", 
@@ -1402,7 +1402,7 @@ df_s[!check0 & check3 & !check4 & !check5]$source.of.latlon.n <-
 
 
 write.csv(df_s[order(idx)], 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1410,9 +1410,9 @@ write.csv(df_s[order(idx)],
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- count synonyms per valid species"))
 
-df_nv <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+df_nv <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.0-clean.csv")
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 # csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
@@ -1449,7 +1449,7 @@ df[is.na(N_var)]$N_var <- 0
 rm(var_count, df_s)
 
 write.csv(df, 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 
@@ -1458,11 +1458,11 @@ write.csv(df,
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- clean repository"))
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-synonyms.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.1-synonyms.csv")
 df1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df1[, names(df1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-filepath <- paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv")
+filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_2-clean.csv")
 df2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df2[, names(df2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 check <- rbind(df1[, c("idx", "type.repository", "country.of.type.repository")], 
@@ -1476,11 +1476,11 @@ check2 <- data.table(check %>% group_by(type.repository, country.of.type.reposit
     summarise(idxes=paste0(idx,collapse='; ')))
 
 write.csv(check2[order(type.repository, country.of.type.repository)], 
-          paste0(dir, "clean/", "check-type-repo.csv"),
+          paste0(dir_data, "clean/", "check-type-repo.csv"),
           fileEncoding="UTF-8")
 
 
-filepath <- paste0(dir, "clean/check-type-repo_edit.csv")
+filepath <- paste0(dir_data, "clean/check-type-repo_edit.csv")
 edit <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
@@ -1490,10 +1490,10 @@ edit <- edit %>% separate_rows(idxes, sep="; ") %>%
 edit <- data.table(edit)
 
 write.csv(edit[order(type.repository.n.CORRECTED, country.of.type.repository.n.CORRECTED.A2)], 
-          paste0(dir, "clean/", "check-type-repo2.csv"),
+          paste0(dir_data, "clean/", "check-type-repo2.csv"),
           fileEncoding="UTF-8")
 
-filepath <- paste0(dir, "clean/check-type-repo2_edit.csv")
+filepath <- paste0(dir_data, "clean/check-type-repo2_edit.csv")
 edit <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
@@ -1511,9 +1511,9 @@ df2 <- merge(df2, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
 
 
 write.csv(df1, 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-clean-repository.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_3.2-clean-repository.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 write.csv(df2, 
-          paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_3.2-clean-repository.csv"), na='', row.names=F, fileEncoding="UTF-8")
 

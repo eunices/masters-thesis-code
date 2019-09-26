@@ -3,7 +3,7 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': summarize by species idx for checks on authors"))
 
-describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_2.0-denormalised.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+describers <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_2.0-denormalised.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 
 describers[, names(describers) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
@@ -26,17 +26,17 @@ describers[idx==16869 & grepl("Urban", full.name.of.describer.n)]$residence.coun
 # # =================
 
 # check <- fread(
-#     paste0(dir, "clean/missing_authors_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+#     paste0(dir_data, "clean/missing_authors_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 # check[, names(check) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
 # describers_info2 <- merge(describers_info, check, by='author', suffixes=c('_old', '_new'), all.x=T, all.y=F)
 # describers_info2$check <- describers_info2$full.name.of.describer_old == describers_info2$full.name.of.describer_new
 
-# write.csv(describers_info2[check==FALSE | is.na(check),c("idx", "author", "full.name.of.describer_old", "full.name.of.describer_new", "check")], paste0(dir, "clean/describers_info.csv"), na='', row.names=F, fileEncoding="UTF-8")
+# write.csv(describers_info2[check==FALSE | is.na(check),c("idx", "author", "full.name.of.describer_old", "full.name.of.describer_new", "check")], paste0(dir_data, "clean/describers_info.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # describers_info2 <- fread(
-#     paste0(dir, "clean/describers_info_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+#     paste0(dir_data, "clean/describers_info_edit.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 # describers_info2[, names(describers_info2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
@@ -55,7 +55,7 @@ describers[idx==16869 & grepl("Urban", full.name.of.describer.n)]$residence.coun
 
 # describers_info <- rbind(describers_info.1, describers_info.2)
 
-# write.csv(describers_info[order(type, idx),], paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all_edit.csv"), na='', row.names=F, fileEncoding="UTF-8")
+# write.csv(describers_info[order(type, idx),], paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all_edit.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 
 # Merge back the other columns
@@ -189,7 +189,7 @@ describers_idx[full.name.of.describer.n=='Ricardo Ayala Barajas']$dod.describer.
 describers_idx$idx_auth <- 1:dim(describers_idx)[1]
 
 
-edit <- fread(paste0(dir, "clean/author_country_edit.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+edit <- fread(paste0(dir_data, "clean/author_country_edit.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 
 edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 edit$residence.country.describer.comment <- NULL
@@ -208,4 +208,4 @@ describers_idx[!is.na(dod.describer.n_new)]$dod.describer.n <- describers_idx[!i
 describers_idx[,c("residence.country.describer.n_new", "dob.describer.n_new", 
         "dod.describer.n_new", "origin.country.describer.n_new" ):=NULL]
 
-write.csv(describers_idx, paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_3.0-by-author.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(describers_idx, paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_3.0-by-author.csv"), na='', row.names=F, fileEncoding="UTF-8")

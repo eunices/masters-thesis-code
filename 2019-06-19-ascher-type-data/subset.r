@@ -13,7 +13,7 @@ to_subset <- "N"
 
 
 # Load data.frame variable names
-var <- data.table(read.xlsx2(paste0(dir, '2019-09-16-metadata.xlsx'), sheetIndex=1, stringsAsFactors=F), as.data.frame=T)
+var <- data.table(read.xlsx2(paste0(dir_data, '2019-09-16-metadata.xlsx'), sheetIndex=1, stringsAsFactors=F), as.data.frame=T)
 names(var)
 var$order <- as.integer(var$order)
 var_f <- var[!grepl("remove|derived", key_status)]
@@ -54,7 +54,7 @@ c_pub_i <- c( "paper.authors", "title", "journal", "volume", "issue",
             "paper.type", "country.of.publication", "city.of.publication")
 
 # Load dataframes
-construct_filepath <- function(filename) {paste0(dir, filename)}
+construct_filepath <- function(filename) {paste0(dir_data, filename)}
 subset_df <- function(filepath, table, write=T) {
 
     # fn_df2 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"
@@ -151,5 +151,11 @@ manual_ll <- c("LOCALITY_MANUALLY_CHECKED_LAT_LONG_ADDED",
 ignore_ll_mismatch <- c("IGNORE_COUNTRY_DISCREPANCY_ERRONEOUS_GADM_BOUNDARY")
 # use country field as GADM boundaries are wrong
 
-# df1 <- get_df1(write=F)
-# df2 <- get_df2(write=F)
+
+
+df1 <- get_df1(write=F)
+df2 <- get_df2(write=F)
+col <- c("idx", "lat", "lon", "flag", "source.of.latlon.n",
+         "source.of.latlon", "type.locality.updated", "type.locality.verbatim",
+         "type.country.n", "type.state.n")
+df_write <- rbind(df1[, ..col], df2[, ..col])
