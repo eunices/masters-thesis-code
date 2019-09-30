@@ -8,9 +8,9 @@ library(gridExtra)
 print(paste0(Sys.time(), " --- Read datasets"))
 
 
-dir <- 'data/2018-05-23-ascher-bee-data/'
-dir2 <- '2019-06-19-ascher-type-data/'
-source(paste0(dir2, "subset.r"))
+dir_data <- 'data/2019-05-23-ascher-bee-data/'
+dir_script <- '2019-06-19-ascher-type-data/'
+source(paste0(dir_script, "subset.r"))
 
 df <- get_df1(write=F)
 
@@ -31,7 +31,7 @@ df_publications <- get_pub(write=F)
 print(paste0("Read df_publications"))
 dim(df_publications)
 
-df_continent <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty3-continent.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df_continent <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty3-continent.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 print(paste0("Read df_continent"))
 table(df_continent$duplicated.row)
@@ -40,7 +40,7 @@ df_continent$duplicated.row <- NULL
 df_continent <- df_continent[date.n<2019]
 
 
-df_biogeo <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty4-biogeo.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df_biogeo <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty4-biogeo.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 print(paste0("Read df_biogeo"))
 table(is.na(df_biogeo$REALM_E))
@@ -48,7 +48,7 @@ dim(df_biogeo); df_biogeo <- df_biogeo[!is.na(REALM_E)]; dim(df_biogeo)
 df_biogeo <- df_biogeo[date.n<2019]
 
 
-df_biogeo_holt <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty5-biogeo-holt.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df_biogeo_holt <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty5-biogeo-holt.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 print(paste0("Read df_biogeo_holt"))
 table(is.na(df_biogeo_holt$Realm))
@@ -57,7 +57,7 @@ df_biogeo_holt <- df_biogeo_holt[date.n<2019]
 
 
 
-df_trop_type1 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty6-trop-type1.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df_trop_type1 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty6-trop-type1.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 print(paste0("Read df_trop_type1"))
 table(is.na(df_trop_type1$Latitude_type))
@@ -65,7 +65,7 @@ df_trop_type1 <- df_trop_type1[date.n<2019]
 
 
 
-df_trop_type2 <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty7-trop-type2.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df_trop_type2 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty7-trop-type2.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 print(paste0("Read df_trop_type2"))
 table(is.na(df_trop_type2$Latitude_type))
@@ -73,7 +73,7 @@ df_trop_type2 <- df_trop_type2[date.n<2019]
 
 
 
-taxonomic_effort <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_6.0-active-by-year.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+taxonomic_effort <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_6.0-active-by-year.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
 taxonomic_effort_long <- data.table(taxonomic_effort %>% gather(type, N, N_describers:N_synonyms))
 
@@ -84,7 +84,7 @@ df_describers <- get_des(write=F)
 
 print(paste0("Read df_describers"))
 
-df_species_describers <- fread(paste0(dir, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_4.0-denormalised2.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+df_species_describers <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_4.0-denormalised2.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df_species_describers[,N_authors:=length(unique(idx_auth)), by=c("idxes")]
 df_species_describers_sum <- unique(df_species_describers[,c("idxes", "N_authors", "date.n")])
 df_species_describers$N_authors <- NULL

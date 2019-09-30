@@ -17,7 +17,7 @@ library(reshape)
 #   geom_sf(data = ll, colour = "slategray3") + theme_minimal()
 # dev.off()
 
-# Flag
+# Data quality
 spp <- get_df1(write=F)
 spp_s <- spp[,c("idx", "type.country.n", "full.name.of.describer")]
 spp_s <- data.table(spp_s %>% separate_rows(full.name.of.describer, sep="; "))
@@ -29,10 +29,8 @@ flag <- rbind(
     data.frame(table(spp2$source.of.latlon.n))
 )
 
-
 write.csv(flag,
           paste0(dir_data, "eda/2019-09-22-type-data-quality2.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
 
 # Diff
 spp$diff <- as.numeric(spp$date.n) - as.numeric(spp$date.of.type.yyyy)
@@ -59,17 +57,16 @@ dim(t); t <- t[!(type.country == "" | residence.country=="[unknown]")]; dim(t)
 #   geom_tile()
 
 # merge t with lat and lon
-to_merge1 <- lookup.cty[, c("GEC", "centroid_lat", "centroid_lon")]
-to_merge2 <- lookup.cty[, c("A.2", "GEC", "centroid_lat", "centroid_lon")]
-t <- merge(t, to_merge1, by.x="type.country", by.y="GEC", all.x=T, all.y=F)
-t <- merge(t, to_merge2, by.x="residence.country", by.y="A.2", all.x=T, all.y=F,
+to_merge1 <- lookup.cty[, c("DL", "centroid_lat", "centroid_lon")]
+to_merge2 <- lookup.cty[, c("DL", "centroid_lat", "centroid_lon")]
+t <- merge(t, to_merge1, by.x="type.country", by.y="DL", all.x=T, all.y=F)
+t <- merge(t, to_merge2, by.x="residence.country", by.y="DL", all.x=T, all.y=F,
            suffixes=c("_type.country", "_residence.country"))
-t$residence.country <- NULL
 
 t[is.na(centroid_lat_type.country)]
 t[is.na(centroid_lat_residence.country)]$residence.country
 
-names(t) <- c("des", "N", "oY", "oX", "res", "dY", "dX")
+names(t) <- c("ori", "des", "N", "dY", "dX", "oY", "oX")
 
 t$Geom <- paste0("LINESTRING (", as.character(t$oX), 
                 " ", as.character(t$oY), ", ", 

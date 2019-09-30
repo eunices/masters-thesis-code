@@ -1,6 +1,4 @@
 # TODO: shift derived variables/dataframes to a different script?
-# TODO: author - dominant countries of work *tomorrow
-# TODO: author - count number of publications per author *tomorrow
 
 print("######################################################")
 print("######################################################")
