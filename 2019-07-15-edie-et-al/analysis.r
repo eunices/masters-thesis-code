@@ -50,12 +50,14 @@ p4 <- ggplot(publications_per_decade, aes(x=date.decade, y=N)) +
 # Old code
 # species_and_pub_per_year <- merge(species_per_year, publications_per_year, by.x="date.n", by.y="date.n", suffix=c("_species", "_publications"))
 # species_and_pub_per_year[, species_per_publication := N_species/N_publications]
-df_pubs <- data.table(df_publications %>% separate_rows(idxes, sep="; "))[!is.na]
+df_pubs <- data.table(df_publications %>% separate_rows(idxes, sep="; "))
 df_pubs <- df_pubs[as.numeric(idxes) <= 20699]
 df_pubs2 <- df_pubs[, list(species=.N), by=c("date.n", "paper.authors", 
-                                                             "journal", "title", 
-                                                             "volume", "issue", "page.numbers.publication")]
-species_and_pub_per_year <- df_pubs2[, list(species_per_publication=mean(species)), by="date.n"]
+                                             "journal", "title", 
+                                             "volume", "issue", "page.numbers.publication")]
+species_and_pub_per_year <- df_pubs2[, list(species_per_publication=mean(species),
+                                            N_publications=length(species),
+                                            N_species=sum(species)), by="date.n"]
 
 
 p5 <- ggplot(species_and_pub_per_year, aes(x=date.n, y=species_per_publication)) + 
@@ -87,12 +89,9 @@ p7 <- ggplot(species_per_publication, aes(x=species_per_pub)) +
                     scale_x_continuous(lim = c(0, 30))
 summary(df$species_per_pub)
 
-write.csv(species_per_publication, "tmp/test.csv")
-
-
-gr <- grid.arrange(p1, p3, p5, p6, nrow = 2, ncol=2)
+gr <- grid.arrange(p1, p3, p5, p6, ncol=1, nrow=4)
 ggsave("plots/2019-07-17-edie-et-al1.png", gr, units="cm", width=20, height=18)
 dev.off()
 
-grid.arrange(p1, p3, p7, p6, nrow = 2, ncol=2)
+grid.arrange(p1, p3, p7, p6, ncol=1, nrow=4)
 
