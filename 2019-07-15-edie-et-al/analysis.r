@@ -90,6 +90,8 @@ p7 <- ggplot(species_per_publication, aes(x=species_per_pub)) +
                     scale_x_continuous(lim = c(0, 30))
 summary(df$species_per_pub)
 
+## Number of taxonomists per year
+
 gr <- grid.arrange(p1, p3, p5, p6, ncol=1, nrow=4)
 ggsave("plots/2019-07-17-edie-et-al1.png", gr, units="cm", width=20, height=18)
 dev.off()

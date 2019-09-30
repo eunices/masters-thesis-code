@@ -44,7 +44,7 @@ taxonomic_effort1 <- merge(data.frame(years=min_year:max_year), taxonomic_effort
 to_exclude <- describer_data[spp_N_1st_auth_s == 0]$idx_auth
 
 # N number of describers
-describers <- df_describers[!idx_auth %in% to_exclude, c("idx_auth", "full.name.of.describer.n", "min", "max_corrected")]
+describers <- describer_data[!idx_auth %in% to_exclude, c("idx_auth", "full.name.of.describer.n", "min", "max_corrected")]
 seq <- mapply(function(a, b) {
     seq(a, b)
 }, a=describers$min, b=describers$max_corrected)
@@ -65,7 +65,7 @@ describers_weighted_by_year <- unique(describers[,c("years", "N_weighted_real_de
 
 taxonomic_effort2 <- merge(describers_active_by_year, describers_weighted_by_year, by="years", all.x=T, all.y=T)
 taxonomic_effort <- merge(taxonomic_effort1, taxonomic_effort2, by="years", all.x=T, all.y=F)
-`
+
 # number of species
 described_species_by_year <- describer_date[]
 described_species_by_year[,N_species_described:=length(unique(idxes)),by="date.n"]
