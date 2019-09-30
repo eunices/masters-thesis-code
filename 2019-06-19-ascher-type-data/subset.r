@@ -2,21 +2,26 @@ source('2019-06-19-ascher-type-data/init.r')
 
 # Libraries
 library(xlsx)
+library(ggplot2)
+library(grid); library(gridExtra)
+library(plyr); library(maptools)
+library(reshape)
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Load clean data frames (useful columns only)
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 # Variables
-to_subset <- "Y"
-# to_subset <- "N"
+# to_subset <- "Y"
+to_subset <- "N"
 
 
 # Load data.frame variable names
 var <- data.table(read.xlsx2(paste0(dir_data, '2019-09-16-metadata.xlsx'), sheetIndex=1, stringsAsFactors=F), as.data.frame=T)
 names(var)
 var$order <- as.integer(var$order)
-var_f <- var[!grepl("remove|derived", key_status)]
+var_f <- var[!grepl("remove", key_status)]
+# var_f <- var[!grepl("remove|derived", key_status)]
 
 
 # Subset useful columns

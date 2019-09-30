@@ -103,6 +103,13 @@ for (i in 2:length(names(describers_template_edits))) {
 describers_idx$full.name.of.describer.n <- gsub('\\"\\"', '\\"', 
                                                 describers_idx$full.name.of.describer.n )
 
+# Quick fixes
+describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$dob.describer.n = "1881"
+describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$dod.describer.n = "1942"
+describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$origin.country.describer.n = "IT"
+describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$residence.country.describer.n = "IT"
+describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$describer.gender.n = "M"
+
 write.csv(describers_idx, 
           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_3.0-by-author.csv"),
           na='', row.names=F, fileEncoding="UTF-8")
