@@ -43,7 +43,7 @@ p4 <- ggplot(publications_per_decade, aes(x=date.decade, y=N)) +
     geom_bar(stat="identity") + 
         xlab("") + ylab("Number of publications") + 
             theme_minimal() +
-                ggtitle("Number of publications per decade")
+                ggtitle("Number of publications per decade") 
 
 
 ## Species per publication
@@ -75,7 +75,8 @@ p6 <- ggplot(species_and_pub_per_year, aes(x=N_publications, y=N_species)) +
     geom_point(alpha=0.5) + 
         xlab("Number of publications") + ylab("Number of species") +
             theme_minimal()  +
-                ggtitle(paste0("Correlation between publications \nand species per year (Rsq=", corr, ")"))
+                ggtitle(paste0("Correlation between publications \nand species per year (Rsq=", corr, ")")) + 
+                        geom_smooth(method='lm',formula=y~x)
 
 
 ## Histogram of number of species per year

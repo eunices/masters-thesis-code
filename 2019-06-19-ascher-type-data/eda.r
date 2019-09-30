@@ -37,7 +37,6 @@ spp$diff <- as.numeric(spp$date.n) - as.numeric(spp$date.of.type.yyyy)
 write.csv(spp[diff<0], 'tmp/test.csv', row.names=F)
 
 # Heatmap of types described by?
-# TODO: fix russia!!!
 
 des <- get_des(write=F)
 des <- des[, c("full.name.of.describer.n", "residence.country.describer.n")]
