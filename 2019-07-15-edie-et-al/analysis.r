@@ -25,8 +25,7 @@ p0 <- ggplot(species_per_year, aes(x=date.n, y=N)) +
                 ggtitle("Number of species described per year") + geom_smooth()
 
 species_per_year2 <- melt(species_per_year, "date.n", stringsAsFactors=F)
-species_per_year2$variable <- as.character(species_per_year2$variable)
-unique(species_per_year2$variable)
+species_per_year2$variable <- factor(species_per_year2$variable, c("N_cumsum", "N"))
 labs <- c(`N` = "N species",
           `N_cumsum` = "Cumulative N species")
 p1 <- ggplot(species_per_year2, aes(x=date.n, y=value)) + 

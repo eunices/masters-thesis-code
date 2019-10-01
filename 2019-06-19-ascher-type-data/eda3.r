@@ -10,8 +10,8 @@ print(paste0(Sys.time(), " --- data quality"))
 spp <- get_df1(write=F)
 spp2 <- get_df2(write=F)
 
-flag <- rbind(data.frame(table(spp$source.of.latlon.n)),
-              data.frame(table(spp2$source.of.latlon.n)))
+flag <- rbind(data.frame(table(spp[date.n <= 2018]$source.of.latlon.n)),
+              data.frame(table(spp2[date.n <= 2018]$source.of.latlon.n)))
 
 write.csv(flag,
           paste0(dir_data, "eda/2019-09-22-type-data-quality2.csv"), na='', row.names=F, fileEncoding="UTF-8")
