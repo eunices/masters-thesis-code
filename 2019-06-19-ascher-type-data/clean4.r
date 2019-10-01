@@ -7,8 +7,8 @@ filepath <- paste0(dir_data, '2019-05-23-Apoidea world consensus file Sorted by 
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-df_s <- df[!(idx %in% 1:20699)]
-df <- df[idx %in% 1:20699]
+df_s <- df[!(idx %in% 1:20669)]
+df <- df[idx %in% 1:20669]
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - clean fields specific to invalid species

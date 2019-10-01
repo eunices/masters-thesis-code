@@ -30,7 +30,7 @@ df_mapper2$Country.final <- ifelse(is.na(df_mapper2$Country),
 df_mapper2 <- merge(df_mapper2[, c("idx", "Country.final")], 
                     lookup.cty[, c("Country", "A.3")], by.x="Country.final", by.y="Country")
 
-seq(1, 20699)[!(df_mapper2[, list(.N), by="idx"]$idx %in% 1:20699)]
+seq(1, 20669)[!(df_mapper2[, list(.N), by="idx"]$idx %in% 1:20669)]
 
 dim(df_mapper2); df_mapper2 <- unique(df_mapper2); dim(df_mapper2)
 

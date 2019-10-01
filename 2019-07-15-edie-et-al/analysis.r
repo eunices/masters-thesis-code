@@ -64,11 +64,11 @@ p4 <- ggplot(publications_per_decade, aes(x=date.decade, y=N)) +
 
 ## Species per publication
 df_pubs <- data.table(df_publications %>% separate_rows(idxes, sep="; "))
-# df_pubs2 <- df_pubs[as.numeric(idxes) <= 20699]
+# df_pubs2 <- df_pubs[as.numeric(idxes) <= 20669]
 df_pubs$idxes <- as.numeric(df_pubs$idxes)
 df_pubs$type <- ""
-df_pubs[idxes <= 20699]$type <- "n_valid"
-df_pubs[idxes > 20699 & idxes <= 32285]$type <- "n_synonym"
+df_pubs[idxes <= 20669]$type <- "n_valid"
+df_pubs[idxes > 20669 & idxes <= 32285]$type <- "n_synonym"
 df_pubs[idxes > 32285 & idxes <= 33198]$type <- "n_subspecies"
 df_pubs[idxes > 33198]$type <- "n_var"
 df_pubs2 <- df_pubs[, list(N_species=.N), 
