@@ -49,3 +49,4 @@ ss <- merge(ss, lookup.cty[, c("GEC", "Country", "A.3")],
 write.csv(ss[order(-prop)],
           paste0(dir_data, "eda/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
+# Rather cool flow map in R https://kateto.net/network-visualization

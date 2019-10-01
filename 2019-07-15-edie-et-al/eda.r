@@ -9,6 +9,12 @@ library(grid); library(gridExtra)
 # Analyses
 #############
 
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - TEST
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- TEST"))
+
 # Cumulative bee species across years
 
 ## All bees

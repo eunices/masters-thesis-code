@@ -6,6 +6,13 @@ df$TE <- paste0(df$author, " ", df$date.n, "--", df$title)
 df_biogeo_holt[,.(.N), by="Realm"][order(-N)]
 df_continent[,.(.N), by="CONTINENT"][order(-N)]
 
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Fig. S2
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Fig. S2"))
+
+# Making individual graphs
+
 ## Number of species described
 
 # Per year
@@ -47,9 +54,6 @@ p4 <- ggplot(publications_per_decade, aes(x=date.decade, y=N)) +
 
 
 ## Species per publication
-# Old code
-# species_and_pub_per_year <- merge(species_per_year, publications_per_year, by.x="date.n", by.y="date.n", suffix=c("_species", "_publications"))
-# species_and_pub_per_year[, species_per_publication := N_species/N_publications]
 df_pubs <- data.table(df_publications %>% separate_rows(idxes, sep="; "))
 df_pubs <- df_pubs[as.numeric(idxes) <= 20699]
 df_pubs2 <- df_pubs[, list(species=.N), by=c("date.n", "paper.authors", 
@@ -90,11 +94,13 @@ p7 <- ggplot(species_per_publication, aes(x=species_per_pub)) +
                     scale_x_continuous(lim = c(0, 30))
 summary(df$species_per_pub)
 
-## Number of taxonomists per year
+# Plotting section as shown in publication
 
-gr <- grid.arrange(p1, p3, p5, p6, ncol=1, nrow=4)
+# Original plot
+gr <- grid.arrange(p1, p3, p5, p6, ncol=2, nrow=2)
 ggsave("plots/2019-07-17-edie-et-al1.png", gr, units="cm", width=20, height=18)
 dev.off()
 
+# Improved plot
 grid.arrange(p1, p3, p7, p6, ncol=1, nrow=4)
 

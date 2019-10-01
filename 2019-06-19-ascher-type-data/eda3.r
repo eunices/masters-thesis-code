@@ -29,3 +29,5 @@ summary(df_ll)
 
 write.csv(df_ll[order(as.numeric(idx))], 
           paste0(dir_data, "eda/2019-09-26-lat-lon.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+

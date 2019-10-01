@@ -10,7 +10,7 @@ suppressMessages(library(tidyr))
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Initializing
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- init setup"))
+print(paste0(Sys.time(), " --- Init setup"))
 
 # Setup
 setwd('C:/Dev/msc-thesis-code')

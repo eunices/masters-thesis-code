@@ -73,3 +73,4 @@ df <- df[order(as.numeric(idx))]
 
 write.csv(df[order(as.numeric(idx))], 
           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_1-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
+    
