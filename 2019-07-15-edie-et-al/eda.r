@@ -8,6 +8,7 @@ library(grid); library(gridExtra)
 
 # Analyses
 #############
+theme <- theme_minimal()
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Time series
@@ -25,11 +26,11 @@ summary_year <- merge(template_year, summary_year, by="date.n", all.x=T, all.y=F
 summary_year[is.na(summary_year$N),]$N <- 0
 summary_year$N_cumsum <- cumsum(summary_year$N)
 plot_year_cumsum <- ggplot(data = summary_year, aes(x=date.n, y=N_cumsum)) + geom_point() + geom_line() + 
-    xlab("Year") + ylab("Cumulative number of species")  + theme_minimal() +
+    xlab("Year") + ylab("Cumulative number of species")  + theme +
         ggtitle("Cumulative number of bee species time series (1758-2018)") + 
              theme(plot.title = element_text(lineheight=.8, face="bold"))
 plot_year <- ggplot(data = summary_year, aes(x=date.n, y=N)) + geom_point() + geom_line() + 
-    xlab("Year") + ylab("Number of species described in a year")  + theme_minimal() +
+    xlab("Year") + ylab("Number of species described in a year")  + theme +
         ggtitle("Number of species described time series (1758-2018)") + 
              theme(plot.title = element_text(lineheight=.8, face="bold")) +  geom_smooth()
 
@@ -47,18 +48,18 @@ summary_year_fam[, N_cumsum := cumsum(N), by="family"]
 
 plot_year_fam_cumsum <- ggplot(data = summary_year_fam, aes(x=date.n, y=N_cumsum)) 
 plot_year_fam_cumsum1 <- plot_year_fam_cumsum + geom_point() + geom_line() +
-    xlab("Year") + ylab("Cumulative number of species") + theme_minimal() +
+    xlab("Year") + ylab("Cumulative number of species") + theme +
         facet_wrap(. ~ family, ncol=3, scales = "free_y") +
         ggtitle("Cumulative number of bee species time series for each family (1758-2018)") + 
              theme(plot.title = element_text(lineheight=.8, face="bold"))
 plot_year_fam_cumsum2 <- plot_year_fam_cumsum + geom_point() + geom_line() +
-    xlab("Year") + ylab("Cumulative number of species") + theme_minimal() +
+    xlab("Year") + ylab("Cumulative number of species") + theme +
         facet_wrap(. ~ family, ncol=3) +
         ggtitle("Cumulative number of bee species time series for each family (1758-2018)") + 
              theme(plot.title = element_text(lineheight=.8, face="bold"))
 plot_year_fam <- ggplot(data = summary_year_fam, aes(x=date.n, y=N)) + 
     geom_point() + geom_line() + 
-        xlab("Year") + ylab("Number of species described in a year")  + theme_minimal() +
+        xlab("Year") + ylab("Number of species described in a year")  + theme +
             facet_wrap(. ~ family, ncol=3, scales="free_y") +
             ggtitle("Number of species described time series (1758-2018)") + 
                 theme(plot.title = element_text(lineheight=.8, face="bold"))  +  geom_smooth()
@@ -82,12 +83,12 @@ plot_year_trop_cumsum <-
     ggplot(data = summary_year_trop, 
            aes(x=date.n, y=N_cumsum, col=Latitude_type3)) +
     geom_point() + geom_line() +
-        xlab("Year") + ylab("Cumulative number of species") + theme_minimal() +
+        xlab("Year") + ylab("Cumulative number of species") + theme +
             ggtitle("Cumulative number of bee species time series for each family (1758-2018)") + 
                 theme(plot.title = element_text(lineheight=.8, face="bold"))
 plot_year_trop <- ggplot(data = summary_year_trop, aes(x=date.n, y=N, col=Latitude_type3)) +
     # geom_point() + geom_line() +
-    xlab("Year") + ylab("Cumulative number of species") + theme_minimal() +
+    xlab("Year") + ylab("Cumulative number of species") + theme +
         ggtitle("Cumulative number of bee species time series for each family (1758-2018)") + 
              theme(plot.title = element_text(lineheight=.8, face="bold")) + geom_smooth()
 
@@ -108,14 +109,14 @@ summary_year_fam_trop[, N_cumsum := cumsum(N), by=c("family", "Latitude_type3")]
 plot_year_fam_trop_cumsum <- 
     ggplot(data = summary_year_fam_trop, 
            aes(x=date.n, y=N_cumsum, col=Latitude_type3)) + geom_point() + geom_line() +
-        xlab("Year") + ylab("Cumulative number of species") + theme_minimal() +
-            facet_wrap(. ~ family, ncol=3, scales = "free_y") +
+        xlab("Year") + ylab("Cumulative number of species") + theme +
+            facet_wrap(. ~ family, ncol=3) +
             ggtitle("Cumulative number of bee species time series for each family (1758-2018)") + 
                 theme(plot.title = element_text(lineheight=.8, face="bold"))
 plot_year_fam_trop <- ggplot(data = summary_year_fam_trop, aes(x=date.n, y=N, 
                           col=Latitude_type3)) +
     # geom_point() + geom_line() +
-    xlab("Year") + ylab("Cumulative number of species") + theme_minimal() +
+    xlab("Year") + ylab("Cumulative number of species") + theme +
         facet_wrap(. ~ family, ncol=3, scales = "free_y") +
         ggtitle("Cumulative number of bee species time series for each family (1758-2018)") + 
              theme(plot.title = element_text(lineheight=.8, face="bold")) + geom_smooth()
@@ -135,40 +136,40 @@ plot_year_fam_trop_cumsum
 plot_year_fam_trop
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - Taxonomic effort
+# Section - Taxonomic effort - taxonomists
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- Taxonomic effort"))
+print(paste0(Sys.time(), " --- Taxonomic effort - taxonomists"))
 
 # Individual plots
 
 # Taxonomic effort
 plot_tax_effort1a <- 
     ggplot(data=taxonomic_effort, aes(x=years, y=N_describers)) +
-        geom_point() + geom_line() + theme_minimal() +
+        geom_point() + geom_line() + theme +
         xlab("Year") + ylab("Number of \nactive taxonomists") + 
                     ggtitle("Number of active taxonomists in each year")
 plot_tax_effort2a <- 
     ggplot(data=taxonomic_effort, aes(x=years, y=N_weighted_describers)) +
-        geom_point() + geom_line() + theme_minimal() +
+        geom_point() + geom_line() + theme +
         xlab("Year") + ylab("Number of active taxonomists, \nweighted by mean number of species described") + 
                     ggtitle("Number of active taxonomists in each year")
 
 # Taxonomic effort (exclude authors w no first author)
 plot_tax_effort1b <- 
     ggplot(data=taxonomic_effort, aes(x=years, y=N_real_describers)) +
-        geom_point() + geom_line() + theme_minimal() +
+        geom_point() + geom_line() + theme +
         xlab("Year") + ylab("Number of \nactive taxonomists") + 
                     ggtitle("Number of active taxonomists in each year")
 plot_tax_effort2b <- 
     ggplot(data=taxonomic_effort, aes(x=years, y=N_weighted_real_describers)) +
-        geom_point() + geom_line() + theme_minimal() +
+        geom_point() + geom_line() + theme +
         xlab("Year") + ylab("Number of active taxonomists, \nweighted by mean number of species described") + 
                     ggtitle("Number of active taxonomists in each year")
 
 # Time series of all taxonomists and real taxonomists on the same plot
 types <- c("N_describers", "N_real_describers")
 plot_tax_effort3 <- ggplot(data=taxonomic_effort_long[type %in% types], aes(x=years, y=N, col=type)) +
-    geom_point() + geom_line() + theme_minimal() +
+    geom_point() + geom_line() + theme +
        xlab("Year") + ylab("Number of \nactive taxonomists") + 
                 ggtitle("Number of active taxonomists in each year")
 
@@ -176,7 +177,7 @@ plot_tax_effort3 <- ggplot(data=taxonomic_effort_long[type %in% types], aes(x=ye
 df_species_describers_sum$century <- as.numeric(sub("(\\d{2}).*", "\\1", df_species_describers_sum$date.n))
 df_species_describers_sum$decade <- as.numeric(sub("(\\d{3}).*", "\\1", df_species_describers_sum$date.n))
 ggplot(df_species_describers_sum, aes(x=as.character(century), y=N_authors)) + 
-  geom_boxplot() + theme_minimal()
+  geom_boxplot() + theme
 df_species_describers_sum[,list(min=min(N_authors),
                                 quartile_1st=quantile(N_authors, 0.25),
                                 median=median(as.numeric(N_authors)),
@@ -187,7 +188,7 @@ df_species_describers_sum[,list(min=min(N_authors),
 rsq <- round(cor(taxonomic_effort$N_describers, taxonomic_effort$N_species_described)^2,2)
 plot_tax_effort3a <- 
     ggplot(data=taxonomic_effort, aes(x=N_describers, y=N_species_described)) +
-        geom_point() + theme_minimal() +
+        geom_point() + theme +
         xlab("Number of active taxonomists") + ylab("Number of species described") + 
                     ggtitle(paste0("Number of active taxonomists in each year (Rsq = ", rsq, ")"))
 
@@ -195,7 +196,7 @@ plot_tax_effort3a <-
 rsq <- round(cor(taxonomic_effort$N_weighted_describers, taxonomic_effort$N_species_described)^2,2)
 plot_tax_effort4a <- 
     ggplot(data=taxonomic_effort, aes(x=N_weighted_describers, y=N_species_described)) +
-        geom_point() + theme_minimal() +
+        geom_point() + theme +
         xlab("Number of active taxonomists") + ylab("Number of species described") + 
                     ggtitle(paste0("Number of active taxonomists in each year, \nweighted by mean no. of species described per taxonomist (Rsq = ", rsq, ")"))
 
@@ -203,7 +204,7 @@ plot_tax_effort4a <-
 rsq <- round(cor(taxonomic_effort$N_real_describers, taxonomic_effort$N_species_described)^2,2)
 plot_tax_effort3b <- 
     ggplot(data=taxonomic_effort, aes(x=N_real_describers, y=N_species_described)) +
-        geom_point() + theme_minimal() +
+        geom_point() + theme +
         xlab("Number of active taxonomists") + ylab("Number of species described") + 
                     ggtitle(paste0("Number of active taxonomists in each year (Rsq = ", rsq, ")"))
 
@@ -211,7 +212,7 @@ plot_tax_effort3b <-
 rsq <- round(cor(taxonomic_effort$N_weighted_real_describers, taxonomic_effort$N_species_described)^2,2)
 plot_tax_effort4b <- 
     ggplot(data=taxonomic_effort, aes(x=N_weighted_real_describers, y=N_species_described)) +
-        geom_point() + theme_minimal() +
+        geom_point() + theme +
         xlab("Number of active taxonomists") + ylab("Number of species described") + 
                     ggtitle(paste0("Number of active taxonomists in each year, \nweighted by mean no. of species described per taxonomist (Rsq = ", rsq, ")"))
 
@@ -221,3 +222,33 @@ grid.arrange(plot_tax_effort1b, plot_tax_effort2b, ncol=1)
 plot_tax_effort3
 grid.arrange(plot_tax_effort3a, plot_tax_effort4a, nrow=1)
 grid.arrange(plot_tax_effort3b, plot_tax_effort4b, nrow=1)
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Taxonomic effort - publications
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Taxonomic effort - publications"))
+
+# Individual plots
+
+## Mean number of species per publication by decade
+mean_N_spp_per_pub_decade <- df_publications_N[, list(mean_N_spp=mean(n_species)), 
+                                               by="date.decade"]
+plot_tax_pub_decade <- 
+    ggplot(data=mean_N_spp_per_pub_decade, aes(x=date.decade, y=mean_N_spp)) +
+        geom_bar(stat="identity") + theme +
+        xlab("Decade") + ylab("Number of species described") + 
+                    ggtitle("Number of species described per publication per decade")
+
+mean_N_spp_per_pub <- df_publications_N[, list(mean_N_spp=mean(n_species)), 
+                                               by="date.n"]
+plot_tax_pub_yr <- 
+    ggplot(data=mean_N_spp_per_pub, aes(x=date.n, y=mean_N_spp)) +
+        geom_bar(stat="identity") + theme +
+        xlab("Year") + ylab("Number of species described") + 
+                    ggtitle("Number of species described per publication per decade")
+
+# Combined plots
+plot_tax_pub_decade
+plot_tax_pub_yr
+

@@ -2,6 +2,7 @@ source('2019-07-15-edie-et-al/init.r')
 
 # Analyses
 #############
+theme <- theme_minimal()
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Fig. 1, S2
@@ -21,7 +22,7 @@ species_per_year$N_cumsum <- cumsum(species_per_year$N)
 p0 <- ggplot(species_per_year, aes(x=date.n, y=N)) + 
     geom_line(size=1) + 
         xlab("") + ylab("Number of species") + 
-            theme_minimal() +
+            theme +
                 ggtitle("Number of species described per year") + geom_smooth()
 
 species_per_year2 <- melt(species_per_year, "date.n", stringsAsFactors=F)
@@ -32,7 +33,7 @@ p1 <- ggplot(species_per_year2, aes(x=date.n, y=value)) +
     facet_wrap(.~variable, nrow=2, scales = "free_y", labeller= as_labeller(labs)) +
         geom_line(size=1) + 
             xlab("") + ylab("") + 
-                theme_minimal() +
+                theme +
                     geom_smooth()
 
 # Per decade
@@ -40,7 +41,7 @@ species_per_decade <- df[,.(.N), by=.(date.decade)]
 p2 <- ggplot(species_per_decade, aes(x=date.decade, y=N)) + 
     geom_bar(stat="identity") + 
         xlab("") + ylab("Number of species") + 
-            theme_minimal() +
+            theme +
                 ggtitle("Number of species described per decade")
 
 
@@ -51,7 +52,7 @@ publications_per_year <- df_publications[,.(.N), by=.(date.n)]
 p3 <- ggplot(publications_per_year, aes(x=date.n, y=N)) + 
     geom_line(size=1) + 
         xlab("") + ylab("Number of publications") + 
-            theme_minimal() +
+            theme +
                 ggtitle("Number of publications per year") + geom_smooth()
 
 # Per decade
@@ -59,31 +60,17 @@ publications_per_decade <- df_publications[,.(.N), by=.(date.decade)]
 p4 <- ggplot(publications_per_decade, aes(x=date.decade, y=N)) + 
     geom_bar(stat="identity") + 
         xlab("") + ylab("Number of publications") + 
-            theme_minimal() +
+            theme +
                 ggtitle("Number of publications per decade") 
 
 ## Species per publication
-df_pubs <- data.table(df_publications %>% separate_rows(idxes, sep="; "))
-# df_pubs2 <- df_pubs[as.numeric(idxes) <= 20669]
-df_pubs$idxes <- as.numeric(df_pubs$idxes)
-df_pubs$type <- ""
-df_pubs[idxes <= 20669]$type <- "n_valid"
-df_pubs[idxes > 20669 & idxes <= 32285]$type <- "n_synonym"
-df_pubs[idxes > 32285 & idxes <= 33198]$type <- "n_subspecies"
-df_pubs[idxes > 33198]$type <- "n_var"
-df_pubs2 <- df_pubs[, list(N_species=.N), 
-                      by=c("date.n", "paper.authors", "journal", "title", 
-                           "volume", "issue", "page.numbers.publication", "type")]
-df_pubs2 <- dcast(df_pubs2, 
-                  date.n + paper.authors + journal + title + volume + issue + page.numbers.publication  ~ type, value.var="N_species", fun.aggregate=sum)
-df_pubs2$n_species <- df_pubs2$n_valid + df_pubs2$n_synonym
-species_and_pub_per_year <- df_pubs2[, list(species_per_publication=mean(n_species),
+species_and_pub_per_year <- df_publications_N[, list(species_per_publication=mean(n_species),
                                             N_publications=length(n_species),
                                             N_species=sum(n_species)), by="date.n"]
 p5 <- ggplot(species_and_pub_per_year, aes(x=date.n, y=species_per_publication)) + 
     geom_line(size=1) +
         xlab("") + ylab("Species per publication") + 
-             theme_minimal() +
+             theme +
                 ggtitle("Number of species per publication") + geom_smooth()
 
 ## Correlation between species and publications per year
@@ -94,27 +81,36 @@ title <- paste0("Correlation between publications \nand species per year (R^2=",
 p6 <- ggplot(species_and_pub_per_year, aes(x=N_publications, y=N_species)) + 
     geom_point(alpha=0.5) + 
         xlab("Number of publications") + ylab("Number of species") +
-            theme_minimal()  +
+            theme  +
                 ggtitle(title) + 
                         geom_smooth(method='lm',formula=y~x)
 
 ## Histogram of number of species in each publication
-sum_p7 <- summary(df_pubs2$n_species); sum_p7
-p7 <- ggplot(df_pubs2, aes(x=n_species)) + 
+sum_p7 <- summary(df_publications_N$n_species); sum_p7
+p7 <- ggplot(df_publications_N, aes(x=n_species)) + 
     geom_histogram(binwidth=1) +
         xlab("Species per publication") + ylab("Frequency") + 
-             theme_minimal() +
+             theme +
                 ggtitle("Number of species \nper publication (V+S)")
 p7v <- p7 + scale_x_continuous(lim = c(0, sum_p7["3rd Qu."])) # for visualisation purposes
 p7d <- ggplot_build(p7)$data[[1]]
 
+## Species per publication across years
+mean_N_spp_per_pub <- df_publications_N[, list(mean_N_spp=mean(n_species)), 
+                                               by="date.n"]
+p11 <- ggplot(data=mean_N_spp_per_pub, aes(x=date.n, y=mean_N_spp)) +
+    geom_line(stat="identity", size=1) + theme +
+    xlab("Year") + ylab("Number of species described") + 
+                ggtitle("Number of species described per publication per year") +
+                    geom_smooth() + scale_y_continuous(lim = c(0, 40))
+summary(df_publications_N$n_species)
 
 # Number of taxonomists 
 # Per year
 p8 <- ggplot(taxonomic_effort, aes(x=years, y=N_real_describers)) + 
     geom_line(size=1) + 
         xlab("") + ylab("Number of taxonomists") + 
-            theme_minimal() +
+            theme +
                 ggtitle("Number of taxonomists per year") + geom_smooth()
 
 
@@ -126,35 +122,55 @@ title <- paste0("Correlation between taxonomists \nand species per year (R^2=", 
 p9 <- ggplot(taxonomic_effort, aes(x=N_real_describers, y=N_species_described)) + 
     geom_point(alpha=0.5) + 
         xlab("Number of taxonomists") + ylab("Number of species") +
-            theme_minimal()  +
+            theme  +
                 ggtitle(title) + 
                     geom_smooth(method='lm',formula=y~x)
 
 ## Histogram of number of species by each taxonomist
-sum_p10 <- summary(df_describers$spp_N); sum_p10
+sum_p10 <- summary(df_describers$ns_species_per_year_active); sum_p10
 p10 <- ggplot(df_describers, aes(x=spp_N)) + 
     geom_histogram(binwidth=1) +
         xlab("Number of species per taxonomist") + ylab("Frequency") + 
-             theme_minimal() +
+             theme +
                 ggtitle("Number of species \nper taxonomist (V+S)") # in their lifetime
 p10v <- p10 + scale_x_continuous(lim = c(0, sum_p10["3rd Qu."])) # for visualisation purposes
 p10d <- ggplot_build(p10)$data[[1]]
 
+
+## Species per author across years
+mean_N_spp_per_des <- df_describers_year[, list(mean_N_spp=mean(N)), 
+                                        by="date.n"]
+p12 <- ggplot(data=mean_N_spp_per_des, aes(x=date.n, y=mean_N_spp)) +
+    geom_line(stat="identity", size=1) + theme +
+    xlab("Year") + ylab("Number of species described") + 
+            ggtitle("Number of species described per taxonomist per year") + 
+                geom_smooth() + scale_y_continuous(lim = c(0, 12))
+summary(df_describer_year$N)
+
+write.csv(df_describer_year, 'tmp/test.csv')
+# TODO: work on using N_spp [to use valid species min and max? to exclude ]
+
 # Combined plots: Fig S2
 ## Original plot
-grid.arrange(p0, p3, p5, p6, ncol=2, nrow=2)
+gr <- grid.arrange(p0, p3, p5, p6, ncol=2, nrow=2)
+ggsave("plots/2019-07-17-edie-et-al1.png", gr, units="cm", width=20, height=18)
+dev.off()
 
 ## Improved plot
 grid.arrange(p0, p3, p8, ncol=1) # time series
 grid.arrange(p7v, p10v) # histograms
 grid.arrange(p6, p9) # correlation
 
-gr <- grid.arrange(p3, p8, p7v, p10v, p6, p9,
-                   widths=c(2, 1, 1),
-                   layout_matrix=rbind(c(2, 4, 6),
-                                       c(3, 5, 7)))
-ggsave("plots/2019-07-17-edie-et-al1.png", gr, units="cm", width=20, height=18)
-dev.off()
+# gr <- grid.arrange(p3, p8, p7v, p10v, p6, p9,
+#                    widths=c(2, 1, 1),
+#                    layout_matrix=rbind(c(2, 4, 6),
+#                                        c(3, 5, 7)))
+grid.arrange(p3, p8, p6, p9,
+                   widths=c(2, 1),
+                   layout_matrix=rbind(c(2, 6),
+                                       c(3, 7)))
+
+grid.arrange(p11, p12)
 
 # Combined plots: Fig 1
 ## Original plot

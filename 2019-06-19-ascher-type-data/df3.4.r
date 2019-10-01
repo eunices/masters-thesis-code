@@ -88,13 +88,13 @@ numeric_cols <- c("ns_spp_N", "ns_spp_N_1st_auth",
 for (col in numeric_cols) describers[is.na(get(col)), (col) := 0]
 
 # Metrics
-describers$years_active <- as.numeric(describers$max) - as.numeric(describers$min) +1
+describers$years_active <- as.numeric(describers$max_corrected) - as.numeric(describers$min) +1
 describers$years_alive <- as.numeric(describers$dod.describer.n) - as.numeric(describers$dob.describer.n) + 1
-describers$years_active_likely <- ifelse(is.na(describers$years_alive), describers$years_active, describers$years_alive - 25) # use min publication date or after PhD
 describers$years_discrepancy <- describers$years_alive - describers$years_active
-
 describers$max_corrected <- describers$max
-describers[!(is.na(dod.describer.n)|dod.describer.n == "U") ]$max_corrected <- describers[!(is.na(dod.describer.n)|dod.describer.n == "U")]$dod.describer.n
+# does not appear to be the case that author work till his death
+# describers[!(is.na(dod.describer.n) | dod.describer.n == "U") ]$max_corrected <- 
+#     describers[!(is.na(dod.describer.n) | dod.describer.n == "U")]$dod.describer.n
 describers[alive=="Y"]$max_corrected <- "2018"
 
 describers$ns_species_per_year_active <- round(describers$ns_spp_N / describers$years_active, 2)
