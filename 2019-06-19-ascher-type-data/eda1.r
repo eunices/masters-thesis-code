@@ -34,7 +34,7 @@ t$Geom <- paste0("LINESTRING (", as.character(t$oX),
                 as.character(t$dX), " ", as.character(t$dY), ")")
 t$no_flow <- t$res == t$des
 write.csv(t,
-          paste0(dir_data, "eda/2019-09-22-flow-map-type-loc-des-country.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda1_flow/2019-09-22-flow-map-type-loc-des-country.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # Summarising where there is no flow
 table(t$no_flow)
@@ -47,6 +47,6 @@ ss <- merge(ss, lookup.cty[, c("GEC", "Country", "A.3")],
       all.x=T, all.y=F)
 
 write.csv(ss[order(-prop)],
-          paste0(dir_data, "eda/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # Rather cool flow map in R https://kateto.net/network-visualization

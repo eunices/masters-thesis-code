@@ -27,5 +27,5 @@ nw_cty <- nw[, list(sum(as.numeric(N))),
                 by=c("residence.country.describer.first_p1", 
                      "residence.country.describer.first_p2")]
 
-write.csv(nw_cty, paste0(dir_data, 'eda/2019-09-22-auth-country-network.csv'), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(nw_cty, paste0(dir_data, 'eda2_auth/2019-09-22-auth-country-network.csv'), na='', row.names=F, fileEncoding="UTF-8")
 
