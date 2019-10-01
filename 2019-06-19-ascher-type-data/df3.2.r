@@ -110,6 +110,17 @@ describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$o
 describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$residence.country.describer.n = "IT"
 describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$describer.gender.n = "M"
 
+
+# Row by row discrepancies
+describers_a[full.name.of.describer.n=="Ismael Alejandro Hinojosa-Díaz", "min"] = "2003"
+describers_a[full.name.of.describer.n=="Johan Christian Fabricius", "max"] = "1804"
+describers_a[full.name.of.describer.n=="Michael Kuhlmann", "min"] = "1998"
+describers_a[full.name.of.describer.n=="Eduardo Andrade Botelho de Almeida", "min"] = "2008" # should be modified in original file
+describers_a[full.name.of.describer.n=="Michael Scott Engel", "min"] = "1995" # should be modified in original file
+describers_a[full.name.of.describer.n=="[Carl Eduard] Adolph Gerstaecker", "full.name.of.describer.n"] = "[Carl Eduard] Adolph Gerstäcker"
+describers_a[full.name.of.describer.n=="Francisco Javier Ortiz-Sanchez", "full.name.of.describer.n"] = "Francisco Javier Ortiz-Sánchez"
+
+
 write.csv(describers_idx, 
           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_3.0-by-author.csv"),
           na='', row.names=F, fileEncoding="UTF-8")

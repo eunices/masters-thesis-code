@@ -40,7 +40,7 @@ min_year <- min(taxonomic_effort1$years)
 max_year <- max(taxonomic_effort1$years)
 taxonomic_effort1 <- merge(data.frame(years=min_year:max_year), taxonomic_effort1, by="years", all.x=T, all.y=F)
 
-# Exclude these
+# Exclude those with no first author publications at all
 to_exclude <- describer_data[spp_N_1st_auth_s == 0]$idx_auth
 
 # N number of describers

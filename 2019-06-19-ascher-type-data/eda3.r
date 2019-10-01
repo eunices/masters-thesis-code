@@ -25,9 +25,11 @@ write.csv(flag,
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- lat and lon"))
 
-df_ll <- rbind(spp[, c("idx", "lat", "lon", "status")], spp2[, c("idx", "lat", "lon", "status")])
+df_ll <- rbind(spp[, c("idx", "lat", "lon", "status")], 
+               spp2[, c("idx", "lat", "lon", "status")])
 x <- dim(df_ll)
-df_ll <- df_ll[!(is.na(lat) | is.na(lon)) & status == "Valid species"]
+df_ll <- df_ll[!(is.na(lat) | is.na(lon)) & 
+               status %in% c("Valid species", "Valid Species", "Synonym")]
 y <- dim(df_ll); round(y/x*100, 2)
 
 write.csv(df_ll[order(as.numeric(idx))], 
