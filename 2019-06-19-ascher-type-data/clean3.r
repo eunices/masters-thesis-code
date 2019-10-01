@@ -21,7 +21,7 @@ pub <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='
 pub <- pub %>% separate_rows(idxes, sep="; ")
 pub <- unique(pub[, c("idxes", "date.n")])
 pub <- pub[!duplicated(idxes)]
-df <- merge(df, pub, all.x=T, all.y=F, by.y="idx", by.x="idxes")
+df <- merge(df, pub, all.x=T, all.y=F, by.x="idx", by.y="idxes")
 
 # date.of.type
 df$date.of.type.string <- paste0("'", df$date.of.type)
