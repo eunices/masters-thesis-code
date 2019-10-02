@@ -172,9 +172,14 @@ df_pub <- merge(df, pubs, by.x="idx", by.y="idx", all.x=T, all.y=T)
 # Count mean/SD number of species described per publication
 df_sp_per_pub <- df_pub[, .N, by=c("full.name.of.describer", "date.n", "author", "title",
                                    "journal", "volume", "issue", "page.numbers.publication")]
+df_sp_per_pub$date.pub <- paste0(df_sp_per_pub$date.n, " (", df_sp_per_pub$N, ")")
+
 author_ss <- df_sp_per_pub[, list(spp_per_pub_mean=mean(N),
                                   spp_per_pub_sd=sd(N),
-                                  n_pubs=.N), by="full.name.of.describer"]
+                                  n_pubs=.N, 
+                                  pub_years =paste0(sort(date.pub), 
+                                                   collapse= "; ")),
+                                 , by="full.name.of.describer"]
 
 describers_final$full.name.of.describer.n <- gsub('\\"\\"', '\\"', 
                                                   describers_final$full.name.of.describer.n)
