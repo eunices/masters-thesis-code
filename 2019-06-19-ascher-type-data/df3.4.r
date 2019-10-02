@@ -54,6 +54,8 @@ describers_a <- data.table(unique(describers_a[,..cols]))
 
 # Synonyms
 describers_s <- describers_all[idxes %in% synonym_idxes]
+describers_s[, syn_max:=max(date.n, na.rm=T), by="idx_auth"]
+describers_s[, syn_min:=min(date.n, na.rm=T), by="idx_auth"]
 describers_s[, syn_spp_N := length(unique(idxes)), by="idx_auth"]
 describers_s[, syn_spp_N_1st_auth := sum(idxes_author.order=="1"), by="idx_auth"]
 describers_s[, syn_spp_N_1st_auth_s := sum(idxes_author.order %in% c("1", "2")), by="idx_auth"]
@@ -62,6 +64,7 @@ describers_s[, syn_spp_N_lst_auth := sum(idxes_author.order=="L"), by="idx_auth"
 describers_s[, syn_spp_idxes := paste(unique(idxes), collapse=", "), by="idx_auth"]
 
 cols <- c("idx_auth", "full.name.of.describer.n",
+          "syn_max", "syn_min", 
           "syn_spp_N", "syn_spp_N_1st_auth",
           "syn_spp_N_1st_auth_s", "syn_spp_N_not_1st_auth",
           "syn_spp_idxes")
@@ -87,15 +90,18 @@ numeric_cols <- c("ns_spp_N", "ns_spp_N_1st_auth",
 
 for (col in numeric_cols) describers[is.na(get(col)), (col) := 0]
 
+# Making max corrected
+describers$max_corrected <- describers$max
+describers[alive=="Y"]$max_corrected <- "2018"
+
+describers$ns_max_corrected <- describers$ns_max
+describers[alive=="Y"]$ns_max_corrected <- "2018"
+
+
 # Metrics
 describers$years_active <- as.numeric(describers$max_corrected) - as.numeric(describers$min) +1
 describers$years_alive <- as.numeric(describers$dod.describer.n) - as.numeric(describers$dob.describer.n) + 1
 describers$years_discrepancy <- describers$years_alive - describers$years_active
-describers$max_corrected <- describers$max
-# does not appear to be the case that author work till his death
-# describers[!(is.na(dod.describer.n) | dod.describer.n == "U") ]$max_corrected <- 
-#     describers[!(is.na(dod.describer.n) | dod.describer.n == "U")]$dod.describer.n
-describers[alive=="Y"]$max_corrected <- "2018"
 
 describers$ns_species_per_year_active <- round(describers$ns_spp_N / describers$years_active, 2)
 describers$ns_species_per_year_alive <- round(describers$ns_spp_N / describers$years_alive, 2)
@@ -156,28 +162,25 @@ pub <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by
 df1 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
 df2 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
 
-pub <- pub %>% separate_rows(idxes)
-pub <- unique(pub)
-pubs <- pub %>% 
-    group_by(date.n, author, title, journal, volume,
-             issue, page.numbers.publication) %>% summarise(idx=paste0(idxes, collapse=", "))
-pubs <- pubs %>% separate_rows(idx)
+pubs <- pub %>% separate_rows(idxes)
 df <- rbind(df1, df2)
-df$full.name.of.describer <- gsub('\\"\\"', '\\"', df$full.name.of.describer )
+df$full.name.of.describer <- gsub('\\"\\"', '\\"', df$full.name.of.describer)
 df <- data.table(df %>% separate_rows(full.name.of.describer, sep="; "))
 df$idx <- as.integer(df$idx); pubs$idx <- as.integer(pubs$idx)
 df_pub <- merge(df, pubs, by.x="idx", by.y="idx", all.x=T, all.y=T)
+
 # Count mean/SD number of species described per publication
 df_sp_per_pub <- df_pub[, .N, by=c("full.name.of.describer", "date.n", "author", "title",
-                  "journal", "volume", "issue", "page.numbers.publication")]
+                                   "journal", "volume", "issue", "page.numbers.publication")]
 author_ss <- df_sp_per_pub[, list(spp_per_pub_mean=mean(N),
-                     spp_per_pub_sd=sd(N),
-                     n_pubs=.N), by="full.name.of.describer"]
+                                  spp_per_pub_sd=sd(N),
+                                  n_pubs=.N), by="full.name.of.describer"]
 
-describers_final$full.name.of.describer.n <- gsub('\\"\\"', '\\"', describers_final$full.name.of.describer.n)
+describers_final$full.name.of.describer.n <- gsub('\\"\\"', '\\"', 
+                                                  describers_final$full.name.of.describer.n)
 describers_final <- merge(describers_final, author_ss, 
-      by.x="full.name.of.describer.n",
-      by.y="full.name.of.describer", all.x=T, all.y=F)
+                          by.x="full.name.of.describer.n",
+                          by.y="full.name.of.describer", all.x=T, all.y=F)
 
 # Get last name
 # describers_final$last.name <- sapply(
@@ -186,11 +189,6 @@ describers_final <- merge(describers_final, author_ss,
 ln <- fread(paste0(dir_data, "clean/last_name.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 ln[, names(ln) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 ln <- ln[, c("full.name.of.describer.n", "last.name", "last.name.no.initials")]
-# ln$last.name.no.initials <- gsub(" ", "", gsub("^[^\\[]]*\\]\\s*|\\[[^\\]*$", "", ln$last.name)) 
-
-# write.csv(ln,
-#           paste0(dir_data, "clean/last_name2.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
 
 describers_final <- merge(describers_final, ln, by="full.name.of.describer.n", all.x=T, all.y=F)
 setcolorder(describers_final, c(2, 1, 3:length(names(describers_final))))

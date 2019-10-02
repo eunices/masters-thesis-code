@@ -89,13 +89,13 @@ print(paste0("Read df_describers / df_describers_year"))
 df_describers <- get_des(write=F)
 df_describers_template <- data.frame(date.n=integer(), full.name.of.describer=character())
 for (i in 1:length(df_describers$idx_auth)) {
+    row <- df_describers[idx_auth==i]
+
     # only include authors which are "real taxonomist"
-    if(df_describers[idx_auth==i]$ns_spp_N_1st_auth_s!=0) {
-        d <- expand.grid(
-            date.n=df_describers[idx_auth==i]$min:df_describers[idx_auth==i]$max_corrected, 
-            full.name.of.describer=df_describers[idx_auth==i]$full.name.of.describer.n)
+    if (!(row$spp_N_1st_auth_s ==0  | row$ns_spp_N ==0)) {
+        d <- expand.grid(date.n=row$ns_min:row$ns_max, 
+                         full.name.of.describer=row$full.name.of.describer.n)
         df_describers_template <- rbind(df_describers_template, d)
-        
     }
 }
 

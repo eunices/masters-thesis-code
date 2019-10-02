@@ -145,9 +145,10 @@ p12 <- ggplot(data=mean_N_spp_per_des, aes(x=date.n, y=mean_N_spp)) +
     xlab("Year") + ylab("Number of species described") + 
             ggtitle("Number of species described per taxonomist per year") + 
                 geom_smooth() + scale_y_continuous(lim = c(0, 12))
-summary(df_describer_year$N)
+summary(df_describers_year$N)
+# qqPlot(df_describers_year$N) # not normal!
 
-write.csv(df_describer_year, 'tmp/test.csv')
+
 # TODO: work on using N_spp [to use valid species min and max? to exclude ]
 
 # Combined plots: Fig S2
