@@ -93,7 +93,7 @@ for (i in 1:length(df_describers$idx_auth)) {
 
     # only include authors which are "real taxonomist"
     if (!(row$spp_N_1st_auth_s == 0)) {
-        d <- expand.grid(date.n=row$min:row$max_corected, 
+        d <- expand.grid(date.n=row$min:row$max_corrected, 
                          full.name.of.describer=row$full.name.of.describer.n)
         df_describers_template <- rbind(df_describers_template, d)
     }
