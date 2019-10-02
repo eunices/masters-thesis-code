@@ -42,20 +42,20 @@ max_year <- max(taxonomic_effort1$years)
 taxonomic_effort1 <- merge(data.frame(years=min_year:max_year), taxonomic_effort1, by="years", all.x=T, all.y=F)
 
 # Exclude these
-# # no first author publications at all
-# to_exclude <- describer_data[spp_N_1st_auth_s == 0]$idx_auth 
+# no first author publications at all
+to_exclude <- describer_data[spp_N_1st_auth_s == 0]$idx_auth 
 
-# to exclude those synonyms only and no first auth pub
-to_exclude <- describer_data[spp_N_1st_auth_s == 0 |
-                             ns_spp_N == 0]$idx_auth 
+# # to exclude those synonyms only and no first auth pub
+# to_exclude <- describer_data[spp_N_1st_auth_s == 0 |
+#                              ns_spp_N == 0]$idx_auth 
 
 # N number of describers
 describers <- describer_data[!(idx_auth %in% to_exclude), 
                              c("idx_auth", "full.name.of.describer.n", 
-                               "ns_min", "ns_max_corrected")]
+                               "min", "max_corrected")]
 seq <- mapply(function(a, b) {
     seq(a, b)
-}, a=describers$ns_min, b=describers$ns_max_corrected)
+}, a=describers$min, b=describers$max_corrected)
 describers$years <- seq
 describers <- describers %>% unnest(years)
 describers[,N_real_describers := length(idx_auth), by=years]
@@ -64,11 +64,11 @@ describers_active_by_year <- unique(describers[,c("years", "N_real_describers")]
 # Weighted 
 describers <- describer_data[!(idx_auth %in% to_exclude),
                              c("idx_auth", "full.name.of.describer.n", 
-                               "ns_min", "ns_max_corrected",
+                               "min", "max_corrected",
                                "ns_species_per_year_active")]
 seq <- mapply(function(a, b) {
     seq(a, b)
-}, a=describers$ns_min, b=describers$ns_max_corrected)
+}, a=describers$min, b=describers$max_corrected)
 describers$years <- seq
 describers <- describers %>% unnest(years)
 describers[,  N_weighted_real_describers := sum(as.numeric(ns_species_per_year_active)), by="years"]
