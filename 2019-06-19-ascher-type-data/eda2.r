@@ -29,3 +29,5 @@ nw_cty <- nw[, list(sum(as.numeric(N))),
 
 write.csv(nw_cty, paste0(dir_data, 'eda2_auth/2019-09-22-auth-country-network.csv'), na='', row.names=F, fileEncoding="UTF-8")
 
+# http://www.sthda.com/english/articles/33-social-network-analysis/137-interactive-network-visualization-using-r/
+# https://www.r-graph-gallery.com/network-interactive.html

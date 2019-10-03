@@ -1,6 +1,5 @@
 source('2019-06-19-ascher-type-data/subset.r')
 
-
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - resource flow
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -51,34 +50,33 @@ write.csv(ss[order(-prop)],
 
 # Rather cool flow map in R https://kateto.net/network-visualization
 
-
-
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Location analysis suggested by Ascher
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- Location analysis"))
 
 # Where are the type repositories?
-loc_type_repo_N <- df[, list(N_type_repo_N=.N), 
+loc_type_repo_N <- spp[, list(N_type_repo_N=.N), 
     by=c("country.of.type.repository.n_long")][order(-N_type_repo_N)]
 loc_type_repo_N[1:20]
 
-loc_type_repo_unique <- df[, list(N_type_repo_unique=length(unique(type.repository.n_short))), 
+loc_type_repo_unique <- spp[, list(N_type_repo_unique=length(unique(type.repository.n_short))), 
                            by=c("country.of.type.repository.n_long")][order(-N_type_repo_unique)]
 loc_type_repo_unique[1:20]
 
 loc_type_repo <- merge(loc_type_repo_N, loc_type_repo_unique, 
                        by="country.of.type.repository.n_long", all.x=T, all.y=T)
-table(df$country.of.type.repository.n_long=="[unknown]")
+table(spp$country.of.type.repository.n_long=="[unknown]")
 
 # Where are the publishers?
 
 # by publication
+df_publications <- get_pub(write=F)
 loc_pub_N <- merge(df_publications[, list(.N), by=c("country.of.publication")],
                        lookup.cty[, c("Country", "DL")], 
                        by.x="country.of.publication", by.y="DL", all.x=T, all.y=F)
 loc_pub_N <- loc_pub_N[order(-N)]
-loc_pub_N[order(-N)][1:20]
+loc_pub_N[order(-N)][1:10]
 table(is.na(df_publications$country.of.publication))
 
 # by journals
@@ -87,16 +85,17 @@ loc_pub_unique <- merge(df_publications[, list(N=length(unique(journal))),
                        lookup.cty[, c("Country", "DL")], 
                        by.x="country.of.publication", by.y="DL", all.x=T, all.y=F)
 loc_pub_unique <- loc_pub_unique[order(-N)]
-loc_pub_unique[order(-N)][1:20]
+loc_pub_unique[order(-N)][1:10]
 
-unique(df_publications[country.of.publication=="JA"]$journal)
-unique(df_publications[country.of.publication=="NZ"]$journal)
-table(df_publications[country.of.publication=="CA"]$journal)
-unique(df_publications[country.of.publication=="RU"]$city.of.publication)
-table(df_publications[country.of.publication=="YA"]$city.of.publication)
+# Quick checks
+# unique(df_publications[country.of.publication=="JA"]$journal)
+# unique(df_publications[country.of.publication=="NZ"]$journal)
+# table(df_publications[country.of.publication=="CA"]$journal)
+# unique(df_publications[country.of.publication=="RU"]$city.of.publication)
+# table(df_publications[country.of.publication=="YA"]$city.of.publication)
 
 # Where are the type localities?
-loc_type_loc <- df[type.country.n.full != "", list(.N), by=c("type.country.n.full")][order(-N)]
+loc_type_loc <- spp[type.country.n.full != "", list(.N), by=c("type.country.n.full")][order(-N)]
 loc_type_loc[1:20]
 table(df$type.country.n.full=="")
 
@@ -104,6 +103,7 @@ table(df$type.country.n.full=="")
 # Where are the describers?
 
 # by N species described
+df_describers <- get_des(write=F)
 loc_des_N <- df_describers[!is.na(residence.country.describer.first), 
                            list(N=sum(ns_spp_N)), 
                            by=c("residence.country.describer.first")][order(-N)]
