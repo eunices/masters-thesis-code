@@ -145,6 +145,7 @@ run_loop <- function() {
 
 }
 
+collectors_unique[1]
 collectors_unique[200]$idxes
 collectors_unique[200]$collector.of.type.n[[1]][[1]]
 collectors_unique[200]$full.name.of.collector.n[[1]][[1]]
@@ -155,9 +156,9 @@ if (loop_2 == "Y") {
     collectors <- run_loop()
     collectors <- data.table(collectors %>% separate_rows(idxes))
     collectors <- data.table(collectors %>%
-    group_by(collector.of.type.n, full.name.of.collector.n,
+        group_by(collector.of.type.n, full.name.of.collector.n,
           title.of.collector.n, collector.gender.n, info.about.collector.n) %>%
-  summarise(idxes=paste0(idxes,collapse='; ')))
+        summarise(idxes=paste0(idxes,collapse='; ')))
 #   summarise(idxes=paste0(idxes,collapse='; ')))
     collectors$idxes <- gsub("; $", "", collectors$idxes)
     

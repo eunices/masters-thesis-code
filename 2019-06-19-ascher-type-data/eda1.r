@@ -50,3 +50,96 @@ write.csv(ss[order(-prop)],
           paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # Rather cool flow map in R https://kateto.net/network-visualization
+
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Location analysis suggested by Ascher
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Location analysis"))
+
+# Where are the type repositories?
+loc_type_repo_N <- df[, list(N_type_repo_N=.N), 
+    by=c("country.of.type.repository.n_long")][order(-N_type_repo_N)]
+loc_type_repo_N[1:20]
+
+loc_type_repo_unique <- df[, list(N_type_repo_unique=length(unique(type.repository.n_short))), 
+                           by=c("country.of.type.repository.n_long")][order(-N_type_repo_unique)]
+loc_type_repo_unique[1:20]
+
+loc_type_repo <- merge(loc_type_repo_N, loc_type_repo_unique, 
+                       by="country.of.type.repository.n_long", all.x=T, all.y=T)
+table(df$country.of.type.repository.n_long=="[unknown]")
+
+# Where are the publishers?
+
+# by publication
+loc_pub_N <- merge(df_publications[, list(.N), by=c("country.of.publication")],
+                       lookup.cty[, c("Country", "DL")], 
+                       by.x="country.of.publication", by.y="DL", all.x=T, all.y=F)
+loc_pub_N <- loc_pub_N[order(-N)]
+loc_pub_N[order(-N)][1:20]
+table(is.na(df_publications$country.of.publication))
+
+# by journals
+loc_pub_unique <- merge(df_publications[, list(N=length(unique(journal))), 
+                                        by=c("country.of.publication")],
+                       lookup.cty[, c("Country", "DL")], 
+                       by.x="country.of.publication", by.y="DL", all.x=T, all.y=F)
+loc_pub_unique <- loc_pub_unique[order(-N)]
+loc_pub_unique[order(-N)][1:20]
+
+unique(df_publications[country.of.publication=="JA"]$journal)
+unique(df_publications[country.of.publication=="NZ"]$journal)
+table(df_publications[country.of.publication=="CA"]$journal)
+unique(df_publications[country.of.publication=="RU"]$city.of.publication)
+table(df_publications[country.of.publication=="YA"]$city.of.publication)
+
+# Where are the type localities?
+loc_type_loc <- df[type.country.n.full != "", list(.N), by=c("type.country.n.full")][order(-N)]
+loc_type_loc[1:20]
+table(df$type.country.n.full=="")
+
+
+# Where are the describers?
+
+# by N species described
+loc_des_N <- df_describers[!is.na(residence.country.describer.first), 
+                           list(N=sum(ns_spp_N)), 
+                           by=c("residence.country.describer.first")][order(-N)]
+
+# by describer
+loc_des_unique <- df_describers[!is.na(residence.country.describer.n), list(.N), 
+                              by=c("residence.country.describer.first")][order(-N)]
+loc_des_unique[1:20]
+table(is.na(df_describers$residence.country.describer.first))
+
+
+merge1 <- merge(loc_type_repo, loc_pub_N[, c("Country", "N")], 
+                by.x="country.of.type.repository.n_long", by.y="Country", all.x=T, all.y=T)
+names(merge1)[which(names(merge1) == "N")] <- "N_loc-pub-N"
+merge2 <- merge(merge1, loc_pub_unique[, c("Country", "N")], 
+                by.x="country.of.type.repository.n_long", by.y="Country", all.x=T, all.y=T)
+names(merge2)[which(names(merge2) == "N")] <- "N_loc-pub-unique"
+merge3 <- merge(merge2, loc_type_loc, 
+                by.x="country.of.type.repository.n_long", by.y="type.country.n.full", 
+                all.x=T, all.y=T)
+names(merge3)[which(names(merge3) == "N")] <- "N_type-loc"
+merge4 <- merge(merge3, loc_des_N, 
+                by.x="country.of.type.repository.n_long", 
+                by.y="residence.country.describer.first", 
+                all.x=T, all.y=T)
+names(merge4)[which(names(merge4) == "N")] <- "N_des_N"
+merge5 <- merge(merge4, loc_des_unique, 
+                by.x="country.of.type.repository.n_long", 
+                by.y="residence.country.describer.first", 
+                all.x=T, all.y=T)
+names(merge5)[which(names(merge5) == "N")] <- "N_des-N"
+merge5[is.na(merge5)] <- 0
+
+write.csv(merge5[country.of.type.repository.n_long!=0][order(country.of.type.repository.n_long)], 
+          paste0(dir_data, 'eda1_flow/2019-10-03-loc.csv'), row.names=F)
+
+
+
+# TODO: cross comparisons

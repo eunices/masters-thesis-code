@@ -82,10 +82,14 @@ df_trop_type2 <- df_trop_type2[date.n<2019]
 
 print(paste0("Read taxonomic_effort / taxonomic_effort_long"))
 taxonomic_effort <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_6.0-active-by-year.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+taxonomic_effort$species_per_real_taxonomist <- 
+    taxonomic_effort$N_species_described / taxonomic_effort$N_real_describers
+taxonomic_effort$species_per_real_taxonomist_weighted <- 
+    taxonomic_effort$N_species_described / taxonomic_effort$N_weighted_real_describers
 taxonomic_effort_long <- data.table(taxonomic_effort %>% gather(type, N, N_describers:N_synonyms))
 
 
-print(paste0("Read df_describers / df_describers_year"))
+print(paste0("Read df_describers / df_describers_year "))
 df_describers <- get_des(write=F)
 df_describers_template <- data.frame(date.n=integer(), full.name.of.describer=character())
 for (i in 1:length(df_describers$idx_auth)) {

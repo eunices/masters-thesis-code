@@ -153,9 +153,12 @@ describers.res.cty.first <- data.table(describers.res.cty[order(idx_auth, order)
 names(describers.res.cty.first) <- c("idx_auth", "residence.country.describer.first")
 describers.res.cty.first$idx_auth <- as.character(describers.res.cty.first$idx_auth)
 
-describers_final <- merge(describers, describers.origin.cty, by='idx_auth', all.x=T, all.y=F)
-describers_final <- merge(describers_final, describers.res.cty.grp, by='idx_auth', all.x=T, all.y=F)
-describers_final <- merge(describers_final, describers.res.cty.first, by='idx_auth', all.x=T, all.y=F)
+describers_final <- merge(describers, describers.origin.cty, 
+                          by='idx_auth', all.x=T, all.y=F)
+describers_final <- merge(describers_final, describers.res.cty.grp, 
+                          by='idx_auth', all.x=T, all.y=F)
+describers_final <- merge(describers_final, describers.res.cty.first,
+                          by='idx_auth', all.x=T, all.y=F)
 
 # Count pub/author metrics
 pub <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
@@ -180,12 +183,39 @@ author_ss <- df_sp_per_pub[, list(spp_per_pub_mean=mean(N),
                                   pub_years =paste0(sort(date.pub), 
                                                    collapse= "; ")),
                                  , by="full.name.of.describer"]
-
 describers_final$full.name.of.describer.n <- gsub('\\"\\"', '\\"', 
                                                   describers_final$full.name.of.describer.n)
+                                                  
 describers_final <- merge(describers_final, author_ss, 
                           by.x="full.name.of.describer.n",
                           by.y="full.name.of.describer", all.x=T, all.y=F)
+
+# Count mean/SD number of species described per publication - ONLY FOR <=15 yrs before death
+df_sp_per_pub2 <- 
+    merge(df_sp_per_pub, describers_final[, c("full.name.of.describer.n", "dod.describer.n")],
+          by.x='full.name.of.describer', by.y='full.name.of.describer.n', all.x=T, all.y=F)
+df_sp_per_pub2$dod.describer.n <- as.numeric(df_sp_per_pub2$dod.describer.n)
+df_sp_per_pub2$date.n <- as.numeric(df_sp_per_pub2$date.n)
+df_sp_per_pub2$dod.describer.n.m <- ifelse(!is.na(df_sp_per_pub2$dod.describer.n),
+                                            df_sp_per_pub2$dod.describer.n - df_sp_per_pub2$date.n , NA)
+df_sp_per_pub2$pub_yr_cat <- ""
+df_sp_per_pub2[dod.describer.n.m <= 15]$pub_yr_cat <- "20y"
+df_sp_per_pub2[dod.describer.n.m <= 5]$pub_yr_cat <- "5y"
+
+author_ss2 <- df_sp_per_pub2[pub_yr_cat != "", 
+                             list(spp_per_pub_mean=mean(N),
+                                  spp_per_pub_sd=sd(N),
+                                  n_spp=sum(N),
+                                  n_pubs=.N),
+                                by=c("full.name.of.describer", "pub_yr_cat")]
+head(author_ss2)
+authors_ss2 <- dcast(author_ss2, full.name.of.describer  ~ pub_yr_cat,
+                     value.var=c("spp_per_pub_mean", "spp_per_pub_sd", "n_spp", "n_pubs"))
+
+describers_final <- merge(describers_final, authors_ss2, 
+                          by.x="full.name.of.describer.n",
+                          by.y="full.name.of.describer", all.x=T, all.y=F)
+
 
 # Get last name
 # describers_final$last.name <- sapply(
