@@ -3,19 +3,23 @@ print("WELCOME TO CLEANING SCRIPTS FOR BEE TYPE DATA")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 # setwd("C:/Dev/msc-thesis-code/")
+dir_script_td <- "2019-06-19-ascher-type-data/"
 # source('2019-06-19-ascher-type-data/main.r')
 
 # Scripts
 #############
+
+# Clean
 start <- proc.time()
-source('2019-06-19-ascher-type-data/init.r')
-source('2019-06-19-ascher-type-data/clean.r')
-source('2019-06-19-ascher-type-data/df1.r', encoding="utf-8")
-source('2019-06-19-ascher-type-data/df2.r')
-source('2019-06-19-ascher-type-data/df3.r')
-source('2019-06-19-ascher-type-data/df4.r')
-source('2019-06-19-ascher-type-data/subset.r')
+source(paste0(dir_script_td, 'init.r'))
+source(paste0(dir_script_td, 'clean.r'))
+source(paste0(dir_script_td, 'df1.r'), encoding="utf-8")
+source(paste0(dir_script_td, 'df2.r'))
+source(paste0(dir_script_td, 'df3.r'))
+source(paste0(dir_script_td, 'df4.r'))
+source(paste0(dir_script_td, 'subset.r'))
 print(proc.time()-start)
+
 
 rm(list=ls())
 
