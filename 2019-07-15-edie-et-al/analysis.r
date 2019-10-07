@@ -2,9 +2,10 @@ print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("WELCOME TO ANALYSES SCRIPTS FOR BEE TYPE DATA")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-# setwd("C:/Dev/msc-thesis-code/")
+
 dir_script_ed <- "2019-07-15-edie-et-al/"
-# setwd(paste0(dir_script_ed, "main.r"))
+# setwd("C:/Dev/msc-thesis-code/")
+# source(paste0(dir_script_ed, "analysis.r"))
 
 # Scripts
 #############

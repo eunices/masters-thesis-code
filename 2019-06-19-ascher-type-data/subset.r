@@ -1,4 +1,5 @@
-source('2019-06-19-ascher-type-data/init.r')
+# Setup
+source('C:/Dev/msc-thesis-code/2019-06-19-ascher-type-data/var.r')
 
 # Libraries
 library(xlsx)
@@ -17,7 +18,8 @@ to_subset <- "N"
 
 
 # Load data.frame variable names
-var <- data.table(read.xlsx2(paste0(dir_data, '2019-09-16-metadata.xlsx'), sheetIndex=1, stringsAsFactors=F), as.data.frame=T)
+var <- data.table(read.xlsx2(paste0(dir_data, '2019-09-16-metadata.xlsx'), 
+                             sheetIndex=1, stringsAsFactors=F), as.data.frame=T)
 names(var)
 var$order <- as.integer(var$order)
 var_f <- var[!grepl("remove", key_status)]

@@ -1,3 +1,5 @@
+source('2019-07-15-edie-et-al/init_a.r')
+
 args <- commandArgs(trailingOnly=TRUE)
 ftime <- as.numeric(args[1])
 
@@ -9,12 +11,12 @@ library(gamlss.dist)
 set.seed(420)
 
 # initial data
-files <- dir('data/dump', pattern = 'count_info.data.R',
+files <- dir(dir_analysis_edie_tmp, pattern = 'count_info.data.R',
              full.names = TRUE)
 data <- read_rdump(files)
 
 # zero inflated fits
-load("data/dump/fit.data") # loads as fit
+load(dir_analysis_edie_tmp, "fit.data") # loads as fit
 zips <- fit # reassign to zips
 rm(fit) # remove from memory
 
@@ -79,4 +81,4 @@ post.forecast <- function(data, ftime, model) {
 forecast <- mclapply(1:1000, mc.cores=4, function(ii) {
    post.forecast(data=data, ftime=ftime, model=zips) 
 })
-save(forecast, file="data/dump/forecast.data")
+save(forecast, file=paste0(dir_analysis_edie_tmp, "forecast.data"))

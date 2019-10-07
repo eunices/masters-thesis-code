@@ -1,3 +1,5 @@
+source('2019-07-15-edie-et-al/init_a.r')
+
 # run posterior simulation from model fit
 library(rstan)
 library(gamlss.dist)
@@ -6,12 +8,12 @@ library(parallel)
 set.seed(420)
 
 # initial data
-files <- dir('data/dump', pattern = 'count_info.data.R',
+files <- dir(dir_analysis_edie_tmp, pattern = 'count_info.data.R',
              full.names = TRUE)
 data <- read_rdump(files)
 
 # zero inflated fits
-load("data/dump/fit.data") # loads as fit
+load(dir_analysis_edie_tmp, "fit.data") # loads as fit
 zips <- fit # reassign to zips
 rm(fit) # remove from memory
 
@@ -87,4 +89,4 @@ allsim <- mclapply(1:1000, function(ii) {
 # allsim <- mclapply(1:1000, mc.cores=4, function(ii) {
 #     posterior.sim(data = data, model = zips, over = FALSE)
 # } )
-save(allsim, file="data/dump/post.data")
+save(allsim, file=paste0(dir_analysis_edie_tmp, "post.data"))

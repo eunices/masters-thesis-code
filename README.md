@@ -26,10 +26,41 @@ Specific fields to take note of:
 - type.country.n
 - type.country.
 
-
 ## Useful links
 
 - [Using citizen science data for ecological niche modelling](https://www.researchgate.net/post/does_it_reliable_to_use_only_citizen_science_data_for_Ecological_niche_modelling)
 
+## Error for Edie et al
+
+```Warning messages:
+1: package ‘dplyr’ was built under R version 3.6.1 
+2: package ‘maptools’ was built under R version 3.6.1 
+3: There were 969 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
+http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup 
+4: Examine the pairs() plot to diagnose sampling problems
+ 
+5: The largest R-hat is 1.79, indicating chains have not mixed.
+Running the chains for more iterations may help. See
+http://mc-stan.org/misc/warnings.html#r-hat 
+6: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+Running the chains for more iterations may help. See
+http://mc-stan.org/misc/warnings.html#bulk-ess 
+7: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+Running the chains for more iterations may help. See
+http://mc-stan.org/misc/warnings.html#tail-ess 
+```
+
+for using trop/non-trop dataset
+
+```fit <- stan( file="2019-07-15-edie-et-al/zip_count.stan",
+                   data=data, 
+                   chains=4, 
+                   warmup=2500,
+                   iter=5000,
+                   init=0,
+                   thin=5,
+                   cores=4,
+                   verbose=TRUE, seed=301,
+                   control = list(max_treedepth = 15))```
 
 Last updated 16 May 2019

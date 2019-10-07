@@ -1,3 +1,5 @@
+source('2019-07-15-edie-et-al/init_a.r')
+
 # visualize results from model fit and forecasting
 args <- commandArgs(trailingOnly=TRUE)
 # OFFSET <- as.logical(args[1])
@@ -11,8 +13,8 @@ library(ggplot2)
 
 #    LOAD DATA --------------------------------------------------------------------------------------------
 
-dataRAW <- read.csv("data/data.csv") # original data
-data <- read_rdump("data/dump/count_info.data.R") # initial model data
+dataRAW <- read.csv(dir_analysis_edie_tmp, "data.csv") # original data
+data <- read_rdump(paste0(dir_analysis_edie_tmp, "count_info.data.R")) # initial model data
 
 
 load("data/dump/fit.data") # zero inflated fits --loads as fit

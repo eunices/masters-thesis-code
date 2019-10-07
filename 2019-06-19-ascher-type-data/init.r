@@ -1,28 +1,9 @@
-# Libraries
-suppressMessages(library(data.table))
-suppressMessages(library(ggplot2))
-suppressMessages(library(sf))
-suppressMessages(library(anytime))
-suppressMessages(library(ggmap))
-suppressMessages(library(dplyr))
-suppressMessages(library(tidyr))
-
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Initializing
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- INITIALIZING"))
-
-# Setup
-setwd('C:/Dev/msc-thesis-code')
-dir_data <- 'data/2019-05-23-ascher-bee-data/'
-dir_script <- '2019-06-19-ascher-type-data/'
-source('keys.R')
-source(paste0(dir_script, 'helper.R'))
-
-
-# Initialize google api for geocoding
-register_google(key = geocode_api)
-
+source('C:/Dev/msc-thesis-code/2019-06-19-ascher-type-data/var.r')
+setwd(wd)
 
 # Read shapefile
 # shp2 <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo.shp')
