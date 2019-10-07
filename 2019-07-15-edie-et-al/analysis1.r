@@ -156,7 +156,7 @@ dfpub <- unique(dfpub[, c("group", "year", "paper.authors", "journal", "title",
          "volume", "issue", "page.numbers.publication")]); dim(dfpub)
 npub <- dfpub[, list(N=.N), by=c("group", "year")]
 pub.matrix <- dcast(npub, year ~ group, value.var="N")
-pub.matrix <- merge(data.frame(year=min(dat$year):max(dat$year)), 
+pub.matrix <- merge(data.frame(year=min(data$year):max(data$year)), 
                     pub.matrix, 
                     by="year", all.x=T, all.y=F)
 pub.matrix[is.na(pub.matrix)] <- 0; pub.matrix <- as.matrix(pub.matrix)
@@ -185,7 +185,7 @@ data <- list(N = N, P = P, str = as.numeric(starts), end = rep(max(dim(count.mat
 # OUTPUT
 ########################################
 
-filepath_output = paste0(dir_analysis_edie_tmp, "count_info.dataaa.R")
+filepath_output = paste0(dir_analysis_edie_tmp, "count_info.data.R")
 
 with(data, {stan_rdump(list = c('N', 'P', 'str', 'end', 'counts', 'off'),
     file = filepath_output)} )

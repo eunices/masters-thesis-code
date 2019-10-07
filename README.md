@@ -53,8 +53,8 @@ http://mc-stan.org/misc/warnings.html#tail-ess
 for using trop/non-trop dataset
 
 ```fit <- stan( file="2019-07-15-edie-et-al/zip_count.stan",
-                   data=data, 
-                   chains=4, 
+                   data=data,
+                   chains=4,
                    warmup=2500,
                    iter=5000,
                    init=0,
@@ -62,5 +62,8 @@ for using trop/non-trop dataset
                    cores=4,
                    verbose=TRUE, seed=301,
                    control = list(max_treedepth = 15))```
+
+
+
 
 Last updated 16 May 2019

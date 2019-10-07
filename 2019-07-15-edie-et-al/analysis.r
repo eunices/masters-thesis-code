@@ -4,7 +4,7 @@ print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 
 dir_script_ed <- "2019-07-15-edie-et-al/"
-# setwd("C:/Dev/msc-thesis-code/")
+setwd("C:/Dev/msc-thesis-code/")
 # source(paste0(dir_script_ed, "analysis.r"))
 
 # Scripts
