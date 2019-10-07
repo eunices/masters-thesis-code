@@ -14,9 +14,9 @@ data <- read_rdump(files)
 # fit model
 fit <- stan( file="2019-07-15-edie-et-al/zip_count.stan",
                    data=data, 
-                   chains=4, 
+                   chains=8, 
                    warmup=2500,
-                   iter=5000,
+                   iter=10000,
                    init=0,
                    thin=5,
                    cores=4,

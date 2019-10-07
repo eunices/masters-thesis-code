@@ -13,15 +13,15 @@ library(ggplot2)
 
 #    LOAD DATA --------------------------------------------------------------------------------------------
 
-dataRAW <- read.csv(dir_analysis_edie_tmp, "data.csv") # original data
+dataRAW <- read.csv(paste0(dir_analysis_edie_tmp, "data.csv")) # original data
 data <- read_rdump(paste0(dir_analysis_edie_tmp, "count_info.data.R")) # initial model data
 
 
-load("data/dump/fit.data") # zero inflated fits --loads as fit
+load(paste0(dir_analysis_edie_tmp, "fit.data")) # zero inflated fits --loads as fit
 zips <- fit # reassign to zips
 rm(fit) # remove from memory
-load("data/dump/post.data") # posterior samples -- loads as allsim
-load("data/dump/forecast.data") # forecast data -- loads as forecast
+load(paste0(dir_analysis_edie_tmp, "post.data")) # posterior samples -- loads as allsim
+load(paste0(dir_analysis_edie_tmp, "forecast.data")) # forecast data -- loads as forecast
 
 # map model indeces to original variables
 mapping <- data.frame( 
@@ -171,7 +171,7 @@ P <- ggplot( ) +
     facet_wrap(~group, scales="free_y", labeller=as_labeller(labels) ) +
     ylab("Number of Species") + 
     xlab("Year of Description")
-ggsave(P, file="output/count_fit.pdf", width=10, height=6)
+ggsave(P, file=paste0(dir_analysis_edie_tmp, "output/count_fit.pdf"), width=10, height=6)
 
 
 # set up plotting data for long-term trends
@@ -196,7 +196,7 @@ P <- ggplot( ) +
     facet_wrap(~group, scales="free_y", labeller=as_labeller(labels) ) +
     ylab("Number of Species") + 
     xlab("Year of Description")
-ggsave(P, file="output/regression.pdf", width=10, height=6)
+ggsave(P, file=paste0(dir_analysis_edie_tmp, "output/regression.pdf"), width=10, height=6)
 
 
 #       END \\ PLOT MODEL FIT -------------------------------------------------------------------------
@@ -241,6 +241,6 @@ fore.table <- split(forsim, forsim$group) %>% # by group
 # merge to Results table
 RESULTS <- merge(results, fore.table, by="group") %>%
     arrange(desc(observed_species))
-write.csv(RESULTS, file="output/results.csv", row.names=FALSE)
+write.csv(RESULTS, file=paste0(dir_analysis_edie_tmp,"output/results.csv"), row.names=FALSE)
 
 #       END \\ SUMMARIZE FORECAST ---------------------------------------------------------------

@@ -1,7 +1,7 @@
 source('2019-07-15-edie-et-al/init_a.r')
 
 args <- commandArgs(trailingOnly=TRUE)
-ftime <- as.numeric(args[1])
+ftime <- as.numeric(15)
 
 library(rstan)
 library(plyr)
@@ -16,7 +16,7 @@ files <- dir(dir_analysis_edie_tmp, pattern = 'count_info.data.R',
 data <- read_rdump(files)
 
 # zero inflated fits
-load(dir_analysis_edie_tmp, "fit.data") # loads as fit
+load(paste0(dir_analysis_edie_tmp, "fit.data")) # loads as fit
 zips <- fit # reassign to zips
 rm(fit) # remove from memory
 
@@ -78,7 +78,7 @@ post.forecast <- function(data, ftime, model) {
 }
 
 # simulate the forecast
-forecast <- mclapply(1:1000, mc.cores=4, function(ii) {
+forecast <- mclapply(1:1000, mc.cores=1, function(ii) {
    post.forecast(data=data, ftime=ftime, model=zips) 
 })
 save(forecast, file=paste0(dir_analysis_edie_tmp, "forecast.data"))

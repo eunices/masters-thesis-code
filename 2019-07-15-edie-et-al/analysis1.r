@@ -15,7 +15,7 @@ input_filepath <- paste0(dir_data,
 dat0 <- fread(input_filepath)
 data <- dat0[, c("idx", "full.name.of.describer", "date.n", "Latitude_type2")]
 
-# One group only
+# # One group only
 # dat0 <- get_df1(write=F)
 # data <- dat0[, c("idx", "full.name.of.describer", "date.n")]
 # data$group <- "1"

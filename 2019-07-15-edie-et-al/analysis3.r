@@ -13,7 +13,7 @@ files <- dir(dir_analysis_edie_tmp, pattern = 'count_info.data.R',
 data <- read_rdump(files)
 
 # zero inflated fits
-load(dir_analysis_edie_tmp, "fit.data") # loads as fit
+load(paste0(dir_analysis_edie_tmp, "fit.data")) # loads as fit
 zips <- fit # reassign to zips
 rm(fit) # remove from memory
 
