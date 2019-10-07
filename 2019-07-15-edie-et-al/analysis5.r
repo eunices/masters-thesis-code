@@ -161,7 +161,7 @@ P <- ggplot( ) +
     facet_wrap(~group, scales="free_y", labeller=as_labeller(labels) ) +
     ylab("Number of Species") + 
     xlab("Year of Description")
-ggsave(P, file="output/cumulative_fit.pdf", width=10, height=6)
+ggsave(P, file=paste0(dir_analysis_edie_tmp, "output/cumulative_fit.pdf"), width=10, height=6)
 
 # plot per year counts
 P <- ggplot( ) +
