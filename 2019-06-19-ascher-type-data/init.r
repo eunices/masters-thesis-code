@@ -3,7 +3,7 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 print(paste0(Sys.time(), " --- INITIALIZING"))
-source('C:/Dev/msc-thesis-code/2019-06-19-ascher-type-data/var.r')
+source('2019-06-19-ascher-type-data/var.r')
 setwd(wd)
 
 
