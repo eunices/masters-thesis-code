@@ -12,7 +12,7 @@ wd <- 'C:/Dev/msc-thesis-code'
 dir_data <- 'data/2019-05-23-ascher-bee-data/'
 dir_script <- '2019-06-19-ascher-type-data/'
 source('keys.R')
-source(paste0(dir_script, 'helper.R'))
+source(paste0(dir_script, 'helper.r'))
 
 
 # Initialize google api for geocoding
