@@ -65,6 +65,15 @@ for using trop/non-trop dataset params
                    control = list(max_treedepth = 15))
 ```
 
+- Values are vastly different from Edie et al [range to 10] and bees [range to 200+]; not zero-inflated?
+
+
 2. Problem 2: Does not work for "single" column (using year only).
 
+# Equal area projection used: 3035, with exception of Mali, Mexico, Niger, Pakistan, Yemen all were >60% in area.
+
+
 Last updated 7 Oct 2019
+
+
+

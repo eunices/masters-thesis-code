@@ -146,7 +146,7 @@ sims <- filter(Z, sim!=0) %>% # subset a sample of simmed series
     } ) %>% rbind.fill # bind together
 # only keep sims less that 4 times the max observed value
 goodsims <- filter(sims, year==max(year) & cml_value < max(obs$cml_value)*4) %>%
-    select(group, sim)
+    dplyr::select(group, sim)
 sims <- inner_join(sims, goodsims, by=c("group", "sim"))
 
 # set up facet labels

@@ -4,6 +4,7 @@ source('2019-07-15-edie-et-al/init_a.r')
 library(rstan)
 library(gamlss.dist)
 library(parallel)
+library(shinystan)
 
 set.seed(420)
 
@@ -16,6 +17,10 @@ data <- read_rdump(files)
 load(paste0(dir_analysis_edie_tmp, "fit.data")) # loads as fit
 zips <- fit # reassign to zips
 rm(fit) # remove from memory
+
+# launch_shinystan(zips)
+
+traceplot(zips)
 
 # posterior predictive simulations for checking model fit
 posterior.sim <- function(data, model, over = FALSE) {
@@ -90,3 +95,8 @@ allsim <- mclapply(1:1000, function(ii) {
 #     posterior.sim(data = data, model = zips, over = FALSE)
 # } )
 save(allsim, file=paste0(dir_analysis_edie_tmp, "post.data"))
+
+
+
+
+

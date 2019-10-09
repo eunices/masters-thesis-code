@@ -9,8 +9,8 @@ setwd("C:/Dev/msc-thesis-code/")
 
 # Scripts
 #############
-
 # Analysis
+source(paste0(dir_script_ed, 'analysis0.r')) # data prep
 source(paste0(dir_script_ed, 'analysis1.r')) # data prep
 source(paste0(dir_script_ed, 'analysis2.r')) # model fitting
 source(paste0(dir_script_ed, 'analysis3.r')) # post

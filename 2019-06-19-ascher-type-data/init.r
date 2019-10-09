@@ -19,7 +19,7 @@ if(!exists("shp2")) {
 if(!exists("shp3")){
     shp3 <- shp2
     st_geometry(shp3) <- NULL
-    write.csv(shp3, 'data/lookup/2019-07-12-gadm-countries-biogeo.csv')
+    # write.csv(shp3, 'data/lookup/2019-07-12-gadm-countries-biogeo.csv')
 }
 if(!exists("shp4")){
     shp4 <- sf::st_read('data/geo_processed/gadm/gadm36_0_utf8_continents.shp', quiet=T)
@@ -27,7 +27,7 @@ if(!exists("shp4")){
 if(!exists("shp5")){
     shp5 <- shp4
     st_geometry(shp5) <- NULL
-    write.csv(shp5, 'data/lookup/2019-07-15-gadm-countries-continent.csv')
+    # write.csv(shp5, 'data/lookup/2019-07-15-gadm-countries-continent.csv')
 }
 
 # shp2 <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_holt.shp')
@@ -41,7 +41,7 @@ if(!exists("shp6")) {
 if(!exists("shp7")){
     shp7 <- shp6
     st_geometry(shp7) <- NULL
-    write.csv(shp7, 'data/lookup/2019-07-15-gadm-countries-biogeo-holt.csv')
+    # write.csv(shp7, 'data/lookup/2019-07-15-gadm-countries-biogeo-holt.csv')
 }
 if(!exists("shp8")) {
     shp8 <- sf::st_read('data/geo/1_separate/gadm/shp_all_levels/gadm36_1.shp', quiet=T)
