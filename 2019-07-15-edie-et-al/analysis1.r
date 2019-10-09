@@ -16,7 +16,8 @@ dat0 <- fread(input_filepath)
 data <- dat0[, c("idx", "full.name.of.describer", "date.n", "Latitude_type2")]
 
 # One group only
-# dat0 <- get_df1(write=F)
+# input_filepath <- paste0(dir_analysis_edie_tmp, "format.csv")
+# dat0 <- fread(input_filepath)
 # data <- dat0[, c("idx", "full.name.of.describer", "date.n")]
 # data1 <- cbind(data, group=1); data2 <- cbind(data, group=2)
 # data <- rbind(data1, data2)
@@ -184,9 +185,9 @@ data <- list(N = N, P = P, str = as.numeric(starts), end = rep(max(dim(count.mat
 # OUTPUT
 ########################################
 
-filepath_output = paste0(dir_analysis_edie_tmp, "count_info.data.R")
+output_filepath <- paste0(dir_analysis_edie_tmp, "count_info.data.R")
 
 with(data, {stan_rdump(list = c('N', 'P', 'str', 'end', 'counts', 'off'),
-    file = filepath_output)} )
+    file = output_filepath)} )
 
 

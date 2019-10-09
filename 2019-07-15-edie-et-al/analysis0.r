@@ -4,7 +4,7 @@ library(sf)
 
 # read data frame
 df <- get_df1(write=F)
-cty <- sf::st_read('data/geo/1_separate/gadm/shp_all_levels/gadm36_1.shp', quiet=T)
+teow <- sf::st_read('data/geo_processed/teow/official/wwf_terr_ecos_dissolved.shp', quiet=T)
 
 # derive new columns
 ll <- sf::st_as_sf(df[!(is.na(lat) | is.na(lon)), 
@@ -18,12 +18,8 @@ ll <- sf::st_as_sf(df[!(is.na(lat) | is.na(lon)),
                    coords = c('lon', 'lat'),
                    crs = "+init=epsg:4326")
 
-countries_shp <- sf::st_join(ll, cty, join = st_intersects)
-countries <- data.table(data.frame(countries_shp))
+join_shp <- sf::st_join(ll, teow, join = st_intersects)
+join_shp <- data.table(data.frame(join_shp))[order(as.numeric(idx))]
+join_shp$geometry <- as.character(join_shp$geometry)
 
-lookup <- lookup.pri_div[!duplicated(lookup.pri_div$HASC_1),c("HASC_1", "CTY.STATE.CODE")]
-
-countries <- merge(countries, lookup, by="HASC_1", all.x=T, all.y=F)
-setDT(countries)[, c("country", "state") := tstrsplit(CTY.STATE.CODE, "\\.")]
-countries$CTY.STATE.CODE <- NULL
-countries <- countries[!duplicated(idx)]
+write.csv(join_shp, paste0(dir_analysis_edie_tmp, 'format.csv'))
