@@ -1,5 +1,5 @@
 # Setup
-source('C:/Dev/msc-thesis-code/2019-06-19-ascher-type-data/var.r')
+source('2019-06-19-ascher-type-data/var.r')
 
 # Libraries
 library(xlsx)
