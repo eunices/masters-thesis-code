@@ -16,3 +16,4 @@ geocode_lat_long <- function(to_geocode) {
     }
     geocoded
 }
+
