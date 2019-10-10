@@ -33,6 +33,9 @@ join_cty <- merge(df[is_latlon_absent & !is_cty_absent, ..cols],
                   lookup_cty[prop_area_biogeo_wwf >= 0.6, c("DL", "biogeo_wwf")], 
                   by.x="type.country.n", by.y="DL", all.x=T, all.y=F)
 join_cty <- join_cty[!is.na(biogeo_wwf),]
-join <- rbind(join_shp, join_cty, fill=T)
 
-write.csv(join, paste0(dir_analysis_edie_tmp, 'format.csv'))
+# combine datasets
+join <- rbind(join_shp, join_cty, fill=T)
+join$lat <- NULL; join$lon <-  NULL
+
+write.csv(join, paste0(dir_analysis_edie_tmp, 'format.csv'), row.names=F)
