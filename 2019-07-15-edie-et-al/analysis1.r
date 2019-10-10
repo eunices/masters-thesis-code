@@ -10,10 +10,10 @@ library(rstan)
 ########################################
 
 # Multiple groups
-# input_filepath <- paste0(dir_data, 
-#         "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty7-trop-type2.csv")
-# dat0 <- fread(input_filepath)
-# data <- dat0[, c("idx", "full.name.of.describer", "date.n", "Latitude_type2")]
+input_filepath <- paste0(dir_data, 
+        "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty7-trop-type2.csv")
+dat0 <- fread(input_filepath)
+data <- dat0[, c("idx", "full.name.of.describer", "date.n", "Latitude_type2")]
 
 # One group only
 # input_filepath <- paste0(dir_analysis_edie_tmp, "format.csv")
