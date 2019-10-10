@@ -1,9 +1,10 @@
 library(tidyverse)
-library(sf)
+library(sf); library(rgeos)
 
 dissolvePolygon = function(filepath, by="None") {
     region = read_sf(filepath)
-
+    region = st_buffer(region, dist = 0) # to resolve TopologyException: input geom invalid
+    
     region %>%
         st_set_geometry(NULL) %>%
         glimpse()

@@ -11,12 +11,12 @@ lookup_cty <- fread('data/lookup/2019-05-29-statoid-country-codes.csv', na=c('')
 is_latlon_absent <- (is.na(df$lat) | is.na(df$lon))
 is_cty_absent <- df$type.country.n == ""
 
-cols <- c("idx", "lat", "lon", 
-          "type.country.n", "type.state.n", 
-          "type.country.n.full", "type.state.n.full", 
-          "type.country.n", "type.state.n", 
-          "type.locality.verbatim", "type.locality.updated", 
-          "flag", "source.of.latlon.n", 
+cols <- c("idx", "lat", "lon",
+          "type.country.n", "type.state.n",
+          "type.country.n.full", "type.state.n.full",
+          "type.country.n", "type.state.n",
+          "type.locality.verbatim", "type.locality.updated",
+          "flag", "source.of.latlon.n",
           "full.name.of.describer" , "date.n")
 
 ll <- sf::st_as_sf(df[!is_latlon_absent, ..cols], 

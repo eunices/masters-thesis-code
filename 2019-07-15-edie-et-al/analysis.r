@@ -2,14 +2,38 @@ print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("WELCOME TO ANALYSES SCRIPTS FOR BEE TYPE DATA")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-
+# If running script from elsewhere
 # setwd("C:/Dev/msc-thesis-code/")
 # source(paste0(dir_script_ed, "analysis.r"))
-dir_script_ed <- "2019-07-15-edie-et-al/"
+
+# Set up
+#############
+options(scipen = 999)
+
+# Model parameters
+#############
+model_params <- list(
+    dataset="GL", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude (trop or not)
+    chains=4,     # stan's number of chains
+    iter=100000,  # stan's number of iterations
+    ad=0.99,      # stan's adapt_delta
+    td=15         # stan's max tree depth
+)
 
 # Scripts
 #############
-# Analysis
+# Initialize identifier
+source('2019-07-15-edie-et-al/init_a.r')
+model_identifier <- paste0(
+    model_params$dataset, "-",
+    "C", as.character(model_params$chains), "-",
+    "I", as.character(model_params$iter), "-",
+    "A", as.character(model_params$ad), "-",
+    "T", as.character(model_params$td))
+dir_model_folder <- paste0(dir_analysis_edie_tmp, "/", model_identifier)
+dir.create(dir_model_folder); dir.create(file.path(dir_model_folder, 'output'))
+
+# Analysis scripts
 source(paste0(dir_script_ed, 'analysis0.r')) # data prep
 source(paste0(dir_script_ed, 'analysis1.r')) # data prep
 source(paste0(dir_script_ed, 'analysis2.r')) # model fitting

@@ -9,12 +9,12 @@ library(shinystan)
 set.seed(420)
 
 # initial data
-files <- dir(dir_analysis_edie_tmp, pattern = 'count_info.data.R',
+files <- dir(dir_model_folder, pattern = 'count_info.data.R',
              full.names = TRUE)
 data <- read_rdump(files)
 
 # zero inflated fits
-load(paste0(dir_analysis_edie_tmp, "fit.data")) # loads as fit
+load(paste0(dir_model_folder, "fit.data")) # loads as fit
 zips <- fit # reassign to zips
 rm(fit) # remove from memory
 
@@ -94,7 +94,7 @@ allsim <- mclapply(1:1000, function(ii) {
 # allsim <- mclapply(1:1000, mc.cores=4, function(ii) {
 #     posterior.sim(data = data, model = zips, over = FALSE)
 # } )
-save(allsim, file=paste0(dir_analysis_edie_tmp, "post.data"))
+save(allsim, file=paste0(dir_model_folder, "post.data"))
 
 
 

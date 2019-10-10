@@ -11,12 +11,12 @@ library(gamlss.dist)
 set.seed(420)
 
 # initial data
-files <- dir(dir_analysis_edie_tmp, pattern = 'count_info.data.R',
+files <- dir(dir_model_folder, pattern = 'count_info.data.R',
              full.names = TRUE)
 data <- read_rdump(files)
 
 # zero inflated fits
-load(paste0(dir_analysis_edie_tmp, "fit.data")) # loads as fit
+load(paste0(dir_model_folder, "fit.data")) # loads as fit
 zips <- fit # reassign to zips
 rm(fit) # remove from memory
 
@@ -81,4 +81,4 @@ post.forecast <- function(data, ftime, model) {
 forecast <- mclapply(1:1000, mc.cores=1, function(ii) {
    post.forecast(data=data, ftime=ftime, model=zips) 
 })
-save(forecast, file=paste0(dir_analysis_edie_tmp, "forecast.data"))
+save(forecast, file=paste0(dir_model_folder, "forecast.data"))
