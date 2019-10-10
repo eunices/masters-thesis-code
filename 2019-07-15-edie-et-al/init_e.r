@@ -43,13 +43,6 @@ df_continent$duplicated.row <- NULL
 df_continent <- df_continent[date.n<2019]
 
 
-print(paste0("Read df_biogeo_holt"))
-df_biogeo_holt <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty5-biogeo-holt.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-table(is.na(df_biogeo_holt$Realm))
-dim(df_biogeo_holt); df_biogeo_holt <- df_biogeo_holt[!is.na(Realm)]; dim(df_biogeo_holt)
-df_biogeo_holt <- df_biogeo_holt[date.n<2019]
-
-
 print(paste0("Read df_trop_type1"))
 df_trop_type1 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty6-trop-type1.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 table(is.na(df_trop_type1$Latitude_type))
