@@ -32,6 +32,7 @@ model_identifier <- paste0(
     "T", as.character(model_params$td))
 dir_model_folder <- paste0(dir_analysis_edie_tmp, "/", model_identifier)
 dir.create(dir_model_folder); dir.create(file.path(dir_model_folder, 'output'))
+filepath_log <- paste0(dir_model_folder, "model.log"); file.create(filepath_log)
 
 # Analysis scripts
 source(paste0(dir_script_ed, 'analysis0.r')) # data prep
