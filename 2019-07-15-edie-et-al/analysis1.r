@@ -10,14 +10,15 @@ library(rstan)
 ########################################
 
 # Multiple groups
-input_filepath <- paste0(dir_data, 
-        "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty7-trop-type2.csv")
-dat0 <- fread(input_filepath)
-data <- dat0[, c("idx", "full.name.of.describer", "date.n", "Latitude_type2")]
+# input_filepath <- paste0(dir_data, 
+#         "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty7-trop-type2.csv")
+# dat0 <- fread(input_filepath)
+# data <- dat0[, c("idx", "full.name.of.describer", "date.n", "Latitude_type2")]
 
 # One group only
 # input_filepath <- paste0(dir_analysis_edie_tmp, "format.csv")
 # dat0 <- fread(input_filepath)
+# dat0 <- get_df1(write=F)
 # data <- dat0[, c("idx", "full.name.of.describer", "date.n")]
 # data1 <- cbind(data, group=1); data2 <- cbind(data, group=2)
 # data <- rbind(data1, data2)
@@ -29,10 +30,98 @@ write.csv(data, paste0(dir_analysis_edie_tmp, "data.csv"))
 # Publications
 df_publications <- get_pub(write=F)
 pubs <- data.table(df_publications %>% separate_rows(idxes, sep="; "))
-pubs <- unique(pubs[, c("date.n", "idxes", "paper.authors", "journal", "title",
-                 "volume", "issue", "page.numbers.publication")])
+pubs <- unique(pubs[, c("date.n", "idxes", "paper.authors", "journal", 
+                        "title", "volume", "issue","page.numbers.publication")])
 names(pubs)[which(names(pubs)=="date.n")] <- "year"
 pubs$idxes <- as.numeric(pubs$idxes)
+
+
+########################################
+# NEWER CODE, not using loops
+########################################
+
+
+# Create one matrix for each group
+counts <- data[, list(.N), by=c("group", "year")]
+count.matrix <- dcast(counts, year ~ group, value.var="N")
+count.matrix <- merge(data.frame(year=min(data$year):max(data$year)), 
+                      count.matrix, 
+                      by="year", all.x=T, all.y=F)
+count.matrix[is.na(count.matrix)] <- 0; count.matrix <- as.matrix(count.matrix)
+rownames <- count.matrix[, 1]
+if(dim(count.matrix)[2] <= 2){
+    count.matrix <- matrix(count.matrix[, 2], ncol=1)
+    row.names(count.matrix) <- rownames
+} else {
+    row.names(count.matrix) <- rownames
+    count.matrix <- count.matrix[, -1]
+}
+
+
+# Get data into stan format
+nyear <- nrow(count.matrix); jgroup <- ncol(count.matrix); npred <- 1
+# index where value is not 0 to use as a starting point
+starts <- apply(count.matrix, 2, function(x) min(which(x != 0))) 
+cc <- t(count.matrix)
+N <- ncol(cc)
+P <- nrow(cc)
+
+# number of publications per year
+dfpub <- merge(data[, c("valid_species_id", "group")], pubs, 
+              by.x="valid_species_id", by.y="idxes", all.x=T, all.y=F); dim(dfpub)
+dfpub <- unique(dfpub[, c("group", "year", "paper.authors", "journal", "title",
+         "volume", "issue", "page.numbers.publication")]); dim(dfpub)
+npub <- dfpub[, list(N=.N), by=c("group", "year")]
+pub.matrix <- dcast(npub, year ~ group, value.var="N")
+pub.matrix <- merge(data.frame(year=min(data$year):max(data$year)), 
+                    pub.matrix, 
+                    by="year", all.x=T, all.y=F)
+pub.matrix[is.na(pub.matrix)] <- 0; pub.matrix <- as.matrix(pub.matrix)
+rownames <- pub.matrix[, 1]
+
+if(dim(pub.matrix)[2] <= 2){
+    pub.matrix <- matrix(pub.matrix[, 2], ncol=1)
+    row.names(pub.matrix) <- rownames
+} else {
+    row.names(pub.matrix) <- rownames
+    pub.matrix <- pub.matrix[, -1]
+}
+
+data <- list(N = N, P = P, str = as.numeric(starts), end = rep(max(dim(count.matrix)[1]), P), 
+             counts = cc, off = t(pub.matrix))
+
+
+
+
+
+
+
+########################################
+# OUTPUT
+########################################
+
+output_filepath <- paste0(dir_analysis_edie_tmp, "count_info.data.R")
+
+with(data, {stan_rdump(list = c('N', 'P', 'str', 'end', 'counts', 'off'),
+    file = output_filepath)} )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ########################################
 # OLDER CODE, using publications wrongly
@@ -117,77 +206,5 @@ original_code <- function() {
 
 
 
-
-
-
-
-########################################
-# NEWER CODE, not using loops
-########################################
-
-
-# Create one matrix for each group
-counts <- data[, list(.N), by=c("group", "year")]
-count.matrix <- dcast(counts, year ~ group, value.var="N")
-count.matrix <- merge(data.frame(year=min(data$year):max(data$year)), 
-                      count.matrix, 
-                      by="year", all.x=T, all.y=F)
-count.matrix[is.na(count.matrix)] <- 0; count.matrix <- as.matrix(count.matrix)
-rownames <- count.matrix[, 1]
-if(dim(count.matrix)[2] <= 2){
-    count.matrix <- matrix(count.matrix[, 2], ncol=1)
-    row.names(count.matrix) <- rownames
-} else {
-    row.names(count.matrix) <- rownames
-    count.matrix <- count.matrix[, -1]
-}
-
-
-# Get data into stan format
-nyear <- nrow(count.matrix); jgroup <- ncol(count.matrix); npred <- 1
-# index where value is not 0 to use as a starting point
-starts <- apply(count.matrix, 2, function(x) min(which(x != 0))) 
-cc <- t(count.matrix)
-N <- ncol(cc)
-P <- nrow(cc)
-
-# number of publications per year
-dfpub <- merge(data[, c("valid_species_id", "group")], pubs, 
-              by.x="valid_species_id", by.y="idxes", all.x=T, all.y=F); dim(dfpub)
-dfpub <- unique(dfpub[, c("group", "year", "paper.authors", "journal", "title",
-         "volume", "issue", "page.numbers.publication")]); dim(dfpub)
-npub <- dfpub[, list(N=.N), by=c("group", "year")]
-pub.matrix <- dcast(npub, year ~ group, value.var="N")
-pub.matrix <- merge(data.frame(year=min(data$year):max(data$year)), 
-                    pub.matrix, 
-                    by="year", all.x=T, all.y=F)
-pub.matrix[is.na(pub.matrix)] <- 0; pub.matrix <- as.matrix(pub.matrix)
-rownames <- pub.matrix[, 1]
-
-if(dim(pub.matrix)[2] <= 2){
-    pub.matrix <- matrix(pub.matrix[, 2], ncol=1)
-    row.names(pub.matrix) <- rownames
-} else {
-    row.names(pub.matrix) <- rownames
-    pub.matrix <- pub.matrix[, -1]
-}
-
-data <- list(N = N, P = P, str = as.numeric(starts), end = rep(max(dim(count.matrix)[1]), P), 
-             counts = cc, off = t(pub.matrix))
-
-
-
-
-
-
-
-########################################
-# OUTPUT
-########################################
-
-output_filepath <- paste0(dir_analysis_edie_tmp, "count_info.data.R")
-
-with(data, {stan_rdump(list = c('N', 'P', 'str', 'end', 'counts', 'off'),
-    file = output_filepath)} )
 
 
