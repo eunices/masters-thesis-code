@@ -35,20 +35,12 @@ df_publications_N <- dcast(df_publications_N,
 df_publications_N$n_species <- df_publications_N$n_valid + df_publications_N$n_synonym
 df_publications_N$date.decade <- paste0(substr(df_publications_N$date.n, 1, 3), "0s")
 
-
-
 print(paste0("Read df_continent"))
 df_continent <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty3-continent.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 table(df_continent$duplicated.row)
 table(is.na(df_continent$countries))
 df_continent$duplicated.row <- NULL
 df_continent <- df_continent[date.n<2019]
-
-print(paste0("Read df_biogeo"))
-df_biogeo <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty4-biogeo.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-table(is.na(df_biogeo$REALM_E))
-dim(df_biogeo); df_biogeo <- df_biogeo[!is.na(REALM_E)]; dim(df_biogeo)
-df_biogeo <- df_biogeo[date.n<2019]
 
 
 print(paste0("Read df_biogeo_holt"))

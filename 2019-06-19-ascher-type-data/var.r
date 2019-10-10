@@ -8,7 +8,6 @@ suppressMessages(library(dplyr))
 suppressMessages(library(tidyr))
 
 # Variables
-wd <- 'C:/Dev/msc-thesis-code'
 dir_data <- 'data/2019-05-23-ascher-bee-data/'
 dir_script <- '2019-06-19-ascher-type-data/'
 source('keys.R')

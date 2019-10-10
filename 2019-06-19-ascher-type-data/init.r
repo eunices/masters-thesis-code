@@ -4,7 +4,7 @@
 
 print(paste0(Sys.time(), " --- INITIALIZING"))
 source('2019-06-19-ascher-type-data/var.r')
-setwd(wd)
+setwd(working_dir)
 
 
 # Prior modification to shp files
