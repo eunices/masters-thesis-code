@@ -54,7 +54,6 @@ pubs$idxes <- as.numeric(pubs$idxes)
 # NEWER CODE, not using loops
 ########################################
 
-
 # Create one matrix for each group
 counts <- data[, list(.N), by=c("group", "year")]
 count.matrix <- dcast(counts, year ~ group, value.var="N")
@@ -70,7 +69,6 @@ if(dim(count.matrix)[2] <= 2){
     row.names(count.matrix) <- rownames
     count.matrix <- count.matrix[, -1]
 }
-
 
 # Get data into stan format
 nyear <- nrow(count.matrix); jgroup <- ncol(count.matrix); npred <- 1
