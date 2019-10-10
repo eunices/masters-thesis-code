@@ -23,7 +23,9 @@ Specific files:
 
 - [Using citizen science data for ecological niche modelling](https://www.researchgate.net/post/does_it_reliable_to_use_only_citizen_science_data_for_Ecological_niche_modelling)
 
-## Error for Edie et al
+## Analyses notes
+
+### Edie et al's issues with bee count data
 
 1. Problem 1: chains not mixed
 
@@ -62,7 +64,7 @@ Note: global dataset used
 
 2. Problem 2: Does not work for "single" column (using year only).
 
-## Calculating areas
+### Calculating areas
 
 - Equal-area projection used is EPSG 3035
 - All countries with exception of Mali, Mexico, Niger, Pakistan, Yemen all were >60% in area.
