@@ -18,10 +18,10 @@ library(rstan)
 # One group only
 # input_filepath <- paste0(dir_analysis_edie_tmp, "format.csv")
 # dat0 <- fread(input_filepath)
-# dat0 <- get_df1(write=F)
-# data <- dat0[, c("idx", "full.name.of.describer", "date.n")]
-# data1 <- cbind(data, group=1); data2 <- cbind(data, group=2)
-# data <- rbind(data1, data2)
+dat0 <- get_df1(write=F)
+data <- dat0[, c("idx", "full.name.of.describer", "date.n")]
+data1 <- cbind(data, group=1); data2 <- cbind(data, group=2)
+data <- rbind(data1, data2)
 
 # # Renaming data
 names(data) <- c("valid_species_id", "species_authority", "year" , "group")
