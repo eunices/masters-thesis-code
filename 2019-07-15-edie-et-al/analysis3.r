@@ -18,8 +18,8 @@ load(paste0(dir_model_folder, "fit.data")) # loads as fit
 zips <- fit # reassign to zips
 rm(fit) # remove from memory
 
+# Diagnostic plots
 # launch_shinystan(zips)
-
 traceplot(zips)
 
 # posterior predictive simulations for checking model fit
