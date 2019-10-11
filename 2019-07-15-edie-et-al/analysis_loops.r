@@ -3,7 +3,7 @@ source('2019-07-15-edie-et-al/init_a.r')
 
 # Parameters
 chosen_speed <- 'fast'
-chosen_indices <- c(1, 2, 3)
+chosen_indices <- c(3, 2, 1)
 
 # Settings (predefined)
 speeds <- list(fast = list(iterations =  100000, 
@@ -56,12 +56,14 @@ model_params_combinations <- list(
 
 if (length(chosen_indices) == 1) {
     chosen_index <- chosen_indices[1]
+    print(paste0("Modelling for chosen_index = ", chosen_index))
     model_params <- model_params_combinations[[chosen_index]]
     source(paste0(dir_script_ed, 'analysis.r'))
 } else {
     for (i in 1:length(chosen_indices)) {
         chosen_index <- chosen_indices[i]
-        model_params <- model_params_combination[[chosen_index]]
+        print(paste0("Modelling for chosen_index = ", chosen_index))
+        model_params <- model_params_combinations[[chosen_index]]
         source(paste0(dir_script_ed, 'analysis.r'))
     }
 
