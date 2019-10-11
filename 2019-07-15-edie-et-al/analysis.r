@@ -17,7 +17,7 @@ if (!exists("model_params")) {
         dataset = "LT", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not
         ll = "N",       # whether using lat lon data (Y) or global.distribution data (N)
         chains = 4,     # stan's number of chains
-        iter = 100000,  # stan's number of iterations
+        iter = 50000,  # stan's number of iterations
         ad = 0.999,      # stan's adapt_delta
         td = 12         # stan's max tree depth
     )   # note: GL and BM always Y; the rest can be either Y or N
@@ -46,4 +46,3 @@ source(paste0(dir_script_ed, 'analysis3.r')) # post
 source(paste0(dir_script_ed, 'analysis4.r')) # forecast
 source(paste0(dir_script_ed, 'analysis5.r')) # plot
 
-# TODO: figure out a way to store params for models

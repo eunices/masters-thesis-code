@@ -5,6 +5,11 @@ library(rstan)
 
 start <- Sys.time()
 
+conn <- file(filepath_log, "a")
+write(paste0("Model identifier: ", model_identifier), conn, sep="\n", append=T)
+write(paste0("Model started at: ", start), conn, sep="\n", append=T)
+close(conn)
+
 # initial data
 files <- dir(dir_model_folder, 
              pattern = 'count_info.data.R',
@@ -38,12 +43,10 @@ for (i in 1:len) {
     else model_li_str <- paste0(model_li_str, ")")
 }
 
-conn <- file(filepath_log)
-writeLines(paste0("Model identifier:", model_identifier), conn)
-writeLines(paste0("Model started at:", start), conn)
-writeLines(paste0("Model stopped at:", stop), conn)
-writeLines(paste0("Model time elapsed:", stop-start), conn)
-writeLines(paste0("Model params:", model_li_str), conn)
+conn <- file(filepath_log, "a")
+write(paste0("Model stopped at: ", stop), conn, sep="\n")
+write(paste0("Model time elapsed: ", stop-start), conn, sep="\n")
+write(paste0("Model params: ", model_li_str), conn, sep="\n")
 close(conn)
 
 # system('shutdown -s')
