@@ -8,33 +8,13 @@ library(rstan)
 ########################################
 # PARAMETERS AND READING DATA
 ########################################
-input_filepath_biogeo <- paste0(dir_analysis_edie_tmp, "format.csv")
-input_filepath_lat <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty7-trop-type2.csv")
-cols_std <- c("idx", "full.name.of.describer", "date.n")
+input_filepath <- paste0(dir_analysis_edie_tmp, "format.csv")
+dat0 <- fread(input_filepath, na=c('')) # or dat0 <- get_df1(write=F)
 
 if(model_params$dataset == "GL") { # global
 
-    dat0 <- fread(input_filepath_biogeo, na=c('')) # or dat0 <- get_df1(write=F)
-    data <- dat0[, ..cols_std]
     data1 <- cbind(data, group=1); data2 <- cbind(data, group=2) # duplicate groups
     data <- rbind(data1, data2)
-
-} else if (model_params$dataset == "LT") { # latitude - tropical or not
-
-    dat0 <- fread(input_filepath_lat, na=c(''))
-    cols <- c(cols_std, "Latitude_type2")
-    data <- unique(dat0[, ..cols]) # remove duplicates
-
-} else if (model_params$dataset == "BG") { # biogeographic realms
-
-    dat0 <- fread(input_filepath, na=c(''))
-    cols <- c(cols_std, "biogeo_wwf")
-    data <- unique(dat0[, ..cols]) # remove duplicates
-
-} else if (model_params$dataset == "BM") { # biomes
-
-    # TODO: 
-
 }
 
 # Renaming headers

@@ -12,12 +12,12 @@ General folder structure guidelines:
 - All "simpler" or exploratory analyses will be stored in the folder itself as `.R` or `.ipynb`.
 - More complex, standalone analyses will be stored in its own folder named as so `<yyyy>-<mm>-<dd>-<topic>` and its own structure which should consist of at least a `data` folder.
 - Commits made by me (Eunice) will be prepended with `[EJYS] <commit message>`.
-- For efficiency purposes, one conda environment is used and its dependencies should be in `requirements.txt` in the main folder. However, if the analyses is niche and requires such unique environment, a `requirements.txt` will be found within the analyses' folder.
 - `tmp/` is a folder for read/write purposes of temporary datasets.
 
 Specific files:
 
-- Standard files such as `.gitignore` and `README.md` are also present.
+- For efficiency purposes, one conda environment is used and its dependencies should be in `requirements.txt` in the main folder. However, if the analyses is niche and requires such unique environment, a `requirements.txt` will be found within the analyses' folder.
+- Standard files such as `.gitignore` and `README.md`.
 - `backup_*.sh` and `recover_*.sh` enables me to backup my data to Dropbox.
 - `keys.r.template` is a template for `keys.r` which contain API keys and working directory used in R.
 

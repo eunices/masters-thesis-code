@@ -13,11 +13,12 @@ options(scipen = 999)
 # Model parameters
 #############
 model_params <- list(
-    dataset="GL", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude (trop or not)
-    chains=4,     # stan's number of chains
-    iter=100000,  # stan's number of iterations
-    ad=0.99,      # stan's adapt_delta
-    td=15         # stan's max tree depth
+    dataset = "GL", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude (trop or not)
+    ll = "Y",       # whether using lat lon data (Y) or global.distribution data (N)
+    chains = 4,     # stan's number of chains
+    iter = 100000,  # stan's number of iterations
+    ad = 0.99,      # stan's adapt_delta
+    td = 15         # stan's max tree depth
 )
 
 # Scripts
@@ -25,14 +26,14 @@ model_params <- list(
 # Initialize identifier
 source('2019-07-15-edie-et-al/init_a.r')
 model_identifier <- paste0(
-    model_params$dataset, "-",
+    model_params$dataset, model_params$ll, "-",
     "C", as.character(model_params$chains), "-",
     "I", as.character(model_params$iter), "-",
     "A", as.character(model_params$ad), "-",
     "T", as.character(model_params$td))
 dir_model_folder <- paste0(dir_analysis_edie_tmp, "/", model_identifier)
 dir.create(dir_model_folder); dir.create(file.path(dir_model_folder, 'output'))
-filepath_log <- paste0(dir_model_folder, "model.log"); file.create(filepath_log)
+filepath_log <- paste0(dir_model_folder, "/model.log"); file.create(filepath_log)
 
 # Analysis scripts
 source(paste0(dir_script_ed, 'analysis0.r')) # data prep
