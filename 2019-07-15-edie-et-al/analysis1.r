@@ -8,7 +8,7 @@ library(rstan)
 ########################################
 # PARAMETERS AND READING DATA
 ########################################
-input_filepath <- paste0(dir_analysis_edie_tmp, "format.csv")
+input_filepath <- paste0(dir_model_folder, "format.csv")
 dat0 <- fread(input_filepath, na=c('')) # or dat0 <- get_df1(write=F)
 
 if(model_params$dataset == "GL") { # global
@@ -83,16 +83,11 @@ data <- list(N = N, P = P, str = as.numeric(starts), end = rep(max(dim(count.mat
              counts = cc, off = t(pub.matrix))
 
 
-
-
-
-
-
 ########################################
 # OUTPUT
 ########################################
 
-output_filepath <- paste0(dir_analysis_edie_tmp, "count_info.data.R")
+output_filepath <- paste0(dir_model_folder, "count_info.data.R")
 
 with(data, {stan_rdump(list = c('N', 'P', 'str', 'end', 'counts', 'off'),
     file = output_filepath)} )

@@ -1,5 +1,9 @@
 source('2019-07-15-edie-et-al/init_a.r')
 
+# TODO: ecoregions shp file
+# TODO: ecoregions and gadm join + lookup statoid
+# TODO: lat bounding boxes [in prog] + lookup statoid
+
 # libraries
 library(sf)
 
