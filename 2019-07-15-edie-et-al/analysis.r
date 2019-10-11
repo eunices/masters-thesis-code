@@ -19,7 +19,7 @@ model_params <- list(
     iter = 100000,  # stan's number of iterations
     ad = 0.99,      # stan's adapt_delta
     td = 15         # stan's max tree depth
-)
+)   # note: GL always Y; BM always N; the rest can be either Y or N
 
 # Scripts
 #############

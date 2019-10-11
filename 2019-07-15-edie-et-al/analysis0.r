@@ -3,6 +3,7 @@ source('2019-07-15-edie-et-al/init_a.r')
 # TODO: ecoregions shp file
 # TODO: ecoregions and gadm join + lookup statoid
 # TODO: lat bounding boxes [in prog] + lookup statoid
+# TODO: modify code?
 
 # libraries
 library(sf)
@@ -113,10 +114,10 @@ if (model_params$dataset == "GL") { # global
             cols <- c(cols_std, "biogeo_wwf")
             join <- unique(dat[, ..cols]) # remove duplicates
 
-        } else if (model_params$dataset == "BM") { # biomes
-            cols <- c(cols_std, "ecoregions2017_biome")
-            join <- unique(dat[, ..cols]) # remove duplicates
-
+        # commented out because this should not be allowed
+        # } else if (model_params$dataset == "BM") { # biomes
+        #     cols <- c(cols_std, "ecoregions2017_biome")
+        #     join <- unique(dat[, ..cols]) # remove duplicates
         }
 
     }
