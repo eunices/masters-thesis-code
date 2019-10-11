@@ -3,8 +3,8 @@ print("WELCOME TO CLEANING SCRIPTS FOR BEE TYPE DATA")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 # setwd("C:/Dev/msc-thesis-code/")
-dir_script_td <- "2019-06-19-ascher-type-data/"
 # source('2019-06-19-ascher-type-data/main.r')
+dir_script_td <- "2019-06-19-ascher-type-data/"
 
 # Scripts
 #############

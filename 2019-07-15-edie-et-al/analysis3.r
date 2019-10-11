@@ -20,7 +20,14 @@ rm(fit) # remove from memory
 
 # Diagnostic plots
 # launch_shinystan(zips)
-traceplot(zips)
+# n <- 30; n_plots <- ceiling(length(names(zips))/n)
+# for (i in 1:1) {
+#     par(ask=T)
+#     start = 1 + (i-1)*n; end = ifelse(i==n_plots, length(names(zips)), start + 29)
+#     tp <- traceplot(zips, pars=names(zips)[start:end])
+#     tp
+# }; par(ask=F)
+traceplot(zips, pars=names(zips))
 
 # posterior predictive simulations for checking model fit
 posterior.sim <- function(data, model, over = FALSE) {

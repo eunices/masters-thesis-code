@@ -9,7 +9,7 @@ library(rstan)
 # PARAMETERS AND READING DATA
 ########################################
 input_filepath <- paste0(dir_model_folder, "format.csv")
-dat0 <- fread(input_filepath, na=c('')) # or dat0 <- get_df1(write=F)
+data <- fread(input_filepath, na=c('')) # or dat0 <- get_df1(write=F)
 
 if(model_params$dataset == "GL") { # global
 
@@ -19,7 +19,7 @@ if(model_params$dataset == "GL") { # global
 
 # Renaming headers
 names(data) <- c("valid_species_id", "species_authority", "year" , "group")
-write.csv(data, paste0(dir_analysis_edie_tmp, "data.csv"))
+write.csv(data, paste0(dir_model_folder, "data.csv"))
 
 # Publications
 df_publications <- get_pub(write=F)

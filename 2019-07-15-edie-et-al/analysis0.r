@@ -2,6 +2,7 @@ source('2019-07-15-edie-et-al/init_a.r')
 
 # TODO: ecoregions shp file
 # TODO: estimate compute power 
+# TODO: read more about model parameters
 
 # libraries
 library(sf)
@@ -123,4 +124,4 @@ if (model_params$dataset == "GL") { # global
 }
 
 
-write.csv(join, paste0(dir_analysis_edie_tmp, 'format.csv'), row.names=F)
+write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F)
