@@ -31,9 +31,7 @@ if(model_params$ll == "Y") {
 
 if (model_params$dataset == "GL") { # global
 
-    data <- df[, ..cols_std]; rm(df)
-    data1 <- cbind(data, group=1); data2 <- cbind(data, group=2) # duplicate groups
-    data <- rbind(data1, data2)
+    join <- df[, ..cols_std]; rm(df)
 
 } else if (model_params$dataset %in% c("LT", "BG", "BM")) { # with regions
 
