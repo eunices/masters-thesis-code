@@ -35,7 +35,6 @@ if(!exists("shp6")) {
     #                     quiet=T)
     # shp7 <- shp6; st_geometry(shp7) <- NULL
 }
-}
 if(!exists("shp8")) {
     # Country pri div shp file
     shp8 <- sf::st_read('data/geo/1_separate/gadm/shp_all_levels/gadm36_1.shp', quiet=T)

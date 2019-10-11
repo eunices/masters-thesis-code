@@ -12,19 +12,22 @@ options(scipen = 999)
 
 # Model parameters
 #############
-model_params <- list(
-    dataset = "GL", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude (trop or not)
-    ll = "Y",       # whether using lat lon data (Y) or global.distribution data (N)
-    chains = 4,     # stan's number of chains
-    iter = 100000,  # stan's number of iterations
-    ad = 0.99,      # stan's adapt_delta
-    td = 15         # stan's max tree depth
-)   # note: GL always Y; BM always N; the rest can be either Y or N
+if (!exist(model_params)) {
+    model_params <- list(
+        dataset = "GL", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not
+        ll = "Y",       # whether using lat lon data (Y) or global.distribution data (N)
+        chains = 4,     # stan's number of chains
+        iter = 100000,  # stan's number of iterations
+        ad = 0.99,      # stan's adapt_delta
+        td = 15         # stan's max tree depth
+    )   # note: GL and BM always Y; the rest can be either Y or N
+}
 
 # Scripts
 #############
-# Initialize identifier
 source('2019-07-15-edie-et-al/init_a.r')
+
+# Initialize identifier
 model_identifier <- paste0(
     model_params$dataset, model_params$ll, "-",
     "C", as.character(model_params$chains), "-",
