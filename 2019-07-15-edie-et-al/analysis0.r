@@ -1,7 +1,7 @@
 source('2019-07-15-edie-et-al/init_a.r')
 
 # TODO: ecoregions shp file
-# TODO: make analysis_loops file
+# TODO: estimate compute power 
 
 # libraries
 library(sf)

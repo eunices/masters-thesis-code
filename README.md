@@ -69,6 +69,7 @@ Note: global dataset used
 ### Calculating areas
 
 - Equal-area projection used is EPSG 3035
-- All countries with exception of Mali, Mexico, Niger, Pakistan, Yemen all were >60% in area.
+- All countries with exception of 5 (Mali, Mexico, Niger, Pakistan, Yemen) all were >60% in area for biogeographic realm
+- All countries with exception of 10 (Argentina, Bangladesh, Chile, China, India, Mexico, Paraguay, Saint Helena, Saudi Arabia, Syria) all were >60% in area for latitude
 
 Last updated 7 Oct 2019
