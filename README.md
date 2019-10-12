@@ -5,10 +5,8 @@ Note: README is written in the first-person voice.
 This repository contains all the code to do with my masters thesis for reproducible research.
 
 ## Folder structure
-
 General folder structure guidelines:
 
-- The repository is more for personal use: to share code between my computers and to backup important artifacts, such as images. I will include images in `plots/` folder.
 - All "simpler" or exploratory analyses will be stored in the folder itself as `.R` or `.ipynb`.
 - More complex, standalone analyses will be stored in its own folder named as so `<yyyy>-<mm>-<dd>-<topic>` and its own structure which should consist of at least a `data` folder.
 - Commits made by me (Eunice) will be prepended with `[EJYS] <commit message>`.
