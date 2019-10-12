@@ -8,18 +8,10 @@ library(rstan)
 ########################################
 # PARAMETERS AND READING DATA
 ########################################
-input_filepath <- paste0(dir_model_folder, "format.csv")
-data <- fread(input_filepath, na=c('')) # or dat0 <- get_df1(write=F)
 
-if(model_params$dataset == "GL") { # global
-
-    data1 <- cbind(data, group=1); data2 <- cbind(data, group=2) # duplicate groups
-    data <- rbind(data1, data2)
-}
-
-# Renaming headers
-names(data) <- c("valid_species_id", "species_authority", "year" , "group")
-write.csv(data, paste0(dir_model_folder, "data.csv"))
+# Read dataframe
+input_filepath <- paste0(dir_model_folder, "data.csv"
+data <- fread(input_filepath, na=c(''))
 
 # Publications
 df_publications <- get_pub(write=F)

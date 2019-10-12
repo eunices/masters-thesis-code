@@ -12,7 +12,7 @@ filepath_input_regions <- 'data/2019-05-23-ascher-bee-data/2019-05-23-Apoidea wo
 
 # read lookup files
 filepath_input_biogeo <- 'data/geo_processed/teow/official/wwf_terr_ecos_dissolved.shp'
-filepath_input_biomes <- 'data/geo/0_manual/Ecoregions2017/Ecoregions2017_dissolved.shp'
+filepath_input_biomes <- 'data/geo/0_manual/Ecoregions2017/Ecoregions2017.shp'
 lookup_cty <- fread('data/lookup/2019-05-29-statoid-country-codes.csv', na=c(''), encoding='UTF-8')
 
 # split dataset according to different parameters as format.csv
@@ -62,23 +62,24 @@ if (model_params$dataset == "GL") { # global
 
             if (model_params$dataset == "BG") {
                 names(join_shp)[which(names(join_shp)=="REALM_EDIT")] <- "biogeo_wwf"
+                
+                # derive new columns for those with country/ country + state only
+                lookup <- lookup_cty[prop_area_biogeo_wwf >= 0.6, c("DL", "biogeo_wwf")], 
+                join_cty <- merge(join_cty, lookup, by.x="type.country.n", by.y="DL", all.x=T, all.y=F)
+                join_cty <- join_cty[!is.na(biogeo_wwf),]
+
             } else if (model_params$dataset == "BM") {
                 names(join_shp)[which(names(join_shp)=="BIOME_NAME")] <- "ecoregions2017_biome"
+                cols_eco <- paste0(cols_ll, "ecoregions2017_biome")
+
+                join <- join_shp@data[, cols_eco]
+                # cannot lookup by country
             }
 
-            # derive new columns for those with country/ country + state only
-            cols_lup <- ifelse(model_params$dataset=="BG", c("DL", "biogeo_wwf"), 
-                ifelse(model_params$dataset=="BM"), c("DL", "ecoregions2017_biome"), "") # TODO: 
-            lookup <- ifelse(model_params$dataset=="BG", 
-                lookup_cty[prop_area_biogeo_wwf >= 0.6, cols_lup], 
-                    ifelse(model_params$dataset=="BM"), 
-                        lookup_cty[prop_area_biome_ecor2017 >= 0.6, cols_lup], "") # TODO: 
+            
 
-            join_cty <- merge(join_cty, lookup, 
-                            by.x="type.country.n", by.y="DL", all.x=T, all.y=F)
-            join_cty <- ifelse(model_params$dataset=="BG", 
-                join_cty[!is.na(biogeo_wwf),], ifelse(model_params$dataset == "BM",
-                    join_cty[!is.na(ecoregions2017_biome),], ""))
+            }
+
 
         } else if (model_params$dataset == "LT") {
 
@@ -123,5 +124,20 @@ if (model_params$dataset == "GL") { # global
 
 }
 
+write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, NA="")
 
-write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F)
+
+# Format the dataframe into actual dataset
+input_filepath <- paste0(dir_model_folder, "format.csv", na="")
+data <- fread(input_filepath, na=c('')) # or dat0 <- get_df1(write=F)
+
+if(model_params$dataset == "GL") { # global
+
+    data1 <- cbind(data, group=1); data2 <- cbind(data, group=2) # duplicate groups
+    data <- rbind(data1, data2)
+}
+
+# Renaming headers
+names(data) <- c("valid_species_id", "species_authority", "year" , "group")
+data <- data[!is.na(group)] # remove NAs
+write.csv(data, paste0(dir_model_folder, "data.csv"), na="")

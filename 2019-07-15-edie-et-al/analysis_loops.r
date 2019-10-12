@@ -3,16 +3,16 @@ source('2019-07-15-edie-et-al/init_a.r')
 
 # Parameters
 chosen_speed <- 'fast'
-chosen_indices <- c(3, 2, 1)
+chosen_indices <- c(5, 3)
 
 # Settings (predefined)
 speeds <- list(fast = list(iterations =  100000, 
-                           adapt_delta = 0.95,
+                           adapt_delta = 0.999,
                            tree_depth = 15,
                            chains = 4),
-               slow = list(iterations =  5000, 
-                           adapt_delta = 0.8,
-                           tree_depth = 10,
+               slow = list(iterations =  50000, 
+                           adapt_delta = 0.99,
+                           tree_depth = 12,
                            chains = 4))
 
 model_params_combinations <- list(
