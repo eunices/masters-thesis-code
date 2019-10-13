@@ -21,7 +21,7 @@ data <- read_rdump(files)
 fit <- stan(file="2019-07-15-edie-et-al/zip_count.stan",
             data=data,
             chains=as.numeric(model_params$chains),
-            warmup=as.numeric(model_params$iter)*0.1, # 10% of iterations
+            warmup=round(as.numeric(model_params$iter)*0.3, 0), # 10% of iterations
             iter=as.numeric(model_params$iter),
             init=0,
             thin=5,
