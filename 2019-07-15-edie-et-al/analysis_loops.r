@@ -2,15 +2,15 @@
 source('2019-07-15-edie-et-al/init_a.r')
 
 # Parameters
-chosen_speed <- 'fast'
-chosen_indices <- c(5, 3)
+chosen_speed <- 'slow'
+chosen_indices <- c(3)
 
 # Settings (predefined)
-speeds <- list(fast = list(iterations =  100000, 
+speeds <- list(slow = list(iterations =  100000, 
                            adapt_delta = 0.999,
                            tree_depth = 15,
                            chains = 4),
-               slow = list(iterations =  50000, 
+               fast = list(iterations =  50000, 
                            adapt_delta = 0.99,
                            tree_depth = 12,
                            chains = 4))

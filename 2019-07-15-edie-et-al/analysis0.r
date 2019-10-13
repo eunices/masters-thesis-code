@@ -64,7 +64,7 @@ if (model_params$dataset == "GL") { # global
                 names(join_shp)[which(names(join_shp)=="REALM_EDIT")] <- "biogeo_wwf"
                 
                 # derive new columns for those with country/ country + state only
-                lookup <- lookup_cty[prop_area_biogeo_wwf >= 0.6, c("DL", "biogeo_wwf")], 
+                lookup <- lookup_cty[prop_area_biogeo_wwf >= 0.6, c("DL", "biogeo_wwf")]
                 join_cty <- merge(join_cty, lookup, by.x="type.country.n", by.y="DL", all.x=T, all.y=F)
                 join_cty <- join_cty[!is.na(biogeo_wwf),]
 
@@ -75,11 +75,6 @@ if (model_params$dataset == "GL") { # global
                 join <- join_shp@data[, cols_eco]
                 # cannot lookup by country
             }
-
-            
-
-            }
-
 
         } else if (model_params$dataset == "LT") {
 
@@ -97,10 +92,12 @@ if (model_params$dataset == "GL") { # global
             join_cty <- merge(join_cty, lookup, by.x="type.country.n", by.y="DL", all.x=T, all.y=F)
             join_cty <- join_cty[!is.na(Latitude_type2),]
         }
-        
-        # combine datasets
-        join <- rbind(join_shp, join_cty, fill=T)
-        join$lat <- NULL; join$lon <-  NULL
+
+        if (model_params$dataset %in% c("BM", "BG")) {
+            # combine datasets
+            join <- rbind(join_shp, join_cty, fill=T)
+            join$lat <- NULL; join$lon <-  NULL
+        }
 
     } else if (model_params$ll == "N") { # not using lat lon
 
@@ -121,10 +118,9 @@ if (model_params$dataset == "GL") { # global
         }
 
     }
-
 }
 
-write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, NA="")
+write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="")
 
 
 # Format the dataframe into actual dataset

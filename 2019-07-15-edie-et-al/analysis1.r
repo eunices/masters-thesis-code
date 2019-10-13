@@ -10,7 +10,7 @@ library(rstan)
 ########################################
 
 # Read dataframe
-input_filepath <- paste0(dir_model_folder, "data.csv"
+input_filepath <- paste0(dir_model_folder, "data.csv")
 data <- fread(input_filepath, na=c(''))
 
 # Publications

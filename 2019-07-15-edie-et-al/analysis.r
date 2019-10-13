@@ -19,7 +19,7 @@ if (!exists("model_params")) {
         chains = 4,     # stan's number of chains
         iter = 100000,  # stan's number of iterations
         ad = 0.999,      # stan's adapt_delta
-        td = 12         # stan's max tree depth
+        td = 15         # stan's max tree depth
     )   # note: GL and BM always Y; the rest can be either Y or N
 }
 
