@@ -55,11 +55,11 @@ if (analysis_edie_loops == "N") {
 
             # Initialize identifier
             model_identifier <- paste0(
-            model_params$dataset, model_params$ll, "-",
-            "C", as.character(model_params$chains), "-",
-            "I", as.character(model_params$iter), "-",
-            "A", as.character(model_params$ad), "-",
-            "T", as.character(model_params$td))
+                model_params$dataset, model_params$ll, "-",
+                "C", as.character(model_params$chains), "-",
+                "I", as.character(model_params$iter), "-",
+                "A", as.character(model_params$ad), "-",
+                "T", as.character(model_params$td))
             dir_model_folder <- paste0(dir_analysis_edie_tmp, "/", model_identifier, "/")
             dir.create(dir_model_folder); dir.create(file.path(dir_model_folder, 'output'))
             filepath_log <- paste0(dir_model_folder, "/model.log"); if (!file.exists(filepath_log)) file.create(filepath_log)
