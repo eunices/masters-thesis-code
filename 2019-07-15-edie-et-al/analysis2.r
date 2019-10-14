@@ -1,4 +1,6 @@
 source('2019-07-15-edie-et-al/init_a.r')
+print(paste0(Sys.time(), " --- analysis2.r"))
+
 
 # fit model to data
 library(rstan)

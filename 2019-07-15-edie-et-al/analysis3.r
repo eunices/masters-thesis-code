@@ -1,4 +1,5 @@
 source('2019-07-15-edie-et-al/init_a.r')
+print(paste0(Sys.time(), " --- analysis3.r"))
 
 # run posterior simulation from model fit
 library(rstan)
@@ -27,7 +28,7 @@ rm(fit) # remove from memory
 #     tp <- traceplot(zips, pars=names(zips)[start:end])
 #     tp
 # }; par(ask=F)
-traceplot(zips, pars=names(zips))
+# traceplot(zips, pars=names(zips))
 
 # posterior predictive simulations for checking model fit
 posterior.sim <- function(data, model, over = FALSE) {
