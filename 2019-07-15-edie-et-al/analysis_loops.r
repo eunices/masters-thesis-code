@@ -91,7 +91,7 @@ run_edie_analysis_loop <- function() {
             # print(model_params)
             tryCatch({
                 source(paste0(dir_script_ed, 'analysis.r'))
-            }, error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))}
+            }, error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))})
         }
     }
 
