@@ -10,7 +10,11 @@ model_li_str <- "model_params <- list("
 len <- length(names(model_params))
 for (i in 1:len) {
     name <- names(model_params)[i]
-    model_li_str <- paste0(model_li_str, name, " = ", "'", model_params[name], "'")
+    if (i == 1) {
+        model_li_str <- paste0(model_li_str, name, " = ", "'", model_params[name], "'")
+    } else {
+        model_li_str <- paste0(model_li_str, name, " = ", model_params[name])
+    }
     if (i < len) model_li_str <- paste0(model_li_str, ", ")
     else model_li_str <- paste0(model_li_str, ")")
 }
