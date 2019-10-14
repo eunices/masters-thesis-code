@@ -163,7 +163,7 @@ if (model_params$dataset == "GL") { # global
     }
 }
 
-rm(df)
+
 
 write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="", fileEncoding = "UTF-8")
 
