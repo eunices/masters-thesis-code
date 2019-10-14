@@ -6,9 +6,7 @@ print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 # setwd("C:/Dev/msc-thesis-code/")
 # source(paste0(dir_script_ed, "analysis.r"))
 
-# Set up
-#############
-options(scipen = 999)
+source('2019-07-15-edie-et-al/init_a.r')
 
 # Model parameters
 #############
@@ -25,8 +23,6 @@ if (!exists("model_params")) {
 
 # Scripts
 #############
-source('2019-07-15-edie-et-al/init_a.r')
-
 # Initialize identifier
 model_identifier <- paste0(
     model_params$dataset, model_params$ll, "-",

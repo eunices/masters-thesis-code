@@ -1,7 +1,6 @@
 # Set up
 #############
 source('2019-07-15-edie-et-al/init_a.r') # init
-options(scipen = 999)
 
 # Parameters
 #############
