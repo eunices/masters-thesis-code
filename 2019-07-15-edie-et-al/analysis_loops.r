@@ -4,12 +4,12 @@ source('2019-07-15-edie-et-al/init_a.r') # init
 
 # Parameters
 #############
-chosen_speeds <- c('fast', 'slow1', 'slow3')
-chosen_indices <- c(2, 3)
+# chosen_speeds <- c('fast', 'slow1', 'slow3')
+# chosen_indices <- c(2, 3)
 # chosen_speeds <- c('fast')
 # chosen_indices <- c(3)
-# chosen_speeds <- c('fast') 
-# chosen_indices <- c(6, 5, 4, 3, 2, 1) # 6 options
+chosen_speeds <- c('fast') 
+chosen_indices <- c(6, 5, 4, 3, 2, 1) # 6 options
 
 # Settings (predefined)
 speeds <- list(slow1 = list(iterations = 100000,
@@ -24,8 +24,8 @@ speeds <- list(slow1 = list(iterations = 100000,
                            adapt_delta = 0.999,
                            tree_depth = 15,
                            chains = 4),
-               fast = list(iterations =  10000, 
-                           adapt_delta = 0.9,
+               fast = list(iterations =  8000, 
+                           adapt_delta = 0.8,
                            tree_depth = 12,
                            chains = 4))
 
