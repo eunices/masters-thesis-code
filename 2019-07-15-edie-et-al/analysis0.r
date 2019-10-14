@@ -5,6 +5,7 @@ print(environment())
 # TODO: read more about model parameters
 # TODO: estimate compute power
 # TODO: figure out how to remove variables after each script
+# https://stackoverflow.com/questions/49818629
 
 # libraries
 library(sf); library(rgeos)
