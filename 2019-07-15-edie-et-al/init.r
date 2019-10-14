@@ -5,7 +5,7 @@ library(gridExtra)
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Read datasets
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- Read datasets"))
+print(paste0(Sys.time(), " --- Initialize"))
 
 dir_analysis_edie_tmp <- 'tmp/edie/'
 dir_script_ed <- "2019-07-15-edie-et-al/"
