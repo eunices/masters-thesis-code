@@ -51,7 +51,7 @@ if (model_params$dataset == "GL") { # global
 
         if (model_params$dataset %in% c("BG", "BM")) {
 
-            file_input <- ifelse(model_params$dataset=="BG", file_input_biogeo, 
+            file_input <- ifelse(model_params$dataset=="BG", filepath_input_biogeo, 
                 ifelse(model_params$dataset=="BM", filepath_input_biomes, ""))
             lupsup <- sf::st_read(file_input, quiet=T)
 
