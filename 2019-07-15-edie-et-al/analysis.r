@@ -1,11 +1,13 @@
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-print("WELCOME TO ANALYSES SCRIPTS FOR BEE TYPE DATA")
+print("WELCOME TO ANALYSES SCRIPTS FOR BEE TYPE DATA (EDIE ET AL)")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 # If running script from elsewhere
 # setwd("C:/Dev/msc-thesis-code/")
 # source(paste0(dir_script_ed, "analysis.r"))
 
+# Init
+#############
 source('2019-07-15-edie-et-al/init_a.r')
 source('2019-07-15-edie-et-al/analysis_loops_params.r')
 
