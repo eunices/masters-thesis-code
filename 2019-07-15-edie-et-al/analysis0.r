@@ -14,11 +14,11 @@ filepath_input_regions <- 'data/2019-05-23-ascher-bee-data/2019-05-23-Apoidea wo
 filepath_input_biogeo <- 'data/geo_processed/teow/official/wwf_terr_ecos_dissolved.shp'
 filepath_input_biomes <- 'data/geo/0_manual/Ecoregions2017/Ecoregions2017.shp'
 lookup_cty <- fread('data/lookup/2019-05-29-statoid-country-codes.csv', na=c(''), encoding='UTF-8')
+lookup_bm <- fread('data/lookup/2019-10-14-biome-broad-cat.csv', na=c(''), encoding='UTF-8')
 
 # split dataset according to different parameters as format.csv
 cols_std <- c("idx", "full.name.of.describer", "date.n")
 cols_ll  <- c("idx", "lat", "lon",
-              "type.country.n", "type.state.n",
               "type.country.n.full", "type.state.n.full",
               "type.country.n", "type.state.n",
               "type.locality.verbatim", "type.locality.updated",
@@ -58,14 +58,12 @@ if (model_params$dataset == "GL") { # global
                                crs = "+init=epsg:4326")
             rm(join_ll)
 
-            join_shp <- sf::st_join(ll, lupsup, join = st_intersects); rm(lupsup)
+            join_shp <- sf::st_join(ll, lupsup, join = st_intersects)
             coords <- data.table(st_coordinates(join_shp))
-            join_shp$lon <- coords$X
-            join_shp$lat <- coords$Y; rm(coords)
+            join_shp$lon <- coords$X; join_shp$lat <- coords$Y; rm(coords)
             join_shp <- data.table(data.frame(join_shp))[order(as.numeric(idx))]
             join_shp$geometry <- NULL
-
-            # join_shp <- join_shp[!duplicated(idx)]
+            join_shp <- join_shp[!duplicated(idx)]
 
             if (model_params$dataset == "BG") {
                 names(join_shp)[which(names(join_shp)=="REALM_EDIT")] <- "biogeo_wwf"
@@ -81,16 +79,49 @@ if (model_params$dataset == "GL") { # global
 
                 join <- join_shp[, ..cols_eco]
                 # cannot lookup by country
+
+                # for NA, get nearest polygon
+                get_nearest <- 
+                    join[is.na(ecoregions2017_biome), c("idx", "lat", "lon")] 
+                get_nearest <- 
+                    sf::st_as_sf(get_nearest, coords = c('lon', 'lat'), crs = "+init=epsg:4326")
+
+                nearestBM <- list()
+                for (i in 1:dim(get_nearest)[1]) {
+                    print(paste0("Getting nearest biome for index", i))
+                    nearestBM[i] <- 
+                        as.character(lupsup[which.min(st_distance(lupsup, get_nearest[i,])),]$BIOME_NAME)
+                }
+                write.csv(nearestBM, 
+                          'data/2019-05-23-ascher-bee-data/eda4_edie/2019-10-14-nearest-loc.csv', 
+                          row.names=F)
+                get_nearest$BIOME_NAME <- nearestBM
+                write.csv(data.frame(get_nearest), 
+                          'data/2019-05-23-ascher-bee-data/eda4_edie/2019-10-14-nearest-loc.csv', 
+                          row.names=F)
+
+                # Above script takes a long time (>1 h), thus its persisted
+                to_join_nearest <- 
+                    fread('data/2019-05-23-ascher-bee-data/eda4_edie/2019-10-14-nearest-loc.csv')
+
+                # Join the "nearest" location to those not intersecting with biomes
+                join <- join(join, to_join_nearest[, c("idx", "BIOME_NAME")], by="idx")
+                join[is.na(ecoregions2017_biome)]$ecoregions2017_biome <- 
+                    join[is.na(ecoregions2017_biome)]$BIOME_NAME
+                
+                # Coarse categories
+                join <- merge(join, lookup_bm,
+                              by.x="ecoregions2017_biome", by.y="BIOME_NAME",
+                              all.x=T, all.y=F)
+
+            }
+                rm(lupsup)
             }
 
         } else if (model_params$dataset == "LT") {
 
             ltrop <- 23.436740; lsubtrop <- 35.000000; ltemp <- 35.000000; lpol <- 66.563250
             join_ll$type <- ""
-            # join_ll[abs(lat) < ltrop, c("type")] <- "Tropical"
-            # join_ll[abs(lat) >= ltrop & abs(lat) < lsubtrop, c("type")] <- "Subtropical"
-            # join_ll[abs(lat) >= lsubtrop & abs(lat) < lpol, c("type")] <- "Temperate"
-            # join_ll[abs(lat) >= lpol, c("type")] <- "Polar"
             join_ll[abs(lat) < ltrop, c("type")] <- "Tropical"
             join_ll[abs(lat) >= ltrop, c("type")] <- "Not tropical"
 
@@ -100,10 +131,9 @@ if (model_params$dataset == "GL") { # global
             join_cty <- join_cty[!is.na(Latitude_type2),]
         }
 
-        if (model_params$dataset %in% c("BM", "BG")) {
+        if (model_params$dataset %in% c("LT", "BG")) {
             # combine datasets
             join <- rbind(join_shp, join_cty, fill=T)
-            join$lat <- NULL; join$lon <-  NULL
         }
 
     } else if (model_params$ll == "N") { # not using lat lon
