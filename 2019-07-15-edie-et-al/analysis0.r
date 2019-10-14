@@ -157,12 +157,12 @@ if (model_params$dataset == "GL") { # global
     }
 }
 
-write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="")
+write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="", fileEncoding = "UTF-8")
 
 
 # Format the dataframe into actual dataset
 input_filepath <- paste0(dir_model_folder, "format.csv", na="")
-data <- fread(input_filepath, na=c('')) # or dat0 <- get_df1(write=F)
+data <- fread(input_filepath, na=c(''), encoding='UTF-8')
 
 if(model_params$dataset == "GL") { # global
 
@@ -173,4 +173,4 @@ if(model_params$dataset == "GL") { # global
 # Renaming headers
 names(data) <- c("valid_species_id", "species_authority", "year" , "group")
 data <- data[!is.na(group)] # remove NAs
-write.csv(data, paste0(dir_model_folder, "data.csv"), row.names=F, na="")
+write.csv(data, paste0(dir_model_folder, "data.csv"), row.names=F, na="", fileEncoding = "UTF-8")

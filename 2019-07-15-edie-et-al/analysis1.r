@@ -11,7 +11,7 @@ library(rstan)
 
 # Read dataframe
 input_filepath <- paste0(dir_model_folder, "data.csv")
-data <- fread(input_filepath, na=c(''))
+data <- fread(input_filepath, na=c(''), encoding="UTF-8")
 
 # Publications
 df_publications <- get_pub(write=F)

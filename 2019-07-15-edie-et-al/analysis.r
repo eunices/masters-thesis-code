@@ -14,10 +14,10 @@ options(scipen = 999)
 #############
 if (!exists("model_params")) {
     model_params <- list(
-        dataset = "LT", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not
-        ll = "N",       # whether using lat lon data (Y) or global.distribution data (N)
+        dataset = "BM", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not
+        ll = "Y",       # whether using lat lon data (Y) or global.distribution data (N)
         chains = 4,     # stan's number of chains
-        iter = 300000,  # stan's number of iterations
+        iter = 5000,  # stan's number of iterations
         ad = 0.99,      # stan's adapt_delta
         td = 15         # stan's max tree depth
     )   # note: GL and BM always Y; the rest can be either Y or N
