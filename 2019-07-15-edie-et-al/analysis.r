@@ -16,7 +16,7 @@ source('2019-07-15-edie-et-al/analysis_loops_params.r')
 analysis_edie_loops <- "Y"
 
 # For loops if analysis_edie_loops == "Y"
-# chosen_speeds <- c('fast', 'slow1', 'slow3')
+# chosen_speeds <- c('slow1', 'slow3')
 # chosen_indices <- c(2, 3)
 # chosen_speeds <- c('fast')
 # chosen_indices <- c(3)
