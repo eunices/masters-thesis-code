@@ -42,3 +42,5 @@ source(paste0(dir_script_ed, 'analysis3.r')) # post
 source(paste0(dir_script_ed, 'analysis4.r')) # forecast
 source(paste0(dir_script_ed, 'analysis5.r')) # plot
 
+# remove all variables after each run (but not functions)
+rm(list = setdiff(ls(), lsf.str()))
