@@ -91,7 +91,7 @@ subset_df <- function(filepath, table, write=T) {
     }
 }
 
-tn <- unique(var$table_name); print(tn)
+tn <- unique(var$table_name)
 
 get_df1 <- function(write=T) {
     fn_df1 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"
