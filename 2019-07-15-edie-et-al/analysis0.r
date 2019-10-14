@@ -5,7 +5,7 @@ source('2019-07-15-edie-et-al/init_a.r')
 # TODO: read more about model parameters
 
 # libraries
-library(sf)
+library(sf); library(rgeos)
 
 # filepaths
 filepath_input_regions <- 'data/2019-05-23-ascher-bee-data/2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty2-cty.csv'
@@ -24,6 +24,8 @@ cols_ll  <- c("idx", "lat", "lon",
               "type.locality.verbatim", "type.locality.updated",
               "flag", "source.of.latlon.n",
               "full.name.of.describer" , "date.n")
+
+model_params = list(ll="Y", dataset="BM")
 
 if(model_params$ll == "Y") {
     df <- get_df1(write=F); dimdf <- dim(df)
@@ -48,17 +50,22 @@ if (model_params$dataset == "GL") { # global
         if (model_params$dataset %in% c("BG", "BM")) {
 
             file_input <- ifelse(model_params$dataset=="BG", file_input_biogeo, 
-                ifelse(model_params$dataset=="BM"), filepath_input_biomes, "")
-            lupsup <- sf::st_read(filepath_input, quiet=T)
+                ifelse(model_params$dataset=="BM", filepath_input_biomes, ""))
+            lupsup <- sf::st_read(file_input, quiet=T)
 
             ll <- sf::st_as_sf(join_ll,
                                coords = c('lon', 'lat'),
                                crs = "+init=epsg:4326")
             rm(join_ll)
 
-            join_shp <- sf::st_join(ll, lupshp, join = st_intersects)
+            join_shp <- sf::st_join(ll, lupsup, join = st_intersects); rm(lupsup)
+            coords <- data.table(st_coordinates(join_shp))
+            join_shp$lon <- coords$X
+            join_shp$lat <- coords$Y; rm(coords)
             join_shp <- data.table(data.frame(join_shp))[order(as.numeric(idx))]
-            join_shp$geometry <- as.character(join_shp$geometry)
+            join_shp$geometry <- NULL
+
+            # join_shp <- join_shp[!duplicated(idx)]
 
             if (model_params$dataset == "BG") {
                 names(join_shp)[which(names(join_shp)=="REALM_EDIT")] <- "biogeo_wwf"
@@ -70,9 +77,9 @@ if (model_params$dataset == "GL") { # global
 
             } else if (model_params$dataset == "BM") {
                 names(join_shp)[which(names(join_shp)=="BIOME_NAME")] <- "ecoregions2017_biome"
-                cols_eco <- paste0(cols_ll, "ecoregions2017_biome")
+                cols_eco <- c(cols_ll, "ecoregions2017_biome")
 
-                join <- join_shp@data[, cols_eco]
+                join <- join_shp[, ..cols_eco]
                 # cannot lookup by country
             }
 
