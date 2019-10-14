@@ -23,8 +23,8 @@ for (i in 1:len) {
 
 conn <- file(filepath_log, "a")
 write(paste0("Model identifier: ", model_identifier), conn, sep="\n", append=T)
-write(paste0("Model started at: ", start), conn, sep="\n", append=T)
 write(paste0("Model params: ", model_li_str), conn, sep="\n")
+write(paste0("Model started at: ", start), conn, sep="\n", append=T)
 close(conn)
 
 # initial data
