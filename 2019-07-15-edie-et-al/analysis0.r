@@ -3,6 +3,7 @@ print(paste0(Sys.time(), " --- analysis0.r"))
 
 # TODO: read more about model parameters
 # TODO: estimate compute power
+# TODO: figure out how to remove variables after each script
 
 # libraries
 library(sf); library(rgeos)

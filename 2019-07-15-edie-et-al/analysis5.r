@@ -172,7 +172,7 @@ P <- ggplot( ) +
     facet_wrap(~group, scales="free_y", labeller=as_labeller(labels) ) +
     ylab("Number of Species") + 
     xlab("Year of Description")
-ggsave(P, file=paste0(dir_model_folder, "output/count_fit.pdf"), width=10, height=6)
+ggsave(P, file=paste0(dir_model_folder, "output/count_fit.pdf"), width=10, height=6); rm(P)
 
 
 # set up plotting data for long-term trends
@@ -197,7 +197,7 @@ P <- ggplot( ) +
     facet_wrap(~group, scales="free_y", labeller=as_labeller(labels) ) +
     ylab("Number of Species") + 
     xlab("Year of Description")
-ggsave(P, file=paste0(dir_model_folder, "output/regression.pdf"), width=10, height=6)
+ggsave(P, file=paste0(dir_model_folder, "output/regression.pdf"), width=10, height=6); rm(P)
 
 
 #       END \\ PLOT MODEL FIT -------------------------------------------------------------------------
@@ -242,6 +242,8 @@ fore.table <- split(forsim, forsim$group) %>% # by group
 # merge to Results table
 RESULTS <- merge(results, fore.table, by="group") %>%
     arrange(desc(observed_species))
-write.csv(RESULTS, file=paste0(dir_model_folder,"output/results.csv"), row.names=FALSE)
+write.csv(RESULTS, file=paste0(dir_model_folder,"output/results.csv"), row.names=FALSE); rm(RESULTS)
 
 #       END \\ SUMMARIZE FORECAST ---------------------------------------------------------------
+rm(obs, sims, mu_sim)
+rm(zips, mapping)

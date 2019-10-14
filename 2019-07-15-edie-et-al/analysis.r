@@ -21,7 +21,7 @@ analysis_edie_loops <- "Y"
 # chosen_speeds <- c('fast')
 # chosen_indices <- c(3)
 chosen_speeds <- c('fast') 
-chosen_indices <- c(6, 5, 4, 3, 2, 1) # 6 options
+chosen_indices <- c(4, 3, 2, 1) # 6 options
 
 
 
