@@ -89,7 +89,9 @@ run_edie_analysis_loop <- function() {
                         "; speed = ", chosen_speed))
             model_params <- model_params_combinations(chosen_speed)[[chosen_index]]
             # print(model_params)
-            source(paste0(dir_script_ed, 'analysis.r'))
+            tryCatch({
+                source(paste0(dir_script_ed, 'analysis.r'))
+            }, error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))}
         }
     }
 
