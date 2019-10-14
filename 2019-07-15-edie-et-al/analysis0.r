@@ -24,7 +24,7 @@ cols_ll  <- c("idx", "lat", "lon",
               "flag", "source.of.latlon.n",
               "full.name.of.describer" , "date.n")
 
-model_params = list(ll="Y", dataset="BM")
+# model_params = list(ll="Y", dataset="BM") # for testing purposes
 
 if(model_params$ll == "Y") {
     df <- get_df1(write=F); dimdf <- dim(df)

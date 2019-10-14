@@ -5,9 +5,20 @@ library(rstan)
 
 start <- Sys.time()
 
+#  Write to logfile
+model_li_str <- "model_params <- list("
+len <- length(names(model_params))
+for (i in 1:len) {
+    name <- names(model_params)[i]
+    model_li_str <- paste0(model_li_str, name, " = ", "'", model_params[name], "'")
+    if (i < len) model_li_str <- paste0(model_li_str, ", ")
+    else model_li_str <- paste0(model_li_str, ")")
+}
+
 conn <- file(filepath_log, "a")
 write(paste0("Model identifier: ", model_identifier), conn, sep="\n", append=T)
 write(paste0("Model started at: ", start), conn, sep="\n", append=T)
+write(paste0("Model params: ", model_li_str), conn, sep="\n")
 close(conn)
 
 # initial data
@@ -21,8 +32,8 @@ data <- read_rdump(files)
 fit <- stan(file="2019-07-15-edie-et-al/zip_count.stan",
             data=data,
             chains=as.numeric(model_params$chains),
-            # warmup=round(as.numeric(model_params$iter)*0.3, 0), # 10% of iterations
-            warmup=round(as.numeric(model_params$iter)*0.2, 0), # 10% of iterations
+            warmup=round(as.numeric(model_params$iter)*0.3, 0), # 30% of iterations
+            # warmup=round(as.numeric(model_params$iter)*0.1, 0), # 10% of iterations
             iter=as.numeric(model_params$iter),
             init=0,
             thin=5,
@@ -35,19 +46,9 @@ save(fit, file=paste0(dir_model_folder, "fit.data"))
 stop <- Sys.time()
 
 # Write to log file
-model_li_str <- "model_params <- list("
-len <- length(names(model_params))
-for (i in 1:len) {
-    name <- names(model_params)[i]
-    model_li_str <- paste0(model_li_str, name, " = ", "'", model_params[name], "'")
-    if (i < len) model_li_str <- paste0(model_li_str, ", ")
-    else model_li_str <- paste0(model_li_str, ")")
-}
-
 conn <- file(filepath_log, "a")
 write(paste0("Model stopped at: ", stop), conn, sep="\n")
 write(paste0("Model time elapsed: ", stop-start), conn, sep="\n")
-write(paste0("Model params: ", model_li_str), conn, sep="\n")
 close(conn)
 
 # system('shutdown -s')

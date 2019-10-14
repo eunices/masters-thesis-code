@@ -5,7 +5,7 @@ options(scipen = 999)
 
 # Parameters
 #############
-# chosen_speeds <- c('fast', 'slow1')
+# chosen_speeds <- c('fast')
 # chosen_indices <- c(3)
 chosen_speeds <- c('fast') 
 chosen_indices <- c(6, 5, 4, 3, 2, 1) # 6 options
@@ -79,36 +79,20 @@ run_edie_analysis_loop <- function() {
     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
-    if (param_len == 1 &  speed_len == 1) {
-
-        chosen_index <- chosen_indices[1]
-        chosen_speed <- chosen_speeds[1]
-        print("#############################################################")
-        print("#############################################################")
-        print("#############################################################")
-        print(paste0(Sys.time(), " --- Modelling for chosen_index = ", chosen_index, 
-                    "; speed = ", chosen_speed))
-        model_params <- model_params_combinations(chosen_speed)[[chosen_index]]
-        # print(model_params)
-        source(paste0(dir_script_ed, 'analysis.r'))
-
-    } else {
-
-        for (j in 1:speed_len) {
-            for (i in 1:param_len) {
-                chosen_index <- chosen_indices[i]; chosen_speed <- chosen_speeds[j]
-                print("#############################################################")
-                print("#############################################################")
-                print("#############################################################")
-                print(paste0(Sys.time(), " --- Modelling for chosen_index = ", chosen_index, 
-                            "; speed = ", chosen_speed))
-                model_params <- model_params_combinations(chosen_speed)[[chosen_index]]
-                # print(model_params)
-                source(paste0(dir_script_ed, 'analysis.r'))
-            }
+    for (j in 1:speed_len) {
+        for (i in 1:param_len) {
+            chosen_index <- chosen_indices[i]; chosen_speed <- chosen_speeds[j]
+            print("#############################################################")
+            print("#############################################################")
+            print("#############################################################")
+            print(paste0(Sys.time(), " --- Modelling for chosen_index = ", chosen_index, 
+                        "; speed = ", chosen_speed))
+            model_params <- model_params_combinations(chosen_speed)[[chosen_index]]
+            # print(model_params)
+            source(paste0(dir_script_ed, 'analysis.r'))
         }
-
     }
+
 }
 
 run_edie_analysis_loop()
