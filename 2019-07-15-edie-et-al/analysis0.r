@@ -1,8 +1,7 @@
 source('2019-07-15-edie-et-al/init_a.r')
 
-# TODO: ecoregions shp file
-# TODO: estimate compute power 
 # TODO: read more about model parameters
+# TODO: estimate compute power
 
 # libraries
 library(sf); library(rgeos)
@@ -80,43 +79,42 @@ if (model_params$dataset == "GL") { # global
                 join <- join_shp[, ..cols_eco]
                 # cannot lookup by country
 
-                # for NA, get nearest polygon
-                get_nearest <- 
-                    join[is.na(ecoregions2017_biome), c("idx", "lat", "lon")] 
-                get_nearest <- 
-                    sf::st_as_sf(get_nearest, coords = c('lon', 'lat'), crs = "+init=epsg:4326")
+                # # for NA, get nearest polygon (script takes a long time >3h, so persisted)
+                # get_nearest <- 
+                #     join[is.na(ecoregions2017_biome), c("idx", "lat", "lon")] 
+                # get_nearest <- 
+                #     sf::st_as_sf(get_nearest, coords = c('lon', 'lat'), crs = "+init=epsg:4326")
 
-                nearestBM <- list()
-                for (i in 1:dim(get_nearest)[1]) {
-                    print(paste0("Getting nearest biome for index", i))
-                    nearestBM[i] <- 
-                        as.character(lupsup[which.min(st_distance(lupsup, get_nearest[i,])),]$BIOME_NAME)
-                }
-                write.csv(nearestBM, 
-                          'data/2019-05-23-ascher-bee-data/eda4_edie/2019-10-14-nearest-loc.csv', 
-                          row.names=F)
-                get_nearest$BIOME_NAME <- nearestBM
-                write.csv(data.frame(get_nearest), 
-                          'data/2019-05-23-ascher-bee-data/eda4_edie/2019-10-14-nearest-loc.csv', 
-                          row.names=F)
+                # nearestBM <- list()
+                # for (i in 1:dim(get_nearest)[1]) {
+                #     print(paste0("Getting nearest biome for index", i))
+                #     nearestBM[i] <- 
+                #         as.character(lupsup[which.min(st_distance(lupsup, get_nearest[i,])),]$BIOME_NAME)
+                # }
+                # get_nearest$BIOME_NAME <- sapply(nearestBM, function(x) x[[1]])
+                # st_geometry(get_nearest) <- NULL
+                # write.csv(data.frame(get_nearest), 
+                #           'data/2019-05-23-ascher-bee-data/eda4_edie/2019-10-14-nearest-loc.csv', 
+                #           row.names=F)
 
-                # Above script takes a long time (>1 h), thus its persisted
+                # Above script takes a long time (>3 h), thus its persisted
                 to_join_nearest <- 
                     fread('data/2019-05-23-ascher-bee-data/eda4_edie/2019-10-14-nearest-loc.csv')
 
                 # Join the "nearest" location to those not intersecting with biomes
                 join <- join(join, to_join_nearest[, c("idx", "BIOME_NAME")], by="idx")
                 join[is.na(ecoregions2017_biome)]$ecoregions2017_biome <- 
-                    join[is.na(ecoregions2017_biome)]$BIOME_NAME
+                    join[is.na(ecoregions2017_biome)]$BIOME_NAME; join$BIOME_NAME <- NULL
                 
                 # Coarse categories
                 join <- merge(join, lookup_bm,
                               by.x="ecoregions2017_biome", by.y="BIOME_NAME",
                               all.x=T, all.y=F)
+                
+                join <- join[BIOME_CAT != "N/A"]
 
             }
                 rm(lupsup)
-            }
 
         } else if (model_params$dataset == "LT") {
 
@@ -132,9 +130,15 @@ if (model_params$dataset == "GL") { # global
         }
 
         if (model_params$dataset %in% c("LT", "BG")) {
-            # combine datasets
-            join <- rbind(join_shp, join_cty, fill=T)
+            join <- rbind(join_shp, join_cty, fill=T) # combine datasets
         }
+        
+        # subset columns required
+        custom_col <- ifelse(model_params$dataset == "LT", "type", 
+            ifelse(model_params$dataset == "BG", "biogeo_wwf", 
+                ifelse(model_params$dataset == "BM", "BIOME_CAT", "")))
+        cols_ll_final <- c(cols_std,  custom_col)
+        join <- join[, ..cols_ll_final]
 
     } else if (model_params$ll == "N") { # not using lat lon
 
@@ -148,12 +152,8 @@ if (model_params$dataset == "GL") { # global
             cols <- c(cols_std, "biogeo_wwf")
             join <- unique(dat[, ..cols]) # remove duplicates
 
-        # commented out because this should not be allowed
-        # } else if (model_params$dataset == "BM") { # biomes
-        #     cols <- c(cols_std, "ecoregions2017_biome")
-        #     join <- unique(dat[, ..cols]) # remove duplicates
+        # commented out because this should not be allowed - "BM" not by country GLOBAL.MAPPER
         }
-
     }
 }
 
@@ -173,4 +173,4 @@ if(model_params$dataset == "GL") { # global
 # Renaming headers
 names(data) <- c("valid_species_id", "species_authority", "year" , "group")
 data <- data[!is.na(group)] # remove NAs
-write.csv(data, paste0(dir_model_folder, "data.csv"), na="")
+write.csv(data, paste0(dir_model_folder, "data.csv"), row.names=F, na="")

@@ -70,4 +70,8 @@ Note: global dataset used
 - All countries with exception of 5 (Mali, Mexico, Niger, Pakistan, Yemen) all were >60% in area for biogeographic realm
 - All countries with exception of 10 (Argentina, Bangladesh, Chile, China, India, Mexico, Paraguay, Saint Helena, Saudi Arabia, Syria) all were >60% in area for latitude
 
+### Ecoregions shp file
+
+- Ecoregions 2017 shp file cannot be dissolved by BIOME_NAME due to 8 topology errors that are not trivial to resolve automatically.
+
 Last updated 7 Oct 2019
