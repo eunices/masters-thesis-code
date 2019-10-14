@@ -115,7 +115,8 @@ if (model_params$dataset == "GL") { # global
                 join <- join[BIOME_CAT != "N/A"]
 
             }
-                rm(lupsup)
+                
+            rm(lupsup)
 
         } else if (model_params$dataset == "LT") {
 
@@ -123,6 +124,7 @@ if (model_params$dataset == "GL") { # global
             join_ll$type <- ""
             join_ll[abs(lat) < ltrop, c("type")] <- "Tropical"
             join_ll[abs(lat) >= ltrop, c("type")] <- "Not tropical"
+            join_shp <- join_ll; rm(join_ll)
 
             # lookup <- lookup_cty[prop_area_biogeo_wwf >= 0.6, c("DL", "Latitude_type")]
             lookup <- lookup_cty[prop_area_biogeo_wwf >= 0.6, c("DL", "Latitude_type2")]
@@ -158,7 +160,7 @@ if (model_params$dataset == "GL") { # global
     }
 }
 
-rm(df, lupsup)
+rm(df)
 
 write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="", fileEncoding = "UTF-8")
 
