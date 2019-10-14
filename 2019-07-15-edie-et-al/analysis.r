@@ -15,6 +15,14 @@ source('2019-07-15-edie-et-al/analysis_loops_params.r')
 #############
 analysis_edie_loops <- "Y"
 
+# For loops if analysis_edie_loops == "Y"
+# chosen_speeds <- c('fast', 'slow1', 'slow3')
+# chosen_indices <- c(2, 3)
+# chosen_speeds <- c('fast')
+# chosen_indices <- c(3)
+chosen_speeds <- c('fast') 
+chosen_indices <- c(6, 5, 4, 3, 2, 1) # 6 options
+
 if (analysis_edie_loops == "N") {
     model_params <- list(
         dataset = "BM", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not
