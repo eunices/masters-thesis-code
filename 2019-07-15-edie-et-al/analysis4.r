@@ -78,3 +78,4 @@ forecast <- mclapply(1:1000, mc.cores=1, function(ii) {
    post.forecast(data=data, ftime=ftime, model=zips) 
 })
 save(forecast, file=paste0(dir_model_folder, "forecast.data")); rm(data, zips, forecast)
+

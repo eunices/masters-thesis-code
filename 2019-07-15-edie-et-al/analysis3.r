@@ -98,9 +98,6 @@ allsim <- mclapply(1:1000, function(ii) {
 # allsim <- mclapply(1:1000, mc.cores=4, function(ii) {
 #     posterior.sim(data = data, model = zips, over = FALSE)
 # } )
-save(allsim, file=paste0(dir_model_folder, "post.data")); rm(allsim, zips, data)
+save(allsim, file=paste0(dir_model_folder, "post.data"))
 
-
-
-
-
+rm(allsim, zips, data)

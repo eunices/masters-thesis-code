@@ -53,3 +53,4 @@ write(paste0("Model time elapsed: ", stop-start), conn, sep="\n")
 close(conn)
 
 # system('shutdown -s')
+rm(fit, data)

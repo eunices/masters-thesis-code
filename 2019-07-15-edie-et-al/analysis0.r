@@ -4,7 +4,7 @@ print(environment())
 
 # TODO: read more about model parameters
 # TODO: estimate compute power
-# TODO: figure out how to remove variables after each script
+# TODO: figure out how to remove variables after each script 
 # https://stackoverflow.com/questions/49818629
 
 # filepaths
@@ -179,3 +179,5 @@ if(model_params$dataset == "GL") { # global
 names(data) <- c("valid_species_id", "species_authority", "year" , "group")
 data <- data[!is.na(group)] # remove NAs
 write.csv(data, paste0(dir_model_folder, "data.csv"), row.names=F, na="", fileEncoding = "UTF-8")
+
+rm(data, join)

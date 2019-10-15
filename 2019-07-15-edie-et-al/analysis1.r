@@ -178,8 +178,4 @@ original_code <- function() {
 }
 
 # data <-  original_code() 
-
-
-
-
-
+rm(N, P, starts, pub.matrix, cc, count.matrix)

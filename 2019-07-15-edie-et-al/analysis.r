@@ -13,7 +13,7 @@ source('2019-07-15-edie-et-al/analysis_loops_params.r')
 
 # Model parameters
 #############
-analysis_edie_loops <- "Y"
+analysis_edie_loops <- "N"
 
 # For loops if analysis_edie_loops == "Y"
 # chosen_speeds <- c('slow1', 'slow3')
@@ -27,6 +27,7 @@ chosen_indices <- c(3)   # 6 options
 
 if (analysis_edie_loops == "N") {
     model_params <- parse_model_identifier("BGY-C4-I8000-A0.8-T12")
+    # model_params <- parse_model_identifier("GLY-C4-I8000-A0.8-T12")
     # model_params <- list(
     #     dataset = "BM", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not
     #     ll = "Y",       # whether using lat lon data (Y) or global.distribution data (N)
@@ -95,7 +96,6 @@ if (analysis_edie_loops == "N") {
                 source(paste0(dir_script_ed, 'analysis3.r')) # post
                 source(paste0(dir_script_ed, 'analysis4.r')) # forecast
                 source(paste0(dir_script_ed, 'analysis5.r')) # plot
-
             }, 
             # warning=function(w) {write(toString(w), filepath_log, append=TRUE)},
             error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))})
