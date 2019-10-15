@@ -21,7 +21,7 @@ analysis_edie_loops <- "Y"
 # chosen_speeds <- c('fast')
 # chosen_indices <- c(3)
 chosen_speeds <- c('fast') 
-chosen_indices <- c(4, 3, 2, 1) # 6 options
+chosen_indices <- c(3)   # 6 options
 
 
 
@@ -96,7 +96,9 @@ if (analysis_edie_loops == "N") {
                 source(paste0(dir_script_ed, 'analysis4.r')) # forecast
                 source(paste0(dir_script_ed, 'analysis5.r')) # plot
 
-            }, error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))})
+            }, 
+            warning=function(w) {write(toString(w), filepath_log, append=TRUE)},
+            error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))})
         }
     }
 } 
