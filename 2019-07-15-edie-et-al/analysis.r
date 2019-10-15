@@ -97,7 +97,7 @@ if (analysis_edie_loops == "N") {
                 source(paste0(dir_script_ed, 'analysis5.r')) # plot
 
             }, 
-            warning=function(w) {write(toString(w), filepath_log, append=TRUE)},
+            # warning=function(w) {write(toString(w), filepath_log, append=TRUE)},
             error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))})
         }
     }
