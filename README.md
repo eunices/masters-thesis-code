@@ -1,7 +1,5 @@
 # README
 
-Note: README is written in the first-person voice.
-
 This repository contains all the code to do with my masters thesis for reproducible research.
 
 ## Folder structure
