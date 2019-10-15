@@ -1,6 +1,4 @@
 # Libraries
-# Sys.setenv(JAVA_HOME="D:/Dev/java/jdk-13")
-
 suppressMessages(library(data.table))
 suppressMessages(library(dplyr))
 suppressMessages(library(ggmap))
