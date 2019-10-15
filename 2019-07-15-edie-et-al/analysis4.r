@@ -4,11 +4,6 @@ print(paste0(Sys.time(), " --- analysis4.r"))
 args <- commandArgs(trailingOnly=TRUE)
 ftime <- as.numeric(15)
 
-library(rstan)
-library(plyr)
-library(parallel)
-library(gamlss.dist)
-
 set.seed(420)
 
 # initial data

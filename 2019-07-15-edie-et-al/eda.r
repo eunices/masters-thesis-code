@@ -1,11 +1,5 @@
 source('2019-07-15-edie-et-al/init_e.r')
 
-# Libraries
-#############
-library(tidyr)
-library(ggplot2)
-library(grid); library(gridExtra)
-
 # Analyses
 #############
 theme <- theme_minimal()

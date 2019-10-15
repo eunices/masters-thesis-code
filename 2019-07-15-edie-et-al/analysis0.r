@@ -7,9 +7,6 @@ print(environment())
 # TODO: figure out how to remove variables after each script
 # https://stackoverflow.com/questions/49818629
 
-# libraries
-library(sf); library(rgeos)
-
 # filepaths
 filepath_input_regions <- 'data/2019-05-23-ascher-bee-data/2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty2-cty.csv'
 

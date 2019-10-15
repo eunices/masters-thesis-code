@@ -2,10 +2,6 @@ source('2019-07-15-edie-et-al/init_a.r')
 print(paste0(Sys.time(), " --- analysis3.r"))
 
 # run posterior simulation from model fit
-library(rstan)
-library(gamlss.dist)
-library(parallel)
-library(shinystan)
 
 set.seed(420)
 

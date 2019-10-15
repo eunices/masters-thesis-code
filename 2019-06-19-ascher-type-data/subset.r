@@ -1,13 +1,6 @@
 # Setup
 source('2019-06-19-ascher-type-data/var.r')
 
-# Libraries
-library(xlsx)
-library(ggplot2)
-library(grid); library(gridExtra)
-library(plyr); library(maptools)
-library(reshape)
-
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Load clean data frames (useful columns only)
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

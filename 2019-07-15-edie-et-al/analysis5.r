@@ -6,12 +6,6 @@ args <- commandArgs(trailingOnly=TRUE)
 # OFFSET <- as.logical(args[1])
 OFFSET <- TRUE
 
-library(dplyr)
-library(plyr)
-library(rstan)
-library(ggplot2)
-
-
 #    LOAD DATA --------------------------------------------------------------------------------------------
 
 dataRAW <- read.csv(paste0(dir_model_folder, "data.csv")) # original data
