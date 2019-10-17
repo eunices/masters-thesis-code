@@ -12,7 +12,7 @@ speeds <- list(slow1 = list(iterations = 100000,
                             tree_depth = 15,
                             chains = 4),
                fast = list(iterations =  8000, 
-                           adapt_delta = 0.8,
+                           adapt_delta = 0.9,
                            tree_depth = 12,
                            chains = 4))
 

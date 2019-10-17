@@ -101,3 +101,4 @@ allsim <- mclapply(1:1000, function(ii) {
 save(allsim, file=paste0(dir_model_folder, "post.data"))
 
 rm(allsim, zips, data)
+

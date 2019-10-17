@@ -1,4 +1,8 @@
+source('2019-06-19-ascher-type-data/init.r')
 source('2019-06-19-ascher-type-data/subset.r')
+
+library(networkD3)
+library(shiny)
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - resource flow
@@ -12,7 +16,9 @@ spp_s <- data.table(spp_s %>% separate_rows(full.name.of.describer, sep="; "))
 des <- get_des(write=F)
 des <- des[, c("full.name.of.describer.n", "residence.country.describer.n")]
 des <- data.table(des %>% separate_rows(residence.country.describer.n, sep="; "))
-des <- des[, id := seq_len(.N), by = full.name.of.describer.n][order(full.name.of.describer.n, id),][!duplicated(full.name.of.describer.n)]
+des <- des[, id := seq_len(.N), by = full.name.of.describer.n][
+        order(full.name.of.describer.n, id),][
+            !duplicated(full.name.of.describer.n)]
 spp_s <- merge(spp_s, des, by.x="full.name.of.describer", by.y="full.name.of.describer.n",
       all.x=T, all.y=F)
 t <- table(spp_s$type.country.n, spp_s$residence.country.describer.n)
@@ -31,9 +37,29 @@ names(t) <- c("ori", "des", "N", "dY", "dX", "oY", "oX")
 t$Geom <- paste0("LINESTRING (", as.character(t$oX), 
                 " ", as.character(t$oY), ", ", 
                 as.character(t$dX), " ", as.character(t$dY), ")")
-t$no_flow <- t$res == t$des
+t$no_flow <- t$ori == t$des
 write.csv(t,
-          paste0(dir_data, "eda1_flow/2019-09-22-flow-map-type-loc-des-country.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda1_flow/2019-09-22-flow-map-type-loc-des-country.csv"), 
+          na='', row.names=F, fileEncoding="UTF-8")
+
+# Plot network
+threshold <- 50; t2 <- t[N>threshold & no_flow == "FALSE"]; no_flow <- t[no_flow == "TRUE"]
+nodes <- unique(data.frame(label=c(t2$ori, t2$des)))
+nodes <- data.table(nodes); nodes <- nodes[order(label)]
+nodes$idx <- seq(0, dim(nodes)[1]-1, 1)
+nodes <- merge(nodes, no_flow[, c("ori", "N")], by.x="label", by.y="ori", all.x=T, all.y=F)
+
+t2 <- merge(t2, nodes[, c("label", "idx")], by.x="ori", by.y="label", all.x=T, all.y=F)
+t2 <- merge(t2, nodes[, c("label", "idx")], by.x="des", by.y="label", all.x=T, all.y=F, suffixes=c("_from", "_to"))
+# t2$N <- t2$N/threshold
+
+clickJS <- 'd3.selectAll(".node").on("click", function(d){ alert(d.name + ": " + d.nodesize + "spp."); })'
+
+forceNetwork(
+  Links = t2, Nodes = nodes,
+  Source = "idx_from", Target = "idx_to", Value = "N", 
+  NodeID = "label", Group="label", Nodesize="N", arrow=T, zoom=T, opacity=1, 
+  charge=-10000, fontFamily="san-serif", fontSize=15, opacityNoHover = 1, clickAction=clickJS)
 
 # Summarising where there is no flow
 table(t$no_flow)
@@ -141,5 +167,3 @@ write.csv(merge5[country.of.type.repository.n_long!=0][order(country.of.type.rep
           paste0(dir_data, 'eda1_flow/2019-10-03-loc.csv'), row.names=F)
 
 
-
-# TODO: cross comparisons

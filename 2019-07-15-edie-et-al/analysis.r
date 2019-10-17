@@ -4,7 +4,7 @@ print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 # If running script from elsewhere
 # setwd("C:/Dev/msc-thesis-code/")
-# source(paste0(dir_script_ed, "analysis.r"))
+# source(paste0("2019-07-15-edie-et-al/", "analysis.r"))
 
 # Init
 #############
@@ -21,13 +21,13 @@ analysis_edie_loops <- "N"
 # chosen_speeds <- c('fast')
 # chosen_indices <- c(3)
 chosen_speeds <- c('fast') 
-chosen_indices <- c(3)   # 6 options
+chosen_indices <- c(2)   # 6 options
 
 
 
 if (analysis_edie_loops == "N") {
-    model_params <- parse_model_identifier("BGY-C4-I8000-A0.8-T12")
-    # model_params <- parse_model_identifier("GLY-C4-I8000-A0.8-T12")
+    model_params <- parse_model_identifier("BGY-C4-I8000-A0.99-T12")
+    # model_params <- parse_model_identifier("LTY-C4-I8000-A0.8-T12")
     # model_params <- list(
     #     dataset = "BM", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not
     #     ll = "Y",       # whether using lat lon data (Y) or global.distribution data (N)
