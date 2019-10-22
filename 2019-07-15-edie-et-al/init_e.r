@@ -97,14 +97,14 @@ if(!exists("shp_gadm_0")) {
     shp_gadm_0 <- sf::st_read('data/geo/1_separate/gadm/shp_all_levels/gadm36_0.shp')
 }
 if(!exists("shp_biogeo")) {
-    print(paste0("Read shp_biogeo"))
-    shp_biogeo <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo2.shp')
+    # print(paste0("Read shp_biogeo"))
+    # shp_biogeo <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo2.shp')
 }
 if(!exists("shp_biogeo_holt")) {
-    print(paste0("Read shp_biogeo_holt"))
-    shp_biogeo_holt <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_holt2.shp')
+    # print(paste0("Read shp_biogeo_holt"))
+    # shp_biogeo_holt <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo_holt2.shp')
 }
 if(!exists("shp_continents")) {
-    print(paste0("Read shp_continents"))
-    shp_continents <- sf::st_read('data/geo_processed/gadm/gadm36_0_utf8_continents.shp')
+    # print(paste0("Read shp_continents"))
+    # shp_continents <- sf::st_read('data/geo_processed/gadm/gadm36_0_utf8_continents.shp')
 }
