@@ -58,7 +58,8 @@ http://mc-stan.org/misc/warnings.html#tail-ess
                    thin=5,
                    cores=4,
                    verbose=TRUE, seed=301,
-                   control = list(max_treedepth = 15))```
+                   control = list(max_treedepth = 15))
+```
 
 Note: global dataset used
 
