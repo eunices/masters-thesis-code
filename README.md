@@ -16,6 +16,9 @@ Specific files:
 - Standard files such as `.gitignore` and `README.md`.
 - `backup_*.sh` and `recover_*.sh` enables me to backup my data to Dropbox.
 - `keys.r.template` is a template for `keys.r` which contain API keys and working directory used in R.
+- To facilitate faster environment setup, a few scripts have been written respectively for `R` and `python`:
+    - `install.r` is a file used to parse for all `.R` scripts for packages and install packages that are not already installed, and to be used after following steps in `setup_r.sh` (whether manually or otherwise); this is in contrary to python where
+    - `environment-py.yaml` is the holder of all packages to be installed with accompanying script `setup_py.sh`. This means packages are installed based on environment-py-msc.yaml instead of parsing through all `.py` files for libraries.
 
 ## Useful links
 

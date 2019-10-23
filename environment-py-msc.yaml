@@ -1,0 +1,9 @@
+name: msc
+channels:
+  - conda-forge
+dependencies:
+  - ipykernel
+  - jupyter
+  - numpy
+  - pandas
+  - seaborn
