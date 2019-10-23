@@ -8,4 +8,4 @@ file=msc-thesis-code-data-$d
 # From portable hard disk drive
 dir="/mnt/e/msc"
 mkdir data
-cp -R $dir/$file data/* 
+cp -R $dir/$file data/*
