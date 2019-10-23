@@ -3,6 +3,7 @@
 This repository contains all the code to do with my masters thesis for reproducible research.
 
 ## Folder structure
+
 General folder structure guidelines:
 
 - All "simpler" or exploratory analyses will be stored in the folder itself as `.R` or `.ipynb`.
@@ -20,9 +21,10 @@ Specific files:
     - `install.r` is a file used to parse for all `.R` scripts for packages and install packages that are not already installed, and to be used after following steps in `setup_r.sh` (whether manually or otherwise); this is in contrary to python where
     - `environment-py.yaml` is the holder of all packages to be installed with accompanying script `setup_py.sh`. This means packages are installed based on environment-py-msc.yaml instead of parsing through all `.py` files for libraries.
 
-## Useful links
+Setting up:
 
-- [Using citizen science data for ecological niche modelling](https://www.researchgate.net/post/does_it_reliable_to_use_only_citizen_science_data_for_Ecological_niche_modelling)
+- Get code: ```git clone -–depth 1 https://github.com/eunices/masters-thesis-code.git ```
+- Get data: from external hardisk, or some cloud storage [to be updated]
 
 ## Analyses notes
 
@@ -56,8 +58,7 @@ http://mc-stan.org/misc/warnings.html#tail-ess
                    thin=5,
                    cores=4,
                    verbose=TRUE, seed=301,
-                   control = list(max_treedepth = 15))
-```
+                   control = list(max_treedepth = 15))```
 
 Note: global dataset used
 
@@ -75,4 +76,4 @@ Note: global dataset used
 
 - Ecoregions 2017 shp file cannot be dissolved by BIOME_NAME due to 8 topology errors that are not trivial to resolve automatically.
 
-Last updated 7 Oct 2019
+Last updated 23 Oct 2019
