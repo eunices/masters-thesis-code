@@ -24,7 +24,7 @@ Specific files:
 Setting up:
 
 - Get code: ```git clone -–depth 1 https://github.com/eunices/masters-thesis-code.git ```
-- Environment setup: use `install.r` for R (after R and Java JDK installed, `JAVA_HOME` env variable set) and `environment-py.yaml`
+- Environment setup: use `install.r` for R (after R and Java JDK installed, `JAVA_HOME` env variable set either globally or in `keys.r` as a workaround for computers which require admin access to install Java) and `environment-py.yaml`
 - Get data: from external hardisk, or some cloud storage [to be updated]
 
 ## Analyses notes

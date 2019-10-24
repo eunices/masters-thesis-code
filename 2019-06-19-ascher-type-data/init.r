@@ -8,8 +8,9 @@ source('2019-07-15-edie-et-al/libraries.r')
 setwd(working_dir)
 
 # Set environment variables
-Sys.setenv(JAVA_HOME=java_home)
-
+if (Sys.getenv(JAVA_HOME) == "") {
+    Sys.setenv(JAVA_HOME=java_home)
+}
 
 # Prior modification to shp files
 # shp2 <- sf::st_read('data/geo_processed/gadm/gadm36_boundaries_utf8_biogeo.shp')
