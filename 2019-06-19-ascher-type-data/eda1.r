@@ -62,7 +62,8 @@ write.csv(ss[order(-prop)],
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Launch shiny apps
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-shiny::runApp('2019-06-19-ascher-type-data/eda1.1_shiny')
+# shiny::runApp('2019-06-19-ascher-type-data/eda1.1_shiny')
+# source('keys.r')
 # rsconnect::setAccountInfo(name='ejysoh',
 # 			              token=shiny_token,
 # 			              secret=shiny_secret)
