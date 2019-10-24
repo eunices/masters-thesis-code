@@ -68,20 +68,20 @@ ui <- fluidPage(
                   c("All", nodes_lab), selected=NULL, multiple=F),
       conditionalPanel(
         condition = "input.countryInput != 'All'",
-        checkboxGroupInput("typeInput", "Type (donor or receipient)", 
+        checkboxGroupInput("typeInput", "Type (Source or Target)", 
                           choices = list("Source" = 1,
                                          "Target" = 2),
                           selected = c(1,2))
-      )
-
+      ),
+      "Legend:", br(),
+      "Src = Source i.e., country of taxonomist", br(),
+      "Tgt = Target i.e. country of type species", br(),
+      "N = N species described",
     ),
     mainPanel(
       sidebarLayout(
         sidebarPanel(tableOutput("networkTable"),
-                     "Legend:", br(),
-                     "Src = Source i.e., country of taxonomist", br(),
-                     "Tgt = Target i.e. country of type species", br(),
-                     "N = N species described", width=2), 
+                     width=2), 
         mainPanel(forceNetworkOutput("network", height="500px"), width=10)
       ),
       width=12
