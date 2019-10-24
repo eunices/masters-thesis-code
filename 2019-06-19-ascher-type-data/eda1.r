@@ -41,30 +41,14 @@ t$no_flow <- t$ori == t$des
 write.csv(t,
           paste0(dir_data, "eda1_flow/2019-09-22-flow-map-type-loc-des-country.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
-
-# Plot network
-threshold <- 50; t2 <- t[N>threshold & no_flow == "FALSE"]; no_flow <- t[no_flow == "TRUE"]
-nodes <- unique(data.frame(label=c(t2$ori, t2$des)))
-nodes <- data.table(nodes); nodes <- nodes[order(label)]
-nodes$idx <- seq(0, dim(nodes)[1]-1, 1)
-nodes <- merge(nodes, no_flow[, c("ori", "N")], by.x="label", by.y="ori", all.x=T, all.y=F)
-
-t2 <- merge(t2, nodes[, c("label", "idx")], by.x="ori", by.y="label", all.x=T, all.y=F)
-t2 <- merge(t2, nodes[, c("label", "idx")], by.x="des", by.y="label", all.x=T, all.y=F, suffixes=c("_from", "_to"))
-# t2$N <- t2$N/threshold
-
-clickJS <- 'd3.selectAll(".node").on("click", function(d){ alert(d.name + ": " + d.nodesize + "spp."); })'
-
-forceNetwork(
-  Links = t2, Nodes = nodes,
-  Source = "idx_from", Target = "idx_to", Value = "N", 
-  NodeID = "label", Group="label", Nodesize="N", arrow=T, zoom=T, opacity=1, 
-  charge=-10000, fontFamily="san-serif", fontSize=15, opacityNoHover = 1, clickAction=clickJS)
+write.csv(t,
+          paste0(dir_script, "eda1.1_shiny/data/2019-09-22-flow-map-type-loc-des-country.csv"), 
+          na='', row.names=F, fileEncoding="UTF-8")
 
 # Summarising where there is no flow
 table(t$no_flow)
 s1 <- t[, list(N=sum(N)), by='des']
-s2 <- t[no_flow==TRUE, list(N=sum(N)), by='des']
+s2 <- t[no_flow=="TRUE", list(N=sum(N)), by='des']
 ss <- merge(s1, s2, by='des', all.x=T, all.y=F, suffixes=c("_total", "_cty"))
 ss$prop <- ss$N_cty/ss$N_total
 ss <- merge(ss, lookup.cty[, c("GEC", "Country", "A.3")], 
@@ -74,7 +58,7 @@ ss <- merge(ss, lookup.cty[, c("GEC", "Country", "A.3")],
 write.csv(ss[order(-prop)],
           paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-# Rather cool flow map in R https://kateto.net/network-visualization
+shiny::runApp('2019-06-19-ascher-type-data/eda1.1_shiny')
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Location analysis suggested by Ascher

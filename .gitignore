@@ -9,6 +9,7 @@
 *.db
 *.sqlite
 /tmp/*
+*/data/*
 
 # Do not ignore folders with gitkeep
 !.gitkeep 
