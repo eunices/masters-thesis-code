@@ -11,6 +11,7 @@
 /tmp/*
 # *.csv
 **/data/*
+**/rsconnect/**
 
 # Do not ignore folders with gitkeep
 !.gitkeep 

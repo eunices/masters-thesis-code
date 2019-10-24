@@ -3,8 +3,10 @@ library(shiny)
 library(data.table)
 library(networkD3)
 
+# TODO: https://docs.rstudio.com/shinyapps.io/getting-started.html#deploying-applications
+
 # Default settings
-default_threshold <- 50
+default_threshold <- 0
 
 # Read data (residing in data folder)
 lu <- fread("data/lookup-country-codes.csv",
