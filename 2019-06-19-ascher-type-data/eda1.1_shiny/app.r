@@ -76,7 +76,7 @@ ui <- fluidPage(
       "Legend:", br(),
       "Src = Source i.e., country of taxonomist", br(),
       "Tgt = Target i.e. country of type species", br(),
-      "N = N species described",
+      "N = N species described"
     ),
     mainPanel(
       sidebarLayout(
