@@ -4,6 +4,7 @@ library(rgeos)
 library(raster)
 library(spatialEco)
 
+# Checks if centroid is in polygon, and assigns polygon via spatial join
 
 filepath <- 'data/geo_processed/gadm/gadm36_0_utf8_continents.shp'
 # filepath <- 'data/geo_processed/gadm/gadm36_1_utf8.shp'
@@ -57,6 +58,7 @@ shp.pol_boundaries.cen <- SpatialPointsDataFrame(shp.pol_boundaries.cen,
 
 
 
+# Using different shp files for the spatial join
 
 #################### For WWF's ecoregions
 
@@ -274,8 +276,7 @@ rgdal::writeOGR(obj=shp.pol_boundaries.cen,
 
 
 
-
-# joins
+# Merge back spatial join
 
 filepath <- 'data/geo/1_separate/gadm/shp_all_levels/gadm36_0.shp'
 poly <- rgdal::readOGR(filepath, use_iconv=TRUE, encoding = "UTF-8")
@@ -283,7 +284,6 @@ filepath <- 'tmp/pt.shp'
 pt <- rgdal::readOGR(filepath, use_iconv=TRUE, encoding = "UTF-8")
 
 pt.poly <- spatialEco::point.in.poly(pt, poly)
-
 
 rgdal::writeOGR(obj=pt.poly, 
                 dsn="tmp/pt.shp",
