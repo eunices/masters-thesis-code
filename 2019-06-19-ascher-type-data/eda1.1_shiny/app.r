@@ -67,8 +67,8 @@ ui <- fluidPage(
       conditionalPanel(
         condition = "input.countryInput != 'All'",
         checkboxGroupInput("typeInput", "Type (donor or receipient)", 
-                          choices = list("Origin" = 1,
-                                          "Destination" = 2),
+                          choices = list("Source" = 1,
+                                         "Target" = 2),
                           selected = c(1,2))
       )
 
