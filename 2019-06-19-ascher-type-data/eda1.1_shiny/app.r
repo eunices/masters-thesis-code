@@ -75,7 +75,7 @@ ui <- fluidPage(
     ),
     mainPanel(
       sidebarLayout(
-        sidebarPanel(tableOutput("networkTable"), br(),
+        sidebarPanel(tableOutput("networkTable"),
                      "Legend:", br(),
                      "Src = Source i.e., country of taxonomist", br(),
                      "Tgt = Target i.e. country of type species", br(),
