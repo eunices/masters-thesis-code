@@ -110,7 +110,7 @@ server <- function(input, output) {
         Source = "idx_from", Target = "idx_to", Value = "N", 
         NodeID = "label", Group="label", Nodesize="N", arrow=T, zoom=T, opacity=.8, 
         radiusCalculation = JS("Math.sqrt(d.nodesize, 2)"),
-        linkWidth = JS("function(d) { return Math.log(d.value, 2); }"),
+        linkWidth = JS("function(d) { return d.value == 1 ? 1 : Math.log(d.value, 2); }"),
         charge=-20000/(input$thresholdInput+1), fontFamily="Calibri", 
         fontSize=20, opacityNoHover = 1, clickAction=clickJS)
     }
