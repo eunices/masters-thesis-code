@@ -72,15 +72,15 @@ ui <- fluidPage(
                           choices = list("Source" = 1,
                                          "Target" = 2),
                           selected = c(1,2))
-      ),
-      "Legend:", br(),
-      "Src = Source i.e., country of taxonomist", br(),
-      "Tgt = Target i.e. country of type species", br(),
-      "N = N species described"
+      )
     ),
     mainPanel(
       sidebarLayout(
         sidebarPanel(tableOutput("networkTable"),
+                     "Legend:", 
+                     "Src = Source i.e., country of taxonomist", 
+                     "Tgt = Target i.e. country of type species", 
+                     "N = N species described",
                      width=2), 
         mainPanel(forceNetworkOutput("network", height="500px"), width=10)
       ),
