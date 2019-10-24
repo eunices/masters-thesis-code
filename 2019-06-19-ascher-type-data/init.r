@@ -8,7 +8,7 @@ source('2019-07-15-edie-et-al/libraries.r')
 setwd(working_dir)
 
 # Set environment variables
-if (Sys.getenv(JAVA_HOME) == "") {
+if (Sys.getenv("JAVA_HOME") == "") {
     Sys.setenv(JAVA_HOME=java_home)
 }
 
