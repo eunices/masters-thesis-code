@@ -1,5 +1,7 @@
 geocode_api = 'XXXXXXXXXXX'
 working_dir = 'C:/Dev/msc-thesis-code'
 java_home = "D:/Dev/java/jdk-13"
-shiny_token="XXXXXXXXXXX"
-shiny_secret="XXXXXXXXXXX"
+shiny_token1="XXXXXXXXXXX"
+shiny_secret1="XXXXXXXXXXX"
+shiny_token2="XXXXXXXXXXX"
+shiny_secret2="XXXXXXXXXXX"

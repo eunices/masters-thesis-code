@@ -59,15 +59,6 @@ ss <- merge(ss, lookup.cty[, c("GEC", "Country", "A.3")],
 write.csv(ss[order(-prop)],
           paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - Launch shiny apps
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# shiny::runApp('2019-06-19-ascher-type-data/eda1.1_shiny')
-# source('keys.r')
-# rsconnect::setAccountInfo(name='ejysoh',
-# 			              token=shiny_token,
-# 			              secret=shiny_secret)
-# rsconnect::deployApp('2019-06-19-ascher-type-data/eda1.1_shiny')
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Location analysis suggested by Ascher

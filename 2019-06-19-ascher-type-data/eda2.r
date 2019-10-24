@@ -9,11 +9,21 @@ library(networkD3)
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- coauthor network"))
 
+# Get authors
+cols <- c("full.name.of.describer.n", "last.name", "alive", "residence.country.describer.first",
+          "describer.gender.n", "n_pubs", "spp_N", "min", "max_corrected")
+auth <- get_des(write=F)[, ..cols]
+write.csv(auth, paste0(dir_script, "eda2.1_shiny/data/authors.csv"), 
+          na='', row.names=F, fileEncoding="UTF-8")
+
 # Load data
 nw <- fread(
     paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 nw[, names(nw) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 nw <- nw[!(is.na(p1) | is.na(p2))]
+
+write.csv(nw, paste0(dir_script, "eda2.1_shiny/data/7.0-author-networks.csv"), 
+          na='', row.names=F, fileEncoding="UTF-8")
 
 split_cty <- function(x) {
     strsplit(x, split="; ")[[1]][1]

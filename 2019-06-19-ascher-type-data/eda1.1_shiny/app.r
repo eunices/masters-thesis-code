@@ -5,6 +5,8 @@ library(shiny)
 library(data.table)
 library(networkD3)
 
+# TODO: changes with time
+
 # Constants / parameters
 DEFAULT_THRESHOLD <- 0
 
@@ -138,7 +140,7 @@ server <- function(input, output) {
         Links = updated$t2, Nodes = updated$nodes,
         Source = "idx_from", Target = "idx_to", Value = "N", 
         colourScale = JS("d3.scaleOrdinal(d3.schemeCategory10);"),
-        NodeID = "label", Group=grouping, Nodesize="N", arrow=T, zoom=T, opacity=.8, 
+        NodeID = "label", Group=grouping, Nodesize="N", arrows=T, zoom=T, opacity=.8, 
         radiusCalculation = JS("Math.sqrt(d.nodesize)"),
         linkWidth = JS("function(d) { return d.value == 1 ? 1 : Math.log(d.value, 2); }"),
         charge=-10000/((input$thresholdInput/200+1)), fontFamily="Calibri", 
