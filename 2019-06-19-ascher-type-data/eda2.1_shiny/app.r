@@ -19,11 +19,10 @@ t <- merge(t, auth[, c('last.name', 'full.name.of.describer.n')], by.x="p2", by.
 t$p1 <- NULL; t$p2 <- NULL
 names(t) <- gsub("last.name_", "", names(t))
 
-
 # Threshold, authors, variable by
 
 # Create labels for authors
-nodes_lab <- sort(auth$last.name)
+nodes_lab <- sort(auth[last.name %in% unique(t$p1, t$p2)]$last.name)
 
 # Update data function
 update <- function(threshold=DEFAULT_THRESHOLD, author=NA) {
@@ -72,8 +71,8 @@ ui <- fluidPage(
     mainPanel(
       sidebarLayout(
         sidebarPanel(tableOutput("networkTable"),
-                     width=4), 
-        mainPanel(forceNetworkOutput("network", height="500px"), width=8)
+                     width=3), 
+        mainPanel(forceNetworkOutput("network", height="500px"), width=9)
       ),
       width=12
     )
