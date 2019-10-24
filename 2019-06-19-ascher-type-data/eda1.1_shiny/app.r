@@ -25,12 +25,15 @@ update <- function(threshold, country=NA, typeInput=c()) {
   if (is.na(country) | country == "All") {
     t2 <- t2[N>threshold]
   } else {
-    if(length(typeInput) <= 0 | (1 %in% typeInput & 2 %in% typeInput)) {
+    if((1 %in% typeInput & 2 %in% typeInput)) {
       t2 <- t2[N>threshold & (ori == country | des == country)]
     } else if (1 %in% typeInput) {
       t2 <- t2[N>threshold & (ori == country)]
     } else if (2 %in% typeInput) {
       t2 <- t2[N>threshold & (des == country)]
+    } else if (length(typeInput) <= 0) {
+      nodes <- data.frame(idx=integer(), label=character())
+      t2 <- data.frame(ori=character(), des=character())
     }
   }
 
@@ -72,8 +75,12 @@ ui <- fluidPage(
     ),
     mainPanel(
       sidebarLayout(
-        sidebarPanel(tableOutput("networkTable"), width=2),
-        mainPanel(forceNetworkOutput("network", height="500px"))
+        sidebarPanel(tableOutput("networkTable"), br(),
+                     "Legend:", br(),
+                     "Src = Source i.e., country of taxonomist", br(),
+                     "Tgt = Target i.e. country of type species", br(),
+                     "N = N species described", width=2), 
+        mainPanel(forceNetworkOutput("network", height="500px"), width=10)
       ),
       width=12
     )
@@ -117,7 +124,9 @@ server <- function(input, output) {
       updated <- update(input$thresholdInput, parsed_country, input$typeInput)
     }
     if(dim(updated$t2)[1] >=1) {
-      updated$t2[,c("des", "ori", "N")]
+      tableshow <- updated$t2[,c("ori", "des", "N")]
+      names(tableshow) <- c("Src", "Tgt", "N")
+      tableshow
     } else { data.frame(Comment=c("No data")) }
 
   })
