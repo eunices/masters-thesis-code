@@ -26,8 +26,8 @@ chosen_indices <- c(2)   # 6 options
 
 
 if (analysis_edie_loops == "N") {
-    model_params <- parse_model_identifier("BGY-C4-I8000-A0.95-T12")
-    # model_params <- parse_model_identifier("LTY-C4-I8000-A0.8-T12")
+    # model_params <- parse_model_identifier("BGY-C4-I100000-A0.999-T15")
+    model_params <- parse_model_identifier("BGY-C4-I8000-A0.999-T12")
     # model_params <- list(
     #     dataset = "BM", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not
     #     ll = "Y",       # whether using lat lon data (Y) or global.distribution data (N)

@@ -8,6 +8,6 @@ conda env create -f environment-py-msc.yaml
 conda activate msc
 python -m ipykernel install --user --name msc --display-name "msc"
 
-# conda env update -f environment-py.yaml
+# conda env update -f environment-py-msc.yaml
 # conda activate msc
 # conda info --env

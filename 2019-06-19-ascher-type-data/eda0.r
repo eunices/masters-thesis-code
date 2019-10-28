@@ -1,17 +1,21 @@
 source('2019-06-19-ascher-type-data/subset.r')
 
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - basic summary statistics 
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- basic summary statistics"))
-
-
-
+theme <- theme_minimal()
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - basic summary statistics 
+# Section - basic summary statistics for taxonomist analysis
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- basic summary statistics"))
+print(paste0(Sys.time(), " --- basic summary statistics for species dataset"))
+df <- get_df1(write=F)
+authors <- df[, c("full.name.of.describer", "idx")] %>% 
+    separate_rows(full.name.of.describer, sep="; ")
+authors <- data.table(authors)[, .N, by="idx"]
+ggplot(authors, aes(x=N)) + geom_histogram(binwidth=1) +
+    labs(x="\nN authors", y="Frequency\n") + theme
+table(authors$N)
+prop.table(table(authors$N))
+
+print(paste0(Sys.time(), " --- basic summary statistics for taxonomist dataset"))
 
 df_describers <- get_des(write=F)
 
