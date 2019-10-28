@@ -1,11 +1,5 @@
 source('2019-07-15-edie-et-al/init_a.r')
 print(paste0(Sys.time(), " --- analysis0.r"))
-print(environment())
-
-# TODO: read more about model parameters
-# TODO: estimate compute power
-# TODO: figure out how to remove variables after each script 
-# https://stackoverflow.com/questions/49818629
 
 # filepaths
 filepath_input_regions <- 'data/2019-05-23-ascher-bee-data/2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty2-cty.csv'
@@ -159,8 +153,6 @@ if (model_params$dataset == "GL") { # global
         }
     }
 }
-
-
 
 write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="", fileEncoding = "UTF-8")
 

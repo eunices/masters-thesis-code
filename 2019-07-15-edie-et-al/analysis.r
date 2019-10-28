@@ -3,7 +3,7 @@ print("WELCOME TO ANALYSES SCRIPTS FOR BEE TYPE DATA (EDIE ET AL)")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 # If running script from elsewhere
-# setwd("C:/Dev/msc-thesis-code/")
+# setwd("C:/_dev/msc/thesis/")
 # source(paste0("2019-07-15-edie-et-al/", "analysis.r"))
 
 # Init
@@ -26,7 +26,7 @@ chosen_indices <- c(2)   # 6 options
 
 
 if (analysis_edie_loops == "N") {
-    model_params <- parse_model_identifier("BGY-C4-I8000-A0.99-T12")
+    model_params <- parse_model_identifier("BGY-C4-I8000-A0.95-T12")
     # model_params <- parse_model_identifier("LTY-C4-I8000-A0.8-T12")
     # model_params <- list(
     #     dataset = "BM", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not

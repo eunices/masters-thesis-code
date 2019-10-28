@@ -2,8 +2,7 @@ source('2019-06-19-ascher-type-data/init.r')
 source('2019-06-19-ascher-type-data/subset.r')
 
 library(networkD3)
-library(shiny)
-library(rsconnect)
+library(ggplot2)
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - resource flow
@@ -52,13 +51,31 @@ s1 <- t[, list(N=sum(N)), by='des']
 s2 <- t[no_flow=="TRUE", list(N=sum(N)), by='des']
 ss <- merge(s1, s2, by='des', all.x=T, all.y=F, suffixes=c("_total", "_cty"))
 ss$prop <- ss$N_cty/ss$N_total
-ss <- merge(ss, lookup.cty[, c("GEC", "Country", "A.3")], 
+ss <- merge(ss, lookup.cty[, c("GEC", "Country", "A.3", "Class")], 
       by.x="des", by.y="GEC", 
       all.x=T, all.y=F)
+ss[is.na(N_cty)]$N_cty <- 0
+ss[is.na(prop)]$prop <- 0
+ss$Class <- factor(ss$Class, levels=c("High income", 
+                                      "Upper middle income",
+                                      "Lower middle income",
+                                      "Low income", 
+                                      "Unclassed"))
+ggplot(ss[!is.na(Class)], aes(x=Class, y=round(prop*100,2))) + 
+  geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
+    labs(x="\nWorld Bank classification", y = "Proportion of species described\n by taxonomist residing in country (%)\n") +
+         theme_classic()
+res <- car::Anova(lm(prop~Class,data = ss), type="III")
+
+summary(ss[prop>0 & N_total>=5]$prop*100)
+length(ss[prop>0 & N_total>=5]$prop*100)
+shapiro.test(ss[prop>0 & N_total>=5]$prop*100) # not normal
 
 write.csv(ss[order(-prop)],
           paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
+write.csv(data.frame(res),
+          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop-anova.csv"), na='', row.names=T, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Location analysis suggested by Ascher
