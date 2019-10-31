@@ -21,8 +21,12 @@ analysis_edie_loop_type <- "string" # string or params
 chosen_speeds <- c('fast') 
 chosen_indices <- c(3, 6)   # 6 options
 # For analysis_edie_loop_type == "string"
-chosen_params <- c("BMY-C4-I12000-A0.8-T12",
-                   "BGN-C4-I12000-A0.9-T12")
+chosen_params <- c("BMY-C4-I20000-A0.8-T12",
+                   "BGN-C4-I12000-A0.99-T12")
+# chosen_params <- c("BGN-C4-I100000-A0.99-T12",
+#                    "BMY-C4-I100000-A0.8-T12",
+#                    "BGN-C4-I300000-A0.99-T12",
+#                    "BMY-C4-I300000-A0.8-T12"a)
 
 if (analysis_edie_loops == "N") {
     model_params <- parse_model_identifier("BGN-C4-I8000-A0.99-T12")
@@ -79,7 +83,7 @@ if (analysis_edie_loops == "N") {
 
     } else if (analysis_edie_loop_type=="string") {
         len_params <- length(chosen_params)
-        print(paste0(Sys.time(), " --- Start modelling loop for ", len_params))
+        print(paste0(Sys.time(), " --- Start modelling loop for ", len_params, " parameter strings."))
 
         for (i in 1:len_params) {
             combination_list[[i]] <- parse_model_identifier(chosen_params[i])

@@ -1,3 +1,4 @@
+
 source('2019-06-19-ascher-type-data/init.r')
 source('2019-06-19-ascher-type-data/subset.r')
 
@@ -166,5 +167,3 @@ merge5[is.na(merge5)] <- 0
 
 write.csv(merge5[country.of.type.repository.n_long!=0][order(country.of.type.repository.n_long)], 
           paste0(dir_data, 'eda1_flow/2019-10-03-loc.csv'), row.names=F)
-
-

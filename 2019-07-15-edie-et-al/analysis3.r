@@ -15,6 +15,14 @@ load(paste0(dir_model_folder, "fit.data")) # loads as fit
 zips <- fit # reassign to zips
 rm(fit) # remove from memory
 
+
+# N <- length(slotNames(fit))
+# for(i in 1:N) {
+#   print(i)
+#   name <- slotNames(fit)[i]; print(eval(paste0("fit@", name)))
+# }
+
+
 # Diagnostic plots
 # launch_shinystan(zips)
 # n <- 30; n_plots <- ceiling(length(names(zips))/n)

@@ -46,10 +46,13 @@ fit <- stan(file="2019-07-15-edie-et-al/zip_count.stan",
 save(fit, file=paste0(dir_model_folder, "fit.data")); rm(fit)
 stop <- Sys.time()
 
+
 # Write to log file
+warn <- warnings()
 conn <- file(filepath_log, "a")
 write(paste0("Model stopped at: ", stop), conn, sep="\n")
 write(paste0("Model time elapsed: ", stop-start), conn, sep="\n")
+write(paste0("Warnings: ", warn), conn, sep="\n")
 close(conn)
 
 # system('shutdown -s')

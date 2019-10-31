@@ -88,5 +88,18 @@ summary(as.numeric(df_describers[prop_species_described_as_last_author<0.9]$max)
 summary(as.numeric(df_describers[prop_species_described_as_last_author>=.9]$max))
 # Seem that those with higher proportion of species described as last author are more recent
 
+# Where are most of the taxonomists
+des_a <- df_describers[spp_N_1st_auth_s>=1]
 
-# histogram of species / author
+des_a1 <- df_describers[, c("full.name.of.describer.n", "residence.country.describer.full")] %>% 
+    separate_rows(residence.country.describer.full, sep= "; ")
+des_a1 <- des_a1[, .N, by="full.name.of.describer.n"]
+table(des_a1$N)
+prop.table(table(des_a1$N))
+
+write.csv(merge(des_a1[N>=2], df_describers[, c("full.name.of.describer.n", "residence.country.describer.full")],
+      by="full.name.of.describer.n", all.x=T, all.y=F),
+      paste0(dir_data, "eda0_sum/2019-10-28-taxonomist-country-res-morethanone.csv"))
+
+write.csv(df_describers[, .N,by=c("residence.country.describer.first")][order(-N)],
+          paste0(dir_data, "eda0_sum/2019-10-28-taxonomist-country-res-summary.csv"))  
