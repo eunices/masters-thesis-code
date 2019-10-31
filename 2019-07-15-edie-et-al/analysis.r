@@ -26,7 +26,7 @@ chosen_params <- c("BMY-C4-I20000-A0.8-T12",
 # chosen_params <- c("BGN-C4-I100000-A0.99-T12",
 #                    "BMY-C4-I100000-A0.8-T12",
 #                    "BGN-C4-I300000-A0.99-T12",
-#                    "BMY-C4-I300000-A0.8-T12"a)
+#                    "BMY-C4-I300000-A0.8-T12")
 
 if (analysis_edie_loops == "N") {
     model_params <- parse_model_identifier("BGN-C4-I8000-A0.99-T12")
