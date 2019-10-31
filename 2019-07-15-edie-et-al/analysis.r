@@ -13,21 +13,20 @@ source('2019-07-15-edie-et-al/analysis_loops_params.r')
 
 # Model parameters
 #############
-analysis_edie_loops <- "N"
+analysis_edie_loops <- "Y" # Y or N
+analysis_edie_loop_type <- "string" # string or params
 
-# For loops if analysis_edie_loops == "Y"
-# chosen_speeds <- c('slow1', 'slow3')
-# chosen_indices <- c(2, 3)
-# chosen_speeds <- c('fast')
-# chosen_indices <- c(3)
+# For analysis_edie_loops == "Y"
+# For analysis_edie_loop_type == "defined"
 chosen_speeds <- c('fast') 
-chosen_indices <- c(2)   # 6 options
-
-
+chosen_indices <- c(3, 6)   # 6 options
+# For analysis_edie_loop_type == "string"
+chosen_params <- c("BMY-C4-I12000-A0.8-T12",
+                   "BGN-C4-I12000-A0.9-T12")
 
 if (analysis_edie_loops == "N") {
-    # model_params <- parse_model_identifier("BGY-C4-I100000-A0.999-T15")
-    model_params <- parse_model_identifier("BGY-C4-I8000-A0.999-T12")
+    model_params <- parse_model_identifier("BGN-C4-I8000-A0.99-T12")
+
     # model_params <- list(
     #     dataset = "BM", # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not
     #     ll = "Y",       # whether using lat lon data (Y) or global.distribution data (N)
@@ -60,21 +59,37 @@ if (analysis_edie_loops == "N") {
 } else if (analysis_edie_loops == "Y") {
     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-    speed_len <- length(chosen_speeds); param_len <- length(chosen_indices)
-    print(paste0(Sys.time(), " --- Start modelling loop for ", speed_len, " x ", 
-                 param_len, " = ", speed_len*param_len, " combinations."))
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
     
-    for (j in 1:speed_len) {
-        for (i in 1:param_len) {
-            chosen_index <- chosen_indices[i]; chosen_speed <- chosen_speeds[j]
-            print("#############################################################")
-            print("#############################################################")
-            print("#############################################################")
-            print(paste0(Sys.time(), " --- Modelling for chosen_index = ", chosen_index, 
-                        "; speed = ", chosen_speed))
-            model_params <- model_params_combinations(chosen_speed)[[chosen_index]]
+    combination_list <- list()
+    if(analysis_edie_loop_type=="params") {
+
+        speed_len <- length(chosen_speeds); param_len <- length(chosen_indices)
+        print(paste0(Sys.time(), " --- Start modelling loop for ", speed_len, " x ", 
+                param_len, " = ", speed_len*param_len, " combinations."))
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+
+        for (j in 1:speed_len) {
+            for (i in 1:param_len) {
+                chosen_index <- chosen_indices[i]; chosen_speed <- chosen_speeds[j]
+                idx <- j*i
+                combination_list[[idx]] <- model_params_combinations(chosen_speed)[[chosen_index]]
+            }
+        }
+
+    } else if (analysis_edie_loop_type=="string") {
+        len_params <- length(chosen_params)
+        print(paste0(Sys.time(), " --- Start modelling loop for ", len_params))
+
+        for (i in 1:len_params) {
+            combination_list[[i]] <- parse_model_identifier(chosen_params[i])
+        }
+
+    }
+
+    for (i in 1:length(combination_list)) {
+
+            model_params <- combination_list[[i]]
 
             # Initialize identifier
             model_identifier <- paste0(
@@ -99,6 +114,5 @@ if (analysis_edie_loops == "N") {
             }, 
             # warning=function(w) {write(toString(w), filepath_log, append=TRUE)},
             error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))})
-        }
     }
-} 
+}
