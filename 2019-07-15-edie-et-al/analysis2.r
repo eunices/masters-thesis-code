@@ -56,4 +56,3 @@ write(paste0("Warnings: ", warn), conn, sep="\n")
 close(conn)
 
 # system('shutdown -s')
-rm(fit, data)
