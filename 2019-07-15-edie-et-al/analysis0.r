@@ -146,7 +146,6 @@ if (model_params$dataset == "GL") { # global
             join <- unique(dat[, ..cols]) # remove duplicates
 
         } else if ((model_params$dataset == "BG") |  (model_params$dataset == "BN")) { # biogeographic realms
-            print("I GOT HERE")
             cols <- c(cols_std, "biogeo_wwf")
             join <- unique(dat[, ..cols]) # remove duplicates
             # if (model_params$dataset == "BN") {
