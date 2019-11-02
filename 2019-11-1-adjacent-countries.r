@@ -58,7 +58,7 @@ all.neighbors <- all.neighbors[, c("country_iso3", "neighbor_iso3", "country_nam
 # 5          TKM           AFG
 # 6          UZB           AFG
 
-write.csv(all.neighbors, "data/lookup/2019-11-1-country-adjacent.csv", fileEncoding="UTF-8", row.names=F)
+write.csv(all.neighbors, "data/lookup/2019-11-01-country-adjacent.csv", fileEncoding="UTF-8", row.names=F)
 
 neighbor.summary <- all.neighbors %>%
   group_by(country_iso3) %>%

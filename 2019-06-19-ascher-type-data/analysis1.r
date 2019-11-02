@@ -30,7 +30,7 @@ lu_col <- lu_col[, c("DL_Col", "DL_ColRuler", "IndYear")]
 lu_col$col_check <- 1
 lu_col <- unique(lu_col)
 
-lu_adj <- fread('data/lookup/2019-11-1-country-adjacent_edit.csv',  encoding="UTF-8") # country_iso3 neighbor_iso3
+lu_adj <- fread('data/lookup/2019-11-01-country-adjacent_edit.csv',  encoding="UTF-8") # country_iso3 neighbor_iso3
 lu_adj <- lu_adj[!(DL1 %in% c("No man's land", "Disputed land")), ]
 lu_adj <- lu_adj[!(DL2 %in% c("No man's land", "Disputed land")), ]
 lu_adj$adj_check <- 1

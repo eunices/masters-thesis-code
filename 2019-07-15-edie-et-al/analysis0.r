@@ -148,11 +148,13 @@ if (model_params$dataset == "GL") { # global
         } else if (model_params$dataset == "BG") { # biogeographic realms
             cols <- c(cols_std, "biogeo_wwf")
             join <- unique(dat[, ..cols]) # remove duplicates
+            join <- join[biogeo_wwf != "AN",]# remove antarctica
 
         # commented out because this should not be allowed - "BM" not by country GLOBAL.MAPPER
         }
     }
 }
+
 
 write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="", fileEncoding = "UTF-8")
 
