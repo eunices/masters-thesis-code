@@ -29,7 +29,7 @@ if (model_params$dataset == "GL") { # global
 
     join <- df[, ..cols_std]; rm(df)
 
-} else if (model_params$dataset %in% c("LT", "BG", "BM")) { # with regions
+} else if (model_params$dataset %in% c("LT", "BG", "BM", "BN")) { # with regions
 
     if (model_params$ll == "Y") { # using lat lon
 
@@ -126,13 +126,13 @@ if (model_params$dataset == "GL") { # global
             join_cty <- join_cty[!is.na(Latitude_type2),]
         }
 
-        if (model_params$dataset %in% c("LT", "BG")) {
+        if (model_params$dataset %in% c("LT", "BG", "BN")) {
             join <- rbind(join_shp, join_cty, fill=T) # combine datasets
         }
         
         # subset columns required
         custom_col <- ifelse(model_params$dataset == "LT", "type", 
-            ifelse(model_params$dataset == "BG", "biogeo_wwf", 
+            ifelse((model_params$dataset == "BG") |  (model_params$dataset == "BN"), "biogeo_wwf", 
                 ifelse(model_params$dataset == "BM", "BIOME_CAT", "")))
         cols_ll_final <- c(cols_std,  custom_col)
         join <- join[, ..cols_ll_final]
@@ -145,16 +145,18 @@ if (model_params$dataset == "GL") { # global
             cols <- c(cols_std, "Latitude_type2")
             join <- unique(dat[, ..cols]) # remove duplicates
 
-        } else if (model_params$dataset == "BG") { # biogeographic realms
+        } else if ((model_params$dataset == "BG") |  (model_params$dataset == "BN")) { # biogeographic realms
+            print("I GOT HERE")
             cols <- c(cols_std, "biogeo_wwf")
             join <- unique(dat[, ..cols]) # remove duplicates
-            join <- join[biogeo_wwf != "AN",]# remove antarctica
+            # if (model_params$dataset == "BN") {
+            #     join <- join[biogeo_wwf != "AN",]# remove antarctica
+            # }
 
         # commented out because this should not be allowed - "BM" not by country GLOBAL.MAPPER
         }
     }
 }
-
 
 write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="", fileEncoding = "UTF-8")
 
