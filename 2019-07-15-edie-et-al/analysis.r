@@ -21,7 +21,10 @@ analysis_edie_loop_type <- "string" # string or params
 chosen_speeds <- c('fast') 
 chosen_indices <- c(3, 6)   # 6 options
 # For analysis_edie_loop_type == "string"
-chosen_params <- c("BNN-C4-I8000-A0.8-T12")
+chosen_params <- c("BNN-C4-I8000-A0.99-T12",
+                   "BNN-C4-I8000-A0.99-T12",
+                   "BNN-C4-I12000-A0.99-T12",
+                   "BNN-C4-I300000-A0.99-T15")
 # chosen_params <- c("BGN-C4-I100000-A0.99-T12",
 #                    "BMY-C4-I100000-A0.8-T12",
 #                    "BGN-C4-I300000-A0.99-T12",
