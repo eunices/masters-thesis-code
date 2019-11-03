@@ -20,7 +20,8 @@ chosen_speeds <- c('fast')
 chosen_indices <- c(3, 6)   # 6 options
 
 # For analysis_edie_loop_type == "string"
-chosen_params <- c("BNN-C2-I1000-A0.8-T12") # test for fast run
+chosen_params <- c("BNN-C2-I100-A0.8-T12", 
+                   "BNN-C2-I1000-A0.8-T12") # test for fast run
 # chosen_params <- c("BNN-C4-I8000-A0.9-T12",
 #                    "BNN-C4-I8000-A0.95-T12",
 #                    "BNN-C4-I8000-A0.99-T12",
@@ -85,23 +86,21 @@ for (i in 1:length(combination_list)) {
     dir.create(dir_model_folder); dir.create(file.path(dir_model_folder, 'output'))
     filepath_log <- paste0(dir_model_folder, "/model.log"); if (!file.exists(filepath_log)) file.create(filepath_log)
 
-    tryCatch({
-        # print("Model params:"); print(model_params)
-
-        # Analysis scripts
+    # Analysis scripts
+    analysis <- function() {
         source(paste0(dir_script_ed, 'analysis0.r')) # data prep
         source(paste0(dir_script_ed, 'analysis1.r')) # data prep
         source(paste0(dir_script_ed, 'analysis2.r')) # model fitting
         source(paste0(dir_script_ed, 'analysis3.r')) # post
         source(paste0(dir_script_ed, 'analysis4.r')) # forecast
         source(paste0(dir_script_ed, 'analysis5.r')) # plot
-
-    }, 
-    # warning=function(w) {write(toString(w), filepath_log, append=TRUE)},
-    error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))})
-
-    # Log warnings
-    warnings(file = filepath_log, append=T)
-
+    }
+    write_to_log <- function(w) {
+        write(conditionMessage(w), file=filepath_log, append=T)
+    }
+    tryCatch(
+        withCallingHandlers(analysis(), warning = function(w) {write_to_log(w)}),
+        error = function(e) {print(paste0("ERROR: ", conditionMessage(e)))}
+    )
 }
 
