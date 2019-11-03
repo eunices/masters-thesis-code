@@ -85,6 +85,7 @@ for (i in 1:length(combination_list)) {
     dir_model_folder <- paste0(dir_analysis_edie_tmp, "/", model_identifier, "/")
     dir.create(dir_model_folder); dir.create(file.path(dir_model_folder, 'output'))
     filepath_log <- paste0(dir_model_folder, "/model.log"); if (!file.exists(filepath_log)) file.create(filepath_log)
+    warnings_log <- paste0(dir_model_folder, "/warnings.log"); if (!file.exists(warnings_log)) file.create(warnings_log)
 
     # Analysis scripts
     analysis <- function() {
@@ -96,11 +97,11 @@ for (i in 1:length(combination_list)) {
         source(paste0(dir_script_ed, 'analysis5.r')) # plot
     }
     write_to_log <- function(w) {
-        write(conditionMessage(w), file=filepath_log, append=T)
+        write(conditionMessage(w), file=warnings_log, append=T)
     }
     tryCatch(
         withCallingHandlers(analysis(), warning = function(w) {write_to_log(w)}),
         error = function(e) {print(paste0("ERROR: ", conditionMessage(e)))}
-    )
+    ) # Solution from: https://stackoverflow.com/questions/37836392/ 
 }
 
