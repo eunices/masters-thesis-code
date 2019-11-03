@@ -96,20 +96,21 @@ for (i in 1:length(combination_list)) {
             source(paste0(dir_script_ed, 'analysis4.r')) # forecast
             source(paste0(dir_script_ed, 'analysis5.r')) # plot
 
-            # Log warnings
-            conn <- file(filepath_log, "a")
-            warn <- summary(warnings())
-            warn_str <- ""
-            for (i in 1:length(warn)){
-                warn_str <- paste0(warn_str, "[", i, "]: ", names(warn)[[i]])
-                if (i==1){
-                    warn_str <- paste0(warn_str, " \n ")
-                }
-            }
-            write(paste0("Warnings: ", warn_str), conn, sep="\n")
-            close(conn)
         }, 
         # warning=function(w) {write(toString(w), filepath_log, append=TRUE)},
         error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))})
+
+        # Log warnings
+        conn <- file(filepath_log, "a")
+        warn <- summary(warnings())
+        warn_str <- ""
+        for (i in 1:length(warn)){
+            warn_str <- paste0(warn_str, "[", i, "]: ", names(warn)[[i]])
+            if (i==1){
+                warn_str <- paste0(warn_str, " \n ")
+            }
+        }
+        write(paste0("Warnings: ", warn_str), conn, sep="\n")
+        close(conn)
 }
 
