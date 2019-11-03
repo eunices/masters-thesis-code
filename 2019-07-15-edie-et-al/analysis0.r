@@ -148,9 +148,9 @@ if (model_params$dataset == "GL") { # global
         } else if ((model_params$dataset == "BG") |  (model_params$dataset == "BN")) { # biogeographic realms
             cols <- c(cols_std, "biogeo_wwf")
             join <- unique(dat[, ..cols]) # remove duplicates
-            # if (model_params$dataset == "BN") {
-            #     join <- join[biogeo_wwf != "AN",]# remove antarctica
-            # }
+            if (model_params$dataset == "BN") {
+                join <- join[biogeo_wwf != "AN",]# remove antarctica
+            }
 
         # commented out because this should not be allowed - "BM" not by country GLOBAL.MAPPER
         }
