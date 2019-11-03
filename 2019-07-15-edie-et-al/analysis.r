@@ -20,12 +20,12 @@ chosen_speeds <- c('fast')
 chosen_indices <- c(3, 6)   # 6 options
 
 # For analysis_edie_loop_type == "string"
-# chosen_params <- c("BNN-C2-I1000-A0.8-T12") # test for fast run
-chosen_params <- c("BNN-C4-I8000-A0.9-T12",
-                   "BNN-C4-I8000-A0.95-T12",
-                   "BNN-C4-I8000-A0.99-T12",
-                   "BNN-C4-I12000-A0.99-T12",
-                   "BNN-C4-I300000-A0.99-T15")
+chosen_params <- c("BNN-C2-I1000-A0.8-T12") # test for fast run
+# chosen_params <- c("BNN-C4-I8000-A0.9-T12",
+#                    "BNN-C4-I8000-A0.95-T12",
+#                    "BNN-C4-I8000-A0.99-T12",
+#                    "BNN-C4-I12000-A0.99-T12",
+#                    "BNN-C4-I300000-A0.99-T15")
 # chosen_params <- c("BGN-C4-I100000-A0.99-T12",
 #                    "BMY-C4-I100000-A0.8-T12",
 #                    "BGN-C4-I300000-A0.99-T12",
@@ -72,45 +72,36 @@ if(analysis_edie_loop_type=="params") {
 
 for (i in 1:length(combination_list)) {
 
-        model_params <- combination_list[[i]]
+    model_params <- combination_list[[i]]
 
-        # Initialize identifier
-        model_identifier <- paste0(
-            model_params$dataset, model_params$ll, "-",
-            "C", as.character(model_params$chains), "-",
-            "I", as.character(model_params$iter), "-",
-            "A", as.character(model_params$ad), "-",
-            "T", as.character(model_params$td))
-        dir_model_folder <- paste0(dir_analysis_edie_tmp, "/", model_identifier, "/")
-        dir.create(dir_model_folder); dir.create(file.path(dir_model_folder, 'output'))
-        filepath_log <- paste0(dir_model_folder, "/model.log"); if (!file.exists(filepath_log)) file.create(filepath_log)
+    # Initialize identifier
+    model_identifier <- paste0(
+        model_params$dataset, model_params$ll, "-",
+        "C", as.character(model_params$chains), "-",
+        "I", as.character(model_params$iter), "-",
+        "A", as.character(model_params$ad), "-",
+        "T", as.character(model_params$td))
+    dir_model_folder <- paste0(dir_analysis_edie_tmp, "/", model_identifier, "/")
+    dir.create(dir_model_folder); dir.create(file.path(dir_model_folder, 'output'))
+    filepath_log <- paste0(dir_model_folder, "/model.log"); if (!file.exists(filepath_log)) file.create(filepath_log)
 
-        tryCatch({
-            # print("Model params:"); print(model_params)
+    tryCatch({
+        # print("Model params:"); print(model_params)
 
-            # Analysis scripts
-            source(paste0(dir_script_ed, 'analysis0.r')) # data prep
-            source(paste0(dir_script_ed, 'analysis1.r')) # data prep
-            source(paste0(dir_script_ed, 'analysis2.r')) # model fitting
-            source(paste0(dir_script_ed, 'analysis3.r')) # post
-            source(paste0(dir_script_ed, 'analysis4.r')) # forecast
-            source(paste0(dir_script_ed, 'analysis5.r')) # plot
+        # Analysis scripts
+        source(paste0(dir_script_ed, 'analysis0.r')) # data prep
+        source(paste0(dir_script_ed, 'analysis1.r')) # data prep
+        source(paste0(dir_script_ed, 'analysis2.r')) # model fitting
+        source(paste0(dir_script_ed, 'analysis3.r')) # post
+        source(paste0(dir_script_ed, 'analysis4.r')) # forecast
+        source(paste0(dir_script_ed, 'analysis5.r')) # plot
 
-        }, 
-        # warning=function(w) {write(toString(w), filepath_log, append=TRUE)},
-        error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))})
+    }, 
+    # warning=function(w) {write(toString(w), filepath_log, append=TRUE)},
+    error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))})
 
-        # Log warnings
-        conn <- file(filepath_log, "a")
-        warn <- summary(warnings())
-        warn_str <- ""
-        for (i in 1:length(warn)){
-            warn_str <- paste0(warn_str, "[", i, "]: ", names(warn)[[i]])
-            if (i==1){
-                warn_str <- paste0(warn_str, " \n ")
-            }
-        }
-        write(paste0("Warnings: ", warn_str), conn, sep="\n")
-        close(conn)
+    # Log warnings
+    warnings(file = filepath_log)
+
 }
 
