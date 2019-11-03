@@ -48,11 +48,11 @@ stop <- Sys.time()
 
 
 # Write to log file
-warn <- warnings()
 conn <- file(filepath_log, "a")
 write(paste0("Model stopped at: ", stop), conn, sep="\n")
 write(paste0("Model time elapsed: ", stop-start), conn, sep="\n")
-write(paste0("Warnings: ", warn), conn, sep="\n")
 close(conn)
+
+
 
 # system('shutdown -s')

@@ -20,6 +20,7 @@ chosen_speeds <- c('fast')
 chosen_indices <- c(3, 6)   # 6 options
 
 # For analysis_edie_loop_type == "string"
+# chosen_params <- c("BNN-C2-I1000-A0.8-T12") # test for fast run
 chosen_params <- c("BNN-C4-I8000-A0.9-T12",
                    "BNN-C4-I8000-A0.95-T12",
                    "BNN-C4-I8000-A0.99-T12",
@@ -86,6 +87,7 @@ for (i in 1:length(combination_list)) {
 
         tryCatch({
             # print("Model params:"); print(model_params)
+
             # Analysis scripts
             source(paste0(dir_script_ed, 'analysis0.r')) # data prep
             source(paste0(dir_script_ed, 'analysis1.r')) # data prep
@@ -93,6 +95,19 @@ for (i in 1:length(combination_list)) {
             source(paste0(dir_script_ed, 'analysis3.r')) # post
             source(paste0(dir_script_ed, 'analysis4.r')) # forecast
             source(paste0(dir_script_ed, 'analysis5.r')) # plot
+
+            # Log warnings
+            conn <- file(filepath_log, "a")
+            warn <- summary(warnings())
+            warn_str <- ""
+            for (i in 1:length(warn)){
+                warn_str <- paste0(warn_str, "[", i, "]: ", names(warn)[[i]])
+                if (i==1){
+                    warn_str <- paste0(warn_str, " \n ")
+                }
+            }
+            write(paste0("Warnings: ", warn_str), conn, sep="\n")
+            close(conn)
         }, 
         # warning=function(w) {write(toString(w), filepath_log, append=TRUE)},
         error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))})
