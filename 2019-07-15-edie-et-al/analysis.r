@@ -101,7 +101,7 @@ for (i in 1:length(combination_list)) {
     error=function(e) {print(paste0("ERROR: ", conditionMessage(e)))})
 
     # Log warnings
-    warnings(file = filepath_log)
+    warnings(file = filepath_log, append=T)
 
 }
 
