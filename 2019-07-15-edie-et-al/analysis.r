@@ -20,13 +20,13 @@ chosen_speeds <- c('fast')
 chosen_indices <- c(3, 6)   # 6 options
 
 # For analysis_edie_loop_type == "string"
-chosen_params <- c("BNN-C2-I100-A0.8-T12", 
-                   "BNN-C2-I1000-A0.8-T12") # test for fast run
-# chosen_params <- c("BNN-C4-I8000-A0.9-T12",
-#                    "BNN-C4-I8000-A0.95-T12",
-#                    "BNN-C4-I8000-A0.99-T12",
-#                    "BNN-C4-I12000-A0.99-T12",
-#                    "BNN-C4-I300000-A0.99-T15")
+# chosen_params <- c("BNN-C2-I100-A0.8-T12", 
+#                    "BNN-C2-I1000-A0.8-T12") # test for fast run
+chosen_params <- c("BNN-C4-I8000-A0.9-T12",
+                   "BNN-C4-I8000-A0.95-T12",
+                   "BNN-C4-I8000-A0.99-T12",
+                   "BNN-C4-I12000-A0.99-T12",
+                   "BNN-C4-I300000-A0.99-T15")
 # chosen_params <- c("BGN-C4-I100000-A0.99-T12",
 #                    "BMY-C4-I100000-A0.8-T12",
 #                    "BGN-C4-I300000-A0.99-T12",
