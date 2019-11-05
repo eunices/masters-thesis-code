@@ -8,9 +8,9 @@ library(tidyr)
 # Data wrangling
 flow <- fread(paste0(dir_data, "eda1_flow/2019-09-22-flow-map-type-loc-des-country.csv"), encoding="UTF-8")
 spp <- get_df1(write=F)
+spp <- spp %>% separate_rows(full.name.of.describer, sep="; ")
 sum_flow <- spp[, .N, by="type.country.n"][order(-N)]
 flow <- flow[no_flow == "FALSE" ,c("ori", "des", "N")]
-
 
 lu <- fread('data/lookup/2019-05-29-statoid-country-codes.csv',  encoding="UTF-8")
 comb <- expand.grid(lu$DL, lu$DL)
@@ -36,7 +36,7 @@ lu_adj <- lu_adj[!(DL2 %in% c("No man's land", "Disputed land")), ]
 lu_adj$adj_check <- 1
 
 # Modelling variables
-model_vars <- c("continent_check", "class_check", "col_check", "adj_check", "continent_des")
+model_vars <- c("continent_check", "class_check", "col_check", "adj_check", "continent_ori", "Class_ori", "Class_des")
 
 # Add SES & continent variables
 cols <- c("DL", "Class", "continent")
