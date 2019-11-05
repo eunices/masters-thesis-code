@@ -1,10 +1,10 @@
 source('2019-06-19-ascher-type-data/var.R')
 
-library(ResourceSelection)
-library(pscl)
-library(caret)
+library(ResourceSelection) # mcfadden
+library(pscl) # hoslem
+library(caret) # cross validation
 library(tidyr)
-# library(ROCR)
+# library(ROCR) # roc
 
 # Read data
 df <- fread(paste0(dir_data, "eda1_flow/2019-11-01-flow-GLM.csv"), encoding="UTF-8")
@@ -21,6 +21,7 @@ df <- df[class_check != 'Unclassed']
 df <- df[continent_ori != 'Unclassed']
 df <- df[ori %in% auth]
 df <- merge(df, auth_N, by.x="ori", by.y="residence.country.describer.n", all.x=T, all.y=F)
+
 
 sapply(df[, 5:10], unique)
 sapply(df[, 5:10], table)

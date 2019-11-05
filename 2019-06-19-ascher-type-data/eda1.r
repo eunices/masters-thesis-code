@@ -66,7 +66,22 @@ ggplot(ss[!is.na(Class)], aes(x=Class, y=round(prop*100,2))) +
   geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
     labs(x="\nWorld Bank classification", y = "Proportion of species described\n by taxonomist residing in country (%)\n") +
          theme_classic()
-res <- car::Anova(lm(prop~Class,data = ss), type="III")
+
+summary(ss[N_cty>=5]$prop)
+length(ss[N_cty>=5])
+
+# http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
+kruskal.test(prop~Class, data = ss)
+pairwise.wilcox.test(ss$prop, ss$Class, p.adjust.method = "BH")
+ss_summary <- ss[, list(mean=mean(prop),
+          median=median(prop),
+          quantile_1st = quantile(prop, 0.25),
+          quantile_3rd = quantile(prop, 0.75),
+          N=.N),
+          by=c("Class")]
+write.csv(ss_summary,
+          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop-summary.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
 
 summary(ss[prop>0 & N_total>=5]$prop*100)
 length(ss[prop>0 & N_total>=5]$prop*100)
@@ -74,9 +89,6 @@ shapiro.test(ss[prop>0 & N_total>=5]$prop*100) # not normal
 
 write.csv(ss[order(-prop)],
           paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
-write.csv(data.frame(res),
-          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop-anova.csv"), na='', row.names=T, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Location analysis suggested by Ascher
