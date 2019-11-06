@@ -32,7 +32,8 @@ write.csv(auth, paste0(dir_script, "eda2.1_shiny/data/authors.csv"),
 
 # Load data
 nw <- fread(
-    paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+    paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"),
+    integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 nw[, names(nw) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 nw <- nw[!(is.na(p1) | is.na(p2))]
 

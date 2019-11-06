@@ -40,4 +40,6 @@ ps4 <- ps4[, c("full.name.of.describer")]; names(ps4) <- "p1"
 ps4 <- ps4[, .N, by=c("p1")]; ps4$p2 <- NA
 ps2 <- rbind(ps2, ps4)
 
-write.csv(ps2[order(-N)], paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(ps2[order(-N)], 
+          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"),
+          na='', row.names=F, fileEncoding="UTF-8")

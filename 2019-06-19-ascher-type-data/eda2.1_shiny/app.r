@@ -13,7 +13,7 @@ DEFAULT_THRESHOLD <- 0
 # Read data (residing in data folder)
 # setwd('2019-06-19-ascher-type-data/eda2.1_shiny')
 t <- fread("data/7.0-author-networks.csv", encoding="UTF-8", na.strings="")
-auth <- fread("data/authors.csv", encoding="UTF-8", na.strings="")
+auth <- fread("data/authors.csv", encoding="UTF-8", na.strings="")[, c("last.name", "full.name.of.describer.n")]
 t <- merge(t, auth[, c('last.name', 'full.name.of.describer.n')], by.x="p1", by.y="full.name.of.describer.n", 
            all.x=T, all.y=F)
 t <- merge(t, auth[, c('last.name', 'full.name.of.describer.n')], by.x="p2", by.y="full.name.of.describer.n", 
@@ -22,9 +22,16 @@ t$p1 <- NULL; t$p2 <- NULL
 names(t) <- gsub("last.name_", "", names(t))
 
 # Threshold, authors, variable by
+auth[grepl("R. B.", last.name)]
+t[grepl("R. B.", p1)]
+t[grepl("R. B.", p2)]
+
 
 # Create labels for authors
-nodes_lab <- sort(auth[last.name %in% unique(t$p1, t$p2)]$last.name)
+nodes_lab <- sort(auth[last.name %in% unique(c(t$p1, t$p2))]$last.name)
+auth[!(last.name %in% unique(t$p1, t$p2))]$last.name
+
+
 
 # Update data function
 update <- function(threshold=DEFAULT_THRESHOLD, author=NA) {
