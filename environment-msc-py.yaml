@@ -8,3 +8,4 @@ dependencies:
   - pandas
   - seaborn
   - networkx=2.4.*
+  - python-louvain=0.13

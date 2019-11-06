@@ -9,7 +9,8 @@ library(tidyr)
 # Read data
 df <- fread(paste0(dir_data, "eda1_flow/2019-11-01-flow-GLM.csv"), encoding="UTF-8")
 
-auth <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), encoding="UTF-8")[,c("idx_auth", "residence.country.describer.n")]
+auth <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), encoding="UTF-8")
+auth <- auth[ns_spp_N >=1,c("idx_auth", "residence.country.describer.n")]
 auth <- data.table(auth %>% separate_rows(residence.country.describer.n, sep="; "))
 auth_N <- auth[residence.country.describer.n != "[unknown]", list(N_taxonomist=.N), by=c("residence.country.describer.n")]
 auth <- auth[, idx:= 1:.N, by=c("idx_auth")]
@@ -21,13 +22,15 @@ df <- df[class_check != 'Unclassed']
 df <- df[continent_ori != 'Unclassed']
 df <- df[ori %in% auth]
 df <- merge(df, auth_N, by.x="ori", by.y="residence.country.describer.n", all.x=T, all.y=F)
-
+df <- unique(df)
 
 sapply(df[, 5:10], unique)
 sapply(df[, 5:10], table)
+table(df$ori)
+
 
 # Derived values
-df$prop_flow <- if(df$N_flow==0, 0, df$N_flow / df$N_total)
+df$prop_flow <- ifelse(df$N_flow==0, 0, df$N_flow / df$N_total)
 df$N_self <- df$N_total-df$N_flow
 df$flow <- ifelse(df$N_flow >0, "Yes",  "No")
 
@@ -35,7 +38,7 @@ df$flow <- ifelse(df$N_flow >0, "Yes",  "No")
 df$continent_check <- factor(df$continent_check, levels=c("Different continent", "Same continent"))
 df$class_check <- factor(df$class_check, levels=c("Equal", "Low-to-high", "High-to-low"))
 df$col_check <- factor(df$col_check, levels=c("Not colonised", "Colonised"))
-df$adj_check <- factor(df$adj_check, levels=c("Not adjacent", "Adjac1ent"))
+df$adj_check <- factor(df$adj_check, levels=c("Not adjacent", "Adjacent"))
 df$continent_ori <- factor(df$continent_ori, 
                            levels=c("Oceania", "Africa", "Australia", 
                                     "Asia", "Europe", "North America", "South America"))

@@ -53,8 +53,7 @@ s2 <- t[no_flow=="TRUE", list(N=sum(N)), by='des']
 ss <- merge(s1, s2, by='des', all.x=T, all.y=F, suffixes=c("_total", "_cty"))
 ss$prop <- ss$N_cty/ss$N_total
 ss <- merge(ss, lookup.cty[, c("GEC", "Country", "A.3", "Class")], 
-      by.x="des", by.y="GEC", 
-      all.x=T, all.y=F)
+      by.x="des", by.y="GEC", all.x=T, all.y=F)
 ss[is.na(N_cty)]$N_cty <- 0
 ss[is.na(prop)]$prop <- 0
 ss$Class <- factor(ss$Class, levels=c("High income", 
@@ -62,23 +61,27 @@ ss$Class <- factor(ss$Class, levels=c("High income",
                                       "Lower middle income",
                                       "Low income", 
                                       "Unclassed"))
+
+ss[Class=="Unclassed"]
+
 ggplot(ss[!is.na(Class)], aes(x=Class, y=round(prop*100,2))) + 
   geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
     labs(x="\nWorld Bank classification", y = "Proportion of species described\n by taxonomist residing in country (%)\n") +
          theme_classic()
 
+ss[N_cty>=1]
 summary(ss[N_cty>=5]$prop)
-length(ss[N_cty>=5])
+dim(ss[N_cty>=5])
 
 # http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
 kruskal.test(prop~Class, data = ss)
 pairwise.wilcox.test(ss$prop, ss$Class, p.adjust.method = "BH")
 ss_summary <- ss[, list(mean=mean(prop),
-          median=median(prop),
-          quantile_1st = quantile(prop, 0.25),
-          quantile_3rd = quantile(prop, 0.75),
-          N=.N),
-          by=c("Class")]
+                        median=median(prop),
+                        quantile_1st = quantile(prop, 0.25),
+                        quantile_3rd = quantile(prop, 0.75),
+                        N=.N),
+                  by=c("Class")]
 write.csv(ss_summary,
           paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop-summary.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
@@ -89,6 +92,30 @@ shapiro.test(ss[prop>0 & N_total>=5]$prop*100) # not normal
 
 write.csv(ss[order(-prop)],
           paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
+
+
+flow <- unique(spp_s[, c("type.country.n", "residence.country.describer.n")])
+flow <- merge(flow[,.N, by=c("residence.country.describer.n")], lookup.cty[, c("DL", "Class")], 
+      by.x="residence.country.describer.n", by.y="DL", all.x=T, all.y=F)
+flow <- flow[!is.na(residence.country.describer.n) & residence.country.describer.n != "[unknown]"]
+
+kruskal.test(N~Class, data = flow)
+pairwise.wilcox.test(flow$prop, flow$Class, p.adjust.method = "BH")
+
+
+ggplot(flow, aes(x=Class, y=N)) + 
+  geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
+    labs(x="\nWorld Bank classification", y = "Number of countries for type locality\n") +
+         theme_classic()
+flow$N <- as.numeric(flow$N)
+flow_summary <- flow[, list(mean=mean(N),
+                        median=median(N),
+                        quantile_1st = quantile(N, 0.25),
+                        quantile_3rd = quantile(N, 0.75),
+                        N=.N),
+                  by=c("Class")]
+write.csv(flow_summary[order(-N)],
+          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-N-summary.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Location analysis suggested by Ascher
