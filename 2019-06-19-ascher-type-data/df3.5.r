@@ -3,21 +3,22 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': creating dataset for network"))
 
+# Get all
 ps <- fread(
     paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 ps[, names(ps) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
+
+# Filter only for valid and synonyms
 dfx1 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx2 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+dfx2 <- dfx2[status == "Synonym"]
+
 dfx <- rbind(dfx1[,c("idx", "date.n")], dfx2[,c("idx", "date.n")])
 dfx <- dfx[date.n <=2018]$idx # limit to 2018
 rm(dfx1, dfx2)
 
 ps <- ps[idx %in% dfx]
-
-des <- fread(
-    paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-des[, names(des) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
 # Create pairs
 ps2 <- ps[grepl(";", full.name.of.describer),]

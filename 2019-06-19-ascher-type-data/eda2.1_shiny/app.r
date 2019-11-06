@@ -5,6 +5,8 @@ library(shiny)
 library(data.table)
 library(networkD3)
 
+# TODO: Something is wrong here with the labelling of nodes
+
 # Constants / parameters
 DEFAULT_THRESHOLD <- 0
 

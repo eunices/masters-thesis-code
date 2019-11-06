@@ -3,11 +3,25 @@ source('2019-06-19-ascher-type-data/subset.r')
 library(tidyverse)
 library(networkD3)
 
-
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - coauthor network
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- coauthor network"))
+
+# Get table of valid/ invalid species
+spp1 <- get_df1(write=F)[, c("idx", "full.name.of.describer", "date.n")]
+spp2 <- get_df2(write=F)[status == "Synonym", c("idx", "full.name.of.describer", "date.n")]
+dim(spp1) + dim(spp2)
+spp <- rbind(spp1, spp2) %>% separate_rows(full.name.of.describer, sep="; ")
+spp[full.name.of.describer == "David Genoud"]
+
+length(unique(spp[idx %in% spp_sum[N>=2]$idx]$full.name.of.describer))
+rm(spp1, spp2)
+spp_sum <- spp[date.n <= 2018, .N, by=c('idx')][order(as.numeric(idx))]
+rbind(table(spp_sum$N),
+      round(prop.table(table(spp_sum$N))*100, 1))
+round(dim(spp_sum[N>=2])[1]/ dim(spp_sum)[1]*100,1)
+dim(spp_sum)[1]
 
 # Get authors
 cols <- c("full.name.of.describer.n", "last.name", "alive", "residence.country.describer.first",

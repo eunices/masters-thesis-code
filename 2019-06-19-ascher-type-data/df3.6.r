@@ -20,8 +20,8 @@ seq <- mapply(function(a, b) {
     seq(a, b)
 }, a=describers$min, b=describers$max_corrected)
 describers$years <- seq
-describers <- describers %>% unnest(years)
-describers[,N_describers := length(idx_auth), by=years]
+describers <- data.table(describers %>% unnest(years))
+describers[,N_describers := length(idx_auth), by="years"]
 describers_active_by_year <- unique(describers[,c("years", "N_describers")])[order(as.numeric(years))]
 
 # Weighted 
@@ -32,7 +32,7 @@ seq <- mapply(function(a, b) {
     seq(a, b)
 }, a=describers$min, b=describers$max_corrected)
 describers$years <- seq
-describers <- describers %>% unnest(years)
+describers <- data.table(describers %>% unnest(years))
 describers[,N_weighted_describers := sum(as.numeric(ns_species_per_year_active)), by=years]
 describers_weighted_by_year <- unique(describers[,c("years", "N_weighted_describers")])[order(as.numeric(years))]
 
@@ -57,7 +57,7 @@ seq <- mapply(function(a, b) {
     seq(a, b)
 }, a=describers$min, b=describers$max_corrected)
 describers$years <- seq
-describers <- describers %>% unnest(years)
+describers <- data.table(describers %>% unnest(years))
 describers[,N_real_describers := length(idx_auth), by=years]
 describers_active_by_year <- unique(describers[,c("years", "N_real_describers")])[order(as.numeric(years))]
 
@@ -70,7 +70,7 @@ seq <- mapply(function(a, b) {
     seq(a, b)
 }, a=describers$min, b=describers$max_corrected)
 describers$years <- seq
-describers <- describers %>% unnest(years)
+describers <- data.table(describers %>% unnest(years))
 describers[,  N_weighted_real_describers := sum(as.numeric(ns_species_per_year_active)), by="years"]
 describers_weighted_by_year <- unique(describers[,c("years", "N_weighted_real_describers")])[order(as.numeric(years))]
 
