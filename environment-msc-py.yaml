@@ -10,5 +10,6 @@ dependencies:
   - pandas
   - python-louvain=0.13
   - scikit-learn
+  - scikit-bio
   - seaborn
   - statsmodels
