@@ -4,8 +4,9 @@ channels:
 dependencies:
   - ipykernel
   - jupyter
+  - networkx=2.4.*
   - numpy
   - pandas
-  - seaborn
-  - networkx=2.4.*
   - python-louvain=0.13
+  - seaborn
+  - sklearn
