@@ -4,9 +4,11 @@ channels:
 dependencies:
   - ipykernel
   - jupyter
+  - matplotlib
   - networkx=2.4.*
   - numpy
   - pandas
   - python-louvain=0.13
-  - seaborn
   - scikit-learn
+  - seaborn
+  - statsmodels
