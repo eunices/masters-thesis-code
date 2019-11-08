@@ -9,4 +9,4 @@ dependencies:
   - pandas
   - python-louvain=0.13
   - seaborn
-  - sklearn
+  - scikit-learn
