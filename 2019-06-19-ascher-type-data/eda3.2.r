@@ -217,10 +217,13 @@ save_graph <- function(dir_output, country, position, prop, r, c) {
     
 }
 
-
-run_specific_scenario <- function(country="All", position="All", dir_output) {
+run_specific_scenario <- function(country="All", position="All", dir_output, type="pub") {
     tryCatch ({
-        prop_t  <- generate_prop_t(country=country, position=position)
+        if (type=="pub") {        # for publication
+            prop_t  <- generate_prop_t(country=country, position=position)
+        } else if (type=="tax") { # for taxonomists
+            prop_t <- generate_prop_t_tax(country=country)
+        }
         if (!is.null(prop_t)) {
             output <- main(country = country, position = position, prop_t)
             save_graph(dir_output, country=country, position=position, prop_t, output$summary$r, output$summary$c)
@@ -228,3 +231,21 @@ run_specific_scenario <- function(country="All", position="All", dir_output) {
         }
     }, error = function(e) {print(e)})
 }
+
+# TODO: taxonomist
+
+des <- get_des(write=F)
+des <- des[, c("full.name.of.describer.n", "min", "max_corrected", 
+               "describer.gender.n", "residence.country.describer.n")]
+
+generate_prop_t_tax <- function() {
+
+}
+
+seq <- mapply(function(a, b) {
+    seq(a, b)
+}, a=describers$min, b=describers$max_corrected)
+describers$years <- seq
+describers <- data.table(describers %>% unnest(years))
+describers[,N_real_describers := length(idx_auth), by=years]
+describers_active_by_year <- unique(describers[,c("years", "N_real_describers")])[order(as.numeric(years))]

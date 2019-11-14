@@ -61,4 +61,6 @@ write.csv(outputs, paste0(dir_data_subf1, "_outputs.csv"), row.names=F)
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- gender rep - taxonomists"))
 
-des <- get_des(write=F)
+# TODO: gender ratio of taxonomists
+
+result_summary_tax <- run_specific_scenario(country="All", position="All", dir_data_subf2, "tax")
