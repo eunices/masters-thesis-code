@@ -14,8 +14,6 @@ source('2019-06-19-ascher-type-data/eda3_util.r') # util functions
 # source('2019-06-19-ascher-type-data/eda3.1.r') # get data from UN 's API and save locally
 source('2019-06-19-ascher-type-data/eda3.2.r') # read local/ bee data
 
-# Parameters
-theme <- theme_classic()
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - gender rep analysis
@@ -40,7 +38,9 @@ print(paste0(Sys.time(), " --- gender rep analysis"))
 # countries <- c("United States of America", "Germany", "Brazil", "France", "United Kingdom", "Japan")
 countries <- c(auth[, .N, by=Country][order(-N)][1:6]$Country)
 
-for (i in 1:1) {
-    country <- countries[i]
-    output <- main(country = country, position="All")
+# TODO: doesn't work for all countries
+for (i in 3:length(countries)) {
+    print("#######################")
+    country <- countries[i]; print(paste0(Sys.time(), ": Analysing for ", country))
+    output_li <- main(country = country, position="All")
 }

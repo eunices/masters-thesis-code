@@ -32,7 +32,10 @@ get.CIs <- function(nFemales.column, nMales.column){
   return(100 * CIs)
 }
 
-
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+} 
 ##############################
 
 find.response.variables <- function(data) {

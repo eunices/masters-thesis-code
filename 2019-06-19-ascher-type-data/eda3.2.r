@@ -4,6 +4,10 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- load data"))
 
+source('2019-06-19-ascher-type-data/eda3_util.r') # util functions
+
+theme <- theme_minimal()
+
 # Read/initialize all data
 
 # Plausible UN data
@@ -123,16 +127,30 @@ main <- function(country="All", position="All") {
         find.response.variables(resampled.data[resampled.data$replicate_id == i,])
     }))
 
+    check_na <- function(x) {
+        table(is.na(x))        
+    }
+
     # calculate confidence intervals
     confi_95.1 <- 0.025; confi_95.2 <- 0.975
     CIs_ratio <- as.numeric(quantile(bootstrap_estimates$gender.ratio.at.present, probs = c(confi_95.1 , confi_95.2)))
     CIs_dt <- as.numeric(quantile(bootstrap_estimates$current.rate.of.change, probs = c(confi_95.1, confi_95.2)))
 
     # tabulate parity year
-    baseline_yr <- 1896; current_yr <- 2019
-    parity.year <- median(bootstrap_estimates$parity.year + baseline_yr) - current_yr
-    CIs_yr <- quantile(bootstrap_estimates$parity.year + baseline_yr, probs = c(confi_95.1, confi_95.2)) - current_yr
-
+    # TODO: figure out why parity.year may be NA
+    if(is.numeric(bootstrap_estimates$parity.year)) {
+        baseline_yr <- 1896; current_yr <- 2019
+        parity.years <- bootstrap_estimates$parity.year
+        parity.year <- median(parity.years) + baseline_yr - current_yr
+        CIs_yr <- as.numeric(quantile(parity.years, probs = c(confi_95.1, confi_95.2)))
+        CIs_yr <- median(parity.years) + baseline_yr - current_yr
+        parity.year[parity.year < 0] <- 0; CIs_yr[CIs_yr < 0] <- 0
+    } else {
+        # if not going to hit parity sometimes, pick the mode non-parity outcome
+        parity.year <- Mode(bootstrap_estimates$parity.year)
+        CIs_yr <- c(NA, NA)
+    }
+    
 
     # plotting data
     print(paste0(Sys.time(), ": Plotting data"))
@@ -149,31 +167,33 @@ main <- function(country="All", position="All") {
     #     geom_vline(xintercept= (res$parity.year + min(prop$date.n)), linetype="dashed", size=1.5, color="black") +
     #     theme + xlab("Year") + ylab("Proportion of female-authored species, overall (%)\n") + ylim(c(0,50))
 
-
+    # TODO: check how CI works here
     prop_overlay <- prop[, c("date.n", "nFemales", "nMales", "n", "prop_F")]
     prop_overlay <- cbind(prop_overlay, get.CIs(prop_overlay$nFemales, prop_overlay$nMales))
 
-    y_axis_title <- paste0("Proportion of female-authored species, ", position, " (%)\n")
+    y_axis_title <- ifelse(country=="All",
+        paste0("Proportion of female-authored species (%),\n", tolower(position), " authors \n"), 
+        paste0("Proportion of female-authored species (%),\n", tolower(position), " authors for ", country, "\n"))
     p1 <- ggplot() + 
         geom_errorbar(data = prop_overlay, aes(x = date.n, ymin = lowerCI, ymax = upperCI), 
                     colour = "darkgrey", width = 0) + 
         geom_point(data = df_p, aes(x = x, y = prop_F)) + 
         geom_line(data = df_p, aes(x = x, y = y)) +
-        xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,50))
+        xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,50)) + theme
     plot_filepath <- paste0(dir_data, "eda3_gender/time-series_", country, "-", position, ".png")
     ggsave(plot_filepath, plot=p1)
 
-    out <- data.frame(country = country, position = position, n.authors = n.authors,
+    summary <- data.frame(country = country, position = position, n.authors = n.authors,
 
-                    gender.ratio.at.present = median(bootstrap_estimates$gender.ratio.at.present), 
-                    low.CI.1 = CIs_ratio[1], up.CI.1 = CIs_ratio[2],
-
-                    current.rate.of.change = median(bootstrap_estimates$current.rate.of.change), 
-                    low.CI.2 = CIs_dt[1], up.CI.2 = CIs_dt[2],
-
-                    years.to.parity = parity.year, 
-                    low.CI.3 = CIs_yr[1], up.CI.3 = CIs_yr[2], 
-
-                    r=res$r, c=res$c, stringsAsFactors = F)
-    return(out)
+                           gender.ratio.at.present = median(bootstrap_estimates$gender.ratio.at.present), 
+                           low.CI.1 = CIs_ratio[1], up.CI.1 = CIs_ratio[2],
+       
+                           current.rate.of.change = median(bootstrap_estimates$current.rate.of.change), 
+                           low.CI.2 = CIs_dt[1], up.CI.2 = CIs_dt[2],
+       
+                           years.to.parity = parity.year, 
+                           low.CI.3 = CIs_yr[1], up.CI.3 = CIs_yr[2], 
+       
+                           r=res$r, c=res$c, stringsAsFactors = F)
+    return(list(summary=summary, bootstrap_estimates=bootstrap_estimates))
 }
