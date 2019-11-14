@@ -37,3 +37,7 @@ prop$N <- prop$F + prop$M
 first_year_female <- min(prop[F>0]$date)
 prop <- prop[date>first_year_female]
 prop$date <- prop$date - (first_year_female + 1)
+
+names(prop)[which(names(prop) == 'F')] <- "nFemales"
+names(prop)[which(names(prop) == 'M')] <- "nMales"
+names(prop)[which(names(prop) == 'N')] <- "n"

@@ -1,6 +1,6 @@
 # https://www.statforbiology.com/2019/stat_nlmm_interaction/
 
-# library(devtools)
+library(devtools)
 # install_github("OnofriAndreaPG/aomisc")
 
 library(lattice)
