@@ -47,44 +47,55 @@ generate_prop_t <- function(country="All", position="All") {
 
     # Filtering for position: "first"
     if (position == "First") {
+        dat <- dat[idxes_author.order %in% c("1")]
+    } else if (position == "Last") {
+        dat <- dat[idxes_author.order %in% c("L")]
+    } else if (position == "First_s") {
         dat <- dat[idxes_author.order %in% c("1", "S")]
+    } else if (position == "Last_s") {
+        dat <- dat[idxes_author.order %in% c("S", "L")]
     }
 
     # count N by gender
-    prop <- dat[, .N,by=c("date.n", "describer.gender.n")]
+    prop <- dat[, .N, by=c("date.n", "describer.gender.n")]
     prop <- dcast(prop, date.n ~ describer.gender.n, value.var="N")
 
-    # normalize date to minimum year with >0
-    prop$date <- prop$date.n - min(prop$date.n)
-    prop <- merge(prop, data.frame(date=0:max(prop$date)),
-                all.x=T, all.y=T, by="date")
-    prop[is.na(prop)] <- 0
+    # ensure no blank years
+    prop <- merge(prop, data.frame(date.n=min(prop$date.n):max(prop$date.n)),
+                  all.x=T, all.y=T, by="date.n")
+    prop[is.na(prop$F)]$F <- 0
+    prop[is.na(prop$M)]$M <- 0
+    prop[is.na(prop$U)]$U <- 0
 
     # tabulate proportion
-    prop$prop_F <- prop$F / (prop$M + prop$F)
+    prop$prop_F <- ifelse(prop$M + prop$F == 0, 0, prop$F / (prop$M + prop$F))
     prop$N <- prop$F + prop$M
 
-    # filter data to year with at least 1 female
-    first_year_female <- min(prop[F>0]$date)
-    prop <- prop[date>first_year_female]
-    prop$date <- prop$date - (first_year_female + 1)
+    if (any(names(prop) %in% "F")) {
+        # filter data to year with at least 1 female
+        first_year_female <- min(prop[F>0]$date, na.rm=T)
+        prop <- prop[date.n>=first_year_female]
+        prop$date <- prop$date.n - first_year_female
+        # prop$date  <- prop$date.n - min(prop$date.n) # no need for at least 1 female
 
-    # rename data
-    names(prop)[which(names(prop) == 'F')] <- "nFemales"
-    names(prop)[which(names(prop) == 'M')] <- "nMales"
-    names(prop)[which(names(prop) == 'N')] <- "n"
+        # rename data
+        names(prop)[which(names(prop) == 'F')] <- "nFemales"
+        names(prop)[which(names(prop) == 'M')] <- "nMales"
+        names(prop)[which(names(prop) == 'N')] <- "n"
 
-    return(prop)
+        return(prop)
+    } else {
+        print("No female taxonomist in dataset.")
+        return(NULL)
+    }
+
 }
 
 # country = "All"
 # position = "All"
-main <- function(country="All", position="All") {
+main <- function(country="All", position="All", prop) {
 
     print(paste0(Sys.time(), ": Optimizing for graphing purposes"))
-
-    # Generate proportion
-    prop <- generate_prop_t(country=country, position = position)
 
     # Optimize c and t based on data
     res <- find.response.variables(prop)
@@ -138,8 +149,8 @@ main <- function(country="All", position="All") {
 
     # tabulate parity year
     # TODO: figure out why parity.year may be NA
+    baseline_yr <- min(prop$date.n); current_yr <- 2019
     if(is.numeric(bootstrap_estimates$parity.year)) {
-        baseline_yr <- 1896; current_yr <- 2019
         parity.years <- bootstrap_estimates$parity.year
         parity.year <- median(parity.years) + baseline_yr - current_yr
         CIs_yr <- as.numeric(quantile(parity.years, probs = c(confi_95.1, confi_95.2)))
@@ -150,38 +161,7 @@ main <- function(country="All", position="All") {
         parity.year <- Mode(bootstrap_estimates$parity.year)
         CIs_yr <- c(NA, NA)
     }
-    
 
-    # plotting data
-    print(paste0(Sys.time(), ": Plotting data"))
-    max_predict_year <- max(prop$date) + 100; baseline_year <- min(prop$date.n)
-    df_p <- data.frame(x= 0:max_predict_year + baseline_year,
-                    y=sapply(0:max_predict_year, pfunc, r=res$r, c=res$c))
-    df_p <- merge(df_p, prop[, c('date.n', 'prop_F')], by.x="x", by.y="date.n", all.x=T, all.y=T)
-    df_p$y <- round(df_p$y*100, 5)
-    df_p$prop_F <- round(df_p$prop_F*100, 5)
-
-    # ggplot(df_p) +
-    #     geom_bar(stat="identity",  aes(x=x, y=y), fill="grey") +
-    #     geom_bar(stat="identity", aes(x=x, y=prop_F), fill = "#FF6666") +
-    #     geom_vline(xintercept= (res$parity.year + min(prop$date.n)), linetype="dashed", size=1.5, color="black") +
-    #     theme + xlab("Year") + ylab("Proportion of female-authored species, overall (%)\n") + ylim(c(0,50))
-
-    # TODO: check how CI works here
-    prop_overlay <- prop[, c("date.n", "nFemales", "nMales", "n", "prop_F")]
-    prop_overlay <- cbind(prop_overlay, get.CIs(prop_overlay$nFemales, prop_overlay$nMales))
-
-    y_axis_title <- ifelse(country=="All",
-        paste0("Proportion of female-authored species (%),\n", tolower(position), " authors \n"), 
-        paste0("Proportion of female-authored species (%),\n", tolower(position), " authors for ", country, "\n"))
-    p1 <- ggplot() + 
-        geom_errorbar(data = prop_overlay, aes(x = date.n, ymin = lowerCI, ymax = upperCI), 
-                    colour = "darkgrey", width = 0) + 
-        geom_point(data = df_p, aes(x = x, y = prop_F)) + 
-        geom_line(data = df_p, aes(x = x, y = y)) +
-        xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,50)) + theme
-    plot_filepath <- paste0(dir_data, "eda3_gender/time-series_", country, "-", position, ".png")
-    ggsave(plot_filepath, plot=p1)
 
     summary <- data.frame(country = country, position = position, n.authors = n.authors,
 
@@ -196,4 +176,55 @@ main <- function(country="All", position="All") {
        
                            r=res$r, c=res$c, stringsAsFactors = F)
     return(list(summary=summary, bootstrap_estimates=bootstrap_estimates))
+}
+
+save_graph <- function(dir_output, country, position, prop, r, c) {
+        # ggplot(df_p) +
+    #     geom_bar(stat="identity",  aes(x=x, y=y), fill="grey") +
+    #     geom_bar(stat="identity", aes(x=x, y=prop_F), fill = "#FF6666") +
+    #     geom_vline(xintercept= (res$parity.year + min(prop$date.n)), linetype="dashed", size=1.5, color="black") +
+    #     theme + xlab("Year") + ylab("Proportion of female-authored species, overall (%)\n") + ylim(c(0,50))
+
+
+    print(paste0(Sys.time(), ": Plotting data"))
+    max_predict_year <- as.integer(round((max(prop$date.n) - min(prop$date.n)) * 3/2, 0))
+    baseline_yr <- min(prop$date.n)
+
+    df_p <- data.frame(x = 0:max_predict_year + baseline_yr,
+                       y = sapply(0:max_predict_year, pfunc, r=r, c=c))
+
+    df_p <- merge(df_p, prop[, c('date.n', 'prop_F')], by.x="x", by.y="date.n", all.x=T, all.y=F)
+    df_p$y <- round(df_p$y*100, 5)
+    df_p$prop_F <- round(df_p$prop_F*100, 5)
+
+    prop_overlay <- prop[, c("date.n", "nFemales", "nMales", "n", "prop_F")][n>0]
+
+    # TODO: check how CI works here 
+    prop_overlay <- cbind(prop_overlay, get.CIs(prop_overlay$nFemales, prop_overlay$nMales))
+
+    y_axis_title <- ifelse(country=="All",
+        paste0("Proportion of female-authored species (%),\n", tolower(position), " authors \n"), 
+        paste0("Proportion of female-authored species (%),\n", tolower(position), " authors for ", country, "\n"))
+    p1 <- ggplot() + 
+        geom_errorbar(data = prop_overlay, aes(x = date.n, ymin = lowerCI, ymax = upperCI), 
+                    colour = "darkgrey", width = 0) + 
+        geom_point(data = df_p, aes(x = x, y = prop_F)) + 
+        geom_line(data = df_p, aes(x = x, y = y)) +
+        xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,50)) + theme
+
+    plot_filepath <- paste0(dir_output, country, "-", position, ".png")
+    ggsave(plot_filepath, plot=p1)
+    
+}
+
+
+run_specific_scenario <- function(country="All", position="All", dir_output) {
+    tryCatch ({
+        prop_t  <- generate_prop_t(country=country, position=position)
+        if (!is.null(prop_t)) {
+            output <- main(country = country, position = position, prop_t)
+            save_graph(dir_output, country=country, position=position, prop_t, output$summary$r, output$summary$c)
+            output$summary
+        }
+    }, error = function(e) {print(e)})
 }

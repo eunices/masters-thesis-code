@@ -38,6 +38,8 @@ Mode <- function(x) {
 } 
 ##############################
 
+
+
 find.response.variables <- function(data) {
   # This function runs the optimiser on a focal bit of resampled data, and gets the current gender ratio, 
   # rate of change, and the year at which the ratio got within 5% of gender parity using the pfunc model
@@ -68,39 +70,5 @@ find.response.variables <- function(data) {
                     current.rate.of.change=current.rate.of.change,
                     parity.year=parity.year, r=r, c=c,
                     stringsAsFactors = F))
-}
-
-
-make.resampled.data <- function(real.data, n.authors, chunk.size)  {
-  # Function to make "chunk.size" resampled datasets containing n.authors each 
-  # this will be done 'n.chunks' times (too big for memory if done in one go)
-
-  # sample idx for each chunk
-  resampled.data <- sample(1:nrow(real.data), size = chunk.size * n.authors, replace = T, prob = probabilities)
-
-  # get frequencies of idx and boot replicate
-  resampled.data <- table(factor(resampled.data, levels = 1:nrow(real.data)), # row idx, var1
-                          rep(1:chunk.size, each = n.authors))                # boot replicate, var2
-
-  # convert frequencies table into dataframe
-  resampled.data <- melt(resampled.data) %>% 
-      rename(row = Var1, boot.replicate = Var2, count = value) %>% 
-      mutate(row = as.numeric(as.character(row)))
-  
-  # create resampled data using row idx to reference real.data
-  resampled.data <- data.frame(date = real.data$date[resampled.data$row], 
-                               gender = real.data$gender[resampled.data$row],
-                               boot.replicate = resampled.data$boot.replicate,
-                               count = resampled.data$count)
-  
-  # get sum of counts for M and F for each boot.replicate/date combination
-  resampled.data <- resampled.data %>% 
-    group_by(boot.replicate, date) %>% 
-    summarise(nFemales = sum(count[gender == "F"]),
-              nMales = sum(count[gender == "M"]),
-              n = nFemales+nMales) %>% 
-    as.data.frame %>% filter(n > 0)
-  
-  resampled.data
 }
 
