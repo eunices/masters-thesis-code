@@ -159,7 +159,9 @@ main <- function(country="All", position="All") {
                     colour = "darkgrey", width = 0) + 
         geom_point(data = df_p, aes(x = x, y = prop_F)) + 
         geom_line(data = df_p, aes(x = x, y = y)) +
-        xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,50)); print(p1)
+        xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,50))
+    plot_filepath <- paste0(dir_data, "eda3_gender/time-series_", country, "-", position, ".png")
+    ggsave(plot_filepath, plot=p1)
 
     out <- data.frame(country = country, position = position, n.authors = n.authors,
 

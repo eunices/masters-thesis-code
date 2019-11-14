@@ -28,9 +28,8 @@ print(paste0(Sys.time(), " --- gender rep analysis"))
 # overall
 ##################################
 
-
-output <- main(country = "All", position = "All")
-output2 <- main(country = "All", position = "First")
+# output <- main(country = "All", position = "All")
+# output2 <- main(country = "All", position = "First")
 
 ##################################
 # usa, germany, brazil, france, united kingdom, japan [top 6 countries]
@@ -41,7 +40,7 @@ output2 <- main(country = "All", position = "First")
 # countries <- c("United States of America", "Germany", "Brazil", "France", "United Kingdom", "Japan")
 countries <- c(auth[, .N, by=Country][order(-N)][1:6]$Country)
 
-for (i in 1:length(countries)) {
+for (i in 1:1) {
     country <- countries[i]
     output <- main(country = country, position="All")
 }
