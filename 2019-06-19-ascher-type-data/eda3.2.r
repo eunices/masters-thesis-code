@@ -254,13 +254,14 @@ main <- function(country="All", position="All", prop) {
 
 save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
 
-    print(paste0(Sys.time(), ": Plotting data"))
-    
+    print(paste0(Sys.time(), ": Plotting data"))  
     baseline_yr <- min(prop$date.n)
 
     # determine y-axis max value
-    max_predict_year <- as.integer(round((max(prop$date.n) - min(prop$date.n)) * 1.75, 0))
-    if (is.numeric(as.numeric(parity.year))) {
+    max_predict_year <- as.integer((max(prop$date.n) - min(prop$date.n)) * 1.75)
+    is_parity_year_numeric <- !is.na(as.numeric(parity.year))
+
+    if (is_parity_year_numeric) {
         parity.year <- as.numeric(parity.year) + CURRENT_YEAR - baseline_yr # normalise to baseline
         max_predict_year <- ifelse(parity.year > max_predict_year,
                                    parity.year, max_predict_year)
@@ -271,9 +272,9 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
     prop_overlay <- cbind(prop, get.CIs(prop$nFemales, prop$nMales)) # TODO: how CI works [0,0 not allowed]
 
     # merge to template (there will be NAs)
-    prop_template <- data.frame(x = 0:max_predict_year + baseline_yr,
-                                y = sapply(0:max_predict_year, pfunc, r=r, c=c))
-    prop_overlay <- merge(prop_template, prop_overlay, by.x="x", by.y="date.n", all.x=T, all.y=F)
+    prop_template <- data.frame(yrs_fr_baseline = 0:max_predict_year + baseline_yr,
+                                predicted = sapply(0:max_predict_year, pfunc, r=r, c=c))
+    prop_overlay <- merge(prop_template, prop_overlay, by.x="yrs_fr_baseline", by.y="date.n", all.x=T, all.y=F)
     prop_overlay$y <- round(prop_overlay$y*100, 5); prop_overlay$prop_F <- round(prop_overlay$prop_F*100, 5) 
 
     y_axis_title <- ifelse(country=="All",
@@ -283,18 +284,22 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
     p1 <- ggplot() + 
         # geom_errorbar(data = prop_overlay, colour = "darkgrey", width = 0,
         #               aes(x = date.n, ymin = lowerCI, ymax = upperCI)) +
-        geom_point(data = prop_overlay, aes(x = x, y = prop_F)) +                 # real data
-        geom_line(data = prop_overlay, aes(x = x, y = y)) +                       # model predicted data
+        geom_point(data = prop_overlay, aes(x = yrs_fr_baseline, y = prop_F)) +                 # real data
+        geom_line(data = prop_overlay, aes(x = yrs_fr_baseline, y = predicted)) +               # model predicted data
         geom_hline(yintercept= 45, linetype="dotted", size=0.8, color="red")  +   # thresholds
         geom_hline(yintercept= 55, linetype="dotted", size=0.8, color="red")  +
         xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,100)) + theme
     
-    if (is.numeric(parity.year)) {
+    if (is_parity_year_numeric) {
         parity_annotation <- toString(parity.year + baseline_yr)
         p1 <- p1 + geom_vline(xintercept= parity.year + baseline_yr, linetype="dashed", size=1.5, color="black") +
             # annotate("text", x=parity.year + baseline_yr, y = 10, label=parity_annotation) + 
             geom_label(aes(x = parity.year + baseline_yr, y = 10, label = parity_annotation), 
                        fill = "white", label.size=0)
+    } else {
+        p1 <- p1 + geom_label(aes(x = max(prop_overlay$yrs_fr_baseline), 
+                                  y = 100, label = parity.year), fill = "white", label.size=0,
+                              vjust="inward", hjust="inward")
     }
 
     plot_filepath <- paste0(dir_output, country, "-", position, ".png")
