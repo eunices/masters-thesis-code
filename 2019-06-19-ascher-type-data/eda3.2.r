@@ -290,7 +290,6 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
         xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,100)) + theme
     
     if (is.numeric(parity.year)) {
-        print(parity.year+baseline_yr)
         parity_annotation <- toString(parity.year + baseline_yr)
         p1 <- p1 + geom_vline(xintercept= parity.year + baseline_yr, linetype="dashed", size=1.5, color="black") +
             # annotate("text", x=parity.year + baseline_yr, y = 10, label=parity_annotation) + 
