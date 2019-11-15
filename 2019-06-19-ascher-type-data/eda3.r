@@ -62,3 +62,10 @@ print(paste0(Sys.time(), " --- gender rep - taxonomists"))
 
 result_summary_tax <- run_specific_scenario(country="All", position="All", dir_data_subf2, "tax")
 write.csv(result_summary_tax, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
+
+result_summary_countries_tax <- lapply(countries, function(country) {
+    run_specific_scenario(country=country, position="All", dir_data_subf2, "tax")
+})
+
+outputs <- rbindlist(c(list(result_summary_tax), result_summary_countries_tax))
+write.csv(outputs, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
