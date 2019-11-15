@@ -259,11 +259,15 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
     max_predict_year <- as.integer(round((max(prop$date.n) - min(prop$date.n)) * 2, 0))
     baseline_yr <- min(prop$date.n)
 
-    prop_overlay <- data.frame(x = 0:max_predict_year + baseline_yr,
-                               y = sapply(0:max_predict_year, pfunc, r=r, c=c))
-    prop_overlay <- merge(prop_overlay, prop[, c('date.n', 'prop_F', 'n')], by.x="x", by.y="date.n", all.x=T, all.y=F)
+    # get confidence intervals
+    cols <- c('date.n', 'prop_F', 'n', 'nFemales', 'nMales')
+    prop_overlay <- cbind(prop, get.CIs(prop$nFemales, prop$nMales)) # TODO: how CI works 
+
+    # merge to template (there will be NAs)
+    prop_template <- data.frame(x = 0:max_predict_year + baseline_yr,
+                                y = sapply(0:max_predict_year, pfunc, r=r, c=c))
+    prop_overlay <- merge(prop_template, prop_overlay, by.x="x", by.y="date.n", all.x=T, all.y=F)
     prop_overlay$y <- round(prop_overlay$y*100, 5); prop_overlay$prop_F <- round(prop_overlay$prop_F*100, 5) 
-    prop_overlay <- cbind(prop_overlay, get.CIs(prop_overlay$nFemales, prop_overlay$nMales)) # TODO: how CI works 
 
     y_axis_title <- ifelse(country=="All",
         paste0("Proportion of female-authored species (%),\n", tolower(position), " authors \n"), 
