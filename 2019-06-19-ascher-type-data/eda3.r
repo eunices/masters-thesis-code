@@ -71,3 +71,4 @@ outputs <- rbindlist(c(list(result_summary_tax), result_summary_countries_tax))
 write.csv(outputs, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
 
 # generate_prop_t_tax("Germany")
+# generate_prop_t_tax("United States of America")

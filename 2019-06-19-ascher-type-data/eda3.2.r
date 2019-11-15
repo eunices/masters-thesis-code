@@ -223,11 +223,10 @@ main <- function(country="All", position="All", prop) {
     CIs_dt <- as.numeric(quantile(bootstrap_estimates$current.rate.of.change, probs = c(confi_95.1, confi_95.2)))
 
     # tabulate parity year
-    # TODO: figure out why parity.year may be NA
     baseline_yr <- min(prop$date.n)
     if(is.numeric(bootstrap_estimates$parity.year)) {
-        parity.years <- bootstrap_estimates$parity.year
-        parity.year <- median(parity.years) + baseline_yr - CURRENT_YEAR
+        parity.years <- as.numeric(bootstrap_estimates$parity.year) # may generate some NAs
+        parity.year <- median(parity.years, na.rm=T) + baseline_yr - CURRENT_YEAR # ignore text with na.rm=T
         CIs_yr <- as.numeric(quantile(parity.years, probs = c(confi_95.1, confi_95.2)))
         CIs_yr <- median(parity.years) + baseline_yr - CURRENT_YEAR
         parity.year[parity.year < 0] <- 0; CIs_yr[CIs_yr < 0] <- 0
@@ -256,12 +255,20 @@ main <- function(country="All", position="All", prop) {
 save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
 
     print(paste0(Sys.time(), ": Plotting data"))
-    max_predict_year <- as.integer(round((max(prop$date.n) - min(prop$date.n)) * 2, 0))
+    
     baseline_yr <- min(prop$date.n)
+
+    # determine y-axis max value
+    max_predict_year <- as.integer(round((max(prop$date.n) - min(prop$date.n)) * 1.75, 0))
+    if (is.numeric(parity.year)) {
+        parity.year <- parity.year + CURRENT_YEAR - baseline_yr # normalise to baseline
+        max_predict_year <- ifelse(parity.year > max_predict_year,
+                                   parity.year, max_predict_year)
+    }
 
     # get confidence intervals
     cols <- c('date.n', 'prop_F', 'n', 'nFemales', 'nMales')
-    prop_overlay <- cbind(prop, get.CIs(prop$nFemales, prop$nMales)) # TODO: how CI works 
+    prop_overlay <- cbind(prop, get.CIs(prop$nFemales, prop$nMales)) # TODO: how CI works [0,0 not allowed]
 
     # merge to template (there will be NAs)
     prop_template <- data.frame(x = 0:max_predict_year + baseline_yr,
@@ -282,7 +289,7 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
         xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,100)) + theme
     
     if (is.numeric(parity.year)) {
-        p1 <- p1 + geom_vline(xintercept= (parity.year + CURRENT_YEAR), linetype="dashed", size=1.5, color="black")
+        p1 <- p1 + geom_vline(xintercept= parity.year + baseline_yr, linetype="dashed", size=1.5, color="black")
     }
 
     plot_filepath <- paste0(dir_output, country, "-", position, ".png")

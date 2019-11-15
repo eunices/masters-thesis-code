@@ -38,8 +38,6 @@ Mode <- function(x) {
 } 
 ##############################
 
-
-
 find.response.variables <- function(data) {
   # This function runs the optimiser on a focal bit of resampled data, and gets the current gender ratio, 
   # rate of change, and the year at which the ratio got within 5% of gender parity using the pfunc model
@@ -50,23 +48,30 @@ find.response.variables <- function(data) {
 
   # Compute the predicted gender ratio at the "present", i.e. the first year with data
   gender.ratio.at.present <- pfunc(max(data$date), r, c)
+
+  # Compute the rate of change in the gender ratio at the "present"
   current.rate.of.change <- pfunc.deriv(p = gender.ratio.at.present, r = r) 
   
-  # Compute the rate of change in the gender ratio at the "present"
+  # Compute parity year
   year.range <- 0:9999
-  predicted.gender.ratio <- pfunc(year.range, r, c)   
-  # Compute the predicted gender ratio from year 2000 way into the future
-  ifelse(predicted.gender.ratio[2] > predicted.gender.ratio[1], rising <- TRUE, rising <- FALSE)  
-  # Check if it's rising or falling towards 50:50
-  if(rising) {
-    if(gender.ratio.at.present < 0.5) parity.year <- year.range[which(predicted.gender.ratio > 0.45)][1]                 # record first year it got within 5% of parity
-    else(parity.year <- "Female-biased and becoming more so")
+  predicted.gender.ratio <- pfunc(year.range, r, c)
+  
+  # check if female ratio increasing
+  is_female_ratio_increasing <- ifelse(predicted.gender.ratio[2] > predicted.gender.ratio[1], TRUE, FALSE)
+
+  if(is_female_ratio_increasing) { # becoming more female biased
+    parity.year <- ifelse(gender.ratio.at.present < 0.5,
+                          # record first year it got within 5% of parity
+                          year.range[which(predicted.gender.ratio > 0.45)][1], 
+                          "Female-biased and becoming more so")
+  } else {                         # becoming more male biased
+    parity.year <- ifelse(gender.ratio.at.present > 0.5, 
+                          # record first year it got within 5% of parity
+                          year.range[which(predicted.gender.ratio < 0.55)][1],
+                          "Male-biased and becoming more so")
   }
-  else {
-    if(gender.ratio.at.present > 0.5) parity.year <- year.range[which(predicted.gender.ratio < 0.55)][1]
-    else(parity.year <- "Male-biased and becoming more so")
-  }
-  return(data.frame(gender.ratio.at.present=gender.ratio.at.present, 
+
+  return(data.frame(gender.ratio.at.present=gender.ratio.at.present,
                     current.rate.of.change=current.rate.of.change,
                     parity.year=parity.year, r=r, c=c,
                     stringsAsFactors = F))
