@@ -19,6 +19,9 @@ names(df_r) <- unlist(names_df_r, use.names=FALSE)
 # Lookup table for countries
 lu <- fread('data/lookup/2019-05-29-statoid-country-codes.csv',  encoding="UTF-8")
 
+
+# For species
+
 # Denormalised authors
 filepath <- '2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_4.0-denormalised2.csv'
 dat <- fread(paste0(dir_data, filepath), encoding="UTF-8", stringsAsFactors=F, na=c(""))
@@ -26,7 +29,8 @@ cols <- c('idxes', 'full.name.of.describer.n', 'idxes_author.order', 'date.n'); 
 
 # Author info
 auth <- get_des(write=F)
-auth <- auth[, c('full.name.of.describer.n', 'residence.country.describer.n', 'describer.gender.n')]
+auth <- auth[, c('full.name.of.describer.n', 'residence.country.describer.n', 'describer.gender.n',
+                 "min", "max_corrected")]
 auth$residence.country.describer.n <- sapply(auth$residence.country.describer.n, function(x) strsplit(x, "; ")[[1]][1])
 auth <- merge(auth, lu[, c("DL", "Country")], all.x=T, all.y=F, 
               by.x="residence.country.describer.n", by.y="DL")
@@ -37,6 +41,19 @@ print(table(dat$idxes_author.order))
 # Merge dataframes
 dat <- merge(dat, auth[, c("full.name.of.describer.n", "describer.gender.n", "Country")],
              all.x=T, all.y=F, by="full.name.of.describer.n")
+
+# For taxonomist
+seq <- mapply(function(a, b) {
+    seq(a, b)
+}, a=auth$min, b=auth$max_corrected)
+auth$years <- seq
+auth_years <- data.table(auth %>% unnest(years)); auth$years <- NULL
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - functions
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- functions"))
 
 generate_prop_t <- function(country="All", position="All") { 
     
@@ -84,6 +101,45 @@ generate_prop_t <- function(country="All", position="All") {
         names(prop)[which(names(prop) == 'N')] <- "n"
 
         return(prop)
+    } else {
+        print("No female taxonomist in dataset.")
+        return(NULL)
+    }
+
+}
+
+generate_prop_t_tax <- function(country="All") {
+
+    # Filter data by country
+    if (country != "All") {
+        auth_years <- auth_years[Country == country]
+    }
+    
+    # Get male female taxonomist ratio
+    prop <- auth_years[, list(N = length(full.name.of.describer.n)), by=c("years", "describer.gender.n")]
+    prop <- dcast(prop, years ~ describer.gender.n, value.var="N")
+    prop <- data.table(merge(data.frame(years=min(prop$years):max(prop$years)), prop, by="years"))
+    prop[is.na(prop)] <-  0
+    prop <- prop[years <= 2018,]
+    prop$N <- prop$F + prop$M
+    prop$prop_F <- prop$F / prop$N
+
+    if (any(names(prop) %in% "F")) {
+        first_year_female <- min(prop[F > 0,]$year)
+        prop <- prop[years >= first_year_female,]
+        prop$date <- prop$years - first_year_female
+
+        prop$F <- as.integer(prop$F)
+        prop$M <- as.integer(prop$M)
+        prop$N <- as.integer(prop$N)
+
+        names(prop)[which(names(prop) == 'F')] <- "nFemales"
+        names(prop)[which(names(prop) == 'M')] <- "nMales"
+        names(prop)[which(names(prop) == 'N')] <- "n"
+        names(prop)[which(names(prop) == 'years')] <- "date.n"
+
+        return(prop)
+
     } else {
         print("No female taxonomist in dataset.")
         return(NULL)
@@ -232,20 +288,3 @@ run_specific_scenario <- function(country="All", position="All", dir_output, typ
     }, error = function(e) {print(e)})
 }
 
-# TODO: taxonomist
-
-des <- get_des(write=F)
-des <- des[, c("full.name.of.describer.n", "min", "max_corrected", 
-               "describer.gender.n", "residence.country.describer.n")]
-
-generate_prop_t_tax <- function() {
-
-}
-
-seq <- mapply(function(a, b) {
-    seq(a, b)
-}, a=describers$min, b=describers$max_corrected)
-describers$years <- seq
-describers <- data.table(describers %>% unnest(years))
-describers[,N_real_describers := length(idx_auth), by=years]
-describers_active_by_year <- unique(describers[,c("years", "N_real_describers")])[order(as.numeric(years))]
