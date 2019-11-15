@@ -53,6 +53,7 @@ write.csv(outputs, paste0(dir_data_subf1, "_outputs.csv"), row.names=F)
 # rbindlist(result_summary)
 
 # generate_prop_t("France", "All")
+# generate_prop_t("Germany", "All")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - gender rep - taxonomists

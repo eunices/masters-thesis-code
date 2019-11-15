@@ -6,9 +6,10 @@ print(paste0(Sys.time(), " --- load data"))
 
 source('2019-06-19-ascher-type-data/eda3_util.r') # util functions
 
-theme <- theme_minimal()
 
-# Read/initialize all data
+# Read/initialize all data/variables
+CURRENT_YEAR <- 2018
+theme <- theme_minimal()
 
 # Plausible UN data
 un_path <- "data/2019-11-11-un-indicators/"
@@ -207,12 +208,12 @@ main <- function(country="All", position="All", prop) {
 
     # tabulate parity year
     # TODO: figure out why parity.year may be NA
-    baseline_yr <- min(prop$date.n); current_yr <- 2019
+    baseline_yr <- min(prop$date.n)
     if(is.numeric(bootstrap_estimates$parity.year)) {
         parity.years <- bootstrap_estimates$parity.year
-        parity.year <- median(parity.years) + baseline_yr - current_yr
+        parity.year <- median(parity.years) + baseline_yr - CURRENT_YEAR
         CIs_yr <- as.numeric(quantile(parity.years, probs = c(confi_95.1, confi_95.2)))
-        CIs_yr <- median(parity.years) + baseline_yr - current_yr
+        CIs_yr <- median(parity.years) + baseline_yr - CURRENT_YEAR
         parity.year[parity.year < 0] <- 0; CIs_yr[CIs_yr < 0] <- 0
     } else {
         # if not going to hit parity sometimes, pick the mode non-parity outcome
@@ -236,46 +237,45 @@ main <- function(country="All", position="All", prop) {
     return(list(summary=summary, bootstrap_estimates=bootstrap_estimates))
 }
 
-save_graph <- function(dir_output, country, position, prop, r, c) {
-        # ggplot(df_p) +
-    #     geom_bar(stat="identity",  aes(x=x, y=y), fill="grey") +
-    #     geom_bar(stat="identity", aes(x=x, y=prop_F), fill = "#FF6666") +
-    #     geom_vline(xintercept= (res$parity.year + min(prop$date.n)), linetype="dashed", size=1.5, color="black") +
-    #     theme + xlab("Year") + ylab("Proportion of female-authored species, overall (%)\n") + ylim(c(0,50))
-
+save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
 
     print(paste0(Sys.time(), ": Plotting data"))
-    max_predict_year <- as.integer(round((max(prop$date.n) - min(prop$date.n)) * 3/2, 0))
+    max_predict_year <- as.integer(round((max(prop$date.n) - min(prop$date.n)) * 2, 0))
     baseline_yr <- min(prop$date.n)
 
-    df_p <- data.frame(x = 0:max_predict_year + baseline_yr,
-                       y = sapply(0:max_predict_year, pfunc, r=r, c=c))
-
-    df_p <- merge(df_p, prop[, c('date.n', 'prop_F')], by.x="x", by.y="date.n", all.x=T, all.y=F)
-    df_p$y <- round(df_p$y*100, 5)
-    df_p$prop_F <- round(df_p$prop_F*100, 5)
-
-    prop_overlay <- prop[, c("date.n", "nFemales", "nMales", "n", "prop_F")][n>0]
-
-    # TODO: check how CI works here 
-    prop_overlay <- cbind(prop_overlay, get.CIs(prop_overlay$nFemales, prop_overlay$nMales))
+    prop_overlay <- data.frame(x = 0:max_predict_year + baseline_yr,
+                               y = sapply(0:max_predict_year, pfunc, r=r, c=c))
+    prop_overlay <- merge(prop_overlay, prop[, c('date.n', 'prop_F', 'n')], by.x="x", by.y="date.n", all.x=T, all.y=F)
+    prop_overlay$y <- round(prop_overlay$y*100, 5); prop_overlay$prop_F <- round(prop_overlay$prop_F*100, 5) 
+    prop_overlay <- prop_overlay[, c("date.n", "prop_F", "n")][n>0]
+    prop_overlay <- cbind(prop_overlay, get.CIs(prop_overlay$nFemales, prop_overlay$nMales)) # TODO: how CI works 
 
     y_axis_title <- ifelse(country=="All",
         paste0("Proportion of female-authored species (%),\n", tolower(position), " authors \n"), 
         paste0("Proportion of female-authored species (%),\n", tolower(position), " authors for ", country, "\n"))
     p1 <- ggplot() + 
-        geom_errorbar(data = prop_overlay, aes(x = date.n, ymin = lowerCI, ymax = upperCI), 
-                    colour = "darkgrey", width = 0) + 
-        geom_point(data = df_p, aes(x = x, y = prop_F)) + 
-        geom_line(data = df_p, aes(x = x, y = y)) +
-        xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,50)) + theme
+        # geom_errorbar(data = prop_overlay, colour = "darkgrey", width = 0,
+        #               aes(x = date.n, ymin = lowerCI, ymax = upperCI)) +
+        geom_point(data = prop_overlay, aes(x = x, y = prop_F)) +                 # real data
+        geom_line(data = prop_overlay, aes(x = x, y = y)) +                       # model predicted data
+        geom_hline(yintercept= 45, linetype="dotted", size=0.8, color="red")  +   # thresholds
+        geom_hline(yintercept= 55, linetype="dotted", size=0.8, color="red")  +
+        xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,100)) + theme
+    
+    if (is.numeric(parity.year)) {
+        p1 <- p1 + geom_vline(xintercept= (parity.year + CURRENT_YEAR), linetype="dashed", size=1.5, color="black")
+    }
 
     plot_filepath <- paste0(dir_output, country, "-", position, ".png")
-    ggsave(plot_filepath, plot=p1)
+    ggsave(plot_filepath, plot=p1, width = 10, height = 7, dpi = 150, units = "in", device='png')
     
 }
 
 run_specific_scenario <- function(country="All", position="All", dir_output, type="pub") {
+
+    print("#################################")
+    print(paste0("Running for '", country, "' at position '", position, "' (", type, ")."))
+
     tryCatch ({
         if (type=="pub") {        # for publication
             prop_t  <- generate_prop_t(country=country, position=position)
@@ -284,7 +284,8 @@ run_specific_scenario <- function(country="All", position="All", dir_output, typ
         }
         if (!is.null(prop_t)) {
             output <- main(country = country, position = position, prop_t)
-            save_graph(dir_output, country=country, position=position, prop_t, output$summary$r, output$summary$c)
+            save_graph(dir_output, country=country, position=position, prop_t, 
+                       output$summary$r, output$summary$c, output$summary$years.to.parity)
             output$summary
         }
     }, error = function(e) {print(e)})
