@@ -256,8 +256,9 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
 
     print(paste0(Sys.time(), ": Plotting data"))  
     baseline_yr <- min(prop$date.n)
+    max_y <- 70
 
-    # determine y-axis max value
+    # determine x-axis max value
     max_predict_year <- as.integer((max(prop$date.n) - min(prop$date.n)) * 1.75)
     is_parity_year_numeric <- !is.na(as.numeric(parity.year))
 
@@ -275,7 +276,7 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
     prop_template <- data.frame(yrs_fr_baseline = 0:max_predict_year + baseline_yr,
                                 predicted = sapply(0:max_predict_year, pfunc, r=r, c=c))
     prop_overlay <- merge(prop_template, prop_overlay, by.x="yrs_fr_baseline", by.y="date.n", all.x=T, all.y=F)
-    prop_overlay$y <- round(prop_overlay$y*100, 5); prop_overlay$prop_F <- round(prop_overlay$prop_F*100, 5) 
+    prop_overlay$predicted <- round(prop_overlay$predicted*100, 5); prop_overlay$prop_F <- round(prop_overlay$prop_F*100, 5) 
 
     y_axis_title <- ifelse(country=="All",
         paste0("Proportion of female-authored species (%),\n", tolower(position), " authors \n"), 
@@ -288,7 +289,7 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
         geom_line(data = prop_overlay, aes(x = yrs_fr_baseline, y = predicted)) +               # model predicted data
         geom_hline(yintercept= 45, linetype="dotted", size=0.8, color="red")  +   # thresholds
         geom_hline(yintercept= 55, linetype="dotted", size=0.8, color="red")  +
-        xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,100)) + theme
+        xlab("\nYear") + ylab(y_axis_title) + ylim(c(0, max_y)) + theme
     
     if (is_parity_year_numeric) {
         parity_annotation <- toString(parity.year + baseline_yr)
@@ -297,13 +298,14 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
             geom_label(aes(x = parity.year + baseline_yr, y = 10, label = parity_annotation), 
                        fill = "white", label.size=0)
     } else {
+        print(parity.year)
         p1 <- p1 + geom_label(aes(x = max(prop_overlay$yrs_fr_baseline), 
-                                  y = 100, label = parity.year), fill = "white", label.size=0,
+                                  y = max_y, label = parity.year), fill = "white", label.size=0,
                               vjust="inward", hjust="inward")
     }
 
     plot_filepath <- paste0(dir_output, country, "-", position, ".png")
-    ggsave(plot_filepath, plot=p1, width = 10, height = 7, dpi = 150, units = "in", device='png')
+    ggsave(plot_filepath, plot=p1, width = 10, height = 5, dpi = 150, units = "in", device='png')
     
 }
 

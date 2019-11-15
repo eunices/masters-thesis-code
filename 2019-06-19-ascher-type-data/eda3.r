@@ -72,7 +72,7 @@ write.csv(outputs, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
 # generate_prop_t_tax("Germany")
 # generate_prop_t_tax("United States of America")
 
-# Test plotting
+# # Test plotting
 source('2019-06-19-ascher-type-data/eda3.2.r') # read local/ bee data
 prop_t <- generate_prop_t_tax(country="Brazil")
 output <- main(country = "Brazil", position = "All", prop_t)
