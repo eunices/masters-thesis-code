@@ -60,6 +60,5 @@ write.csv(outputs, paste0(dir_data_subf1, "_outputs.csv"), row.names=F)
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- gender rep - taxonomists"))
 
-source('2019-06-19-ascher-type-data/eda3.2.r') # read local/ bee data
 result_summary_tax <- run_specific_scenario(country="All", position="All", dir_data_subf2, "tax")
 write.csv(result_summary_tax, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
