@@ -61,7 +61,6 @@ write.csv(outputs, paste0(dir_data_subf1, "_outputs.csv"), row.names=F)
 print(paste0(Sys.time(), " --- gender rep - taxonomists"))
 
 result_summary_tax <- run_specific_scenario(country="All", position="All", dir_data_subf2, "tax")
-write.csv(result_summary_tax, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
 
 result_summary_countries_tax <- lapply(countries, function(country) {
     run_specific_scenario(country=country, position="All", dir_data_subf2, "tax")
@@ -72,3 +71,10 @@ write.csv(outputs, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
 
 # generate_prop_t_tax("Germany")
 # generate_prop_t_tax("United States of America")
+
+# Test plotting
+source('2019-06-19-ascher-type-data/eda3.2.r') # read local/ bee data
+prop_t <- generate_prop_t_tax(country="All")
+output <- main(country = "All", position = "All", prop_t)
+save_graph(dir_data_subf2, country="All", position="All", prop_t, 
+           output$summary$r, output$summary$c, output$summary$years.to.parity)

@@ -260,8 +260,8 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
 
     # determine y-axis max value
     max_predict_year <- as.integer(round((max(prop$date.n) - min(prop$date.n)) * 1.75, 0))
-    if (is.numeric(parity.year)) {
-        parity.year <- parity.year + CURRENT_YEAR - baseline_yr # normalise to baseline
+    if (is.numeric(as.numeric(parity.year))) {
+        parity.year <- as.numeric(parity.year) + CURRENT_YEAR - baseline_yr # normalise to baseline
         max_predict_year <- ifelse(parity.year > max_predict_year,
                                    parity.year, max_predict_year)
     }
@@ -279,6 +279,7 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
     y_axis_title <- ifelse(country=="All",
         paste0("Proportion of female-authored species (%),\n", tolower(position), " authors \n"), 
         paste0("Proportion of female-authored species (%),\n", tolower(position), " authors for ", country, "\n"))
+    
     p1 <- ggplot() + 
         # geom_errorbar(data = prop_overlay, colour = "darkgrey", width = 0,
         #               aes(x = date.n, ymin = lowerCI, ymax = upperCI)) +
@@ -289,7 +290,12 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
         xlab("\nYear") + ylab(y_axis_title) + ylim(c(0,100)) + theme
     
     if (is.numeric(parity.year)) {
-        p1 <- p1 + geom_vline(xintercept= parity.year + baseline_yr, linetype="dashed", size=1.5, color="black")
+        print(parity.year+baseline_yr)
+        parity_annotation <- toString(parity.year + baseline_yr)
+        p1 <- p1 + geom_vline(xintercept= parity.year + baseline_yr, linetype="dashed", size=1.5, color="black") +
+            # annotate("text", x=parity.year + baseline_yr, y = 10, label=parity_annotation) + 
+            geom_label(aes(x = parity.year + baseline_yr, y = 10, label = parity_annotation), 
+                       fill = "white", label.size=0)
     }
 
     plot_filepath <- paste0(dir_output, country, "-", position, ".png")
