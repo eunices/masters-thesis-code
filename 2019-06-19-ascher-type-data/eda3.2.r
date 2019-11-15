@@ -103,6 +103,15 @@ generate_prop_t <- function(country="All", position="All") {
         
         # include more than 0 to fit graph
         return(prop[n>0])
+
+        # output looks like this
+        #     date.n nFemales nMales U prop_F  n date
+        # 1:   1996        1      1 0  0.500  2    0
+        # 2:   1997        0      5 0  0.000  5    1
+        # 3:   1998        1      0 0  1.000  1    2
+        # 4:   1999        0      8 0  0.000  8    3
+        # 5:   2000        0      8 0  0.000  8    4
+
     } else {
         print("No female taxonomist in dataset.")
         return(NULL)
@@ -142,6 +151,13 @@ generate_prop_t_tax <- function(country="All") {
 
         # include more than 0 to fit graph
         return(prop[n>0])
+
+        # output looks like this
+        #     date.n nFemales nMales U  n    prop_F date
+        # 1:   1996        1      5 0  6 0.1666667    0
+        # 2:   1997        1      7 0  8 0.1250000    1
+        # 3:   1998        2      7 0  9 0.2222222    2
+        # 4:   1999        2      7 0  9 0.2222222    3
 
     } else {
         print("No female taxonomist in dataset.")
@@ -247,7 +263,6 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
                                y = sapply(0:max_predict_year, pfunc, r=r, c=c))
     prop_overlay <- merge(prop_overlay, prop[, c('date.n', 'prop_F', 'n')], by.x="x", by.y="date.n", all.x=T, all.y=F)
     prop_overlay$y <- round(prop_overlay$y*100, 5); prop_overlay$prop_F <- round(prop_overlay$prop_F*100, 5) 
-    prop_overlay <- prop_overlay[, c("date.n", "prop_F", "n")][n>0]
     prop_overlay <- cbind(prop_overlay, get.CIs(prop_overlay$nFemales, prop_overlay$nMales)) # TODO: how CI works 
 
     y_axis_title <- ifelse(country=="All",

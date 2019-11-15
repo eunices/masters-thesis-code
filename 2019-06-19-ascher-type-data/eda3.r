@@ -52,8 +52,8 @@ write.csv(outputs, paste0(dir_data_subf1, "_outputs.csv"), row.names=F)
 # print(result_summary[[1]])
 # rbindlist(result_summary)
 
-# generate_prop_t("France", "All")
 # generate_prop_t("Germany", "All")
+# generate_prop_t("France", "All")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - gender rep - taxonomists
@@ -69,3 +69,5 @@ result_summary_countries_tax <- lapply(countries, function(country) {
 
 outputs <- rbindlist(c(list(result_summary_tax), result_summary_countries_tax))
 write.csv(outputs, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
+
+# generate_prop_t_tax("Germany")
