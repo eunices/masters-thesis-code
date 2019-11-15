@@ -252,7 +252,7 @@ main <- function(country="All", position="All", prop) {
     return(list(summary=summary, bootstrap_estimates=bootstrap_estimates))
 }
 
-save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
+save_graph <- function(dir_output, country, position, prop, r, c, parity.year, type) {
 
     print(paste0(Sys.time(), ": Plotting data"))  
     baseline_yr <- min(prop$date.n)
@@ -278,9 +278,15 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year) {
     prop_overlay <- merge(prop_template, prop_overlay, by.x="yrs_fr_baseline", by.y="date.n", all.x=T, all.y=F)
     prop_overlay$predicted <- round(prop_overlay$predicted*100, 5); prop_overlay$prop_F <- round(prop_overlay$prop_F*100, 5) 
 
-    y_axis_title <- ifelse(country=="All",
-        paste0("Proportion of female-authored species (%),\n", tolower(position), " authors \n"), 
-        paste0("Proportion of female-authored species (%),\n", tolower(position), " authors for ", country, "\n"))
+    if(type=="pub"){
+        y_axis_title <- ifelse(country=="All",
+            paste0("Proportion of female-authored species (%),\n", tolower(position), " authors \n"), 
+            paste0("Proportion of female-authored species (%),\n", tolower(position), " authors for ", country, "\n"))
+    } else if (type=="tax"){
+        y_axis_title <- ifelse(country=="All",
+            paste0("Proportion of female taxonomists (%)\n"), 
+            paste0("Proportion of female taxonomists (%)\n", "for ", country, "\n"))
+    }
     
     p1 <- ggplot() + 
         # geom_errorbar(data = prop_overlay, colour = "darkgrey", width = 0,
@@ -323,7 +329,7 @@ run_specific_scenario <- function(country="All", position="All", dir_output, typ
         if (!is.null(prop_t)) {
             output <- main(country = country, position = position, prop_t)
             save_graph(dir_output, country=country, position=position, prop_t, 
-                       output$summary$r, output$summary$c, output$summary$years.to.parity)
+                       output$summary$r, output$summary$c, output$summary$years.to.parity, type)
             output$summary
         }
     }, error = function(e) {print(e)})

@@ -14,13 +14,13 @@ source('2019-06-19-ascher-type-data/eda3_util.r') # util functions
 source('2019-06-19-ascher-type-data/eda3.2.r') # read local/ bee data
 
 dir_data_subf <- paste0(dir_data, "eda3_gender/"); if(!dir.exists(dir_data_subf)) dir.create(dir_data_subf)
-dir_data_subf1 <- paste0(dir_data_subf, "time-series-pub/"); if(!dir.exists(dir_data_subf1)) dir.create(dir_data_subf1)
+dir_data_subf1 <- paste0(dir_data_subf, "time-series-spp/"); if(!dir.exists(dir_data_subf1)) dir.create(dir_data_subf1)
 dir_data_subf2 <- paste0(dir_data_subf, "time-series-tax/"); if(!dir.exists(dir_data_subf2)) dir.create(dir_data_subf2)
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - gender rep - papers
+# Section - gender rep - species
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- gender rep - papers"))
+print(paste0(Sys.time(), " --- gender rep - species"))
 
 # adapted from https://github.com/lukeholman/genderGapCode/
 
@@ -73,8 +73,8 @@ write.csv(outputs, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
 # generate_prop_t_tax("United States of America")
 
 # # Test plotting
-source('2019-06-19-ascher-type-data/eda3.2.r') # read local/ bee data
-prop_t <- generate_prop_t_tax(country="Brazil")
-output <- main(country = "Brazil", position = "All", prop_t)
-save_graph(dir_data_subf2, country="Brazil", position="All", prop_t, 
-           output$summary$r, output$summary$c, output$summary$years.to.parity)
+# source('2019-06-19-ascher-type-data/eda3.2.r') # read local/ bee data
+# prop_t <- generate_prop_t_tax(country="Brazil")
+# output <- main(country = "Brazil", position = "All", prop_t)
+# save_graph(dir_data_subf2, country="Brazil", position="All", prop_t, 
+#            output$summary$r, output$summary$c, output$summary$years.to.parity, "tax")
