@@ -1,6 +1,5 @@
 source('2019-06-19-ascher-type-data/subset.r')
 
-
 # Libraries
 library(dplyr)
 library(RSQLite)

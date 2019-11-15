@@ -99,8 +99,9 @@ generate_prop_t <- function(country="All", position="All") {
         names(prop)[which(names(prop) == 'F')] <- "nFemales"
         names(prop)[which(names(prop) == 'M')] <- "nMales"
         names(prop)[which(names(prop) == 'N')] <- "n"
-
-        return(prop)
+        
+        # include more than 0 to fit graph
+        return(prop[n>0])
     } else {
         print("No female taxonomist in dataset.")
         return(NULL)
@@ -138,7 +139,8 @@ generate_prop_t_tax <- function(country="All") {
         names(prop)[which(names(prop) == 'N')] <- "n"
         names(prop)[which(names(prop) == 'years')] <- "date.n"
 
-        return(prop)
+        # include more than 0 to fit graph
+        return(prop[n>0])
 
     } else {
         print("No female taxonomist in dataset.")
