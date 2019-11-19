@@ -1,3 +1,4 @@
+# adapted from https://github.com/lukeholman/genderGapCode/
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - load data
@@ -14,8 +15,6 @@ theme <- theme_minimal()
 # Plausible UN data
 un_path <- "data/2019-11-11-un-indicators/"
 df_r <- fread(paste0(un_path, '2019-11-12-indicators.csv'), encoding="UTF-8", stringsAsFactors=F, na=c(""))
-names_df_r <- df_r[1,]; df_r <- df_r[-1,]
-names(df_r) <- unlist(names_df_r, use.names=FALSE)
 
 # Lookup table for countries
 lu <- fread('data/lookup/2019-05-29-statoid-country-codes.csv',  encoding="UTF-8")
@@ -26,6 +25,7 @@ lu <- fread('data/lookup/2019-05-29-statoid-country-codes.csv',  encoding="UTF-8
 # Denormalised authors
 filepath <- '2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_4.0-denormalised2.csv'
 dat <- fread(paste0(dir_data, filepath), encoding="UTF-8", stringsAsFactors=F, na=c(""))
+dat[, names(dat) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 cols <- c('idxes', 'full.name.of.describer.n', 'idxes_author.order', 'date.n'); dat <- dat[,..cols]
 
 # Author info
@@ -36,6 +36,7 @@ auth$residence.country.describer.n <- sapply(auth$residence.country.describer.n,
 auth <- merge(auth, lu[, c("DL", "Country")], all.x=T, all.y=F, 
               by.x="residence.country.describer.n", by.y="DL")
 auth$residence.country.describer.n <- NULL
+countries <- c(auth[!is.na(Country), .N, by=Country][order(-N)]$Country)
 
 print(table(dat$idxes_author.order))
 
@@ -77,6 +78,9 @@ generate_prop_t <- function(country="All", position="All") {
     # count N by gender
     prop <- dat[, .N, by=c("date.n", "describer.gender.n")]
     prop <- dcast(prop, date.n ~ describer.gender.n, value.var="N")
+    if(!"F" %in% names(prop)) prop$F <- 0
+    if(!"M" %in% names(prop)) prop$M <- 0
+    prop$date.n <- as.numeric(prop$date.n)
 
     # ensure no blank years
     prop <- merge(prop, data.frame(date.n=min(prop$date.n):max(prop$date.n)),
@@ -89,7 +93,7 @@ generate_prop_t <- function(country="All", position="All") {
     prop$prop_F <- ifelse(prop$M + prop$F == 0, 0, prop$F / (prop$M + prop$F))
     prop$N <- prop$F + prop$M
 
-    if (any(names(prop) %in% "F")) {
+    if (sum(prop$F) >0) {
         # filter data to year with at least 1 female
         first_year_female <- min(prop[F>0]$date, na.rm=T)
         prop <- prop[date.n>=first_year_female]
@@ -113,7 +117,7 @@ generate_prop_t <- function(country="All", position="All") {
         # 5:   2000        0      8 0  0.000  8    4
 
     } else {
-        print("No female taxonomist in dataset.")
+        print(paste0("No female taxonomist in dataset for ", country))
         return(NULL)
     }
 
@@ -226,9 +230,10 @@ main <- function(country="All", position="All", prop) {
     baseline_yr <- min(prop$date.n)
     if(is.numeric(bootstrap_estimates$parity.year)) {
         parity.years <- as.numeric(bootstrap_estimates$parity.year) # may generate some NAs
+        parity.years <- parity.years[!is.na(parity.years)]
         parity.year <- median(parity.years, na.rm=T) + baseline_yr - CURRENT_YEAR # ignore text with na.rm=T
-        CIs_yr <- as.numeric(quantile(parity.years, probs = c(confi_95.1, confi_95.2)))
-        CIs_yr <- median(parity.years) + baseline_yr - CURRENT_YEAR
+        CIs_yr <- quantile(parity.years, probs = c(confi_95.1, confi_95.2))
+        CIs_yr <- CIs_yr + baseline_yr - CURRENT_YEAR
         parity.year[parity.year < 0] <- 0; CIs_yr[CIs_yr < 0] <- 0
     } else {
         # if not going to hit parity sometimes, pick the mode non-parity outcome
@@ -276,18 +281,21 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year, t
     prop_template <- data.frame(yrs_fr_baseline = 0:max_predict_year + baseline_yr,
                                 predicted = sapply(0:max_predict_year, pfunc, r=r, c=c))
     prop_overlay <- merge(prop_template, prop_overlay, by.x="yrs_fr_baseline", by.y="date.n", all.x=T, all.y=F)
-    prop_overlay$predicted <- round(prop_overlay$predicted*100, 5); prop_overlay$prop_F <- round(prop_overlay$prop_F*100, 5) 
+    prop_overlay$predicted <- round(prop_overlay$predicted*100, 5)
+    prop_overlay$prop_F <- round(prop_overlay$prop_F*100, 5) 
 
+    # y axis title
     if(type=="pub"){
         y_axis_title <- ifelse(country=="All",
             paste0("Proportion of female-authored species (%),\n", tolower(position), " authors \n"), 
             paste0("Proportion of female-authored species (%),\n", tolower(position), " authors for ", country, "\n"))
     } else if (type=="tax"){
         y_axis_title <- ifelse(country=="All",
-            paste0("Proportion of female taxonomists (%)\n"), 
-            paste0("Proportion of female taxonomists (%)\n", "for ", country, "\n"))
+            paste0("Proportion of female authors (%)\n"), 
+            paste0("Proportion of female authors (%)\n", "for ", country, "\n"))
     }
     
+    # Plot
     p1 <- ggplot() + 
         # geom_errorbar(data = prop_overlay, colour = "darkgrey", width = 0,
         #               aes(x = date.n, ymin = lowerCI, ymax = upperCI)) +
@@ -297,19 +305,21 @@ save_graph <- function(dir_output, country, position, prop, r, c, parity.year, t
         geom_hline(yintercept= 55, linetype="dotted", size=0.8, color="red")  +
         xlab("\nYear") + ylab(y_axis_title) + ylim(c(0, max_y)) + theme
     
-    if (is_parity_year_numeric) {
+    # Plot parity year if it exists
+    if (is_parity_year_numeric) { # plot numeric value
         parity_annotation <- toString(parity.year + baseline_yr)
         p1 <- p1 + geom_vline(xintercept= parity.year + baseline_yr, linetype="dashed", size=1.5, color="black") +
             # annotate("text", x=parity.year + baseline_yr, y = 10, label=parity_annotation) + 
             geom_label(aes(x = parity.year + baseline_yr, y = 10, label = parity_annotation), 
                        fill = "white", label.size=0)
-    } else {
+    } else { # else plot text
         print(parity.year)
         p1 <- p1 + geom_label(aes(x = max(prop_overlay$yrs_fr_baseline), 
                                   y = max_y, label = parity.year), fill = "white", label.size=0,
                               vjust="inward", hjust="inward")
     }
 
+    # save graph
     plot_filepath <- paste0(dir_output, country, "-", position, ".png")
     ggsave(plot_filepath, plot=p1, width = 10, height = 5, dpi = 150, units = "in", device='png')
     
@@ -330,7 +340,7 @@ run_specific_scenario <- function(country="All", position="All", dir_output, typ
             output <- main(country = country, position = position, prop_t)
             save_graph(dir_output, country=country, position=position, prop_t, 
                        output$summary$r, output$summary$c, output$summary$years.to.parity, type)
-            output$summary
+            output
         }
     }, error = function(e) {print(e)})
 }

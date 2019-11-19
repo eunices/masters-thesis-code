@@ -6,17 +6,17 @@ print(paste0(Sys.time(), " --- get UN data"))
 
 # http://ec2-54-174-131-205.compute-1.amazonaws.com/API/Information.php
 
-indicators <- c(24106,  # GDI: Mean years of schooling (females aged 25 years and above)
-                24206,  # GDI: Mean years of schooling (males aged 25 years and above)
-                120606, # GDI: Life expectancy at birth, female
-                121106, # GDI: Life expectancy at birth, male
-                123306, # GDI: Expected years of schooling, females
-                123406, # GDI: Expected years of schooling, males
-                123506, # GDI: Estimated GNI per capita (PPP), female
-                123606, # GDI: Estimated GNI per capita (PPP), male
-                137906  # GDI
+indicators <- list(`24106` = "schl_f", # GDI: Mean years of schooling (females aged 25 years and above)
+                   `24206` = "schl_m", # GDI: Mean years of schooling (males aged 25 years and above)
+                   `120606`= "lexp_f", # GDI: Life expectancy at birth, female
+                   `121106`= "lexp_m", # GDI: Life expectancy at birth, male
+                   `123306`= "esch_f", # GDI: Expected years of schooling, females
+                   `123406`= "esch_m", # GDI: Expected years of schooling, males
+                   `123506`= "gnip_f", # GDI: Estimated GNI per capita (PPP), female
+                   `123606`= "gnip_m", # GDI: Estimated GNI per capita (PPP), male
+                   `137906`= "gdip_a"  # GDI
 )
-query_indicator <- do.call(paste, c(as.list(indicators), sep = ","))
+query_indicator <- do.call(paste, c(as.list(names(indicators)), sep = ","))
 path <- paste0(
     "http://ec2-54-174-131-205.compute-1.amazonaws.com/API/HDRO_API.php/indicator_id=",
     query_indicator, "/year=1990,2017/structure=cyi")
@@ -33,7 +33,19 @@ df[, c('country', 'year', 'indicator') := tstrsplit(col, ".", fixed=TRUE)]
 names(df)[which(names(df)==".")] <- "value"
 
 df_r <- dcast(df[year==2017], country ~ indicator, value.var="value")
-df_r
+
+names(df_r) <- unlist(sapply(names(df_r), function(name) {
+    # print(name)
+    if(name %in% names(indicators)) {
+        indicators[name]
+     } else { name }
+}))
+
+
+lu <- fread('data/lookup/2019-05-29-statoid-country-codes.csv',  encoding="UTF-8")[,c("A-3", "Country")]
+df_r <- merge(df_r, lu, by.x="country", by.y="A-3", all.x=T, all.y=F); rm(lu)
+df_r <- df_r[!is.na(country)]
+
 
 un_path <- "data/2019-11-11-un-indicators/"
 dir.create(un_path)

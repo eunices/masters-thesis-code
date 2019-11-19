@@ -1,6 +1,6 @@
-pfunc <- function(t, r, c) {
-    exp(0.5*r*t) / (2*exp(0.5*r*t) + c)
-}
+# adapted from https://github.com/lukeholman/genderGapCode/
+
+pfunc <- function(t, r, c) exp(0.5*r*t) / (2*exp(0.5*r*t) + c)
 
 # li <- sapply(1:100, function(x) pfunc(c(x, 1, 1)))
 # plot(1:100, li)
@@ -18,7 +18,6 @@ find.ll<-function(data, par) {
 # Internal function to perform 1D optimisation and find the parameters r and c that optimises the log likelihood
 # for the focal set of data. Arbitrarily chosen starting values
 run.optimiser <- function(data) optim(par = c(0.1, 1), find.ll, data = data)
-
 
 # Used to find the 95% CIs on a proportion (uses default method of the binom.test function). 
 # Works for a pair of columns nFemales and nMales
@@ -59,12 +58,13 @@ find.response.variables <- function(data) {
   # check if female ratio increasing
   is_female_ratio_increasing <- ifelse(predicted.gender.ratio[2] > predicted.gender.ratio[1], TRUE, FALSE)
 
-  if(is_female_ratio_increasing) { # becoming more female biased
+  if(is_female_ratio_increasing) {              # becoming more female biased
     parity.year <- ifelse(gender.ratio.at.present < 0.5,
                           # record first year it got within 5% of parity
                           year.range[which(predicted.gender.ratio > 0.45)][1], 
                           "Female-biased and becoming more so")
-  } else {                         # becoming more male biased
+
+  } else {                                      # becoming more male biased
     parity.year <- ifelse(gender.ratio.at.present > 0.5, 
                           # record first year it got within 5% of parity
                           year.range[which(predicted.gender.ratio < 0.55)][1],
