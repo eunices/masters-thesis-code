@@ -32,7 +32,11 @@ rm(fit) # remove from memory
 #     tp <- traceplot(zips, pars=names(zips)[start:end])
 #     tp
 # }; par(ask=F)
-# traceplot(zips, pars=names(zips))
+png(paste0(dir_model_folder, 'traceplot.png'), width=24, height=16, units="in", res=150)
+traceplot(zips, pars=names(zips))
+dev.off()
+
+write.csv(summary(zips)$summary, paste0(dir_model_folder, 'fit.csv'), fileEncoding='UTF-8')
 
 # posterior predictive simulations for checking model fit
 posterior.sim <- function(data, model, over = FALSE) {
