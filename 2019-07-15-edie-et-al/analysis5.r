@@ -26,6 +26,32 @@ mapping <- data.frame(
 #   END \\ LOAD --------------------------------------------------------------------------------------------
 
 
+
+# CHECK CHAIN CONVERGENCE --------------------------------------------------------------------
+
+# report any parameters with chains that didn't mix
+badchain <- summary(zips)$summary %>%
+    data.frame(par=row.names( . ), . ) %>%
+    filter(Rhat > 1.1 | Rhat < 0.9)
+
+# write warning output
+if (nrow(badchain) > 0) {
+    interpret <- FALSE
+    sink(paste0(dir_model_folder, "output/chain_sampling.txt"))
+    cat("Chains have not converged. Increase interations in sampling in stan() function 
+        call in code/model.r. Do not interpret model results as parameter estimates are 
+        currently highly unstable.")
+    sink()
+} else {
+    interpret <- TRUE
+    sink(paste0(dir_model_folder, "output/chain_sampling.txt"))
+    cat("Chains have converged. Model results are robust to posterior sampling.")
+    sink()
+}
+
+# END \\ CHECK CHAIN CONVERGENCE ----------------------------------------------------------
+
+
 #   PREPARE CUMULATIVE SERIES -------------------------------------------------------------------
 
 # cumulative series for observed data
