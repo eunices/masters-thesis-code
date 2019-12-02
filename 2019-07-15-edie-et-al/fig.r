@@ -350,3 +350,50 @@ df_describers[full.name.of.describer.n=="Francis Walker"]
 write.csv(tax_highest_prop_syn[1:10], 
           paste0(dir_data, 'eda4_edie/2019-10-03-tax-3-highest-syn.csv'), row.names=F)
 
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Taxonomic effort paragraph
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Taxonomic effort paragraph"))
+
+# Count number of statuses
+df2 <- get_df2(write=F)[,c("idx", "status", "date.n")]
+df_years <- rbind(df[, c("idx", "status", "date.n")], df2)
+status <- table(df_years$status)
+sum(status)
+round(prop.table(status)*100, 1)
+
+# Count by author-years
+df_tax <- df_describers[spp_N_1st_auth_s>0]
+dim(df_tax)
+df_tax$diff <- df_tax$max - df_tax$ns_max
+tax_only_non_valid <- df_tax[ns_spp_N==0]$full.name.of.describer.n
+df_tax$non_valid_spp_N <- df_tax$spp_N - df_tax$ns_spp_N
+tax_valid_and_non_valid <-  df_tax[ns_spp_N > 0 & non_valid_spp_N > 0]$full.name.of.describer.n
+
+# Total number of author-years
+total_author_years <- dim(df_describers_year)[1]
+
+# Author-years: Only non-valid species
+length(tax_only_non_valid)
+length(df_describers_year[full.name.of.describer %in% tax_only_non_valid]$N)
+length(df_describers_year[full.name.of.describer %in% tax_only_non_valid]$N) / total_author_years * 100
+
+# Author-years: At least valid species and at least 1 non-valid species
+length(tax_valid_and_non_valid)
+round(prop.table(table(df_tax[full.name.of.describer.n %in% tax_valid_and_non_valid]$diff==0))*100, 1)
+summary(df_tax[full.name.of.describer.n %in% tax_valid_and_non_valid & diff >0]$diff)
+sum(df_tax[full.name.of.describer.n %in% tax_valid_and_non_valid & diff >0]$diff)
+
+# Did not shift the mean
+summary(df_describers_year$N)
+summary(df_describers_year[!full.name.of.describer %in% c(tax_only_non_valid)]$N)
+summary(df_describers_year[!full.name.of.describer %in% c(tax_only_non_valid, tax_valid_and_non_valid)]$N)
+
+
+p1 <- ggplot(df_describers_year) + geom_density(aes(x = N), alpha = 0.2) + xlim(c(0, 20)) + theme_minimal()
+p2 <- ggplot(df_describers_year[!full.name.of.describer %in% c(tax_only_non_valid)]) +
+    geom_density(aes(x = N), alpha = 0.2) + xlim(c(0,20)) + theme_minimal()
+
+grid.arrange(p1, p2)
+
+(721+524)/ total_author_years
