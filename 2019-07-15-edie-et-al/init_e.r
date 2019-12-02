@@ -67,6 +67,7 @@ taxonomic_effort_long <- data.table(taxonomic_effort %>% gather(type, N, N_descr
 print(paste0("Read df_describers / df_describers_year "))
 df_describers <- get_des(write=F)
 df_describers_template <- data.frame(date.n=integer(), full.name.of.describer=character())
+
 for (i in 1:length(df_describers$idx_auth)) {
     row <- df_describers[idx_auth==i]
 

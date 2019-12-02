@@ -305,9 +305,11 @@ table(is.na(dfx2$collector.gender.n))
 table(is.na(dfx2$title.of.collector.n))
 
 write.csv(dfx1, 
-        paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"),
+          na='', row.names=F, fileEncoding="UTF-8")
 
 write.csv(dfx2, 
-        paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"),
+          na='', row.names=F, fileEncoding="UTF-8")
 
 # note to self. may not be necessary

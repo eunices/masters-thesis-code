@@ -5,7 +5,7 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- load data"))
 
-source('2019-06-19-ascher-type-data/eda3_util.r') # util functions
+source('2019-06-19-ascher-type-data/analysis3_util.r') # util functions
 
 
 # Read/initialize all data/variables

@@ -10,9 +10,9 @@ library(httr)
 library(jsonlite)
 
 # Scripts
-source('2019-06-19-ascher-type-data/eda3_util.r') # util functions
-# source('2019-06-19-ascher-type-data/eda3.1.r') # get data from UN 's API and save locally
-source('2019-06-19-ascher-type-data/eda3.2.r') # read local/ bee data
+source('2019-06-19-ascher-type-data/analysis3_util.r') # util functions
+# source('2019-06-19-ascher-type-data/analysis3.1.r') # get data from UN 's API and save locally
+source('2019-06-19-ascher-type-data/analysis3.2.r') # read local/ bee data
 
 dir_data_subf <- paste0(dir_data, "eda3_gender/"); if(!dir.exists(dir_data_subf)) dir.create(dir_data_subf)
 dir_data_subf1 <- paste0(dir_data_subf, "time-series-spp/"); if(!dir.exists(dir_data_subf1)) dir.create(dir_data_subf1)
