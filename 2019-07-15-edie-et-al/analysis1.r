@@ -70,7 +70,7 @@ if(dim(pub.matrix)[2] <= 2){
 # model_params$te == 0 # no taxonomic effort
 # model_params$te == 1 # taxonomic effort, by publications
 # in future, model_params$te == 2 # taxonomic effort, by taxonomists
-if( ! model_params$te == 0){  
+if(model_params$te == 0){ # no taxonomic effort
     pub.matrix[] <- 0 # set offset to zero
 }
 
