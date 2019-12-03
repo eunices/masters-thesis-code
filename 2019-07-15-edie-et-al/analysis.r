@@ -69,6 +69,7 @@ for (i in 1:length(model_param_list)) {
     # Initialize identifier
     model_identifier <- paste0(
         model_params$dataset, model_params$ll, "-",
+        "E", as.character(model_params$te), "-",
         "C", as.character(model_params$chains), "-",
         "I", as.character(model_params$iter), "-",
         "A", as.character(model_params$ad), "-",
