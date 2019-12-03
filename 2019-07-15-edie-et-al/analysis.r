@@ -43,7 +43,8 @@ chosen_params <- c("BMY-C4-I20000-A0.8-T12") # fast run
 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
-combination_list <- list()
+# Create list of model params
+model_param_list <- list()
 if(analysis_edie_loop_type=="params") {
 
     speed_len <- length(chosen_speeds); param_len <- length(chosen_indices)
@@ -56,7 +57,7 @@ if(analysis_edie_loop_type=="params") {
         for (i in 1:param_len) {
             chosen_index <- chosen_indices[i]; chosen_speed <- chosen_speeds[j]
             idx <- j*i
-            combination_list[[idx]] <- model_params_combinations(chosen_speed)[[chosen_index]]
+            model_param_list[[idx]] <- model_params_combinations(chosen_speed)[[chosen_index]]
         }
     }
 
@@ -65,14 +66,16 @@ if(analysis_edie_loop_type=="params") {
     print(paste0(Sys.time(), " --- Start modelling loop for ", len_params, " parameter strings."))
 
     for (i in 1:len_params) {
-        combination_list[[i]] <- parse_model_identifier(chosen_params[i])
+        model_param_list[[i]] <- parse_model_identifier(chosen_params[i])
     }
 
 }
 
-for (i in 1:length(combination_list)) {
 
-    model_params <- combination_list[[i]]
+# Loop through list
+for (i in 1:length(model_param_list)) {
+
+    model_params <- model_param_list[[i]]
 
     # Initialize identifier
     model_identifier <- paste0(
@@ -95,11 +98,9 @@ for (i in 1:length(combination_list)) {
         source(paste0(dir_script_ed, 'analysis4.r')) # forecast
         source(paste0(dir_script_ed, 'analysis5.r')) # plot
     }
-    write_to_log <- function(w) {
-        write(conditionMessage(w), file=warnings_log, append=T)
-    }
+
     tryCatch(
-        withCallingHandlers(analysis(), warning = function(w) {write_to_log(w)}),
+        withCallingHandlers(analysis(), warning = function(w) {write_to_log(w, warnings_log)}),
         error = function(e) {print(paste0("ERROR: ", conditionMessage(e)))}
     ) # Solution from: https://stackoverflow.com/questions/37836392/ 
 }

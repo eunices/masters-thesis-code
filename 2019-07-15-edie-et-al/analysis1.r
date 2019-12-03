@@ -167,7 +167,7 @@ original_code <- function() {
         pub.matrix[rownames(pub.matrix) %in% names(npub[[ii]]), ii] <- npub[[ii]]
     }
 
-
+    # According to Edie (pers. comm.), OFFSET = TRUE is for TE model, and OFFSET = FALSE is for noTE model.
     # if( ! OFFSET ){  # set offset to zero
     #     pub.matrix[] <- 0
     # }

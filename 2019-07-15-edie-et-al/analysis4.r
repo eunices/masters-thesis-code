@@ -1,9 +1,7 @@
 source('2019-07-15-edie-et-al/init_a.r')
 print(paste0(Sys.time(), " --- analysis4.r"))
 
-args <- commandArgs(trailingOnly=TRUE)
-ftime <- as.numeric(15)
-
+ftime <- as.numeric(25)
 set.seed(420)
 
 # initial data

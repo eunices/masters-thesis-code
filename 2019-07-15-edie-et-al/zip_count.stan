@@ -1,7 +1,9 @@
-functions {
-  real count_series_lp(int[] y, int[] off,
+functions { 
+
+  real count_series_lp(int[] y, int[] off, // data for spp. and publications
       vector coef, real alpha, real beta, // ACP part
       real gamma, real eta, real phi) {  // zero-inflation part
+
 
     real lp;
     int Y;
@@ -39,8 +41,8 @@ functions {
 
     lp = 0;
     for(i in 1:Y) {
-      if(y[i] == 0) {
-        lp = lp + log_sum_exp(bernoulli_lpmf(1 | theta[i]), 
+      if(y[i] == 0) { 
+        lp = lp + log_sum_exp(bernoulli_lpmf(1 | theta[i]),  // why bernoulli
             bernoulli_lpmf(0 | theta[i]) + 
             poisson_lpmf(y[i] | (off[i] + 1) * mu[i]));
       } else {
@@ -48,7 +50,7 @@ functions {
             poisson_lpmf(y[i] | (off[i] + 1) * mu[i]));
       }
     }
-    return lp;
+    return lp;   // returns log prob
   }
 }
 data {

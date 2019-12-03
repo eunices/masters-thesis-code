@@ -1,4 +1,10 @@
 parse_model_identifier <- function(string) {
+
+    #' Parses model identifier into a list of parameters
+
+    #' Parses a specific model identifier into a list of parameter.
+    #' @param string The string that is to be decomposed into a list of parameters.
+
     model_params <- list()
     string <- strsplit(string, "-")[[1]]
 
@@ -25,3 +31,17 @@ parse_model_identifier <- function(string) {
 # Test
 # string <- "BMY-C4-I5000-A0.99-T15"
 # parse_model_identifier(string)
+
+
+write_to_log <- function(w, warn_log_fp) {
+
+    #' Writes warning to warning logfile.
+
+    #' Writes warning to logfile in specified path. 
+    #' @param w Warning output from a try-catch block.
+    #' @param warn_log_fp Warning log filepath. Should be a .log file. 
+
+    write(conditionMessage(w), file=warn_log_fp, append=T)
+}
+
+
