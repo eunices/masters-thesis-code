@@ -16,23 +16,25 @@ source('2019-07-15-edie-et-al/analysis_loops_params.r')
 analysis_edie_loop_type <- "string" # string or params
 
 # For analysis_edie_loop_type == "params"
-chosen_speeds <- c('fast') 
-chosen_indices <- c(3, 6)   # 6 options
+chosen_speeds <- c('fast')  # print(names(speeds))
+chosen_indices <- c(3, 6)   # print(combinations)
+chosen_efforts <- c(0, 1)   # either 0 (no taxonomic effort), 1 (pub taxonomic effort)
 
 # For analysis_edie_loop_type == "string"
-chosen_params <- c("BMY-C4-I20000-A0.8-T12") # fast run
-# chosen_params <- c("BNN-C4-I8000-A0.9-T12",
-#                    "BNN-C4-I8000-A0.95-T12",
-#                    "BNN-C4-I8000-A0.99-T12",
-#                    "BNN-C4-I12000-A0.99-T12",
-#                    "BNN-C4-I300000-A0.99-T15")
-# chosen_params <- c("BGN-C4-I100000-A0.99-T12",
-#                    "BMY-C4-I100000-A0.8-T12",
-#                    "BGN-C4-I300000-A0.99-T12",
-#                    "BMY-C4-I300000-A0.8-T12")
+chosen_params <- c("BMY-E0-C4-I20000-A0.8-T12") # fast run
+# chosen_params <- c("BNN-E0-C4-I8000-A0.9-T12",
+#                    "BNN-E0-C4-I8000-A0.95-T12",
+#                    "BNN-E0-C4-I8000-A0.99-T12",
+#                    "BNN-E0-C4-I12000-A0.99-T12",
+#                    "BNN-E0-C4-I300000-A0.99-T15")
+# chosen_params <- c("BGN-E0-C4-I100000-A0.99-T12",
+#                    "BMY-E0-C4-I100000-A0.8-T12",
+#                    "BGN-E0-C4-I300000-A0.99-T12",
+#                    "BMY-E0-C4-I300000-A0.8-T12")
 
-# model_params        <dataset><ll>-C<chains>-I<iter>-A<ad>-T<td>
+# model_params        <dataset><ll>-E<te>-C<chains>-I<iter>-A<ad>-T<td>
 #     dataset         # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not
+#     te              # taxonomic effort 0=no taxonomic effort, 1=publication taxonomic effort
 #     ll              # whether using lat lon data (Y) or global.distribution data (N)
 #     chains          # stan's number of chains
 #     iter            # stan's number of iterations
@@ -44,31 +46,18 @@ print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
 # Create list of model params
-model_param_list <- list()
+len_params <- ifelse(analysis_edie_loop_type=="params", 
+                     length(chosen_speeds)*length(chosen_indices)*length(chosen_efforts),
+                     length(chosen_params))
+print(paste0(Sys.time(), " --- Start modelling loop for ", len_params, " parameters."))
+
 if(analysis_edie_loop_type=="params") {
-
-    speed_len <- length(chosen_speeds); param_len <- length(chosen_indices)
-    print(paste0(Sys.time(), " --- Start modelling loop for ", speed_len, " x ", 
-            param_len, " = ", speed_len*param_len, " combinations."))
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-
-    for (j in 1:speed_len) {
-        for (i in 1:param_len) {
-            chosen_index <- chosen_indices[i]; chosen_speed <- chosen_speeds[j]
-            idx <- j*i
-            model_param_list[[idx]] <- model_params_combinations(chosen_speed)[[chosen_index]]
-        }
-    }
-
+    model_param_list <- create_model_params_combi(chosen_speeds, chosen_indices, chosen_efforts)
 } else if (analysis_edie_loop_type=="string") {
-    len_params <- length(chosen_params)
-    print(paste0(Sys.time(), " --- Start modelling loop for ", len_params, " parameter strings."))
-
+    model_param_list <- list()
     for (i in 1:len_params) {
         model_param_list[[i]] <- parse_model_identifier(chosen_params[i])
     }
-
 }
 
 

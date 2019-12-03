@@ -14,15 +14,21 @@ parse_model_identifier <- function(string) {
             model_params$ll <- substr(string[i], 3, 3)
         } else {
             first_letter <- substr(string[i], 1, 1)
-            if(first_letter == "C") {
-                model_params$chains <- as.numeric(substr(string[i], 2, nchar(string[i])))
-            } else if (first_letter == "I") {
-                model_params$iter <- as.numeric(substr(string[i], 2, nchar(string[i])))
-            } else if (first_letter == "A") {
-                model_params$ad <- as.numeric(substr(string[i], 2, nchar(string[i])))
-            } else if (first_letter == "T") {
-                model_params$td <- as.numeric(substr(string[i], 2, nchar(string[i])))
+            if (first_letter == "E" ) { # taxonomic effort
+                model_params$te <- as.numeric(substr(string[i], 2, nchar(string[i])))
             }
+            if(first_letter == "C") { # chains
+                model_params$chains <- as.numeric(substr(string[i], 2, nchar(string[i])))
+            }
+            if (first_letter == "I") { # iterations
+                model_params$iter <- as.numeric(substr(string[i], 2, nchar(string[i])))
+            } 
+            if (first_letter == "A") { # adapt delta
+                model_params$ad <- as.numeric(substr(string[i], 2, nchar(string[i])))
+            } 
+            if (first_letter == "T") { # tree depth
+                model_params$td <- as.numeric(substr(string[i], 2, nchar(string[i])))
+            } 
         }
     }
     model_params

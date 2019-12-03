@@ -67,6 +67,13 @@ if(dim(pub.matrix)[2] <= 2){
     pub.matrix <- pub.matrix[, -1]
 }
 
+# model_params$te == 0 # no taxonomic effort
+# model_params$te == 1 # taxonomic effort, by publications
+# in future, model_params$te == 2 # taxonomic effort, by taxonomists
+if( ! model_params$te == 0){  
+    pub.matrix[] <- 0 # set offset to zero
+}
+
 data <- list(N = N, P = P, str = as.numeric(starts), end = rep(max(dim(count.matrix)[1]), P), 
              counts = cc, off = t(pub.matrix))
 
@@ -168,9 +175,9 @@ original_code <- function() {
     }
 
     # According to Edie (pers. comm.), OFFSET = TRUE is for TE model, and OFFSET = FALSE is for noTE model.
-    # if( ! OFFSET ){  # set offset to zero
-    #     pub.matrix[] <- 0
-    # }
+    if( ! OFFSET){  
+        pub.matrix[] <- 0 # set offset to zero
+    }
 
     list(N = N, P = P, str = as.numeric(starts), end = rep(max(len), P), 
                 counts = cc, off = t(pub.matrix))
