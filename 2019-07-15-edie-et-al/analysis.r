@@ -21,16 +21,26 @@ chosen_indices <- c(3, 6)   # print(combinations)
 chosen_efforts <- c(0, 1)   # either 0 (no taxonomic effort), 1 (pub taxonomic effort)
 
 # For analysis_edie_loop_type == "string"
-chosen_params <- c("BMY-E0-C4-I20000-A0.8-T12") # fast run
-# chosen_params <- c("BNN-E0-C4-I8000-A0.9-T12",
-#                    "BNN-E0-C4-I8000-A0.95-T12",
-#                    "BNN-E0-C4-I8000-A0.99-T12",
-#                    "BNN-E0-C4-I12000-A0.99-T12",
-#                    "BNN-E0-C4-I300000-A0.99-T15")
-# chosen_params <- c("BGN-E0-C4-I100000-A0.99-T12",
-#                    "BMY-E0-C4-I100000-A0.8-T12",
-#                    "BGN-E0-C4-I300000-A0.99-T12",
-#                    "BMY-E0-C4-I300000-A0.8-T12")
+# chosen_params <- c("BMY-E0-C4-I20000-A0.8-T12") # fast run
+chosen_params <- c("BGY-E0-C4-I8000-A0.8-T12",
+                   "BMY-E0-C4-I8000-A0.8-T12",
+                   "BNN-E0-C4-I8000-A0.8-T12",
+
+                   "BGY-E0-C4-I8000-A0.95-T12",
+                   "BMY-E0-C4-I8000-A0.95-T12",
+                   "BNN-E0-C4-I8000-A0.95-T12",
+
+                   "BMY-E0-C4-I20000-A0.8-T12",
+
+                   "BGY-E0-C4-I100000-A0.8-T12",
+                   "BMY-E0-C4-I100000-A0.8-T12",
+                   "BNN-E0-C4-I100000-A0.8-T12",
+
+                   "BGY-E0-C4-I300000-A0.99-T15",
+                   "BMY-E0-C4-I300000-A0.99-T15",
+                   "BNN-E0-C4-I300000-A0.99-T15",
+                   
+                   "BGY-E0-C4-I300000-A0.999-T15")
 
 # model_params        <dataset><ll>-E<te>-C<chains>-I<iter>-A<ad>-T<td>
 #     dataset         # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not
