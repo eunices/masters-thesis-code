@@ -175,9 +175,9 @@ original_code <- function() {
     }
 
     # According to Edie (pers. comm.), OFFSET = TRUE is for TE model, and OFFSET = FALSE is for noTE model.
-    if( ! OFFSET){  
-        pub.matrix[] <- 0 # set offset to zero
-    }
+    # if( ! OFFSET){  
+    #     pub.matrix[] <- 0 # set offset to zero
+    # }
 
     list(N = N, P = P, str = as.numeric(starts), end = rep(max(len), P), 
                 counts = cc, off = t(pub.matrix))
