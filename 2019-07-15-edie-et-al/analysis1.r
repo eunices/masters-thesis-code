@@ -42,7 +42,7 @@ if(dim(count.matrix)[2] <= 2){
 nyear <- nrow(count.matrix); jgroup <- ncol(count.matrix); npred <- 1
 # index where value is not 0 to use as a starting point
 starts <- apply(count.matrix, 2, function(x) min(which(x != 0))) 
-cc <- t(count.matrix)
+cc <- t(count.matrix) 
 N <- ncol(cc)
 P <- nrow(cc)
 

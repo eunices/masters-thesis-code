@@ -54,12 +54,12 @@ functions {
   }
 }
 data {
-  int<lower=0> N;
-  int<lower=0> P;
-  int<lower=0> str[P];
-  int<lower=0> end[P];
-  int<lower=0> counts[P, N];
-  int<lower=0> off[P, N];
+  int<lower=0> N; // years
+  int<lower=0> P; // groups
+  int<lower=0> str[P];  // index where value is != 0 of each group
+  int<lower=0> end[P];  // length of each group
+  int<lower=0> counts[P, N]; // N species data [group x years]
+  int<lower=0> off[P, N];    // N publications data [group x years]
 }
 parameters {
   vector[2] coef[P];
@@ -80,7 +80,7 @@ transformed parameters {
   cov_matrix[2] Sigma;
 
   for(p in 1:P) {
-    beta[p] = (1 - alpha[p]) * beta_unc[p];
+    beta[p] = (1 - alpha[p]) * beta_unc[p]; // why beta_unc 1st?
   }
 
   Sigma = quad_form_diag(Omega, sigma);
@@ -98,7 +98,7 @@ model {
   Omega ~ lkj_corr(2);
   sigma ~ cauchy(0, 1);
   mu[1] ~ normal(0, 5);
-  mu[2] ~ normal(0, 1);
+  mu[2] ~ normal(0, 1); 
   for(p in 1:P) {
     coef[p] ~ multi_normal(mu, Sigma);
   }
