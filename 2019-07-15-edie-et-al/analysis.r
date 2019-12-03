@@ -6,6 +6,9 @@ print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 # setwd("C:/_dev/msc/thesis/")
 # source(paste0("2019-07-15-edie-et-al/", "analysis.r"))
 
+# memory.limit(12000)
+memory.limit(25000)
+
 # Init
 #############
 source('2019-07-15-edie-et-al/init_a.r')
