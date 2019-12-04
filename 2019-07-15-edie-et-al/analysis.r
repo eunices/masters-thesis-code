@@ -113,8 +113,8 @@ for (i in 1:length(model_param_list)) {
 
     # Analysis scripts
     analysis <- function() {
-        source(paste0(dir_script_ed, 'analysis0.r')) # data prep
-        source(paste0(dir_script_ed, 'analysis1.r')) # data prep
+        source(paste0(dir_script_ed, 'analysis0.r')) # data prep/wrangling
+        source(paste0(dir_script_ed, 'analysis1.r')) # formatting data
         source(paste0(dir_script_ed, 'analysis2.r')) # model fitting
         source(paste0(dir_script_ed, 'analysis3.r')) # post
         source(paste0(dir_script_ed, 'analysis4.r')) # forecast
