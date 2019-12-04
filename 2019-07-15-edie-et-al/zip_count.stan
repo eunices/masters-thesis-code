@@ -65,7 +65,7 @@ parameters {
   vector[2] coef[P];
   vector[2] mu;
   corr_matrix[2] Omega;
-  vector<lower=0>[2] sigma;
+  vector<lower=0>[2] tau;
   real<lower=0,upper=1> alpha[P];
   real<lower=0,upper=1> beta_unc[P];
   real<lower=0,upper=1> gamma[P];
@@ -83,7 +83,7 @@ transformed parameters {
     beta[p] = (1 - alpha[p]) * beta_unc[p]; // why beta_unc 1st?
   }
 
-  Sigma = quad_form_diag(Omega, sigma);
+  Sigma = quad_form_diag(Omega, tau);
 }
 model {
   for(p in 1:P) {
@@ -96,7 +96,7 @@ model {
   sigma_phi ~ cauchy(0, 1);
 
   Omega ~ lkj_corr(2);
-  sigma ~ cauchy(0, 1);
+  tau ~ cauchy(0, 1);
   mu[1] ~ normal(0, 5);
   mu[2] ~ normal(0, 1); 
   for(p in 1:P) {
