@@ -6,8 +6,8 @@ print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 # setwd("C:/_dev/msc/thesis/")
 # source(paste0("2019-07-15-edie-et-al/", "analysis.r"))
 
-# memory.limit(12000)
-memory.limit(25000)
+memory.limit(size=12000)
+# memory.limit(size=25000)
 
 # Init
 #############
@@ -24,7 +24,9 @@ chosen_indices <- c(3, 6)   # print(combinations)
 chosen_efforts <- c(0, 1)   # either 0 (no taxonomic effort), 1 (pub taxonomic effort)
 
 # For analysis_edie_loop_type == "string"
-chosen_params <- c("FAM-E0-C4-I20000-A0.8-T12") # fast run
+# chosen_params <- c("FAM-E0-C4-I20000-A0.8-T12") # fast run
+chosen_params <- c("FAM-E0-C4-I20000-A0.8-T12",
+                   "FAM-E1-C4-I20000-A0.8-T12") # fast run
 # chosen_params <- c("BGY-E0-C4-I8000-A0.8-T12",
 #                    "BMY-E0-C4-I8000-A0.8-T12",
 #                    "BNN-E0-C4-I8000-A0.8-T12",
