@@ -53,7 +53,7 @@ dfpub <- unique(dfpub[, c("group", "year", "paper.authors", "journal", "title",
          "volume", "issue", "page.numbers.publication")]); dim(dfpub)
 npub <- dfpub[, list(N=.N), by=c("group", "year")]
 pub.matrix <- dcast(npub, year ~ group, value.var="N")
-pub.matrix <- merge(data.frame(year=min(data$year):max(data$year)), 
+pub.matrix <- merge(data.frame(year=min(data$year):max(data$year)),
                     pub.matrix, 
                     by="year", all.x=T, all.y=F)
 pub.matrix[is.na(pub.matrix)] <- 0; pub.matrix <- as.matrix(pub.matrix)

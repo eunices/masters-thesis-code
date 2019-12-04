@@ -1,8 +1,6 @@
 source('2019-07-15-edie-et-al/init_a.r')
 print(paste0(Sys.time(), " --- analysis0.r"))
 
-# TODO: extend this to group by family
-
 # filepaths
 filepath_input_regions <- 'data/2019-05-23-ascher-bee-data/2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty2-cty.csv'
 
@@ -158,15 +156,18 @@ if (model_params$dataset == "GL") { # global
     }
 }
 
-write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="", fileEncoding = "UTF-8")
+if (model_params$dataset == "FA") {
+    df <- get_df1(write=F)
+    join <- df[, c("idx", "full.name.of.describer", "date.n", "family")][order(as.numeric(idx))]
+}
 
+write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="", fileEncoding = "UTF-8")
 
 # Format the dataframe into actual dataset
 input_filepath <- paste0(dir_model_folder, "format.csv", na="")
 data <- fread(input_filepath, na=c(''), encoding='UTF-8')
 
-if(model_params$dataset == "GL") { # global
-
+if (model_params$dataset == "GL") { # global
     data1 <- cbind(data, group=1); data2 <- cbind(data, group=2) # duplicate groups
     data <- rbind(data1, data2)
 }
