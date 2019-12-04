@@ -161,6 +161,14 @@ if (model_params$dataset == "FA") {
     join <- df[, c("idx", "full.name.of.describer", "date.n", "family")][order(as.numeric(idx))]
 }
 
+if (model_params$dataset == "GE") {
+    df <- get_df1(write=F)
+    join <- df[, c("idx", "full.name.of.describer", "date.n", "genus")][order(as.numeric(idx))]
+    join <- df[tolower(genus) %in% c("andrena", "lasioglossum", "megachile", 
+                                     "bombus", "hylaeus", "nomada", "perdita",
+                                     "coelioxys", "anthophora", "xylocopa", "colletes", "osmia")]
+}
+
 write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="", fileEncoding = "UTF-8")
 
 # Format the dataframe into actual dataset
