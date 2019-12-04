@@ -32,9 +32,11 @@ rm(fit) # remove from memory
 #     tp <- traceplot(zips, pars=names(zips)[start:end])
 #     tp
 # }; par(ask=F)
+
 png(paste0(dir_model_folder, 'traceplot.png'), width=24, height=16, units="in", res=150)
 traceplot(zips, pars=names(zips))
-dev.off()
+dev.off() 
+# TODO: still doesn't work
 
 write.csv(summary(zips)$summary, paste0(dir_model_folder, 'fit.csv'), fileEncoding='UTF-8')
 

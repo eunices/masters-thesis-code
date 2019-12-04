@@ -1,6 +1,8 @@
 source('2019-07-15-edie-et-al/init_a.r')
 print(paste0(Sys.time(), " --- analysis0.r"))
 
+# TODO: extend this to group by family
+
 # filepaths
 filepath_input_regions <- 'data/2019-05-23-ascher-bee-data/2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty2-cty.csv'
 
@@ -20,8 +22,7 @@ cols_ll  <- c("idx", "lat", "lon",
               "full.name.of.describer" , "date.n")
 
 # model_params = list(ll="Y", dataset="BM") # for testing purposes
-
-if(model_params$ll == "Y") {
+if (model_params$ll == "Y") {
     df <- get_df1(write=F); dimdf <- dim(df)
 }
 
