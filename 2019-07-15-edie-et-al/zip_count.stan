@@ -7,7 +7,7 @@ functions {
 
     real lp;
     int Y;
-    vector[size(y)] mu;
+    vector[size(y)] lambda;
     vector[size(y)] omega;
     vector[size(y)] theta;
     int value[size(y)];
@@ -28,9 +28,9 @@ functions {
     }
 
     // ACP part
-    mu[1] = omega[1];
+    lambda[1] = omega[1];
     for(i in 2:Y) {
-      mu[i] = omega[i] + alpha * y[i - 1] + beta * mu[i - 1];
+      lambda[i] = omega[i] + alpha * y[i - 1] + beta * lambda[i - 1];
     }
 
     // zero-inflated part
@@ -44,10 +44,10 @@ functions {
       if(y[i] == 0) { 
         lp = lp + log_sum_exp(bernoulli_lpmf(1 | theta[i]),  // why bernoulli
             bernoulli_lpmf(0 | theta[i]) + 
-            poisson_lpmf(y[i] | (off[i] + 1) * mu[i]));
+            poisson_lpmf(y[i] | (off[i] + 1) * lambda[i]));
       } else {
         lp = lp + (bernoulli_lpmf(0 | theta[i]) + 
-            poisson_lpmf(y[i] | (off[i] + 1) * mu[i]));
+            poisson_lpmf(y[i] | (off[i] + 1) * lambda[i]));
       }
     }
     return lp;   // returns log prob
@@ -59,7 +59,7 @@ data {
   int<lower=0> str[P];  // index where value is != 0 of each group
   int<lower=0> end[P];  // length of each group
   int<lower=0> counts[P, N]; // N species data [group x years]
-  int<lower=0> off[P, N];    // N publications data [group x years]
+  int<lower=0> off[P, N];    // N publications data [group x years] - how is this incorporated?
 }
 parameters {
   vector[2] coef[P];
