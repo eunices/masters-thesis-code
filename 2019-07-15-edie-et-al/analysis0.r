@@ -26,10 +26,6 @@ if (model_params$ll == "Y") {
 
 if (model_params$dataset == "GL") { # global
     
-    if(model_params$ll == "N") {
-        df <- get_df1(write=F); dimdf <- dim(df)
-    }
-
     join <- df[, ..cols_std]; rm(df)
 
 } else if (model_params$dataset %in% c("LT", "BG", "BM", "BN")) { # with regions
