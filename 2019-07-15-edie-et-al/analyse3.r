@@ -1,6 +1,6 @@
 # run posterior simulation to check model fit
 source('2019-07-15-edie-et-al/init_a.r')
-print(paste0(Sys.time(), " --- posterior simulation for model fit.r"))
+print(paste0(Sys.time(), " --- posterior simulation for model fit"))
 
 set.seed(420) # for reproducibility
 

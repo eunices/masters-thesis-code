@@ -1,6 +1,6 @@
 # Wrangling data from original dataset
 source('2019-07-15-edie-et-al/init_a.r')
-print(paste0(Sys.time(), " --- wrangling data.r"))
+print(paste0(Sys.time(), " --- wrangling data"))
 
 # filepaths
 filepath_input_regions <- 'data/2019-05-23-ascher-bee-data/2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty2-cty.csv'

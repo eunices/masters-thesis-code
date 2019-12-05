@@ -1,6 +1,6 @@
 # format data for stan
 source('2019-07-15-edie-et-al/init_a.r')
-print(paste0(Sys.time(), " --- format data  for stan.r"))
+print(paste0(Sys.time(), " --- format data  for stan"))
 
 ########################################
 # PARAMETERS AND READING DATA
