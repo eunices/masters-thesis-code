@@ -186,7 +186,7 @@ post.forecast <- function(data, ftime, model) {
       # set first time point
       lambda[1] <- oo
       theta[1] <- 0
-      co[1] <- oo[jj]
+      co[1] <- oo[1]
 
       # set subsequent time points
       for(jj in 2:ftime) {
