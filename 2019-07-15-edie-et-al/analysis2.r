@@ -1,5 +1,6 @@
+# Running model
 source('2019-07-15-edie-et-al/init_a.r')
-print(paste0(Sys.time(), " --- analysis2.r"))
+print(paste0(Sys.time(), " --- running stan model.r"))
 
 #  Write to logfile
 start <- Sys.time()

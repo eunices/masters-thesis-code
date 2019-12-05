@@ -1,6 +1,6 @@
 # run posterior forecasts to make predictions
 source('2019-07-15-edie-et-al/init_a.r')
-print(paste0(Sys.time(), " --- analysis4.r"))
+print(paste0(Sys.time(), " --- making forecasts.r"))
 
 set.seed(420) # for reproducibility
 

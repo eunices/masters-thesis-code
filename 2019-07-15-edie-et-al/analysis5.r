@@ -1,10 +1,6 @@
-source('2019-07-15-edie-et-al/init_a.r')
-print(paste0(Sys.time(), " --- analysis5.r"))
-
 # visualize results from model fit and forecasting
-args <- commandArgs(trailingOnly=TRUE)
-# OFFSET <- as.logical(args[1])
-OFFSET <- TRUE
+source('2019-07-15-edie-et-al/init_a.r')
+print(paste0(Sys.time(), " --- visualising results.r"))
 
 #    LOAD DATA --------------------------------------------------------------------------------------------
 
