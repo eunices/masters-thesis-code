@@ -38,28 +38,30 @@ post.forecast <- function(data, ftime, model) {
 
         # offset starts at first naming year
         all_toff <- data$off[ii, ][start:end] 
+
         # generate offset segment by sampling past decade of offsets
-        toff <- sample(all_toff[ (length(all_toff) - ftime) : length(all_toff) ], 
+        toff <- sample(all_toff[(length(all_toff) - ftime) : length(all_toff)], 
                        ftime, replace=TRUE)
 
-        mu <- c()
+        lambda <- c()
         theta <- c()
         oo <- data$counts[ii, end]
         co <- c() # empty expected count vec
+
         # by time point
         for(jj in 1:ftime) {  # time seq extends the series by ftime years
           if(jj == 1) { # the starting point is the number of species described at end of time series
-            mu[jj] <- oo
+            lambda[jj] <- oo
             theta[jj] <- 0
             co[jj] <- oo[jj]
           } else { # if not the starting point
-            mu[jj] <- exp(coef0[ii] + coef1[ii] * jj) +
-            alp[ii] * oo[jj - 1] + bet[ii] * mu[jj - 1]
+            lambda[jj] <- exp(coef0[ii] + coef1[ii] * jj) +
+            alp[ii] * oo[jj - 1] + bet[ii] * lambda[jj - 1]
 
             val <- (oo[jj - 1] == 0) * 1
             theta[jj] <- (val * gam[ii]) + ((1 - val) * eta[ii])
 
-            co[jj] <- rZIP(1, mu = (toff[jj] + 1) * mu[jj], 
+            co[jj] <- rZIP(1, lambda = (toff[jj] + 1) * lambda[jj], 
                            sigma = theta[jj])
             oo[jj] <- co[jj] # current count becomes next expected count
           }
