@@ -26,21 +26,21 @@ post.forecast <- function(data, ftime, model) {
     coef0=mp$coef0; coef1=mp$coef1; alp=mp$alp; bet=mp$bet;
     gam=mp$gam; eta=mp$eta; phi=phi; rm(mp)
 
+    # number of groups
+    p <- data$P 
     # initial count
-    p <- data$P # number of groups
     initial <- sapply(seq(p), function(pp) data$counts[ pp, data$str[pp]])
 
     # by group
-    out <- list()
+    out <- list() # store predictions
     for(ii in seq(p)) {
-        start <- data$str[ii]
-        end <- data$end[ii]
+        start <- data$str[ii]; end <- data$end[ii]
 
         # offset starts at first naming year
         all_toff <- data$off[ii, ][start:end] 
         # generate offset segment by sampling past decade of offsets
-        toff <- sample(all_toff[ (length(all_toff) - ftime ) : length(all_toff) ], 
-            ftime, replace=TRUE)
+        toff <- sample(all_toff[ (length(all_toff) - ftime) : length(all_toff) ], 
+                       ftime, replace=TRUE)
 
         mu <- c()
         theta <- c()
@@ -48,7 +48,7 @@ post.forecast <- function(data, ftime, model) {
         co <- c() # empty expected count vec
         # by time point
         for(jj in 1:ftime) {  # time seq extends the series by ftime years
-          if(jj == 1) { # the starting point is the number of species described at end of time series.
+          if(jj == 1) { # the starting point is the number of species described at end of time series
             mu[jj] <- oo
             theta[jj] <- 0
             co[jj] <- oo[jj]

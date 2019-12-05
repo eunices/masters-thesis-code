@@ -45,7 +45,7 @@ posterior.sim <- function(data, model, over = FALSE) {
 
   #' Sample from posterior parameters
   #' 
-  #' Returns sampled counts derived for each year and each group
+  #' Return sampled counts for each year by group
   #' @param over If over =T, use negative binomial, otherwise use zero-inflated Poisson
 
   # sample from model posterior
@@ -53,15 +53,15 @@ posterior.sim <- function(data, model, over = FALSE) {
   coef0=mp$coef0; coef1=mp$coef1; alp=mp$alp; bet=mp$bet;
   gam=mp$gam; eta=mp$eta; phi=phi; rm(mp)
 
+  # number of groups
+  p <- data$P 
   # initial count
-  p <- data$P # number of groups
   initial <- sapply(seq(p), function(pp) data$counts[pp, data$str[pp]])
 
   # by group
   sims <- list() # store simulations
   for(ii in seq(p)) {
-    start <- data$str[ii]
-    end <- data$end[ii]
+    start <- data$str[ii]; end <- data$end[ii]
 
     toff <- data$off[ii, ][start:end] # offset segment starts at first naming year
 
