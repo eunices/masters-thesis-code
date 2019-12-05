@@ -42,6 +42,12 @@ write.csv(summary(zips)$summary, paste0(dir_model_folder, 'fit.csv'), fileEncodi
 
 # posterior predictive simulations for checking model fit
 posterior.sim <- function(data, model, over = FALSE) {
+  #' Sample from posterior parameters
+  #' 
+  #' Returns sampled counts derived for each year and each group
+  #' @param over If over =T, use negative binomial, otherwise use zero-inflated Poisson
+
+
   outs <- extract(model, permuted = TRUE) # posterior
   p <- data$P # number of groups
   
@@ -50,69 +56,68 @@ posterior.sim <- function(data, model, over = FALSE) {
   coef1 <- apply(outs$coef[, , 2], 2, function(x) sample(x, 1))
 
   # acp
-  alp <- apply(outs$alpha, 2, function(x) sample(x, 1))  # for each prov
-  bet <- apply(outs$beta, 2, function(x) sample(x, 1))  # for each prov
+  alp <- apply(outs$alpha, 2, function(x) sample(x, 1))  # for each group
+  bet <- apply(outs$beta, 2, function(x) sample(x, 1))  # for each group
 
   # markov
-  gam <- apply(outs$gamma, 2, function(x) sample(x, 1))  # for each prov
-  eta <- apply(outs$eta, 2, function(x) sample(x, 1))  # for each prov
+  gam <- apply(outs$gamma, 2, function(x) sample(x, 1))  # for each group
+  eta <- apply(outs$eta, 2, function(x) sample(x, 1))  # for each group
   
   # t=1
-  phi <- apply(outs$phi, 2, function(x) sample(x, 1))  # for each prov
+  phi <- apply(outs$phi, 2, function(x) sample(x, 1))  # for each group
 
   # initial count
-  initial <- sapply(seq(p), function(pp) data$counts[ pp, data$str[pp]])
-
-  if(over) phi <- apply(outs$phi, 2, function(x) sample(x, 1))
+  initial <- sapply(seq(p), function(pp) data$counts[pp, data$str[pp]])
 
   sims <- list() # store simulations
-  # by province
+  # by group
   for(ii in seq(p)) {
-    toff <- data$off[ii, ][data$str[ii]:data$end[ii]] # offset segment starts at first naming year
-    mu <- c()
+    start <- data$str[ii]
+    end <- data$end[ii]
+
+    toff <- data$off[ii, ][start:end] # offset segment starts at first naming year
+
+    lambda <- c()
     theta <- c()
     oo <- c()  # counts over time
+    
     # by time point
-    for(jj in seq(data$end[ii] - (data$str[ii] - 1))) {
+    for(jj in seq(end - start + 1) {
+      
       if(jj == 1) {
-        mu[jj] <- phi[ii]
+        lambda[jj] <- phi[ii]
         theta[jj] <- 0
         oo[jj] <- initial[ii]
       } else {
-        mu[jj] <- exp(coef0[ii] + coef1[ii] * jj) +
-        alp[ii] * oo[jj - 1] + bet[ii] * mu[jj - 1]
+        
+        lambda[jj] <- exp(coef0[ii] + coef1[ii] * jj) +
+          alp[ii] * oo[jj - 1] + bet[ii] * lambda[jj - 1]
 
-        val <- (oo[jj - 1] == 0) * 1
+        val <- ifelse(oo[jj - 1] == 0, 1, 0)
         theta[jj] <- (val * gam[ii]) + ((1 - val) * eta[ii])
 
         if(!over) {
-          oo[jj] <- rZIP(1, mu = (toff[jj] + 1) * mu[jj], 
+          oo[jj] <- rZIP(1, lambda = (toff[jj] + 1) * lambda[jj], 
                          sigma = theta[jj])
-        } else if(over) {
-          if(runif(1, min = 0, max = 1) > theta[jj]) {
-            oo[jj] <- rnbinom(1, mu = (toff[jj] + 1) * mu[jj], 
-                              size = phi[ii])
-          } else {
-            oo[jj] <- 0
-          }
-
+        } else {
+          # if sampled variable <= theta (p(y=0)), it is 0, 
+          # otherwise, sample from neg binomial
+          oo[jj] <- ifelse(runif(1, min = 0, max = 1)  <= theta[jj], 0, 
+                           rnbinom(1, lambda = (toff[jj] + 1) * lambda[jj], 
+                                   size = phi[ii]))
         }
       } 
     }
-    oo <- c(rep(0, data$str[ii] - 1), oo)
+    oo <- c(rep(0, start - 1), oo) # pad with 0s
     sims[[ii]] <- oo
   }
   sims
 }
 
-# post sim
+# posterior simulations
 allsim <- mclapply(1:1000, function(ii) {
     posterior.sim(data = data, model = zips, over = FALSE)
 } )
-# allsim <- mclapply(1:1000, mc.cores=4, function(ii) {
-#     posterior.sim(data = data, model = zips, over = FALSE)
-# } )
 save(allsim, file=paste0(dir_model_folder, "post.data"))
 
 rm(allsim, zips, data)
-
