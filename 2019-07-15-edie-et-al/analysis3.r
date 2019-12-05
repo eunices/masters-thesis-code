@@ -41,7 +41,7 @@ dev.off()
 write.csv(summary(zips)$summary, paste0(dir_model_folder, 'fit.csv'), fileEncoding='UTF-8')
 
 # posterior predictive simulations for checking model fit
-posterior.sim <- function(data, model, over = FALSE) {
+posterior.sim <- function(data, model) {
 
   #' Sample from posterior parameters
   #' 
@@ -54,7 +54,8 @@ posterior.sim <- function(data, model, over = FALSE) {
   gam=mp$gam; eta=mp$eta; phi=phi; rm(mp)
 
   # number of groups
-  p <- data$P 
+  p <- data$P
+
   # initial count
   initial <- sapply(seq(p), function(pp) data$counts[pp, data$str[pp]])
 
@@ -63,49 +64,46 @@ posterior.sim <- function(data, model, over = FALSE) {
   for(ii in seq(p)) {
     start <- data$str[ii]; end <- data$end[ii]
 
-    toff <- data$off[ii, ][start:end] # offset segment starts at first naming year
+    # offset segment starts at first naming year
+    toff <- data$off[ii, ][start:end]
 
+    # initialize parameters
     lambda <- c()
     theta <- c()
     oo <- c()  # counts over time
     
     # by time point
-    for(jj in seq(end - start + 1) {
+
+    # set first time point
+    lambda[1] <- phi[ii]
+    theta[1] <- 0
+    oo[1] <- initial[ii]
+
+    # set subsequent time points
+    for(jj in seq(2, end - start + 1) {
       
-      if(jj == 1) {
-        lambda[jj] <- phi[ii]
-        theta[jj] <- 0
-        oo[jj] <- initial[ii]
-      } else {
-        
-        lambda[jj] <- exp(coef0[ii] + coef1[ii] * jj) +
-          alp[ii] * oo[jj - 1] + bet[ii] * lambda[jj - 1]
+      lambda[jj] <- exp(coef0[ii] + coef1[ii] * jj) +
+        alp[ii] * oo[jj - 1] + bet[ii] * lambda[jj - 1]
 
-        val <- ifelse(oo[jj - 1] == 0, 1, 0)
-        theta[jj] <- (val * gam[ii]) + ((1 - val) * eta[ii])
+      z <- ifelse(oo[jj - 1] == 0, 1, 0)
+      theta[jj] <- (z * gam[ii]) + ((1 - z) * eta[ii])
 
-        if(!over) {
-          oo[jj] <- rZIP(1, lambda = (toff[jj] + 1) * lambda[jj], 
-                         sigma = theta[jj])
-        } else {
-          # if sampled variable <= theta (p(y=0)), it is 0, 
-          # otherwise, sample from neg binomial
-          oo[jj] <- ifelse(runif(1, min = 0, max = 1)  <= theta[jj], 0, 
-                           rnbinom(1, lambda = (toff[jj] + 1) * lambda[jj], 
-                                   size = phi[ii]))
-        }
-      } 
+      oo[jj] <- rZIP(1, lambda = (toff[jj] + 1) * lambda[jj], 
+                        sigma = theta[jj])
     }
+
     oo <- c(rep(0, start - 1), oo) # pad with 0s
     sims[[ii]] <- oo
+  
   }
+
   sims
 }
 
 # posterior simulations
 allsim <- mclapply(1:1000, function(ii) {
-    posterior.sim(data = data, model = zips, over = FALSE)
+    posterior.sim(data = data, model = zips)
 } )
-save(allsim, file=paste0(dir_model_folder, "post.data"))
 
+save(allsim, file=paste0(dir_model_folder, "post.data"))
 rm(allsim, zips, data)
