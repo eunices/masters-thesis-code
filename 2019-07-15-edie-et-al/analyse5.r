@@ -6,7 +6,7 @@ print(paste0(Sys.time(), " --- visualising results"))
 ####### Load data
 
 # load data
-data_raw <- read.csv(paste0(dir_model_folder, "data.csv")) # original data
+data_raw <- read.csv(paste0(dir_model_folder, "data.csv"), na.strings=c("")) # original data
 data <- read_rdump(paste0(dir_model_folder, "count_info.data.R")) # initial model data
 
 # load zero inflated fits
@@ -260,6 +260,8 @@ write.csv(final_results, file=paste0(dir_model_folder,"output/results.csv"), row
 rm(final_results)
 
 ####### END Summarise forecast
+
+# TODO: fix plots! the labelling is funky
 
 # remove variables to free up memory
 rm(obs, sims, mu_sim, forsim)
