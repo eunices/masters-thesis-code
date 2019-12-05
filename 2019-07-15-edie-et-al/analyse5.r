@@ -2,30 +2,31 @@
 source('2019-07-15-edie-et-al/init_a.r')
 print(paste0(Sys.time(), " --- visualising results.r"))
 
-#    LOAD DATA --------------------------------------------------------------------------------------------
 
+####### Load data
+
+# load data
 dataRAW <- read.csv(paste0(dir_model_folder, "data.csv")) # original data
 data <- read_rdump(paste0(dir_model_folder, "count_info.data.R")) # initial model data
 
+# load zero inflated fits
+load(paste0(dir_model_folder, "fit.data")) # as "fit"
+zips <- fit; rm(fit)
 
-load(paste0(dir_model_folder, "fit.data")) # zero inflated fits --loads as fit
-zips <- fit # reassign to zips
-rm(fit) # remove from memory
-load(paste0(dir_model_folder, "post.data")) # posterior samples -- loads as allsim
-load(paste0(dir_model_folder, "forecast.data")) # forecast data -- loads as forecast
+# load posterior simulation
+load(paste0(dir_model_folder, "post.data")) # as "allsim"
+
+# load forecast predictions
+load(paste0(dir_model_folder, "forecast.data")) # as "forecast"
 
 # map model indeces to original variables
-mapping <- data.frame( 
-    groupname=as.character(unique(dataRAW$group)),
-    group=as.numeric(unique(dataRAW$group)))
-
-#   END \\ LOAD --------------------------------------------------------------------------------------------
+mapping <- data.frame(groupname=as.character(unique(dataRAW$group)),
+                      group=as.numeric(unique(dataRAW$group)))
 
 
+####### Check for chain convergence
 
-# CHECK CHAIN CONVERGENCE --------------------------------------------------------------------
-
-# report any parameters with chains that didn't mix
+# filter for chians that did not mix
 badchain <- summary(zips)$summary %>%
     data.frame(par=row.names( . ), . ) %>%
     filter(Rhat > 1.1 | Rhat < 0.9)
@@ -45,26 +46,20 @@ if (nrow(badchain) > 0) {
     sink()
 }
 
-# END \\ CHECK CHAIN CONVERGENCE ----------------------------------------------------------
-
-
-#   PREPARE CUMULATIVE SERIES -------------------------------------------------------------------
+####### Prepare cumulative series
 
 # cumulative series for observed data
-cumm <- lapply( seq(data$P), function(ii) { # each prov
-    data.frame(
-        index=1:data$end[ii],
-        value=data$counts[ii, ],
-        cml_value=cumsum(data$counts[ii, ]),
-        off=data$off[ii, ],
-        group=ii
-    )
-}) %>% rbind.fill
+cumm <- lapply(seq(data$P), function(ii) { # each group
+    data.frame(index=1:data$end[ii],
+               value=data$counts[ii, ],
+               cml_value=cumsum(data$counts[ii, ]),
+               off=data$off[ii, ], 
+               group=ii)}) %>% rbind.fill
 cumm$sim <- 0 # set sim to 0 to mark observed data
 
 # cumulative series for simmed data
 cummsim <- lapply( seq(length(allsim)), function(jj) { # each sim
-    lapply( seq(length(data$end)), function(ii) { # each prov
+    lapply( seq(length(data$end)), function(ii) { # each group
         data.frame(
             index=1:data$end[ii], 
             value=allsim[[jj]][[ii]],
@@ -79,11 +74,10 @@ cummsim <- lapply( seq(length(allsim)), function(jj) { # each sim
 Z <- rbind(cumm, cummsim) # combine the observed and simmed series
 Z$year <- Z$index + min(dataRAW$year) - 1 # add original year back
 
-#   END \\ PREPARE CUMULATIVE SERIES ---------------------------------------------------------
+####### END Prepare cumulative series
 
 
-#   SUMMARIZE MODEL RESULTS --------------------------------------------------------------------
-
+####### Summarise model results
 sumy <- filter(Z, sim !=0 & index==max(index)) %>%
   group_by(group) %>%
   dplyr::summarize(
@@ -130,12 +124,12 @@ calc.lambda <- function(x, b0, b1) {
 }
 
 # pull out the second coefficient for each province across each posterior sample
-prov.cf1 <- apply(coef, 1, function(i) i[ ,1])
-prov.cf2 <- apply(coef, 1, function(i) i[ ,2])
+group.cf1 <- apply(coef, 1, function(i) i[ ,1])
+group.cf2 <- apply(coef, 1, function(i) i[ ,2])
 
 lambda <- lapply( seq(data$P), function(ii) { # for each group
-    cf1 <- prov.cf1[ii, ]
-    cf2 <- prov.cf2[ii, ]
+    cf1 <- group.cf1[ii, ]
+    cf2 <- group.cf2[ii, ]
     time <- 1:data$end[ii]
     cPair <- lapply(1:length(cf1), function(kk){ # for each coefficient pair
         b0 <- cf1[kk]
@@ -148,10 +142,10 @@ lambda <- lapply( seq(data$P), function(ii) { # for each group
 }) %>% rbind.fill # end group
 lambda$year <- lambda$time + min(dataRAW$year) # add original year back
 
-#       END \\ SUMMARIZE MODEL RESULTS ------------------------------------------------------
+####### END Summarise model results
 
 
-#       PLOT MODEL FIT -----------------------------------------------------------------------------------
+####### Plot model fit
 
 # set up plotting data for group panels
 obs <- filter(Z, sim==0) # subset to observed series
@@ -214,16 +208,14 @@ P <- ggplot( ) +
     ylab("Number of Species") + 
     xlab("Year of Description")
 ggsave(P, file=paste0(dir_model_folder, "output/regression.pdf"), width=10, height=6); rm(P)
+####### END Plot model fit
 
 
-#       END \\ PLOT MODEL FIT -------------------------------------------------------------------------
-
-
-#       SUMMARIZE FORECAST --------------------------------------------------------------------------
+####### Summarise forecast
 
 # cumulative series for sampled data
 forsim <- lapply( seq(length(forecast)), function(jj) { # each sim
-    lapply( seq(data$P), function(ii) { # each prov
+    lapply( seq(data$P), function(ii) { # each group
         data.frame(
             index=((ncol(data$counts) + 1) : (ncol(data$counts) +
                 length(forecast[[1]][[1]]))) + min(dataRAW$year) - 1, 
@@ -232,7 +224,7 @@ forsim <- lapply( seq(length(forecast)), function(jj) { # each sim
     } ) %>% rbind.fill
 }) %>% rbind.fill
 
-# for each prov
+# for each group
 # cumsum across each sim
 # find the mean cumsum
 # find the CI of cumsums
@@ -260,6 +252,8 @@ RESULTS <- merge(results, fore.table, by="group") %>%
     arrange(desc(observed_species))
 write.csv(RESULTS, file=paste0(dir_model_folder,"output/results.csv"), row.names=FALSE); rm(RESULTS)
 
-#       END \\ SUMMARIZE FORECAST ---------------------------------------------------------------
+####### END Summarise forecast 
+
+# remove variables to free up memory
 rm(obs, sims, mu_sim)
 rm(zips, mapping)
