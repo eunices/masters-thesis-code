@@ -43,7 +43,8 @@ fit <- stan(file="2019-07-15-edie-et-al/zip_count.stan",
             verbose=TRUE,
             seed=301,
             control = list(max_treedepth = as.numeric(model_params$td),
-                           adapt_delta = as.numeric(model_params$ad)))
+                           adapt_delta = as.numeric(model_params$ad),
+                           stepsize=0.01))
 save(fit, file=paste0(dir_model_folder, "fit.data")); rm(fit)
 stop <- Sys.time()
 

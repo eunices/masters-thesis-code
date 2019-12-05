@@ -28,7 +28,7 @@ write.csv(summary(zips)$summary, paste0(dir_model_folder, 'fit.csv'), fileEncodi
 # posterior simulations
 allsim <- mclapply(1:1000, function(ii) {
     posterior.sim(data = data, model = zips)
-} )
+})
 
 # save posterior simulations
 save(allsim, file=paste0(dir_model_folder, "post.data"))

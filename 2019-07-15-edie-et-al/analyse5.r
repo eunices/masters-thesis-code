@@ -100,7 +100,7 @@ obs_count <- Z %>%
 # through time and negative is decreasing...
 
 # `coef` is an array where 
-# [posterior sample [1:1000], group number[1:N groups], coefficient[1:2]]
+# [posterior sample [1:N samples], group number[1:N groups], coefficient[1:2]]
 coef <- rstan::extract(zips, par="coef")[[1]]
 
 group.cf1 <- apply(coef, 1, function(i) i[, 1])
@@ -155,16 +155,18 @@ lambda$year <- lambda$time + min(data_raw$year)
 obs <- Z %>% filter(sim==0)   # subset to observed series
 
 # set up plotting data for group panels
-sims <- Z %>% 
-    filter(sim!=0) %>%        # subset only simulated series
-    split(., .$group) %>%     # group by group
-    lapply(., function(oo) {  # for each group
-        ids <- sample(unique(oo$sim), 200, replace=FALSE)
-        oo[oo$sim %in% ids, ]
-    } ) %>% rbind.fill %>%
-    # only keep sims less that 4 times the max observed value
-    filter(year==max(year) & cml_value < max(obs$cml_value)*4) %>%
+sims <- filter(Z, sim!=0) %>% # subset a sample of simmed series
+    split( . , .$group) %>%   # group by group
+    lapply( . , function(oo){ # for each group
+        ids <- sample(unique(oo$sim), 200)
+        oo[ oo$sim %in% ids, ]
+    } ) %>% rbind.fill
+
+# only keep sims less that 4 times the max observed value and with the max year
+goodsims <- filter(sims, year==max(year) & cml_value < max(obs$cml_value)*4) %>%
     dplyr::select(group, sim)
+sims <- inner_join(sims, goodsims, by=c("group", "sim"))
+rm(goodsims)
 
 # set up facet labels
 labels <- as.character(mapping$groupname)
@@ -192,8 +194,8 @@ ggsave(P, file=paste0(dir_model_folder, "output/count_fit.pdf"), width=10, heigh
 
 # set up plotting data for long-term trends
 sims <- filter(lambda, sim!=0) %>%   # subset only simulated series
-    split( . , .$group) %>%          # by group
-    lapply( . , function(oo){        # for each group
+    split(., .$group) %>%          # by group
+    lapply(., function(oo){        # for each group
         ids <- sample(unique(oo$sim), 200)
         oo[oo$sim %in% ids, ]
     }) %>% rbind.fill
@@ -222,47 +224,43 @@ rm(P)
 ####### Summarise forecast
 
 # cumulative series for sampled data
+nc <- ncol(data$counts)
+len_fc <- length(forecast[[1]][[1]])
+min_year <- min(data_raw$year)
+index <- ((nc + 1):(nc + len_fc)) + (min_year - 1)
+
 forsim <- lapply(seq(length(forecast)), function(jj) { # each sim
     lapply(seq(data$P), function(ii) { # each group
-        nc <- ncol(data$counts)
-        index <- ((nc + 1): (nc + length(forecast[[1]][[1]]))) + min(data_raw$year) - 1
         data.frame(index=index, value=cumsum(forecast[[jj]][[ii]]), group=ii, sim=jj)
-    } ) %>% rbind.fill
+    }) %>% rbind.fill
 }) %>% rbind.fill
 
-# for each group
-# cumsum across each sim
-# find the mean cumsum
-# find the CI of cumsums
-
+# for each group and each sim, find the mean and CI of cumsums
 fore.table <- split(forsim, forsim$group) %>% # by group
-    lapply( . , function(gg) { # for each group
-        # gg <- split(forsim, forsim$group)[[1]]
+    lapply(., function(gg) { # for each group
         group <- unique(gg$group)
-        vv <- lapply( split(gg, gg$sim), function(oo) { # for each sim
+        vv <- lapply(split(gg, gg$sim), function(oo) { # for each sim
             cs <- max(oo$value)
-            oo[ nrow(oo), ]$value <- cs
-            oo[ nrow(oo), ]
+            oo[nrow(oo), ]$value <- cs
+            oo[nrow(oo), ]
         }) %>% rbind.fill
-        fore.mu <- round( mean(vv$value), 0)  + # summarize mean expected
-            max(obs[ obs$group == group, "cml_value"]) # add mean expected to currents counts
-        fore.lower <- round( quantile(vv$value, 0.1), 0)  + # summarize lower expected
-            max(obs[ obs$group == group, "cml_value"]) # add mean expected to currents counts    
-        fore.upper <- round( quantile(vv$value, 0.9), 0)  + # summarize upper expected
-            max(obs[ obs$group == group, "cml_value"]) # add mean expected to currents counts
+        fore.mu <- round(mean(vv$value), 0) +               # summarize mean expected
+            max(obs[obs$group == group, "cml_value"])       # add to currents counts
+        fore.lower <- round( quantile(vv$value, 0.1), 0) +  # summarize lower expected
+            max(obs[obs$group == group, "cml_value"])       # add to currents counts    
+        fore.upper <- round( quantile(vv$value, 0.9), 0) +  # summarize upper expected
+            max(obs[obs$group == group, "cml_value"])       # add to currents counts
         data.frame(group=group, fore.mu, fore.lower, fore.upper)    
     }) %>% rbind.fill
 
 # merge to Results table
 final_results <- merge(results, fore.table, by="group") %>%
     arrange(desc(observed_species))
-write.csv(final_results, file=paste0(dir_model_folder,"output/results.csv"), 
-          row.names=FALSE)
-
-rm(RESULTS)
+write.csv(final_results, file=paste0(dir_model_folder,"output/results.csv"), row.names=FALSE)
+rm(final_results)
 
 ####### END Summarise forecast
 
 # remove variables to free up memory
-rm(obs, sims, mu_sim)
+rm(obs, sims, mu_sim, forsim)
 rm(zips, mapping)

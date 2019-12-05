@@ -184,6 +184,7 @@ if (model_params$dataset == "GL") { # global
 # Renaming headers
 names(data) <- c("valid_species_id", "species_authority", "year" , "group")
 data <- data[!is.na(group)] # remove NAs
+data <- data[year<=2018]    # ensure date is <=2018
 write.csv(data, paste0(dir_model_folder, "data.csv"), row.names=F, na="", fileEncoding = "UTF-8")
 
 rm(data, join)

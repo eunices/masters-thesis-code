@@ -1,3 +1,5 @@
+library(gamlss.dist)
+
 parse_model_identifier <- function(string) {
 
     #' Parses model identifier into a list of parameters
@@ -92,7 +94,7 @@ posterior.sim <- function(data, model) {
   # sample from model posterior
   mp <- sample_model_posterior_parameters(model)
   coef0=mp$coef0; coef1=mp$coef1; alp=mp$alp; bet=mp$bet;
-  gam=mp$gam; eta=mp$eta; phi=phi; rm(mp)
+  gam=mp$gam; eta=mp$eta; phi=mp$phi; rm(mp)
 
   # number of groups
   p <- data$P
@@ -121,7 +123,7 @@ posterior.sim <- function(data, model) {
     oo[1] <- initial[ii]
 
     # set subsequent time points
-    for(jj in seq(2, end - start + 1) {
+    for(jj in seq(2, end - start + 1)) {
       
       lambda[jj] <- exp(coef0[ii] + coef1[ii] * jj) +
         alp[ii] * oo[jj - 1] + bet[ii] * lambda[jj - 1]
@@ -129,8 +131,8 @@ posterior.sim <- function(data, model) {
       z <- ifelse(oo[jj - 1] == 0, 1, 0)
       theta[jj] <- (z * gam[ii]) + ((1 - z) * eta[ii])
 
-      oo[jj] <- rZIP(1, lambda = (toff[jj] + 1) * lambda[jj], 
-                        sigma = theta[jj])
+      oo[jj] <- gamlss.dist::rZIP(1, mu = (toff[jj] + 1) * lambda[jj], 
+                                  sigma = theta[jj])
     }
 
     oo <- c(rep(0, start - 1), oo) # pad with 0s
@@ -154,7 +156,7 @@ post.forecast <- function(data, ftime, model) {
   # sample from model posterior
   mp <- sample_model_posterior_parameters(model)
   coef0=mp$coef0; coef1=mp$coef1; alp=mp$alp; bet=mp$bet;
-  gam=mp$gam; eta=mp$eta; phi=phi; rm(mp)
+  gam=mp$gam; eta=mp$eta; phi=mp$phi; rm(mp)
 
   # number of groups
   p <- data$P 
@@ -194,8 +196,8 @@ post.forecast <- function(data, ftime, model) {
         z <- ifelse(oo[jj - 1] == 0, 1, 0)
         theta[jj] <- (z * gam[ii]) + ((1 - z) * eta[ii])
 
-        co[jj] <- rZIP(1, lambda = (toff[jj] + 1) * lambda[jj], 
-                       sigma = theta[jj])
+        co[jj] <- gamlss.dist::rZIP(1, mu = (toff[jj] + 1) * lambda[jj],
+                                    sigma = theta[jj])
 
         oo[jj] <- co[jj] # current count becomes next expected count
       }

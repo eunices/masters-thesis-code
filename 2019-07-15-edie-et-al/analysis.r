@@ -24,61 +24,15 @@ chosen_indices <- c(3, 6)   # print(combinations)
 chosen_efforts <- c(0, 1)   # either 0 (no taxonomic effort), 1 (pub taxonomic effort)
 
 # For analysis_edie_loop_type == "string"
-# chosen_params <- c("GEN-E0-C4-I20000-A0.8-T12") # fast run
-chosen_params <- c("GEN-E0-C4-I8000-A0.8-T12",
-                   "GEN-E1-C4-I8000-A0.8-T12",
-
-                   "GEN-E0-C4-I8000-A0.95-T12",
-                   "GEN-E1-C4-I8000-A0.95-T12",
-    
-                   "BMY-E0-C4-I20000-A0.99-T12",
-                   "BNN-E0-C4-I20000-A0.99-T12",
-                   "FAM-E0-C4-I20000-A0.99-T12",
-                   "FAM-E1-C4-I20000-A0.99-T12",
-                   "GEN-E0-C4-I20000-A0.99-T12",
-                   "GEN-E1-C4-I20000-A0.99-T12",
-
-                   "BMY-E0-C4-I300000-A0.99-T15",
-                   "BNN-E0-C4-I300000-A0.99-T15",
-                   "FAM-E0-C4-I300000-A0.99-T15",
-                   "GEN-E0-C4-I300000-A0.99-T15",
-                   "GLY-E0-C4-I300000-A0.99-T15",
-                   
-                   "FAM-E1-C4-I300000-A0.99-T15",
-                   "GEN-E1-C4-I300000-A0.99-T15",
-                   "GLN-E1-C4-I300000-A0.99-T15",
-                   "GLY-E1-C4-I300000-A0.99-T15")
-
-# chosen_params <- c("BGY-E0-C4-I8000-A0.8-T12",
-#                    "BMY-E0-C4-I8000-A0.8-T12",
-#                    "BNN-E0-C4-I8000-A0.8-T12",
-
-#                    "BGY-E0-C4-I8000-A0.95-T12",
-#                    "BMY-E0-C4-I8000-A0.95-T12",
-#                    "BNN-E0-C4-I8000-A0.95-T12",
-
-#                    "BMY-E0-C4-I20000-A0.8-T12",
-
-#                    "BGY-E0-C4-I100000-A0.8-T12",
-#                    "BMY-E0-C4-I100000-A0.8-T12",
-#                    "BNN-E0-C4-I100000-A0.8-T12",
-
-#                    "BGY-E0-C4-I300000-A0.99-T15",
-#                    "BMY-E0-C4-I300000-A0.99-T15",
-#                    "BNN-E0-C4-I300000-A0.99-T15",
-                   
-#                    "BGY-E0-C4-I300000-A0.999-T15")
-# chosen_params <- c("BMY-E0-C4-I8000-A0.8-T12",
-#                    "BMY-E0-C4-I8000-A0.95-T12",
-#                    "BMY-E0-C4-I20000-A0.8-T12",
-#                    "BMY-E0-C4-I100000-A0.8-T12",
-
-#                    "BGY-E0-C4-I300000-A0.99-T15",
-#                    "BMY-E0-C4-I300000-A0.99-T15",
-#                    "BNN-E0-C4-I300000-A0.99-T15",
-
-#                    "BGY-E0-C4-I300000-A0.999-T15")
-
+chosen_params <- c("FAM-E0-C4-I20000-A0.8-T12") # fast run
+# chosen_params <- c("GEN-E0-C4-I8000-A0.999-T12",
+#                    "BMY-E0-C4-I8000-A0.999-T12",
+#                    "BMY-E1-C4-I20000-A0.8-T12",
+#                    "BNN-E1-C4-I8000-A0.95-T12",
+#                    "BGN-E1-C4-I8000-A0.9-T12",
+#                    "BMY-E0-C4-I8000-A0.999-T12",
+#                    "BNN-E0-C4-I8000-A0.99-T12",
+#                    "BNN-E1-C4-I8000-A0.999-T12")
 
 # model_params        <dataset><ll>-E<te>-C<chains>-I<iter>-A<ad>-T<td>
 #     dataset         # BG = biogeographic realms,  GL = global, BM = biomes, LT = latitude-trop/not
@@ -129,12 +83,12 @@ for (i in 1:length(model_param_list)) {
 
     # Analysis scripts
     analysis <- function() {
-        source(paste0(dir_script_ed, 'analysis0.r')) # data prep/wrangling
-        source(paste0(dir_script_ed, 'analysis1.r')) # formatting data
-        source(paste0(dir_script_ed, 'analysis2.r')) # model fitting
-        source(paste0(dir_script_ed, 'analysis3.r')) # post
-        source(paste0(dir_script_ed, 'analysis4.r')) # forecast
-        source(paste0(dir_script_ed, 'analysis5.r')) # plot
+        source(paste0(dir_script_ed, 'analyse0.r')) # data prep/wrangling
+        source(paste0(dir_script_ed, 'analyse1.r')) # formatting data
+        source(paste0(dir_script_ed, 'analyse2.r')) # model fitting
+        source(paste0(dir_script_ed, 'analyse3.r')) # model validation
+        source(paste0(dir_script_ed, 'analyse4.r')) # forecast
+        source(paste0(dir_script_ed, 'analyse5.r')) # plot
     }
 
     tryCatch(
