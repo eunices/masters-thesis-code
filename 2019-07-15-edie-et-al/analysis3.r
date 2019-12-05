@@ -42,35 +42,23 @@ write.csv(summary(zips)$summary, paste0(dir_model_folder, 'fit.csv'), fileEncodi
 
 # posterior predictive simulations for checking model fit
 posterior.sim <- function(data, model, over = FALSE) {
+
   #' Sample from posterior parameters
   #' 
   #' Returns sampled counts derived for each year and each group
   #' @param over If over =T, use negative binomial, otherwise use zero-inflated Poisson
 
-
-  outs <- extract(model, permuted = TRUE) # posterior
-  p <- data$P # number of groups
-  
-  # regression
-  coef0 <- apply(outs$coef[, , 1], 2, function(x) sample(x, 1))
-  coef1 <- apply(outs$coef[, , 2], 2, function(x) sample(x, 1))
-
-  # acp
-  alp <- apply(outs$alpha, 2, function(x) sample(x, 1))  # for each group
-  bet <- apply(outs$beta, 2, function(x) sample(x, 1))  # for each group
-
-  # markov
-  gam <- apply(outs$gamma, 2, function(x) sample(x, 1))  # for each group
-  eta <- apply(outs$eta, 2, function(x) sample(x, 1))  # for each group
-  
-  # t=1
-  phi <- apply(outs$phi, 2, function(x) sample(x, 1))  # for each group
+  # sample from model posterior
+  mp <- sample_model_posterior_parameters(model)
+  coef0=mp$coef0; coef1=mp$coef1; alp=mp$alp; bet=mp$bet;
+  gam=mp$gam; eta=mp$eta; phi=phi; rm(mp)
 
   # initial count
+  p <- data$P # number of groups
   initial <- sapply(seq(p), function(pp) data$counts[pp, data$str[pp]])
 
-  sims <- list() # store simulations
   # by group
+  sims <- list() # store simulations
   for(ii in seq(p)) {
     start <- data$str[ii]
     end <- data$end[ii]

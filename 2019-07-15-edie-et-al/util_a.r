@@ -41,7 +41,7 @@ parse_model_identifier <- function(string) {
 
 write_to_log <- function(w, warn_log_fp) {
 
-    #' Writes warning to warning logfile.
+    #' Writes warning to warning logfile
 
     #' Writes warning to logfile in specified path. 
     #' @param w Warning output from a try-catch block.
@@ -50,4 +50,33 @@ write_to_log <- function(w, warn_log_fp) {
     write(conditionMessage(w), file=warn_log_fp, append=T)
 }
 
+sample_model_posterior_parameters <- function(model) {
+
+    #' Samples from model's posterior
+    #'
+    #' Returns a list of sampled model parameters
+    #' @param model Model dumped from rstan
+
+    outs <- extract(model, permuted = TRUE) # posterior
+  
+    # regression
+    coef0 <- apply(outs$coef[, , 1], 2, function(x) sample(x, 1))
+    coef1 <- apply(outs$coef[, , 2], 2, function(x) sample(x, 1))
+
+    # acp
+    alp <- apply(outs$alpha, 2, function(x) sample(x, 1))  # for each group
+    bet <- apply(outs$beta, 2, function(x) sample(x, 1))  # for each group
+
+    # markov
+    gam <- apply(outs$gamma, 2, function(x) sample(x, 1))  # for each group
+    eta <- apply(outs$eta, 2, function(x) sample(x, 1))  # for each group
+      
+    # t=1
+    phi <- apply(outs$phi, 2, function(x) sample(x, 1))  # for each group
+
+    return(list(coef0=coef0, coef1=coef1,
+                alp=alp, bet=bet,
+                gam=gam,eta=eta,
+                phi=phi))
+}
 

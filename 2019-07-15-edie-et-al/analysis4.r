@@ -15,38 +15,36 @@ zips <- fit # reassign to zips
 rm(fit) # remove from memory
 
 post.forecast <- function(data, ftime, model) {
-    outs <- extract(model, permuted = TRUE) # posterior
-    p <- data$P # number of groups
 
-    # regression
-    coef0 <- apply(outs$coef[, , 1], 2, function(x) sample(x, 1))
-    coef1 <- apply(outs$coef[, , 2], 2, function(x) sample(x, 1))
+    #' 
+    #' 
+    #' 
+    #'  
 
-    # acp
-    alp <- apply(outs$alpha, 2, function(x) sample(x, 1))  # for each prov
-    bet <- apply(outs$beta, 2, function(x) sample(x, 1))  # for each prov
-
-    # markov
-    gam <- apply(outs$gamma, 2, function(x) sample(x, 1))  # for each prov
-    eta <- apply(outs$eta, 2, function(x) sample(x, 1))  # for each prov
-
-    # t=1
-    phi <- apply(outs$phi, 2, function(x) sample(x, 1))  # for each prov
+    # sample from model posterior
+    mp <- sample_model_posterior_parameters(model)
+    coef0=mp$coef0; coef1=mp$coef1; alp=mp$alp; bet=mp$bet;
+    gam=mp$gam; eta=mp$eta; phi=phi; rm(mp)
 
     # initial count
+    p <- data$P # number of groups
     initial <- sapply(seq(p), function(pp) data$counts[ pp, data$str[pp]])
 
-    # by province
+    # by group
     out <- list()
     for(ii in seq(p)) {
-        all_toff <- data$off[ii, ][data$str[ii]:data$end[ii]] # offset starts at first naming year
+        start <- data$str[ii]
+        end <- data$end[ii]
+
+        # offset starts at first naming year
+        all_toff <- data$off[ii, ][start:end] 
         # generate offset segment by sampling past decade of offsets
         toff <- sample(all_toff[ (length(all_toff) - ftime ) : length(all_toff) ], 
             ftime, replace=TRUE)
 
         mu <- c()
         theta <- c()
-        oo <- data$counts[ii, data$end[ii]]
+        oo <- data$counts[ii, end]
         co <- c() # empty expected count vec
         # by time point
         for(jj in 1:ftime) {  # time seq extends the series by ftime years
