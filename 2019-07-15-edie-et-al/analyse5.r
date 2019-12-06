@@ -262,6 +262,8 @@ rm(final_results)
 ####### END Summarise forecast
 
 # TODO: fix plots! the labelling is funky
+# TODO: write up on the comparison between ll and country
+# TODO: write up the rest of the analyses
 
 # remove variables to free up memory
 rm(obs, sims, mu_sim, forsim)
