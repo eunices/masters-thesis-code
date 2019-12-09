@@ -27,7 +27,6 @@ chosen_efforts <- c(0, 1)   # either 0 (no taxonomic effort), 1 (pub taxonomic e
 # chosen_params <- c("GEN-E0-C4-I8000-A0.8-T12") # fast run
 chosen_params <- c("BMY-E0-C4-I20000-A0.999-T15",
                    "GEN-E0-C4-I20000-A0.999-T15",
-                   "GEN-E0-C4-I20000-A0.999-T15",
                    "BMY-E0-C4-I300000-A0.999-T15",
                 #    "GEN-E0-C4-I300000-A0.99-T15",
                    "GEN-E0-C4-I300000-A0.999-T15",
