@@ -20,8 +20,8 @@ load(paste0(dir_model_folder, "post.data")) # as "allsim"
 load(paste0(dir_model_folder, "forecast.data")) # as "forecast"
 
 # map model indeces to original variables
-mapping <- data.frame(groupname=as.character(unique(data_raw$group)),
-                      group=as.numeric(unique(data_raw$group)))
+mapping <- unique(data.frame(groupname=as.character(data_raw$group),
+                             group=as.numeric(data_raw$group)))
 
 ####### END Load data
 
@@ -160,7 +160,7 @@ sims <- filter(Z, sim!=0) %>% # subset a sample of simmed series
     lapply( . , function(oo){ # for each group
         ids <- sample(unique(oo$sim), 200)
         oo[ oo$sim %in% ids, ]
-    } ) %>% rbind.fill
+    }) %>% rbind.fill
 
 # only keep sims less that 4 times the max observed value and with the max year
 goodsims <- filter(sims, year==max(year) & cml_value < max(obs$cml_value)*4) %>%
@@ -261,9 +261,6 @@ rm(final_results)
 
 ####### END Summarise forecast
 
-# TODO: fix plots! the labelling is funky
-# TODO: write up on the comparison between ll and country
-# TODO: write up the rest of the analyses
 
 # remove variables to free up memory
 rm(obs, sims, mu_sim, forsim)

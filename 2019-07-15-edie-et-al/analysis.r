@@ -1,3 +1,7 @@
+# TODO: check how model is evaluated
+# TODO: write up on the comparison between ll and country
+# TODO: write up the rest of the analyses
+
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("WELCOME TO ANALYSES SCRIPTS FOR BEE TYPE DATA (EDIE ET AL)")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -16,6 +20,8 @@ source('2019-07-15-edie-et-al/analysis_loops_params.r')
 
 # Model parameters
 #############
+init_params <- FALSE # whether just initialize model
+
 analysis_edie_loop_type <- "string" # string or params
 
 # For analysis_edie_loop_type == "params"
@@ -24,7 +30,7 @@ chosen_indices <- c(3, 6)   # print(combinations)
 chosen_efforts <- c(0, 1)   # either 0 (no taxonomic effort), 1 (pub taxonomic effort)
 
 # For analysis_edie_loop_type == "string"
-# chosen_params <- c("GEN-E0-C4-I8000-A0.8-T12") # fast run
+# chosen_params <- c("BGY-E0-C4-I8000-A0.8-T12") # fast run
 chosen_params <- c("BMY-E0-C4-I20000-A0.999-T15",
                    "GEN-E0-C4-I20000-A0.999-T15",
                    "BMY-E0-C4-I300000-A0.999-T15",
@@ -77,17 +83,19 @@ for (i in 1:length(model_param_list)) {
     warnings_log <- paste0(dir_model_folder, "/warnings.log"); if (!file.exists(warnings_log)) file.create(warnings_log)
 
     # Analysis scripts
-    analysis <- function() {
-        source(paste0(dir_script_ed, 'analyse0.r')) # data prep/wrangling
-        source(paste0(dir_script_ed, 'analyse1.r')) # formatting data
-        source(paste0(dir_script_ed, 'analyse2.r')) # model fitting
-        source(paste0(dir_script_ed, 'analyse3.r')) # model validation
-        source(paste0(dir_script_ed, 'analyse4.r')) # forecast
-        source(paste0(dir_script_ed, 'analyse5.r')) # plot
+    analysis <- function(run=TRUE) {
+        if(run) {
+            source(paste0(dir_script_ed, 'analyse0.r')) # data prep/wrangling
+            source(paste0(dir_script_ed, 'analyse1.r')) # formatting data
+            source(paste0(dir_script_ed, 'analyse2.r')) # model fitting
+            source(paste0(dir_script_ed, 'analyse3.r')) # model validation
+            source(paste0(dir_script_ed, 'analyse4.r')) # forecast
+            source(paste0(dir_script_ed, 'analyse5.r')) # plot
+        }
     }
 
     tryCatch(
-        withCallingHandlers(analysis(), warning = function(w) {write_to_log(w, warnings_log)}),
+        withCallingHandlers(analysis(run=!init_params), warning = function(w) {write_to_log(w, warnings_log)}),
         error = function(e) {print(paste0("ERROR: ", conditionMessage(e)))}
     ) # Solution from: https://stackoverflow.com/questions/37836392/ 
 }
