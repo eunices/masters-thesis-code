@@ -71,7 +71,7 @@ species_and_pub_per_year <- df_publications_N[, list(species_per_publication=mea
                                             N_species=sum(n_species)), by="date.n"]
 p5 <- ggplot(species_and_pub_per_year, aes(x=date.n, y=species_per_publication)) + 
     geom_line(size=1) +
-        xlab("") + ylab("Species/ publication") + 
+        xlab("") + ylab("Number of species/ publication") + 
              theme +
                 ggtitle("Number of species/ publication by year") + geom_smooth()
 
@@ -159,7 +159,7 @@ p10d <- ggplot_build(p10)$data[[1]]
 
 p13 <- ggplot(data=taxonomic_effort, aes(x=years, y=species_per_real_taxonomist)) +
     geom_line(stat="identity", size=1) + theme +
-    xlab("Year") + ylab("Number of species described") + 
+    xlab("Year") + ylab("Number of species/ taxonomist") + 
             ggtitle("Number of species described/ taxonomist by year") + 
                 geom_smooth() + scale_y_continuous(lim = c(0, 12))
 
