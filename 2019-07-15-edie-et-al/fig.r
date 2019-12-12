@@ -29,14 +29,23 @@ p0 <- ggplot(species_per_year, aes(x=date.n, y=N)) +
 
 species_per_year2 <- melt(species_per_year, "date.n", stringsAsFactors=F)
 species_per_year2$variable <- factor(species_per_year2$variable, c("N_cumsum", "N"))
+pt_sum <- data.table(species_per_year2)[, list(max=max(value)), by=c("variable")]
+pts <- data.frame(date.n=rep(c(1914, 1919, 1939, 1945), 2), 
+                  variable=c(rep("N_cumsum", 4), rep("N", 4)),
+                  value=c(rep(pt_sum[variable=="N_cumsum",]$max, 4), rep(pt_sum[variable=="N",]$max, 4)))
+# World War I 1914-1919; World War II 1939-1945
+
 labs <- c(`N` = "N species",
           `N_cumsum` = "Cumulative N species")
 p1 <- ggplot(species_per_year2, aes(x=date.n, y=value)) + 
     facet_wrap(.~variable, nrow=2, scales = "free_y", labeller= as_labeller(labs)) +
-        geom_line(size=1) + 
-            xlab("") + ylab("") + 
-                theme +
-                    geom_smooth()
+    geom_ribbon(pts[c(1,2,5,6),], mapping=aes(x=date.n, ymin=0, ymax=value), fill="red", alpha=0.2) +
+    geom_ribbon(pts[c(1,2,5,6),], mapping=aes(x=date.n, ymin=0, ymax=value), fill="red", alpha=0.2) +
+    geom_ribbon(pts[c(3,4,7,8),], mapping=aes(x=date.n, ymin=0, ymax=value), fill="red", alpha=0.2) +
+    geom_ribbon(pts[c(3,4,7,8),], mapping=aes(x=date.n, ymin=0, ymax=value), fill="red", alpha=0.2) +
+    geom_line(size=1) + geom_smooth() +
+        xlab("") + ylab("") +
+            theme
 
 # Per decade
 species_per_decade <- df[,.(.N), by=.(date.decade)]
@@ -234,6 +243,11 @@ grid.arrange(p3, p8, p6, p9, p15, p14, p7v, p10v, p17v,
             layout_matrix=rbind(c(1, 3, 7),
                                 c(2, 4, 8),
                                 c(5, 6, 9)))
+grid.arrange(p3, p8, p6, p9, p15, p14, 
+            widths=c(2, 1, 1),
+            layout_matrix=rbind(c(1, 3),
+                                c(2, 4),
+                                c(5, 6)))
 
 grid.arrange(p5, p13, p16)
 # grid.arrange(p12, p13)
