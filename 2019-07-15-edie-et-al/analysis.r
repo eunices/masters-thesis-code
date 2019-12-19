@@ -16,7 +16,7 @@ source('2019-07-15-edie-et-al/analysis_loops_params.r')
 
 # Model parameters
 #############
-init_params <- FALSE # whether just initialize model
+init_params <- TRUE # whether just initialize model
 
 analysis_edie_loop_type <- "string" # string or params
 
@@ -26,10 +26,7 @@ chosen_indices <- c(3, 6)   # print(combinations)
 chosen_efforts <- c(0, 1)   # either 0 (no taxonomic effort), 1 (pub taxonomic effort)
 
 # For analysis_edie_loop_type == "string"
-chosen_params <- c(
-                #    "BMY-E0-C4-I8000-A0.95-T12",
-                   "BMY-E1-C4-I20000-A0.8-T12"
-                   ) # fast run
+chosen_params <- c("BGY-E0-C4-I8000-A0.8-T12") # fast run
 # chosen_params <- c("BMY-E0-C4-I20000-A0.999-T15",
 #                    "GEN-E0-C4-I20000-A0.999-T15",
                    
@@ -73,17 +70,7 @@ for (i in 1:length(model_param_list)) {
     model_params <- model_param_list[[i]]
 
     # Initialize identifier
-    model_identifier <- paste0(
-        model_params$dataset, model_params$ll, "-",
-        "E", as.character(model_params$te), "-",
-        "C", as.character(model_params$chains), "-",
-        "I", as.character(model_params$iter), "-",
-        "A", as.character(model_params$ad), "-",
-        "T", as.character(model_params$td))
-    dir_model_folder <- paste0(dir_analysis_edie_tmp, "/", model_identifier, "/")
-    dir.create(dir_model_folder); dir.create(file.path(dir_model_folder, 'output'))
-    filepath_log <- paste0(dir_model_folder, "/model.log"); if (!file.exists(filepath_log)) file.create(filepath_log)
-    warnings_log <- paste0(dir_model_folder, "/warnings.log"); if (!file.exists(warnings_log)) file.create(warnings_log)
+    dir_model_folder <- initialize_model_params(model_params)
 
     # Analysis scripts
     analysis <- function(run=TRUE) {

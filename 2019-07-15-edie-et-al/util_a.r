@@ -40,6 +40,31 @@ parse_model_identifier <- function(string) {
 # string <- "BMY-C4-I5000-A0.99-T15"
 # parse_model_identifier(string)
 
+initialize_model_params <- function(model_params) {
+
+    #' Parses list of model params and initializes necessary folders
+    #'
+    #' Parses list of model params into a model identifier and
+    #' initializes necessary folders. Returns the model folder directory.
+    #' @model_params list The list that contains a list of model parameters.
+
+  model_identifier <- paste0(
+    model_params$dataset, model_params$ll, "-",
+    "E", as.character(model_params$te), "-",
+    "C", as.character(model_params$chains), "-",
+    "I", as.character(model_params$iter), "-",
+    "A", as.character(model_params$ad), "-",
+    "T", as.character(model_params$td))
+  dir_model_folder <- paste0(dir_analysis_edie_tmp, "/", model_identifier, "/")
+
+  dir.create(dir_model_folder); dir.create(file.path(dir_model_folder, 'output'))
+  filepath_log <- paste0(dir_model_folder, "/model.log")
+  if (!file.exists(filepath_log)) file.create(filepath_log)
+  warnings_log <- paste0(dir_model_folder, "/warnings.log")
+  if (!file.exists(warnings_log)) file.create(warnings_log)
+
+  dir_model_folder
+} 
 
 write_to_log <- function(w, warn_log_fp) {
 
