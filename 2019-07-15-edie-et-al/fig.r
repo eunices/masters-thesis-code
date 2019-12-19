@@ -172,8 +172,6 @@ p13 <- ggplot(data=taxonomic_effort, aes(x=years, y=species_per_real_taxonomist)
             ggtitle("Number of species described/ taxonomist by year") + 
                 geom_smooth() + scale_y_continuous(lim = c(0, 12))
 
-
-
 # Weighted taxonomists
 
 ## Correlation between species and taxonomists per year
@@ -212,7 +210,27 @@ p17v <- p17 + scale_x_continuous(lim = c(0, sum_p17["3rd Qu."])) # for visualisa
 p17d <- ggplot_build(p17)$data[[1]]
 
 
-# TODO: work on using N_spp [to use valid species min and max? to exclude ]
+cols <- c("years", "N_real_describers", "N_weighted_real_describers", "N_species_described")
+pub_auth_yr <- merge(species_and_pub_per_year[, c("date.n", "N_publications")],
+                     taxonomic_effort[, ..cols], 
+                     by.x="date.n", by.y="years", all.x=T, all.y=T)
+pub_auth_yr[is.na(pub_auth_yr)] <- 0
+pub_auth_yr <- pub_auth_yr[date.n<=2018]
+# pub_auth_yr[!is.finite(N_weighted_real_describers)]$N_weighted_real_describers <- 195.57
+
+c <- cor.test(pub_auth_yr[is.finite(N_weighted_real_describers)]$N_weighted_real_describers, 
+              pub_auth_yr[is.finite(N_weighted_real_describers)]$N_publications, 
+              method = c("pearson"))
+corr <- round(c$estimate^2, 2)
+title <- paste0("Correlation between taxonomists (wted) \nand publications per year (R^2=", 
+                corr, ")")
+p18 <- ggplot(pub_auth_yr, aes(x=N_weighted_real_describers, y=N_publications)) + 
+    geom_point(alpha=0.5) + 
+        xlab("Number of taxonomists (wted)") + ylab("Number of publications") +
+            theme  +
+                ggtitle(title) + 
+                    geom_smooth(method='lm',formula=y~x)
+
 
 # Combined plots: Fig S2
 ## Original plot
@@ -238,25 +256,45 @@ grid.arrange(p6, p9) # correlation
 #             layout_matrix=rbind(c(1, 3),
 #                                 c(2, 4),
 #                                 c(5, 6)))
-grid.arrange(p3, p8, p6, p9, p15, p14, p7v, p10v, p17v,
-            widths=c(2, 1, 1),
-            layout_matrix=rbind(c(1, 3, 7),
-                                c(2, 4, 8),
-                                c(5, 6, 9)))
+
+# Draft 1
 grid.arrange(p3, p8, p6, p9, p15, p14, 
             widths=c(2, 1, 1),
             layout_matrix=rbind(c(1, 3),
                                 c(2, 4),
                                 c(5, 6)))
 
+# Draft 2
+grid.arrange(p3, p8, p6, p9, p15, p14, p7v, p10v, p17v,
+            widths=c(2, 1, 1),
+            layout_matrix=rbind(c(1, 3, 7),
+                                c(2, 4, 8),
+                                c(5, 6, 9)))
+
+
+# Draft 3
+p <- ggplot() + theme
+grid.arrange(p3, p8, p6, p9, p15, p14, p18, p,
+            widths=c(2, 1, 1),
+            layout_matrix=rbind(c(1, 3, 8),
+                                c(2, 4, 8),
+                                c(5, 6, 7)))
+
+# Draft 4
+grid.arrange(p3, p8, p6, p9, p15, p14, 
+            widths=c(2, 1),
+            layout_matrix=rbind(c(1, 3),
+                                c(2, 4),
+                                c(5, 6)))
+
+
+## Time series
 grid.arrange(p5, p13, p16)
 # grid.arrange(p12, p13)
 # grid.arrange(p12, p13)
 
 # Combined plots: Fig 1
-## Original plot
 p1
-
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Describers profile - one large monograph towards end of life, or many small?

@@ -3,7 +3,7 @@ source('2019-07-15-edie-et-al/init.r')
 
 print(paste0("Read df"))
 df <- get_df1(write=F)
-df <- df[date.n<2019]
+df <- df[date.n<2018]
 df$date.decade <- paste0(substr(df$date.n, 1, 3), "0s")
 
 

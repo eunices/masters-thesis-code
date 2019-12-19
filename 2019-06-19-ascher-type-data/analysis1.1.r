@@ -7,6 +7,8 @@ library(tidyr)
 
 # Data wrangling
 flow <- fread(paste0(dir_data, "eda1_flow/2019-09-22-flow-map-type-loc-des-country.csv"), encoding="UTF-8")
+flow[no_flow==FALSE, list(N_cty=length(unique(des))), by=c("ori")][order(-N_cty)]
+
 spp <- get_df1(write=F)
 spp <- spp %>% separate_rows(full.name.of.describer, sep="; ")
 sum_flow <- spp[, .N, by="type.country.n"][order(-N)]

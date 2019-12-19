@@ -55,7 +55,9 @@ sapply(df, function(x) any(is.na(x)))
 # Model 1: predict binary
 a0 <- glm(flow ~ continent_check + col_check + adj_check + Class_ori + Class_des, 
           data=df, family="binomial")
-a1 <- glm(flow ~ continent_check + col_check + adj_check + class_check + N_taxonomist, 
+a1 <- glm(flow ~ continent_check + adj_check + col_check +  + class_check + N_taxonomist, 
+          data=df, family="binomial")
+a2 <- glm(flow ~ continent_check * adj_check + col_check +  + class_check + N_taxonomist, 
           data=df, family="binomial")
 summary(a1)
 # anova(a0, a1, test="Chisq") # significant = keep complex model
