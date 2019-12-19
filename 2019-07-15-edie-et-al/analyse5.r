@@ -2,6 +2,7 @@
 source('2019-07-15-edie-et-al/init_a.r')
 print(paste0(Sys.time(), " --- visualising results"))
 
+theme <- theme_minimal()
 
 ####### Load data
 
@@ -10,16 +11,16 @@ data_raw <- read.csv(paste0(dir_model_folder, "data.csv"), na.strings=c("")) # o
 data <- read_rdump(paste0(dir_model_folder, "count_info.data.R")) # initial model data
 
 # load zero inflated fits
-load(paste0(dir_model_folder, "fit.data")) # as "fit"
+load(paste0(dir_model_folder, "fit.data"))       # as "fit"
 zips <- fit; rm(fit)
 
 # load posterior simulation
-load(paste0(dir_model_folder, "post.data")) # as "allsim"
+load(paste0(dir_model_folder, "post.data"))      # as "allsim"
 
 # load forecast predictions
-load(paste0(dir_model_folder, "forecast.data")) # as "forecast"
+load(paste0(dir_model_folder, "forecast.data"))  # as "forecast"
 
-# map model indeces to original variables
+# map model indices to original variables
 mapping <- unique(data.frame(groupname=as.character(data_raw$group),
                              group=as.numeric(data_raw$group)))
 
@@ -78,7 +79,6 @@ Z <- rbind(cumm, cummsim)
 Z$year <- Z$index + min(data_raw$year) - 1
 
 ####### END Prepare cumulative series
-
 
 ####### Summarise model results
 sum_y <- Z %>% 
@@ -179,7 +179,7 @@ P <- ggplot() +
     geom_path(data=obs, aes(x=year, y=cml_value)) +
     facet_wrap(~group, scales="free_y", labeller=as_labeller(labels)) +
     ylab("Number of species") + 
-    xlab("Year")
+    xlab("Year") + theme
 ggsave(P, file=paste0(dir_model_folder, "output/cumulative_fit.pdf"), width=10, height=6)
 
 # plot per year counts
@@ -189,13 +189,13 @@ P <- ggplot() +
     geom_path(data=obs, aes(x=year, y=value)) +
     facet_wrap(~group, scales="free_y", labeller=as_labeller(labels)) +
     ylab("Number of species") + 
-    xlab("Year")
+    xlab("Year") + theme
 ggsave(P, file=paste0(dir_model_folder, "output/count_fit.pdf"), width=10, height=6)
 
 # set up plotting data for long-term trends
 sims <- filter(lambda, sim!=0) %>%   # subset only simulated series
-    split(., .$group) %>%          # by group
-    lapply(., function(oo){        # for each group
+    split(., .$group) %>%            # by group
+    lapply(., function(oo){          # for each group
         ids <- sample(unique(oo$sim), 200)
         oo[oo$sim %in% ids, ]
     }) %>% rbind.fill
@@ -214,7 +214,7 @@ P <- ggplot() +
     geom_line(data=mu_sim, aes(x=year, y=mu), col="royalblue") +
     facet_wrap(~group, scales="free_y", labeller=as_labeller(labels)) +
     ylab("Number of species") +
-    xlab("Year")
+    xlab("Year") + theme
 ggsave(P, file=paste0(dir_model_folder, "output/regression.pdf"), width=10, height=6)
 
 rm(P)
@@ -257,11 +257,11 @@ fore.table <- split(forsim, forsim$group) %>% # by group
 final_results <- merge(results, fore.table, by="group") %>%
     arrange(desc(observed_species))
 write.csv(final_results, file=paste0(dir_model_folder,"output/results.csv"), row.names=FALSE)
-rm(final_results)
 
 ####### END Summarise forecast
 
 
 # remove variables to free up memory
+rm(final_results)
 rm(obs, sims, mu_sim, forsim)
 rm(zips, mapping)
