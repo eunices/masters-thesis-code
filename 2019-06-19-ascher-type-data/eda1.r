@@ -66,7 +66,7 @@ ss[Class=="Unclassed"]
 
 ggplot(ss[!is.na(Class)], aes(x=Class, y=round(prop*100,2))) + 
   geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
-    labs(x="\nWorld Bank classification", y = "Proportion of species described\n by taxonomist residing in country (%)\n") +
+    labs(x="\nWorld Bank classification", y = "Proportion of species described\n by describers residing in country (%)\n") +
          theme_classic()
 
 ss[N_cty>=1]
@@ -105,7 +105,7 @@ pairwise.wilcox.test(flow$prop, flow$Class, p.adjust.method = "BH")
 
 ggplot(flow, aes(x=Class, y=N)) + 
   geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
-    labs(x="\nWorld Bank classification", y = "Number of countries for type locality\n") +
+    labs(x="\nWorld Bank classification", y = "Number of countries\n to which there is taxonomic flow") +
          theme_classic()
 flow$N <- as.numeric(flow$N)
 flow_summary <- flow[, list(mean=mean(N),
