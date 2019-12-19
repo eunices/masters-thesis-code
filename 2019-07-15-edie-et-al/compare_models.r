@@ -13,7 +13,7 @@ model_dir_list <- lapply(model_param_list, function(x) initialize_model_params(x
 results <- list()
 theme <- theme_minimal()
 plots <- list()
-for (i in 2:length(chosen_models)) {
+for (i in 1:length(chosen_models)) {
 
     
     dir_model_folder <- model_dir_list[i]
@@ -59,21 +59,43 @@ for (i in 2:length(chosen_models)) {
     Z <- data.table(Z)
     obs_Z <- Z[sim == 0, c("group", "year", "cml_value")]
     Z2 <- merge(Z, obs_Z, by=c("group", "year"), all.x=T, all.y=T, suffixes=c("_sim", "_obs"))
-
-    # get accuracy
     Z2 <- Z2[sim!=0]
 
+    # get accuracy
     result <- lapply(unique(Z2$group), function(grp) {
         lapply(unique(Z2$sim), function(s) {
             to_calc <- Z2[group==grp & sim==s]
-            accuracy(to_calc$cml_value_sim, to_calc$cml_value_obs)
+            data.frame(accuracy(to_calc$cml_value_sim, to_calc$cml_value_obs),
+                       group=grp, sim=s)
         })
     })
-    result <- rbindlist(lapply(result[[1]], as.data.frame))
+    
     results[[i]] <- result
 }
 
+# list of models of groups of simulations
+formatted <- list()
+for (i in 1:length(results)) {
+    formatted[[i]] <- lapply(results[[i]], function(grp) {
+        rbindlist(lapply(grp, as.data.frame))
+    })
+}
+formatted2 <- list()
+mapping <- unique(data.frame(groupname=as.character(data_raw$group),
+                             group=as.numeric(data_raw$group)))
+for (i in 1:length(results)) {
+    formatted2[[i]] <- merge(rbindlist(formatted[[i]]), mapping,
+                             by="group", all.x=T, all.y=F)
+}
+
+
+do.call(cbind, lapply(formatted2, function(model) {
+    model[, list(MAPE_mean = mean(MAPE)), by=c('groupname')]
+}))
+
+do.call(cbind, lapply(formatted2, function(model) {
+    model[, list(MAPE_mean = mean(MAPE))]
+}))
+
 # https://otexts.com/fpp2/accuracy.html
 # https://pkg.robjhyndman.com/forecast/reference/accuracy.html
-
-lapply(results, colMeans)
