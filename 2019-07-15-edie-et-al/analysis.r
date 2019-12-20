@@ -26,7 +26,9 @@ chosen_indices <- c(3, 6)   # print(combinations)
 chosen_efforts <- c(0, 1)   # either 0 (no taxonomic effort), 1 (pub taxonomic effort)
 
 # For analysis_edie_loop_type == "string"
-chosen_params <- c("HAL-E0-C4-I8000-A0.8-T12") # fast run
+chosen_params <- c("HAL-E0-C4-I8000-A0.9-T12",
+                   "HAL-E0-C4-I8000-A0.99-T12",
+                   "HAL-E0-C4-I8000-A0.999-T12") # fast run
 # chosen_params <- c("BMY-E0-C4-I20000-A0.999-T15",
 #                    "GEN-E0-C4-I20000-A0.999-T15",
                    

@@ -8,7 +8,7 @@ source('2019-07-15-edie-et-al/init_a.r')
 chosen_models <- c("BGY-E0-C4-I8000-A0.8-T12",
                    "BGY-E1-C4-I300000-A0.999-T15")
 model_param_list <- lapply(chosen_models, function(x) parse_model_identifier(x))
-model_dir_list <- lapply(model_param_list, function(x) initialize_model_params(x))
+model_dir_list <- lapply(model_param_list[1], function(x) initialize_model_params(x))
 
 results <- list()
 theme <- theme_minimal()
