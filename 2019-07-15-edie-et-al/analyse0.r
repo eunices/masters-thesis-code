@@ -165,10 +165,15 @@ if (model_params$dataset == "FA") {
 if (model_params$dataset == "GE") {
     df <- get_df1(write=F)
     join <- df[, c("idx", "full.name.of.describer", "date.n", "genus")][order(as.numeric(idx))]
-    join <- join[tolower(genus) %in% c("andrena", "lasioglossum", "megachile", 
-                                       "bombus", "hylaeus", "nomada", "coelioxys",
-                                       "anthophora", "colletes", "perdita")]
+    # join <- join[tolower(genus) %in% c("andrena", "lasioglossum", "megachile", 
+    #                                    "bombus", "hylaeus", "nomada", "coelioxys",
+    #                                    "anthophora", "colletes", "perdita")]
+    join <- join[genus %in% c("Lasioglossum", "Lipotriches", "Sphecodes",
+                              "Patellapis", "Halictus", "Dufourea", "Augochloropsis",
+                              "Nomia", "Augochlora", "Neocorynura")]
 }
+
+df[family == "Halictidae", list(.N), by="genus"][order(-N)][1:10]
 
 write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="", fileEncoding = "UTF-8")
 
