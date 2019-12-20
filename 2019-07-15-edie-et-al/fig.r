@@ -545,6 +545,21 @@ grid.arrange(p1, p2)
 (721+524)/ total_author_years
 
 
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Species richness and area graph
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Species richness and area graph"))
+area <- read.csv('data/2019-05-23-ascher-bee-data/eda4_edie/2019-12-20-richness-area.csv')
+
+ggplot(area) + 
+    geom_point(aes(x=log(area), y=log(richness))) +
+    stat_smooth(area, mapping=aes(x=log(area), y=log(richness)), method='lm', formula = y~x) +
+    xlab("log(Area (million sq km))") + ylab("log(N species discovered)") +
+    scale_y_continuous(limits=c(2, 10)) + 
+    theme
+
+summary(lm(log(richness) ~ log(area), area))
+
 
 ######## EXTRA EDA ########
 
