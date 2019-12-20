@@ -4,16 +4,19 @@ source('2019-06-19-ascher-type-data/var.R')
 source('2019-06-19-ascher-type-data/subset.R')
 
 
-df0 <- get_df1(write=F)
-df0$date.decade <- paste0(substr(as.character(df0$date.n), 1, 3), "0s")
+df0a <- get_df1(write=F)
+df0b <- get_df2(write=F)
+df0b <- df0b[status=="Synonym"]
 
-df0[date.decade=='1820s', c("species", "genus", "full.name.of.describer")]
+df <- rbind(df0a[,c("full.name.of.describer", "idx", "date.n")],
+            df0b[,c("full.name.of.describer", "idx", "date.n")])
+df$date.decade <- paste0(substr(as.character(df$date.n), 1, 3), "0s")
 
-df <- df0[,c("full.name.of.describer", "idx", "date.decade")]; dim(df)
 df <- df %>% separate_rows(full.name.of.describer, sep="; ")
 df <- unique(df)
-df <- df[, list(.N), by=c('idx', 'date.decade')]
 df <- df[order(date.n)]
+df <- df[, list(.N), by=c('idx', 'date.decade')]
+df <- df[order(date.decade)]
 df$N <- as.character(df$N)
 
 calc_median <- function(x){
