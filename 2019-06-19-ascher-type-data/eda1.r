@@ -18,10 +18,12 @@ des <- get_des(write=F)
 des <- des[, c("full.name.of.describer.n", "residence.country.describer.n")]
 des <- data.table(des %>% separate_rows(residence.country.describer.n, sep="; "))
 des <- des[, id := seq_len(.N), by = full.name.of.describer.n][
-        order(full.name.of.describer.n, id),][
-            !duplicated(full.name.of.describer.n)]
+        order(full.name.of.describer.n, id),][!duplicated(full.name.of.describer.n)]
 spp_s <- merge(spp_s, des, by.x="full.name.of.describer", by.y="full.name.of.describer.n",
-      all.x=T, all.y=F)
+               all.x=T, all.y=F)
+spp_s <- spp_s[, c("type.country.n", "residence.country.describer.n", "idx")]
+spp_s <- unique(spp_s)
+
 t <- table(spp_s$type.country.n, spp_s$residence.country.describer.n)
 t <- data.table(t)
 dim(t); t <- t[N!=0]; dim(t)
@@ -46,7 +48,9 @@ write.csv(t,
           paste0(dir_script, "eda1.1_shiny/data/2019-09-22-flow-map-type-loc-des-country.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
-# Summarising where there is no flow
+# 1) Summarising where there is no flow
+
+# Data processing
 table(t$no_flow)
 s1 <- t[, list(N=sum(N)), by='des']
 s2 <- t[no_flow=="TRUE", list(N=sum(N)), by='des']
@@ -61,18 +65,23 @@ ss$Class <- factor(ss$Class, levels=c("High income",
                                       "Lower middle income",
                                       "Low income", 
                                       "Unclassed"))
+ss[Class=="Unclassed"] # visual check
 
-ss[Class=="Unclassed"]
-
+# Plot
 ggplot(ss[!is.na(Class)], aes(x=Class, y=round(prop*100,2))) + 
   geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
     labs(x="\nWorld Bank classification", y = "Proportion of species described\n by describers residing in country (%)\n") +
          theme_classic()
 
+# In text figures
 ss[N_cty>=1]
-summary(ss[N_cty>=5]$prop)
-dim(ss[N_cty>=5])
+summary(ss[prop>0 & N_total>=5]$prop*100)
+length(ss[prop>0 & N_total>=5]$prop*100)
+shapiro.test(ss[prop>0 & N_total>=5]$prop*100) # not normal
+ss[N_total>5][order(-prop)][1:10]
+ss[Country=="Brazil"]
 
+# Statistical tests
 # http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
 kruskal.test(prop~Class, data = ss)
 pairwise.wilcox.test(ss$prop, ss$Class, p.adjust.method = "BH")
@@ -82,26 +91,39 @@ ss_summary <- ss[, list(mean=mean(prop),
                         quantile_3rd = quantile(prop, 0.75),
                         N=.N),
                   by=c("Class")]
+
 write.csv(ss_summary,
           paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop-summary.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
-
-summary(ss[prop>0 & N_total>=5]$prop*100)
-length(ss[prop>0 & N_total>=5]$prop*100)
-shapiro.test(ss[prop>0 & N_total>=5]$prop*100) # not normal
 
 write.csv(ss[order(-prop)],
           paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
+# 2) Count number of countries where there is flow
 
+# Data processing
 flow <- unique(spp_s[, c("type.country.n", "residence.country.describer.n")])
-flow <- merge(flow[,.N, by=c("residence.country.describer.n")], lookup.cty[, c("DL", "Class")], 
-      by.x="residence.country.describer.n", by.y="DL", all.x=T, all.y=F)
+flow <- flow[type.country.n != residence.country.describer.n]
+flow <- flow[,.N, by=c("residence.country.describer.n")]
+
+des_countries <- unique(des$residence.country.describer.n); length(des_countries)
+des_countries <- des_countries[!des_countries %in% flow$residence.country.describer.n]
+des_countries <- data.frame(residence.country.describer.n=des_countries, N=0)
+flow <- rbind(flow, des_countries)         
+
+flow <- merge(flow, 
+              lookup.cty[, c("DL", "Class")], 
+              by.x="residence.country.describer.n", by.y="DL", all.x=T, all.y=F)
 flow <- flow[!is.na(residence.country.describer.n) & residence.country.describer.n != "[unknown]"]
+# flow$Class <- ifelse(flow$Class == "High income", "High income", "Not high income")
+
+flow$Class <- factor(flow$Class, levels=c("High income", 
+                                          "Upper middle income",
+                                          "Lower middle income",
+                                          "Low income", 
+                                          "Unclassed"))
 
 kruskal.test(N~Class, data = flow)
-pairwise.wilcox.test(flow$prop, flow$Class, p.adjust.method = "BH")
-
+pairwise.wilcox.test(flow$N, flow$Class, p.adjust.method = "BH")
 
 ggplot(flow, aes(x=Class, y=N)) + 
   geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
@@ -114,6 +136,11 @@ flow_summary <- flow[, list(mean=mean(N),
                         quantile_3rd = quantile(N, 0.75),
                         N=.N),
                   by=c("Class")]
+flow[, list(mean=mean(N),
+            median=median(N),
+            quantile_1st = quantile(N, 0.25),
+            quantile_3rd = quantile(N, 0.75),
+            N=.N)]
 write.csv(flow_summary[order(-N)],
           paste0(dir_data, "eda1_flow/2019-09-22-summary-country-N-summary.csv"), na='', row.names=F, fileEncoding="UTF-8")
 

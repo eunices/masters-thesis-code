@@ -173,6 +173,7 @@ labels <- as.character(mapping$groupname)
 names(labels) <- mapping$group
 
 # plot cumulative counts
+print("Plotting cumulative_fit.pdf")
 P <- ggplot() +
     geom_path(data=sims, aes(x=year, y=cml_value, group=sim), 
               col="skyblue2", alpha=0.1) +
@@ -182,6 +183,7 @@ P <- ggplot() +
     xlab("Year") + theme
 ggsave(P, file=paste0(dir_model_folder, "output/cumulative_fit.pdf"), width=10, height=6)
 
+print("Plotting count_fit.pdf")
 # plot per year counts
 P <- ggplot() +
     geom_path(data=sims, aes(x=year, y=value, group=sim),
@@ -207,6 +209,7 @@ mu_sim <- sims %>%
     data.frame()
 
 # plot long term trends
+print("Plotting regression.pdf")
 P <- ggplot() +
     geom_path(data=obs, aes(x=year, y=(value/(off+1)))) +
     geom_line(data=sims, aes(x=year, y=lam, group=sim), 
@@ -223,6 +226,7 @@ rm(P)
 
 ####### Summarise forecast
 
+print("Generating output.csv table")
 # cumulative series for sampled data
 nc <- ncol(data$counts)
 len_fc <- length(forecast[[1]][[1]])
@@ -259,7 +263,6 @@ final_results <- merge(results, fore.table, by="group") %>%
 write.csv(final_results, file=paste0(dir_model_folder,"output/results.csv"), row.names=FALSE)
 
 ####### END Summarise forecast
-
 
 # remove variables to free up memory
 rm(final_results)

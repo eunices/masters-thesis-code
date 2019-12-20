@@ -86,6 +86,9 @@ described_species_by_year <- unique(
 described_per_year_final2 <- merge(taxonomic_effort, described_species_by_year,
                                    by.x="years", by.y="date.n", all.x=T, all.y=F)
 
+# TODO: plot time series of N=1 species described, N=2 etc.
+
+
 # number of synonyms
 described_species_by_year <- describer_date[]
 described_species_by_year[,N_species_described:=length(unique(idxes)),by="date.n"]
