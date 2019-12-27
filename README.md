@@ -77,4 +77,20 @@ Note: global dataset used
 
 - Ecoregions 2017 shp file cannot be dissolved by BIOME_NAME due to 8 topology errors that are not trivial to resolve automatically.
 
+## Refs
+Network for coauthorship
+- https://programminghistorian.org/en/lessons/exploring-and-analyzing-network-data-with-python#advanced-networkx-community-detection-with-modularity
+- https://www.pnas.org/content/101/suppl_1/5200
+- https://www.pnas.org/content/103/23/8577 
+
+Flow of taxonomic resources
+- https://academic.oup.com/bioscience/article/64/4/322/248677
+
+Gender equality 
+- Holman et al 
+https://journals.plos.org/plosbiology/article?id=10.1371journal.pbio.2004956
+
+
+
+
 Last updated 23 Oct 2019

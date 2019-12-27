@@ -33,3 +33,15 @@ launch_shinystan(fit)
 # reparametrize
 # https://mc-stan.org/docs/2_18/stan-users-guide/reparameterization-section.html
 # https://betanalpha.github.io/assets/case_studies/divergences_and_bias.html
+
+
+# Edie et al TODO
+# TODO: understand offset for TE in posterior samples
+# https://stat.ethz.ch/pipermail/r-help/2008-March/155920.html 
+# https://discourse.mc-stan.org/t/how-to-fit-a-simple-poisson-process/7913
+# TODO: time series CV
+# TODO: check divergent transitions https://betanalpha.github.io/assets/case_studies/divergences_and_bias.html
+# https://mc-stan.org/users/documentation/case-studies/divergences_and_bias.html
+# https://betanalpha.github.io/assets/case_studies/rstan_workflow.html
+# TODO: compare biomes
+# TODO: compare genus
