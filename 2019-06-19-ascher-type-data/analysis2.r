@@ -28,12 +28,12 @@ plot_auth_decade1 <-
     ggplot(data=df, aes(x=date.decade, fill=N)) +
         geom_bar(position = "fill") +
         xlab("\nDecade") + ylab("Proportion species with \nN number of authors\n") +
-        theme_minimal()
+        theme_minimal() + scale_fill_grey()
 
 plot_auth_decade2 <- 
     ggplot(data=df, aes(x=date.decade, fill=N)) +
         geom_bar(stat='count') +
         xlab("\nDecade") + ylab("Number of species with \nN number of authors\n") +
-        theme_minimal()
+        theme_minimal() + scale_fill_grey()
 
 grid.arrange(plot_auth_decade1, plot_auth_decade2)

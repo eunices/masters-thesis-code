@@ -31,11 +31,11 @@ hist_active_yrs <- ggplot(data.frame(yrs=yrs_active1b)) +
                    mapping=aes(x=yrs, y=..count../sum(..count..) * 100),
                    binwidth=10, fill='black') + 
     geom_histogram(aes(x=yrs, y=..count../sum(..count..) * 100), binwidth=10, 
-                   fill='darkorange', alpha=0.6) +
+                   fill='grey80', alpha=0.6) +
     scale_x_continuous(breaks= seq(0, max(yrs_active1), 10)) +
     geom_vline(xintercept=9, color='grey', size=1) +
     geom_vline(xintercept=summary(yrs_active1)[5], color='grey', size=1, linetype="dashed") +
-    geom_vline(xintercept=summary(yrs_active1b)[5], color='darkorange', size=1, linetype="dashed") +
+    geom_vline(xintercept=summary(yrs_active1b)[5], color='grey', size=1, linetype="dotted") +
     xlab("\nNumber of active years") + ylab("Proportion of PTEs (%)\n") + 
     theme
 
