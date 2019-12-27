@@ -32,3 +32,4 @@ launch_shinystan(fit)
 
 # reparametrize
 # https://mc-stan.org/docs/2_18/stan-users-guide/reparameterization-section.html
+# https://betanalpha.github.io/assets/case_studies/divergences_and_bias.html
