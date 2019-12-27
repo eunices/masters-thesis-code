@@ -59,6 +59,38 @@ hist_mean_sp_per_auth <- ggplot(df_describers) +
                    binwidth=5) + theme
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Prop species describing <=N species
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Species richness and area graph"))
+
+taxonomic_effort$N_real_describers.1 <- taxonomic_effort$N_real_describers.1 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.2 <- taxonomic_effort$N_real_describers.2 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.3 <- taxonomic_effort$N_real_describers.3 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.4 <- taxonomic_effort$N_real_describers.4 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.5 <- taxonomic_effort$N_real_describers.5 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.6 <- taxonomic_effort$N_real_describers.6 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.7 <- taxonomic_effort$N_real_describers.7 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.8 <- taxonomic_effort$N_real_describers.8 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.9 <- taxonomic_effort$N_real_describers.9 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.10 <- taxonomic_effort$N_real_describers.10 / taxonomic_effort$N_real_describers * 100
+
+cols <- names(taxonomic_effort)[grepl("N_real_describers.", names(taxonomic_effort))]
+cols <- c("years", cols)
+des_y <- melt(taxonomic_effort[, ..cols], id.vars="years")
+
+formatstr <- function(string) {
+  string <- gsub("N_real_describers.", "", string)
+  ifelse(string=="1", string, paste0("<=", string))
+}
+
+ggplot(des_y, aes(x=years, y=value, group=variable)) + 
+    geom_line(size=1, colour="grey") + geom_smooth(colour="black") +
+    xlab("Year") + ylab("Proportion of PTEs describing <= N species (%)\n") +
+    facet_wrap(. ~variable, ncol=2, labeller=labeller(variable=formatstr), dir="v") +
+    scale_y_continuous(limits=c(0, 50)) +
+    theme
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Fig. 1, S2
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- Fig. 1, S2"))
@@ -549,7 +581,7 @@ grid.arrange(p1, p2)
 # Section - Species richness and area graph
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- Species richness and area graph"))
-area <- read.csv('data/2019-05-23-ascher-bee-data/eda4_edie/2019-12-20-richness-area.csv')
+area <- read.csv('data/lookup/2019-12-20-richness-area.csv')
 
 ggplot(area) + 
     geom_point(aes(x=log(area), y=log(richness))) +

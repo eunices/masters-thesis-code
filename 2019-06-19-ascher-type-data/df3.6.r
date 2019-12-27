@@ -65,7 +65,6 @@ taxonomic_effort2 <-
                by=years][order(as.numeric(years))][
                    , c("years", "N_real_describers", "N_weighted_real_describers")]
 
-
 ###########################
 # For taxonomic_effort3
 ###########################
@@ -112,8 +111,6 @@ taxonomic_effort3 <-
 ###########################
 taxonomic_effort <- merge(taxonomic_effort1, taxonomic_effort2, by="years", all.x=T, all.y=F)
 taxonomic_effort <- merge(taxonomic_effort, taxonomic_effort3, by="years", all.x=T, all.y=F)
-
-# TODO: plot time series of N=1 species described, N=2 etc.
 
 ############################
 # Count species
