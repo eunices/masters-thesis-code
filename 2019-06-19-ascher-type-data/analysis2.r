@@ -27,7 +27,7 @@ calc_median <- function(x){
 plot_auth_decade1 <- 
     ggplot(data=df, aes(x=date.decade, fill=N)) +
         geom_bar(position = "fill") +
-        xlab("\nDecade") + ylab("Proportion species with \nN number of authors\n") +
+        xlab("\nDecade") + ylab("Proportion of species with \nN number of authors\n") +
         theme_minimal() + scale_fill_grey()
 
 plot_auth_decade2 <- 
