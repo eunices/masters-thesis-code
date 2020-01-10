@@ -22,3 +22,7 @@ install_libs <- function(packages) {
 }
 
 install_libs(lib_li)
+
+# Note the following for the latest R
+# Warning message:
+# packages 'ResourceSelection ', 'pscl ', 'caret ', 'aomisc' are not available (for R version 3.6.2) 
