@@ -1,5 +1,6 @@
 # Installs all R packages. Not R itself.
 # Need to ensure that JAVA_HOME environment variable is already set.
+# Set R_LIBS_USER also for new library path
 
 # Read all R files
 r_files <- list.files('.', pattern=".r$", recursive=T)
@@ -10,7 +11,8 @@ for (i in 1:length(r_files)) {
     lib_li <- c(lib_li, libs)
 }
 
-lib_li <- gsub("suppress(Warnings|Messages)\\(library\\(|library\\(|\\)", "", lib_li)
+lib_li <-gsub("#.*", "", lib_li) # remove all words after hash
+lib_li <- gsub("suppress(Warnings|Messages)\\(library\\(|library\\(|\\)", "", lib_li) # remove functions
 lib_li <- unique(unlist(strsplit(lib_li, "; ")))
 
 install_libs <- function(packages) {
