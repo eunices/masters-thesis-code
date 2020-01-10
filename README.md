@@ -5,7 +5,6 @@ This repository contains all the code to do with my masters thesis for reproduci
 ## TODOs:
 
 - Check in `2019-09-24-coauthor-networkx/src` from laptop!
-- Test commit
 
 ## Folder structure
 
