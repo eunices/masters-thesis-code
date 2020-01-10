@@ -25,7 +25,39 @@ Setting up:
 
 - Get code: ```git clone -–depth 1 https://github.com/eunices/masters-thesis-code.git ```
 - Environment setup: use `install.r` for R (after R and Java JDK installed, `JAVA_HOME` env variable set either globally or in `keys.r` as a workaround for computers which require admin access to install Java) and `environment-py.yaml`
-- Get data: from external hardisk, or some cloud storage [to be updated]
+- Get data: from external hardisk, or some cloud storage [to be updated] * see below "Backup files"
+
+Data files:
+
+- Full set of data in `msc/data/`
+  - Geolayers `geo/` as `data/geo` folder in codebase
+  - Geo_processed layers `geo_processed/` as `data/geo_processed/` folder in codebase
+  - Data `data/` as `data/` folder in codebase
+  - Models `models/` as `tmp/` folder in codebase
+  - Backup instructions: files to be backed up once in 2 months from development computer to external hard disk
+
+- Bare minimum set of data to start with
+  - Only in `msc/data/`
+    - Geo files `geo/`
+      - `0_manual/Ecoregions2017/Ecoregions2017.shp` and associated files
+      - `1_separate/`
+    - Geo files that are "edited" `geo_processed/`
+      - `gadm/gadm36_0_utf8_continents.shp` and associated files
+      - `latitude/latitude_boxes.shp` and associated files
+      - `teow/official/wwf_terr_ecos_dissolved.shp`
+  - Updated in `Dropbox/msc-thesis/`
+    - Data `data/` that are frequently updated
+      - `lookup/` files
+      - `2019-05-23-ascher-bee-data/` files
+        - `clean/` files as manual cleaning is involved
+        - `final/` files as this is the final "cleaned" dataset
+        - `2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_2.0-denormalised_edit4.csv` as there is manual cleaning involved
+        - `2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_2.0-denormalised.csv` as it takes a long time to create this file by code (runs as a loop)
+        - `2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv` as there is manual cleaning involved
+        - `2019-05-23-Apoidea world consensus file Sorted by name 2019-idx.xlsb` as this is the original dataset in binary
+        - `2019-09-16-metadata.csv` as this file may be changed frequently. Required columns of the dataset are presented
+    - Backup instructions: Dropbox to be backed up when changes are made to abovementioned Dropbox files.
+  
 
 ## Analyses notes
 
