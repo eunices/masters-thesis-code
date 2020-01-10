@@ -32,7 +32,7 @@ Data files:
 - Full set of data in `msc/data/`
   - Geolayers `geo/` as `data/geo` folder in codebase
   - Geo_processed layers `geo_processed/` as `data/geo_processed/` folder in codebase
-  - Data `data/` as `data/` folder in codebase
+  - Data `data-<date of backup>/` as `data/` folder in codebase
   - Models `models/` as `tmp/` folder in codebase
   - Backup instructions: files to be backed up once in 2 months from development computer to external hard disk
 
