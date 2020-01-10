@@ -2,10 +2,6 @@
 
 This repository contains all the code to do with my masters thesis for reproducible research.
 
-## TODOs:
-
-- Check in `2019-09-24-coauthor-networkx/src` from laptop!
-
 ## Folder structure
 
 General folder structure guidelines:
