@@ -1,3 +1,9 @@
+# Information about code:
+# This code corresponds to data wrangling code for my MSc thesis.
+# This code is for creating distribution datasets by country and other groups.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 print("######################################################")
 print("######################################################")
 print("######################################################")

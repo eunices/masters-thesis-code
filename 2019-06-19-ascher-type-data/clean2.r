@@ -1,9 +1,14 @@
+# Information about code:
+# This code corresponds to cleaning code for my MSc thesis.
+# A series of other codes are named as clean1|2|3|4.r
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - cleaning repository
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- cleaning repository"))
 
-filepath <- paste0(dir_data, '2019-05-23-Apoidea world consensus file Sorted by name 2019-idx-1-geocoded.csv')
+filepath <- paste0(dir_data, basefile, '-idx-1-geocoded.csv')
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 

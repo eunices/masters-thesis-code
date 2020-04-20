@@ -1,44 +1,50 @@
+# Information about code:
+# This code corresponds to data wrangling code for my MSc thesis.
+# This code is for creating denormalised describer-species dataset.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - create describer raw dataset
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- describer raw dataset"))
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv")
+filepath <- paste0(dir_data, basefile, " oth_4.3-clean-coll.csv")
 df_s <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv")
+filepath <- paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv")
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-describer_cols <- c("idx", "author", "full.name.of.describer", "describer.gender", 
-          "dob.describer", "dod.describer",
-          "origin.country.describer", "residence.country.describer", "institution.of.describer")
+describer_cols <- c("idx", "author", "full.name.of.describer", "describer.gender",
+                    "dob.describer", "dod.describer", "origin.country.describer",
+                    "residence.country.describer", "institution.of.describer")
 
 describers_info_valid_species <- df[,..describer_cols]
 describers_info_synonyms <- df_s[,..describer_cols]
 describers_info <- rbind(describers_info_valid_species, describers_info_synonyms)
 
-write.csv(describers_info[order(author)], 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv"), na='', row.names=F, fileEncoding="UTF-8")
+filename_write = paste0(dir_data, basefile, " describers_1.0-all.csv")
+write.csv(describers_info[order(author)], filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
+# filename_write = paste0(dir_data, basefile, " describers_1.0-synonyms.csv")
 # write.csv(describers_info_synonyms[order(author)], 
-#           paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-synonyms.csv"), na='', row.names=F, fileEncoding="UTF-8")
+#           filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section -  individual author species rows 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': individual author species rows"))
 
-describers_info <- fread(
-    paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-
+filename_read = paste0(dir_data, basefile, " describers_1.0-all.csv")
+describers_info <- fread(filename_read, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 describers_info[, names(describers_info) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape 
 
 # A loop was written because currently this doesn't really work!~
 # describers <- describers_info %>% separate_rows(full.name.of.describer, 
 #                                                 describer.gender, dob.describer,
 #                                                 dod.describer, origin.country.describer,
-#                                                 residence.country.describer, institution.of.describer, 
+#                                                 residence.country.describer, 
+#                                                 institution.of.describer, 
 #                                                 sep=";|,", convert=T)
 
 # # =================
@@ -73,7 +79,9 @@ run_loop <- function() {
     describers <- data.frame(idx=character(), full.name.of.describer.n=character(),
                             describer.gender.n=character(), dob.describer.n=character(),
                             dod.describer.n=character(), origin.country.describer.n=character(),
-                            residence.country.describer.n=character(), institution.of.describer.n=character(), author.order=integer())
+                            residence.country.describer.n=character(), 
+                            institution.of.describer.n=character(),
+                            author.order=integer())
     n_rows <- dim(describers_info)[1]
     for (i in 1:n_rows) {
     # for (i in 1:2) {
@@ -146,8 +154,10 @@ if (loop_3=='Y') {
 
     describers[!describer.gender.n %in% c("M", "F", "U")]$describer.gender.n <- ""
 
-    describers$institution.of.describer.n <- gsub("[[:digit:]]", "",        describers$institution.of.describer.n)
+    describers$institution.of.describer.n <- gsub("[[:digit:]]", "", 
+        describers$institution.of.describer.n)
 
-    write.csv(describers, paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_2.0-denormalised.csv"), na='', row.names=F, fileEncoding="UTF-8")
+    filename_write = paste0(dir_data, basefile, " describers_2.0-denormalised.csv")
+    write.csv(describers, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 }
 

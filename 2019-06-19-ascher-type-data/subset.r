@@ -21,37 +21,38 @@ var_f <- var[!grepl("remove", key_status)]
 
 # Subset useful columns
 c_main <- c('idx', 'genus', 'species', 'status', 
-          'author', 'full.name.of.describer', 
-          'original.genus', 'original.subgenus', 'original.epithet', 
-          'date', 'date.n') # essential info
+           'author', 'full.name.of.describer', 
+           'original.genus', 'original.subgenus', 'original.epithet', 
+           'date', 'date.n') # essential info
 
 c_loc <- c('type.locality.verbatim', 'type.locality.updated',
-         'lat', 'lon', 'source.of.latlon', 
-         'type.country', 'type.state', 'elev.m')
+          'lat', 'lon', 'source.of.latlon', 
+          'type.country', 'type.state', 'elev.m')
 
 c_coll_i <- c('date.of.type', 'date.of.type.string', 'date.of.type.dd',
-            'date.of.type.mm', 'date.of.type.yyyy',
-            'collector.of.type', 'title.of.collector', 'full.name.of.collector',
-            'collector.gender', 'info.about.collector')
+              'date.of.type.mm', 'date.of.type.yyyy',
+              'collector.of.type', 'title.of.collector', 'full.name.of.collector',
+              'collector.gender', 'info.about.collector')
 
 c_tax <- c('family', 'subfamily', 'subgenus', 'subtribe', 'tribe') 
 
 c_nat_hist <- c('type.sex', 'host.plant.of.type', 'host.plant', 'nest.substrate',
-              'host.insect.or.prey', 'sociality', 'pollen.transport')
+                'host.insect.or.prey', 'sociality', 'pollen.transport')
 
 c_oth <- c("flag", "duplicated.row")
 
 c_coll_i_n <- c('date.of.type', 'date.of.type.string', 'date.of.type.dd',
-            'date.of.type.mm', 'date.of.type.yyyy',
-            'collector.of.type.n', 'title.of.collector.n', 'full.name.of.collector.n',
-            'collector.gender.n', 'info.about.collector.n', 'uncertain')
+                'date.of.type.mm', 'date.of.type.yyyy',
+                'collector.of.type.n', 'title.of.collector.n', 'full.name.of.collector.n',
+                'collector.gender.n', 'info.about.collector.n', 'uncertain')
 
 c_des_i <- c("author", "full.name.of.describer", "describer.gender", 
-        "dob.describer", "dod.describer", "origin.country.describer", "residence.country.describer", "institution.of.describer")
+             "dob.describer", "dod.describer", "origin.country.describer",
+             "residence.country.describer", "institution.of.describer")
 
 c_pub_i <- c( "paper.authors", "title", "journal", "volume", "issue", 
-            "page.numbers.publication", 
-            "paper.type", "country.of.publication", "city.of.publication")
+             "page.numbers.publication", 
+             "paper.type", "country.of.publication", "city.of.publication")
 
 # Load dataframes
 construct_filepath <- function(filename) {paste0(dir_data, filename)}

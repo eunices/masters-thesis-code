@@ -1,17 +1,24 @@
+# Information about code:
+# This code corresponds to data wrangling code for my MSc thesis.
+# This code is for creating the coauthor network data.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - creating dataset for network
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': creating dataset for network"))
 
 # Get all
-ps <- fread(
-    paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_1.0-all.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+ps <- fread(paste0(dir_data, basefile, " describers_1.0-all.csv"), 
+            integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 ps[, names(ps) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-
 # Filter only for valid and synonyms
-dfx1 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-dfx2 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"), integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+dfx1 <- fread(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"), 
+              integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+dfx2 <- fread(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"), 
+              integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx2 <- dfx2[status == "Synonym"]
 
 dfx <- rbind(dfx1[,c("idx", "date.n")], dfx2[,c("idx", "date.n")])
@@ -24,7 +31,7 @@ ps <- ps[idx %in% dfx]
 ps2 <- ps[grepl(";", full.name.of.describer),]
 ps4 <- ps[!grepl(";", full.name.of.describer),]
 ps2 <- strsplit(ps2$full.name.of.describer, split = "; ")
-# ps2 <- lapply(ps2, length)
+# ps2 <- lapply(ps2, length) # check
 ps2 <- lapply(ps2, function(x) as.data.frame(t(combn(x, m=2))))
 ps2 <- rbindlist(ps2); names(ps2) <- c('p1', 'p2')
 # https://stackoverflow.com/questions/30702191/
@@ -40,6 +47,5 @@ ps4 <- ps4[, c("full.name.of.describer")]; names(ps4) <- "p1"
 ps4 <- ps4[, .N, by=c("p1")]; ps4$p2 <- NA
 ps2 <- rbind(ps2, ps4)
 
-write.csv(ps2[order(-N)], 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_7.0-author-networks.csv"),
+write.csv(ps2[order(-N)], paste0(dir_data, basefile, " describers_7.0-author-networks.csv"),
           na='', row.names=F, fileEncoding="UTF-8")

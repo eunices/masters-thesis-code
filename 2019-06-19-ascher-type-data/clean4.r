@@ -1,9 +1,15 @@
+# Information about code:
+# This code corresponds to cleaning code for my MSc thesis.
+# A series of other codes are named as clean1|2|3|4.r
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - splitting dataset
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- splitting dataset"))
 
-filepath <- paste0(dir_data, '2019-05-23-Apoidea world consensus file Sorted by name 2019-idx-3-clean-fields.csv')
+filepath <- paste0(dir_data, basefile, '-idx-3-clean-fields.csv')
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
@@ -51,7 +57,8 @@ df_s$genus_new <- NULL
 df_s$taxonomicnotes.subspecies.synonyms.etc <- NULL
 
 write.csv(df_s[order(as.numeric(idx))], 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, basefile, " oth_1-clean.csv"), 
+          na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - clean fields specific to valid species
@@ -72,5 +79,6 @@ df <- merge(df, var_count, by=c("genus", "species"), all.x=T, all.y=F)
 df <- df[order(as.numeric(idx))]
 
 write.csv(df[order(as.numeric(idx))], 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_1-clean.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, basefile, " filtered_1-clean.csv"), 
+          na='', row.names=F, fileEncoding="UTF-8")
     

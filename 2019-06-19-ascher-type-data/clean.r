@@ -1,3 +1,8 @@
+# Information about code:
+# This code corresponds to cleaning code for my MSc thesis.
+# A series of other codes are named as clean1|2|3|4.r
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 print("######################################################")
 print("######################################################")
 print("######################################################")

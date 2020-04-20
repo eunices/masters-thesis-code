@@ -1,22 +1,26 @@
+# Information about code:
+# This code corresponds to cleaning code for my MSc thesis.
+# A series of other codes are named as clean1|2|3|4.r
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - cleaning other fields
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- cleaning other fields"))
 
-
-filepath <- paste0(dir_data, '2019-05-23-Apoidea world consensus file Sorted by name 2019-idx-2-clean-repo.csv')
+filepath <- paste0(dir_data, basefile, '-idx-2-clean-repo.csv')
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
 # date
-
 # old code left here for legacy purposes
 # no point cleaning this as data is captured actually in publications field 
 # df$date.n <- as.numeric(gsub("\\[.*\\]", "", df$date)) # remove square brackets
 # df[is.na(date.n)]$date.n <- 
 #    as.numeric(sub("\\D*(\\d+).*", "\\1", df[is.na(date.n)]$author.date))
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv")
+filepath <- paste0(dir_data, basefile, " pub_1.0-clean.csv")
 pub <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 pub <- pub %>% separate_rows(idxes, sep="; ")
 pub <- unique(pub[, c("idxes", "date.n")])
@@ -30,7 +34,8 @@ df[df$date.of.type.dd>31,]$date.of.type.dd <- NA
 
 df$date.of.type.mm <- 
     gsub(".*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec).*", "\\1", df$date.of.type)
-df[!df$date.of.type.mm %in% c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),]$date.of.type.mm <- ""
+df[!df$date.of.type.mm %in% c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),]$date.of.type.mm <- ""
 df$date.of.type.yyyy <- as.character(as.numeric(sub('.*(\\d{4}).*', '\\1', df$date.of.type)))
 
 paste_nine = function(numeric){
@@ -55,7 +60,7 @@ df <- merge(df, date_discrepancy, by="idx", all.x=T, all.y=F)
 df[!is.na(date.of.type.corrected)]$date.of.type.yyyy <- df[!is.na(date.of.type.corrected)]$date.of.type.corrected
 df$date.of.type.corrected <- NULL
 
-# Calculate again
+# calculate again
 df$years.lag <- as.numeric(df$date.n) - as.numeric(df$date.of.type.yyyy)
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -89,4 +94,5 @@ df[idx==6804]$family <- "Megachilidae"
 df[genus=="Nomada" & subfamily=="Apinae"]$subfamily <- "Nomadinae"
 
 write.csv(df[order(as.numeric(idx))], 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019-idx-3-clean-fields.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, basefile, "-idx-3-clean-fields.csv"), 
+          na='', row.names=F, fileEncoding="UTF-8")

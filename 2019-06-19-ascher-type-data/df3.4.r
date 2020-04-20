@@ -1,24 +1,31 @@
+# Information about code:
+# This code corresponds to data wrangling code for my MSc thesis.
+# This code is for creating the describer dataset with details.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - summarizing describer information
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': summarizing describer information"))
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-clean.csv")
-synonyms <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+filename_read <- paste0(dir_data, basefile, " oth_1-clean.csv")
+synonyms <- fread(filename_read, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 synonym_idxes <- synonyms[status=="Synonym",]$idx
 subsp_idxes <- synonyms[status=="Valid subspecies",]$idx
 var_idxes <- synonyms[status=="Infrasubspecific",]$idx
 rm(synonyms)
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_3.0-by-author.csv")
+filepath <- paste0(dir_data, basefile, " describers_3.0-by-author.csv")
 cols <- c("idx_auth", "full.name.of.describer.n", "describer.gender.n", "dob.describer.n",
-       "dod.describer.n", "alive", "origin.country.describer.n", 
-       "residence.country.describer.n", "institution.of.describer.n")
+          "dod.describer.n", "alive", "origin.country.describer.n", 
+          "residence.country.describer.n", "institution.of.describer.n")
 describers_template <- fread(filepath, na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[
     ,..cols]
 describers_template[, names(describers_template) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-describers_all <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_4.0-denormalised2.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+filename_read = paste0(dir_data, basefile, " describers_4.0-denormalised2.csv")
+describers_all <- fread(filename_read, na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 describers_all[, names(describers_all) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
 # For non-synonyms
@@ -115,8 +122,10 @@ describers$prop_species_syn <- round(describers$syn_spp_N
 / describers$spp_N,2)
 
 # countries
-describers.origin.cty <- data.table(describers[,c("idx_auth", "origin.country.describer.n")] %>% separate_rows(origin.country.describer.n), " ")[order(as.numeric(idx_auth))] # technically no need for this
-describers.res.cty <- data.table(describers[,c("idx_auth", "residence.country.describer.n")] %>% separate_rows(residence.country.describer.n, sep="; "))[order(as.numeric(idx_auth))]
+describers.origin.cty <- data.table(describers[,c("idx_auth", "origin.country.describer.n")] %>%
+    separate_rows(origin.country.describer.n), " ")[order(as.numeric(idx_auth))] # technically no need for this
+describers.res.cty <- data.table(describers[,c("idx_auth", "residence.country.describer.n")] %>% 
+    separate_rows(residence.country.describer.n, sep="; "))[order(as.numeric(idx_auth))]
 describers.res.cty[, order:=1:.N, by="idx_auth"] # retain order
 
 describers.origin.cty <- describers.origin.cty[origin.country.describer.n != ""]
@@ -161,9 +170,9 @@ describers_final <- merge(describers_final, describers.res.cty.first,
                           by='idx_auth', all.x=T, all.y=F)
 
 # Count pub/author metrics
-pub <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 pub_1.0-clean.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
-df1 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
-df2 <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
+pub <- fread(paste0(dir_data, basefile, " pub_1.0-clean.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+df1 <- fread(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
+df2 <- fread(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
 
 pubs <- pub %>% separate_rows(idxes)
 df <- rbind(df1, df2)
@@ -233,13 +242,19 @@ setcolorder(describers_final, c(2, 1, 3:length(names(describers_final))))
 # 3. for those with duplicated surname, abbrev. name and add in sq brackets
 
 # Quick fixes
-cockerell <- strsplit(describers_final[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$spp_idxes, ", ")[[1]]
+cockerell <- 
+    strsplit(describers_final[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$spp_idxes, ", ")[[1]]
 cockerell <- data.frame(cockerell_idx=cockerell)
-write.csv(cockerell,
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final-cockerell.csv"), na='', row.names=F, fileEncoding="UTF-8")
+filename_write = paste0(dir_data, basefile, " describers_5.0-describers-final-cockerell.csv")
+write.csv(cockerell, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
-write.csv(describers_final[order(as.numeric(idx_auth))], paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), na='', row.names=F, fileEncoding="UTF-8")
+filename_write = paste0(dir_data, basefile, " describers_5.0-describers-final.csv")
+write.csv(describers_final[order(as.numeric(idx_auth))], filename_write, 
+          na='', row.names=F, fileEncoding="UTF-8")
 
-describers_final[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$spp_idxes <- "Check 2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final-cockerell.csv"
+describers_final[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$spp_idxes <- 
+    paste0("Check ", basefile, " describers_5.0-describers-final-cockerell.csv")
 
-write.csv(describers_final[order(as.numeric(idx_auth))], paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final-view.csv"), na='', row.names=F, fileEncoding="UTF-8")
+filename_write = paste0(dir_data, basefile, " describers_5.0-describers-final-view.csv")
+write.csv(describers_final[order(as.numeric(idx_auth))], filename_write, 
+          na='', row.names=F, fileEncoding="UTF-8")

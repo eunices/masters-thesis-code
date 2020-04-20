@@ -1,16 +1,20 @@
+# Information about code:
+# This code corresponds to the main script for data cleaning and wrangling for my MSc thesis.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# To use this script: 
+# setwd("C:/_dev/msc/thesis/")
+# source('2019-06-19-ascher-type-data/main.r')
+
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("WELCOME TO CLEANING SCRIPTS FOR BEE TYPE DATA")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-# setwd("C:/Dev/msc-thesis-code/")
-# source('2019-06-19-ascher-type-data/main.r')
+# Set up
+start <- proc.time()
 dir_script_td <- "2019-06-19-ascher-type-data/"
 
-# Scripts
-#############
-
-# Clean
-start <- proc.time()
+# Cleaning/ data wrangling scripts
 source(paste0(dir_script_td, 'init.r'))
 source(paste0(dir_script_td, 'clean.r'))
 source(paste0(dir_script_td, 'df1.r'), encoding="utf-8")
@@ -19,8 +23,6 @@ source(paste0(dir_script_td, 'df3.r'))
 source(paste0(dir_script_td, 'df4.r'))
 source(paste0(dir_script_td, 'subset.r'))
 print(proc.time()-start)
-
-
 rm(list=ls())
 
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")

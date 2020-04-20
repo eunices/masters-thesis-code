@@ -1,18 +1,24 @@
+# Information about code:
+# This code corresponds to data wrangling code for my MSc thesis.
+# This code is for creating dataset for taxonomic effort.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - no of taxonomist active per year
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': number of taxonomist active per year"))
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv")
+filepath <- paste0(dir_data, basefile, " describers_5.0-describers-final.csv")
 describer_data <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 describer_data[, names(describer_data) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 describer_data <- describer_data[years_active > 0]
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_4.0-denormalised2.csv")
+filepath <- paste0(dir_data, basefile, " describers_4.0-denormalised2.csv")
 describer_date <- fread(filepath, na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 describer_date[, names(describer_date) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-clean.csv")
+filepath <- paste0(dir_data, basefile, " oth_1-clean.csv")
 synonyms <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 synonyms[, names(synonyms) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
@@ -134,5 +140,5 @@ per_year2 <- merge(per_year1, described_species_by_year,
 per_year2[is.na(per_year2)] <- 0
 per_year2 <- data.table(per_year2)
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_6.0-active-by-year.csv") 
+filepath <- paste0(dir_data, basefile, " describers_6.0-active-by-year.csv") 
 write.csv(per_year2[years<=2018], filepath, na='', row.names=F, fileEncoding="UTF-8")

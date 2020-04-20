@@ -1,3 +1,8 @@
+# Information about code:
+# This code corresponds to data wrangling code for my MSc thesis.
+# This code is for wrangling collector-specific fields.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 print("######################################################")
 print("######################################################")
 print("######################################################")
@@ -27,23 +32,25 @@ loop_2 <- "Y"
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- collector raw dataset"))
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-clean.csv")
+filepath <- paste0(dir_data, basefile, " oth_1-clean.csv")
 df_s <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df_s[, names(df_s) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_1-clean.csv")
+filepath <- paste0(dir_data, basefile, " oth_1-clean.csv")
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
 collector_cols <- c("idx", "collector.of.type", "full.name.of.collector",
-          "title.of.collector", "collector.gender", "info.about.collector")
+                    "title.of.collector", "collector.gender", "info.about.collector")
 
-collectors_info <- rbind(df[,..collector_cols],  df_s[,..collector_cols])
+collectors_info <- rbind(df[, ..collector_cols],  df_s[,..collector_cols])
 
-print(paste0("There are ", table(is.na(collectors_info$collector.of.type))[2], " idxes with no collector info."))
+print(paste0("There are ", table(is.na(collectors_info$collector.of.type))[2],
+             " idxes with no collector info."))
 
-write.csv(collectors_info[order(full.name.of.collector)], 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_1.0-all.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(collectors_info[order(full.name.of.collector)],
+          paste0(dir_data, basefile, " collectors_1.0-all.csv"), 
+          na='', row.names=F, fileEncoding="UTF-8")
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -51,14 +58,14 @@ write.csv(collectors_info[order(full.name.of.collector)],
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- denormalise collector dataset"))
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_1.0-all.csv")
+filepath <- paste0(dir_data, basefile, " collectors_1.0-all.csv")
 collectors_info <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 collectors_info[, names(collectors_info) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-collectors_unique <- data.table(collectors_info %>%
-  group_by(collector.of.type, full.name.of.collector,
-          title.of.collector, collector.gender, info.about.collector) %>%
-  summarise(idxes=paste0(idx,collapse='; ')))
+collectors_unique <- 
+    collectors_info[, list(idxes=paste0(idx, collapse="; ")), 
+                    by=c("collector.of.type", "full.name.of.collector",
+                         "title.of.collector", "collector.gender", "info.about.collector")]
 
 # Split authors by ;
 split_comma <- function(x) {
@@ -72,24 +79,24 @@ split_gender <- function(x) {
 }
 
 collectors_unique$collector.of.type.n <- lapply(collectors_unique$collector.of.type, split_comma)
-collectors_unique$full.name.of.collector.n <- lapply(collectors_unique$full.name.of.collector, split_semicolon)
+collectors_unique$full.name.of.collector.n <- lapply(collectors_unique$full.name.of.collector, 
+                                                     split_semicolon)
 collectors_unique$collector.gender.n <- lapply(collectors_unique$collector.gender,
-                                            split_gender)
+                                               split_gender)
 collectors_unique$title.of.collector.n <- lapply(collectors_unique$title.of.collector,
-                                        split_semicolon)
+                                                 split_semicolon)
 collectors_unique$info.about.collector.n <- lapply(collectors_unique$info.about.collector,
-                                        split_semicolon)
+                                                   split_semicolon)
 
 run_loop <- function() {
-    
+
     # Create a new row for each author
     collectors <- data.frame(idxes=character(),
-                            collector.of.type.n=character(),
-                            full.name.of.collector.n=character(),
-                            collector.gender.n=character(),
-                            title.of.collector.n=character(),
-                            info.about.collector.n=character()
-                            )
+                             collector.of.type.n=character(),
+                             full.name.of.collector.n=character(),
+                             collector.gender.n=character(),
+                             title.of.collector.n=character(),
+                             info.about.collector.n=character())
 
     n_rows = dim(collectors_unique)[1]
     for (i in 1:n_rows) {
@@ -155,18 +162,17 @@ collectors_unique[200]$info.about.collector.n[[1]][[1]]
 if (loop_2 == "Y") {
     collectors <- run_loop()
     collectors <- data.table(collectors %>% separate_rows(idxes))
-    collectors <- data.table(collectors %>%
-        group_by(collector.of.type.n, full.name.of.collector.n,
-          title.of.collector.n, collector.gender.n, info.about.collector.n) %>%
-        summarise(idxes=paste0(idxes,collapse='; ')))
-#   summarise(idxes=paste0(idxes,collapse='; ')))
+    collectors <- collectors[, list(idxes=paste0(idxes, collapse="; ")), 
+                    by=c("collector.of.type.n", "full.name.of.collector.n",
+                         "title.of.collector.n", "collector.gender.n", "info.about.collector.n")]
     collectors$idxes <- gsub("; $", "", collectors$idxes)
     
-    write.csv(collectors[order(full.name.of.collector.n)], 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_2.0-denormalised.csv"), na='', row.names=F, fileEncoding="UTF-8")
+    # Write file
+    filename_write = paste0(dir_data, basefile, " collectors_2.0-denormalised.csv")
+    write.csv(collectors[order(full.name.of.collector.n)], filename_write,
+            na='', row.names=F, fileEncoding="UTF-8")
 
 }
-
 
 # these excludes rows with no collector information
 
@@ -175,7 +181,7 @@ if (loop_2 == "Y") {
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- clean collector dataset"))
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_2.0-denormalised_edit4.csv")
+filepath <- paste0(dir_data, basefile, " collectors_2.0-denormalised_edit4.csv")
 collectors <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 collectors[, names(collectors) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
@@ -194,81 +200,58 @@ table(collectors$uncertain=="y")
 #     summarise(idxes=paste0(idxes,collapse='; '), 
 #               N=n()))
 
-# write.csv(collectors_group, paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_2.0-denormalised_edit4.csv"), na='', row.names=F, fileEncoding="UTF-8")
+# write.csv(collectors_group, paste0(dir_data, basefile, " collectors_2.0-denormalised_edit4.csv"), na='', row.names=F, fileEncoding="UTF-8")
 
 # cleaned for persons who have collected > 100 type specimens
 
+collectors_grouped <- collectors[, list(idxes=paste0(idxes, collapse="; "), N=.N),
+           by=c("uncertain", "collector.of.type.n", "full.name.of.collector.n",
+                "title.of.collector.n", "collector.gender.n", "info.about.collector.n")]
 
-collectors_grouped <- data.table(collectors %>% 
-    group_by(uncertain, collector.of.type.n,
-                 full.name.of.collector.n,
-                 title.of.collector.n,
-                 collector.gender.n,
-                 info.about.collector.n) %>%
-    summarise(idxes=paste0(idxes,collapse='; '),
-              N=n()))
-
-# collectors_grouped1 <- data.table(collectors[uncertain=="", ] %>% 
-#     group_by(collector.of.type.n,
-#                  full.name.of.collector.n,
-#                  title.of.collector.n,
-#                  collector.gender.n,
-#                  info.about.collector.n) %>%
-#     summarise(idxes=paste0(idxes,collapse='; '),
-#               N=n()))
 
 # Exclude uncertain; approximately 10% of data
-collectors_grouped2 <- data.table(collectors[uncertain=="y", ] %>% 
-    group_by(collector.of.type.n,
-                 full.name.of.collector.n,
-                 title.of.collector.n,
-                 collector.gender.n,
-                 info.about.collector.n) %>%
-    summarise(idxes=paste0(idxes,collapse='; '),
-              N=n()))
+
+collectors_grouped2 <- collectors[uncertain=="y", list(idxes=paste0(idxes, collapse="; "), N=.N),
+           by=c("uncertain", "collector.of.type.n", "full.name.of.collector.n",
+                "title.of.collector.n", "collector.gender.n", "info.about.collector.n")]
+
 print(paste0("There are ", sum(collectors_grouped2$N), " uncertain rows."))
 
-# collectors_grouped <- merge(collectors_grouped1, collectors_grouped2, 
-#       by=c("collector.of.type.n",
-#                  "full.name.of.collector.n",
-#                  "title.of.collector.n",
-#                  "collector.gender.n",
-#                  "info.about.collector.n"), all.x=T, all.y=T, suffixes=c("_certain", "_uncertain"))
-
-
-write.csv(collectors_grouped[order(uncertain, -N, full.name.of.collector.n)], paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_3.0-collectors.csv"), na='', row.names=F, fileEncoding="UTF-8")
+write.csv(collectors_grouped[order(uncertain, -N, full.name.of.collector.n)], 
+          paste0(dir_data, basefile, " collectors_3.0-collectors.csv"), 
+          na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - merge back into main dataframe
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- merge back into main dataframe"))
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_3.0-collectors.csv")
+filepath <- paste0(dir_data, basefile, " collectors_3.0-collectors.csv")
 collectors <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 collectors[, names(collectors) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
 collectors <- data.table(collectors %>% separate_rows(idxes))
-collectors <- collectors[, c("collector.of.type.n", "full.name.of.collector.n", "uncertain", "collector.gender.n", "title.of.collector.n", "idxes")]
-collectors2 <- collectors[order(uncertain)] %>% 
-    group_by(idxes) %>%
-    summarise(
-        collector.of.type.n=paste0(collector.of.type.n,collapse='; '),
-        full.name.of.collector.n=paste0(full.name.of.collector.n,collapse='; '),
-        uncertain=paste0(uncertain,collapse='; '),
-        collector.gender.n=paste0(collector.gender.n, collapse='; '),
-        title.of.collector.n=paste0(title.of.collector.n, collapse='; '),
-    )
-table(duplicated(collectors2$idxes))
+collectors <- collectors[, c("collector.of.type.n", "full.name.of.collector.n", "uncertain", 
+                             "collector.gender.n", "title.of.collector.n", "idxes")]
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.2-clean-auth-full-name.csv")
+collectors2 <- collectors[order(uncertain), 
+           list(collector.of.type.n=paste0(collector.of.type.n, collapse='; '),
+                full.name.of.collector.n=paste0(full.name.of.collector.n, collapse='; '),
+                uncertain=paste0(uncertain, collapse='; '),
+                collector.gender.n=paste0(collector.gender.n, collapse='; '),
+                title.of.collector.n=paste0(title.of.collector.n, collapse='; ')), 
+           by="idxes"]
+
+filepath <- paste0(dir_data, basefile, " filtered_4.2-clean-auth-full-name.csv")
 dfx1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx1[, names(dfx1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.2-clean-auth-full-name.csv")
+filepath <- paste0(dir_data, basefile, " oth_4.2-clean-auth-full-name.csv")
 dfx2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-if(any(names(dfx1) %in% c('collector.of.type.n_new', 'full.name.of.collector.n_new', 'uncertain_new', 'collector.gender.n_new', 'title.of.collector.n_new'))) {
+if(any(names(dfx1) %in% c('collector.of.type.n_new', 'full.name.of.collector.n_new', 
+                          'uncertain_new', 'collector.gender.n_new', 'title.of.collector.n_new'))) {
     dfx1$collector.of.type.n_new <- NULL
     dfx1$full.name.of.collector.n_new <- NULL
     dfx1$uncertain_new <- NULL
@@ -277,7 +260,7 @@ if(any(names(dfx1) %in% c('collector.of.type.n_new', 'full.name.of.collector.n_n
 }
 
 dfx1 <- merge(dfx1, collectors2, all.x=T, all.y=F, by.x='idx', by.y='idxes',
-            suffixes=c("", "_new"))
+              suffixes=c("", "_new"))
 
 table(is.na(dfx1$collector.of.type.n))
 table(is.na(dfx1$full.name.of.collector.n))
@@ -287,7 +270,8 @@ table(is.na(dfx1$title.of.collector.n))
 
 # logic in having df3.r here is a little odd, as cleaning is cyclical
 # if collector-variable_new exist in the dataframe, then do not run this code
-if(any(names(dfx2) %in% c('collector.of.type.n_new', 'full.name.of.collector.n_new', 'uncertain_new', 'collector.gender.n_new', 'title.of.collector.n_new'))) {
+if(any(names(dfx2) %in% c('collector.of.type.n_new', 'full.name.of.collector.n_new', 
+                          'uncertain_new', 'collector.gender.n_new', 'title.of.collector.n_new'))) {
     dfx2$collector.of.type.n_new <- NULL
     dfx2$full.name.of.collector.n_new <- NULL
     dfx2$uncertain_new <- NULL
@@ -296,7 +280,7 @@ if(any(names(dfx2) %in% c('collector.of.type.n_new', 'full.name.of.collector.n_n
 }
 
 dfx2 <- merge(dfx2, collectors2, all.x=T, all.y=F, by.x='idx', by.y='idxes',
-            suffixes=c("", "_new"))
+              suffixes=c("", "_new"))
 
 table(is.na(dfx2$collector.of.type.n))
 table(is.na(dfx2$full.name.of.collector.n))
@@ -304,12 +288,10 @@ table(is.na(dfx2$uncertain))
 table(is.na(dfx2$collector.gender.n))
 table(is.na(dfx2$title.of.collector.n))
 
-write.csv(dfx1, 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_4.3-clean-coll.csv"),
+write.csv(dfx1, paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"),
           na='', row.names=F, fileEncoding="UTF-8")
 
-write.csv(dfx2, 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"),
+write.csv(dfx2, paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"),
           na='', row.names=F, fileEncoding="UTF-8")
 
 # note to self. may not be necessary

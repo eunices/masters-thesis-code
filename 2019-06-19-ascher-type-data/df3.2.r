@@ -1,9 +1,14 @@
+# Information about code:
+# This code corresponds to data wrangling code for my MSc thesis.
+# This code is for creating describer-based dataset from denormalised data.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - summarize by species idx for checks of authors
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': summarize by species idx for checks on authors"))
 
-filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_2.0-denormalised.csv")
+filepath <- paste0(dir_data, basefile, " describers_2.0-denormalised.csv")
 describers_merged <- fread(filepath, na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 describers_merged[, names(describers_merged) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
@@ -120,7 +125,6 @@ describers_idx[full.name.of.describer.n=="Michael Scott Engel", "min"] = "1995" 
 describers_idx[full.name.of.describer.n=="[Carl Eduard] Adolph Gerstaecker", "full.name.of.describer.n"] = "[Carl Eduard] Adolph Gerstäcker"
 describers_idx[full.name.of.describer.n=="Francisco Javier Ortiz-Sanchez", "full.name.of.describer.n"] = "Francisco Javier Ortiz-Sánchez"
 
-
-write.csv(describers_idx, 
-          paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_3.0-by-author.csv"),
-          na='', row.names=F, fileEncoding="UTF-8")
+# Write file
+filename_write = paste0(dir_data, basefile, " describers_3.0-by-author.csv")
+write.csv(describers_idx, filename_write, na='', row.names=F, fileEncoding="UTF-8")

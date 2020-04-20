@@ -1,3 +1,9 @@
+# Information about code:
+# This code corresponds to data wrangling for my MSc thesis.
+# They format the original datasets into other datasets for analyses.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 print("######################################################")
 print("######################################################")
 print("######################################################")
