@@ -11,7 +11,8 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- load data"))
 
-source('2019-06-19-jsa-type/analysis3_util.r') # util functions
+source('2019-06-19-jsa-type-ch3-gender/analysis1/util.r') # util functions
+# source('2019-06-19-jsa-type-ch3-gender/analysis1/data-un.r') # get UN data functions
 
 # Read/initialize all data/variables
 CURRENT_YEAR <- 2018

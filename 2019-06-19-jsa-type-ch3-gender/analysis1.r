@@ -18,9 +18,9 @@ library(httr)
 library(jsonlite)
 
 # Scripts
-source('2019-06-19-jsa-type/analysis3_util.r') # util functions
-# source('2019-06-19-jsa-type/analysis3.1.r') # get data from UN 's API and save locally
-source('2019-06-19-jsa-type/analysis3.2.r') # read local/ bee data
+source('2019-06-19-jsa-type-ch3-gender/analysis1/util.r') # util functions
+# source('2019-06-19-jsa-type-ch3-gender/analysis1/data-un.r') # get data from UN 's API and save locally
+source('2019-06-19-jsa-type-ch3-gender/analysis1/model.r') # read local/ bee data
 
 dir_data_subf <- paste0(dir_data, "eda3_gender/"); if(!dir.exists(dir_data_subf)) dir.create(dir_data_subf)
 dir_data_subf1 <- paste0(dir_data_subf, "time-series-spp/"); if(!dir.exists(dir_data_subf1)) dir.create(dir_data_subf1)
@@ -92,7 +92,7 @@ write.csv(outputs, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
 # generate_prop_t_tax("United States of America")
 
 # # Test plotting
-# source('2019-06-19-jsa-type/eda3.2.r') # read local/ bee data
+# source('2019-06-19-jsa-type-ch3-gender/analysis1/model.r') # read local/ bee data
 # prop_t <- generate_prop_t_tax(country="Brazil")
 # output <- main(country = "Brazil", position = "All", prop_t)
 # save_graph(dir_data_subf2, country="Brazil", position="All", prop_t, 
@@ -104,7 +104,7 @@ write.csv(outputs, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- gender rep - species"))
 
-source('2019-06-19-jsa-type/eda3.2.r') # read local/ bee data
+source('2019-06-19-jsa-type-ch3-gender/analysis1/model.r') # read local/ bee data
 prop_t <- generate_prop_t_tax(country="All") 
 
 

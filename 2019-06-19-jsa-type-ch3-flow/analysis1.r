@@ -4,7 +4,7 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 # Set up
-source('2019-06-19-jsa-type/init/var.R')
+source('2019-06-19-jsa-type-ch3-flow/analysis1/data.R')
 
 # Libraries
 library(ResourceSelection) # mcfadden
