@@ -3,6 +3,7 @@
 # This code is for creating describer-based dataset from denormalised data.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - summarize by species idx for checks of authors
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -12,6 +13,7 @@ filepath <- paste0(dir_data, basefile, " describers_2.0-denormalised.csv")
 describers_merged <- fread(filepath, na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 describers_merged[, names(describers_merged) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
+# # CHECK:
 # unique(describers_merged[full.name.of.describer.n=="Ricardo Ayala Barajas"]$dod.describer.n)
 
 # Summarize by idx
@@ -73,7 +75,7 @@ describers_idx$residence.country.describer.n <- gsub("; $", "", describers_idx$r
 describers_idx$alive <- "N"
 describers_idx[grepl("\\[alive in 2019\\]", describers_idx$dod.describer.original)]$alive <- "Y"
 
-#  Create index
+# Create index
 describers_idx$idx_auth <- 1:dim(describers_idx)[1]
 
 # Make edits with describer_edits.csv
@@ -114,7 +116,6 @@ describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$d
 describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$origin.country.describer.n = "IT"
 describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$residence.country.describer.n = "IT"
 describers_idx[full.name.of.describer.n=='Francesco ["Franz"] von Biegeleben']$describer.gender.n = "M"
-
 
 # Row by row discrepancies
 describers_idx[full.name.of.describer.n=="Ismael Alejandro Hinojosa-Díaz", "min"] = "2003"

@@ -201,20 +201,17 @@ table(collectors$uncertain=="y")
 #               N=n()))
 
 # write.csv(collectors_group, paste0(dir_data, basefile, " collectors_2.0-denormalised_edit4.csv"), na='', row.names=F, fileEncoding="UTF-8")
-
 # cleaned for persons who have collected > 100 type specimens
 
 collectors_grouped <- collectors[, list(idxes=paste0(idxes, collapse="; "), N=.N),
            by=c("uncertain", "collector.of.type.n", "full.name.of.collector.n",
                 "title.of.collector.n", "collector.gender.n", "info.about.collector.n")]
 
-
-# Exclude uncertain; approximately 10% of data
-
 collectors_grouped2 <- collectors[uncertain=="y", list(idxes=paste0(idxes, collapse="; "), N=.N),
            by=c("uncertain", "collector.of.type.n", "full.name.of.collector.n",
                 "title.of.collector.n", "collector.gender.n", "info.about.collector.n")]
 
+# Exclude uncertain; approximately 10% of data
 print(paste0("There are ", sum(collectors_grouped2$N), " uncertain rows."))
 
 write.csv(collectors_grouped[order(uncertain, -N, full.name.of.collector.n)], 
@@ -235,12 +232,12 @@ collectors <- collectors[, c("collector.of.type.n", "full.name.of.collector.n", 
                              "collector.gender.n", "title.of.collector.n", "idxes")]
 
 collectors2 <- collectors[order(uncertain), 
-           list(collector.of.type.n=paste0(collector.of.type.n, collapse='; '),
-                full.name.of.collector.n=paste0(full.name.of.collector.n, collapse='; '),
-                uncertain=paste0(uncertain, collapse='; '),
-                collector.gender.n=paste0(collector.gender.n, collapse='; '),
-                title.of.collector.n=paste0(title.of.collector.n, collapse='; ')), 
-           by="idxes"]
+    list(collector.of.type.n=paste0(collector.of.type.n, collapse='; '),
+        full.name.of.collector.n=paste0(full.name.of.collector.n, collapse='; '),
+        uncertain=paste0(uncertain, collapse='; '),
+        collector.gender.n=paste0(collector.gender.n, collapse='; '),
+        title.of.collector.n=paste0(title.of.collector.n, collapse='; ')), 
+    by="idxes"]
 
 filepath <- paste0(dir_data, basefile, " filtered_4.2-clean-auth-full-name.csv")
 dfx1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
@@ -293,5 +290,3 @@ write.csv(dfx1, paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"),
 
 write.csv(dfx2, paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"),
           na='', row.names=F, fileEncoding="UTF-8")
-
-# note to self. may not be necessary

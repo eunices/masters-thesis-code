@@ -158,7 +158,8 @@ describers.res.cty.grp <- data.table(describers.res.cty[,c("idx_auth", "Country"
   summarise(residence.country.describer.full=paste0(Country,collapse='; ')))
 describers.res.cty.grp$idx_auth <- as.character(describers.res.cty.grp$idx_auth)
 
-describers.res.cty.first <- data.table(describers.res.cty[order(idx_auth, order),c("idx_auth", "Country")][!duplicated(idx_auth)])
+describers.res.cty.first <- 
+    data.table(describers.res.cty[order(idx_auth, order),c("idx_auth", "Country")][!duplicated(idx_auth)])
 names(describers.res.cty.first) <- c("idx_auth", "residence.country.describer.first")
 describers.res.cty.first$idx_auth <- as.character(describers.res.cty.first$idx_auth)
 
@@ -170,9 +171,12 @@ describers_final <- merge(describers_final, describers.res.cty.first,
                           by='idx_auth', all.x=T, all.y=F)
 
 # Count pub/author metrics
-pub <- fread(paste0(dir_data, basefile, " pub_1.0-clean.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
-df1 <- fread(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
-df2 <- fread(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
+pub <- fread(paste0(dir_data, basefile, " pub_1.0-clean.csv"), 
+             na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
+df1 <- fread(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"),
+             na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
+df2 <- fread(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"),
+             na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
 
 pubs <- pub %>% separate_rows(idxes)
 df <- rbind(df1, df2)
@@ -224,11 +228,6 @@ authors_ss2 <- dcast(author_ss2, full.name.of.describer  ~ pub_yr_cat,
 describers_final <- merge(describers_final, authors_ss2, 
                           by.x="full.name.of.describer.n",
                           by.y="full.name.of.describer", all.x=T, all.y=F)
-
-
-# Get last name
-# describers_final$last.name <- sapply(
-#     strsplit(as.character(describers_final$full.name.of.describer.n), " "), tail, 1)
 
 ln <- fread(paste0(dir_data, "clean/last_name.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
 ln[, names(ln) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes

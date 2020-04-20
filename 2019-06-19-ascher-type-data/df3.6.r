@@ -39,7 +39,7 @@ taxonomic_effort1 <-
                by=years][order(as.numeric(years))][
                    ,c("years", "N_describers", "N_weighted_describers")]
 
-# Check, since cut-off year is 2018, to exclude Silas Bossert
+# # CHECK: since cut-off year is 2018, to exclude Silas Bossert
 # describer_data[full.name.of.describer.n =="Silas Bossert"]
 # describers[!is.finite(as.numeric(describers$ns_species_per_year_active))]
 

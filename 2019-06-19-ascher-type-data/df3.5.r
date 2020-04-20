@@ -31,7 +31,7 @@ ps <- ps[idx %in% dfx]
 ps2 <- ps[grepl(";", full.name.of.describer),]
 ps4 <- ps[!grepl(";", full.name.of.describer),]
 ps2 <- strsplit(ps2$full.name.of.describer, split = "; ")
-# ps2 <- lapply(ps2, length) # check
+# ps2 <- lapply(ps2, length) # CHECK:
 ps2 <- lapply(ps2, function(x) as.data.frame(t(combn(x, m=2))))
 ps2 <- rbindlist(ps2); names(ps2) <- c('p1', 'p2')
 # https://stackoverflow.com/questions/30702191/

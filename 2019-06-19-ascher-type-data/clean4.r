@@ -35,7 +35,8 @@ idxdf <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding
 idxdf[, names(idxdf) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
 idxdf$correct_synonym <- gsub('=', '', idxdf$taxonomic_notes)
-idxdf[status=="Valid subspecies"]$correct_synonym <- gsub("([A-Za-z]+).*", "\\1", idxdf[status=="Valid subspecies"]$correct_synonym)
+idxdf[status=="Valid subspecies"]$correct_synonym <- 
+    gsub("([A-Za-z]+).*", "\\1", idxdf[status=="Valid subspecies"]$correct_synonym)
 idxdf$taxonomic_notes <- NULL
 
 # max of idx that is green for each row

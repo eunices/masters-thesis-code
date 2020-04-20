@@ -13,13 +13,7 @@ filepath <- paste0(dir_data, basefile, '-idx-2-clean-repo.csv')
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 
-# date
-# old code left here for legacy purposes
-# no point cleaning this as data is captured actually in publications field 
-# df$date.n <- as.numeric(gsub("\\[.*\\]", "", df$date)) # remove square brackets
-# df[is.na(date.n)]$date.n <- 
-#    as.numeric(sub("\\D*(\\d+).*", "\\1", df[is.na(date.n)]$author.date))
-
+# date: not cleaning actual date field as data is captured actually in publications table 
 filepath <- paste0(dir_data, basefile, " pub_1.0-clean.csv")
 pub <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 pub <- pub %>% separate_rows(idxes, sep="; ")

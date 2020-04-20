@@ -4,7 +4,6 @@
 # as well as to tabulate publication-specific metrics.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-# TODO: shift derived variables/dataframes to a different script?
 
 print("######################################################")
 print("######################################################")
@@ -13,6 +12,7 @@ print(paste0(Sys.time(), " --- starting df1.r"))
 print("######################################################")
 print("######################################################")
 print("######################################################")
+# TODO: shift derived variables/dataframes to a different script?
 
 source('2019-06-19-ascher-type-data/init.r')
 
@@ -219,20 +219,12 @@ dfx1 <- data.table(dfx1)
 dfx1$full.name.of.describer <- dfx1$full.name.of.describer_new
 dfx1$full.name.of.describer_new <- NULL
 
-# dfx1[full.name.of.describer != full.name.of.describer_new]$full.name.of.describer <- 
-#   dfx1[full.name.of.describer != full.name.of.describer_new]$full.name.of.describer_new
-# dfx1$full.name.of.describer_new <- NULL
-
 dfx2 <- merge(dfx2, auth, by="author", all.x=T, all.y=F, suffixes=c("", "_new"))
 table(is.na(dfx2$full.name.of.describer_new))
 dfx2 <- data.table(dfx2)
 
 dfx2$full.name.of.describer <- dfx2$full.name.of.describer_new
 dfx2$full.name.of.describer_new <- NULL
-
-# dfx2[full.name.of.describer != full.name.of.describer_new]$full.name.of.describer <- 
-#  dfx2[full.name.of.describer != full.name.of.describer_new]$full.name.of.describer_new
-# dfx2$full.name.of.describer_new <- NULL
 
 # Row-based changes
 dfx1[idx==14019]$author = "Sakagami and Ebmer"

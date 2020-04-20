@@ -26,10 +26,6 @@ describers_info <- rbind(describers_info_valid_species, describers_info_synonyms
 filename_write = paste0(dir_data, basefile, " describers_1.0-all.csv")
 write.csv(describers_info[order(author)], filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
-# filename_write = paste0(dir_data, basefile, " describers_1.0-synonyms.csv")
-# write.csv(describers_info_synonyms[order(author)], 
-#           filename_write, na='', row.names=F, fileEncoding="UTF-8")
-
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section -  individual author species rows 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
