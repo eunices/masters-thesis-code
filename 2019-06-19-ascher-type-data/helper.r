@@ -1,3 +1,4 @@
+library(ggmap)
 
 geocode_lat_long <- function(to_geocode) {
     # to_geocode is a list of localities
@@ -17,3 +18,8 @@ geocode_lat_long <- function(to_geocode) {
     geocoded
 }
 
+library(revgeo)
+source('keys.r')
+
+# revgeo(longitude=103.959701, latitude=1.379857, provider = 'google', 
+#        output='frame', API=geocode_api)
