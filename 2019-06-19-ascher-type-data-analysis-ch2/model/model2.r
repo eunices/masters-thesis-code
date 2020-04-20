@@ -1,5 +1,5 @@
 # Running model
-source('2019-07-15-edie-et-al/init/init_a.r')
+source('2019-06-19-ascher-type-data-analysis-ch2/init/init_a.r')
 print(paste0(Sys.time(), " --- running stan model"))
 
 #  Write to logfile
@@ -31,7 +31,7 @@ data <- read_rdump(files)
 
 
 # fit model
-fit <- stan(file="2019-07-15-edie-et-al/zip_count.stan",
+fit <- stan(file="2019-06-19-ascher-type-data-analysis-ch2/zip_count.stan",
             data=data,
             chains=as.numeric(model_params$chains),
             warmup=round(as.numeric(model_params$iter)*0.3, 0), # 30% of iterations

@@ -1,5 +1,5 @@
 # run posterior forecasts to make predictions
-source('2019-07-15-edie-et-al/init/init_a.r')
+source('2019-06-19-ascher-type-data-analysis-ch2/init/init_a.r')
 print(paste0(Sys.time(), " --- making forecasts"))
 
 set.seed(420) # for reproducibility

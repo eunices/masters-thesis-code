@@ -3,7 +3,7 @@
 library(forecast)
 library(ggplot2)
 
-source('2019-07-15-edie-et-al/init/init_a.r')
+source('2019-06-19-ascher-type-data-analysis-ch2/init/init_a.r')
 
 chosen_models <- c("BGY-E0-C4-I8000-A0.8-T12",
                    "BGY-E1-C4-I300000-A0.999-T15")

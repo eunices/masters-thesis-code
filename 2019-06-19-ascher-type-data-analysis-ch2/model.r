@@ -4,15 +4,15 @@ print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 # If running script from elsewhere
 # setwd("C:/_dev/msc/thesis/")
-# source(paste0("2019-07-15-edie-et-al/", "analysis.r"))
+# source(paste0("2019-06-19-ascher-type-data-analysis-ch2/", "analysis.r"))
 
 memory.limit(size=12000)
 # memory.limit(size=25000)
 
 # Init
 #############
-source('2019-07-15-edie-et-al/init/init_a.r')
-source('2019-07-15-edie-et-al/model/model_loops_params.r')
+source('2019-06-19-ascher-type-data-analysis-ch2/init/init_a.r')
+source('2019-06-19-ascher-type-data-analysis-ch2/model/model_loops_params.r')
 
 # Model parameters
 #############
