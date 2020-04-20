@@ -1,4 +1,15 @@
 {
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
+    "editor.tabSize": 2,
+    "r.linting.assignmentType": false,
+    "r.linting.doubleQuotes": false,
+    "r.linting.enable": true,
+    "r.linting.maxLineLength": 100,
+    "r.linting.multipleDots": false,
+    "r.linting.multipleStatements": false,
+    "r.linting.spacesAroundOperators": false,
+    "r.linting.trailingBlankLines": false,
+    "r.linting.trueFalseNames": false,
+    "r.linting.trailingWhitespace": false,
 }
