@@ -54,7 +54,7 @@ write.csv(t,
           paste0(dir_data, "eda1_flow/2019-09-22-flow-map-type-loc-des-country.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 write.csv(t,
-          paste0(dir_script, "eda1.1_shiny/data/2019-09-22-flow-map-type-loc-des-country.csv"), 
+          paste0(dir_shiny, "eda1.1_shiny/data/2019-09-22-flow-map-type-loc-des-country.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
 # 1) Summarising where there is no flow

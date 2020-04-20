@@ -36,7 +36,7 @@ dim(spp_sum)[1]
 cols <- c("full.name.of.describer.n", "last.name", "alive", "residence.country.describer.first",
           "describer.gender.n", "n_pubs", "spp_N", "min", "max_corrected")
 auth <- get_des(write=F)[, ..cols]
-write.csv(auth, paste0(dir_script, "eda2.1_shiny/data/authors.csv"), 
+write.csv(auth, paste0(dir_shiny, "eda2.1_shiny/data/authors.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
 # Load data
@@ -45,7 +45,7 @@ nw <- fread(paste0(dir_data, basefile, " describers_7.0-author-networks.csv"),
 nw[, names(nw) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 nw <- nw[!(is.na(p1) | is.na(p2))]
 
-write.csv(nw, paste0(dir_script, "eda2.1_shiny/data/7.0-author-networks.csv"), 
+write.csv(nw, paste0(dir_shiny, "eda2.1_shiny/data/7.0-author-networks.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
 split_cty <- function(x) {
