@@ -107,12 +107,12 @@ get_pub <- function(write=T) {
 }
 
 get_des <- function(write=T) {
-    fn_des <- paste0(" describers_5.0-describers-final.csv")
+    fn_des <- paste0(basefile, " describers_5.0-describers-final.csv")
     subset_df(fn_des, "describer", write=write)
 }
 
 get_col <- function(write=T) {
-    fn_col <- paste0(" collectors_3.0-collectors.csv")
+    fn_col <- paste0(basefile, " collectors_3.0-collectors.csv")
     subset_df(fn_col, "collector", write=write)
 }
 
