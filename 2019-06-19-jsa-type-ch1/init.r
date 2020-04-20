@@ -5,8 +5,6 @@ dir_script <- '2019-06-19-jsa-type/'
 dir_script_ch1 <- '2019-06-19-jsa-type/'
 
 source(paste0(dir_script, "subset.r"))
-source(paste0(dir_script_ch1, "init/libraries.r"))
-
 
 # Read datasets
 print(paste0("Read df"))

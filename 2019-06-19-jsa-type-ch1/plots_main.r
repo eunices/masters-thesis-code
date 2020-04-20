@@ -1,5 +1,5 @@
 # Set up
-source('2019-06-19-jsa-type-ch1/init/init.r')
+source('2019-06-19-jsa-type-ch1/init.r')
 
 # Analyses
 #############
