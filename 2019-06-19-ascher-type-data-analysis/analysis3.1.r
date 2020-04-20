@@ -1,3 +1,8 @@
+# Information about code:
+# This code corresponds to a chapter in my MSc thesis for
+# Chapter 3, the section on Gender analysis: data aquisition
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - get UN data
@@ -41,12 +46,12 @@ names(df_r) <- unlist(sapply(names(df_r), function(name) {
      } else { name }
 }))
 
-
-lu <- fread('data/lookup/2019-05-29-statoid-country-codes.csv',  encoding="UTF-8")[,c("A-3", "Country")]
+cols <- c("A-3", "Country")
+lu <- fread('data/lookup/2019-05-29-statoid-country-codes.csv',  encoding="UTF-8")[, ..cols]
 df_r <- merge(df_r, lu, by.x="country", by.y="A-3", all.x=T, all.y=F); rm(lu)
 df_r <- df_r[!is.na(country)]
 
-
 un_path <- "data/2019-11-11-un-indicators/"
 dir.create(un_path)
-write.csv(df_r, paste0(un_path, '2019-11-12-indicators.csv'), na='', row.names=F, fileEncoding="UTF-8")
+filename_write = paste0(un_path, '2019-11-12-indicators.csv')
+write.csv(df_r, filename_write, na='', row.names=F, fileEncoding="UTF-8")

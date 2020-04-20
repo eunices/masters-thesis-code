@@ -1,11 +1,19 @@
+# Information about code:
+# This code corresponds to exploratory data analyses for my MSc thesis.
+# They are pertaining to EDA for the authors (relevant for Chapter 1).
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# Set up
 source('2019-06-19-ascher-type-data/subset.r')
 
+# Parameters
 theme <- theme_minimal()
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - basic summary statistics for taxonomist analysis
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- basic summary statistics for species dataset"))
+
 df <- get_df1(write=F)
 authors <- df[, c("full.name.of.describer", "idx")] %>% 
     separate_rows(full.name.of.describer, sep="; ")
@@ -48,7 +56,8 @@ table(df_species_describers_sum$N_authors)
 # Were the greatest taxonomists always first authors? 
 ## Last authors
 cor(df_describers$num_species_described, df_describers$prop_species_described_as_last_author)^2
-cor(df_describers[num_species_described<500]$num_species_described, df_describers[num_species_described<500]$prop_species_described_as_last_author)^2
+cor(df_describers[num_species_described<500]$num_species_described, 
+    df_describers[num_species_described<500]$prop_species_described_as_last_author)^2
 
 ggplot(df_describers[num_species_described<500], aes(num_species_described, prop_species_described_as_last_author)) +
     geom_point() + theme_minimal()
@@ -57,16 +66,19 @@ ggplot(df_describers, aes(num_species_described, prop_species_described_as_last_
 
 ## Not as first authors
 cor(df_describers$num_species_described, df_describers$prop_species_described_not_as_first_author)^2
-cor(df_describers[num_species_described<500]$num_species_described, df_describers[num_species_described<500]$prop_species_described_not_as_first_author)^2
+cor(df_describers[num_species_described<500]$num_species_described, 
+    df_describers[num_species_described<500]$prop_species_described_not_as_first_author)^2
 
-ggplot(df_describers[num_species_described<500], aes(num_species_described, prop_species_described_not_as_first_author)) +
+ggplot(df_describers[num_species_described<500], 
+       aes(num_species_described, prop_species_described_not_as_first_author)) +
     geom_point() + theme_minimal()
 ggplot(df_describers, aes(num_species_described, prop_species_described_not_as_first_author)) +
     geom_point() + theme_minimal()
 # Does not appear to be a correlation when a continuous variable
 
 # But probably there are some who are always last authors for all
-df_describers[order(-prop_species_described_as_last_author)][,c("full.name.of.describer.n", "prop_species_described_as_last_author")]
+df_describers[order(-prop_species_described_as_last_author)][
+    ,c("full.name.of.describer.n", "prop_species_described_as_last_author")]
 
 # Also as seen here
 # Hist of prop_species_described_as_last_author
@@ -97,9 +109,14 @@ des_a1 <- des_a1[, .N, by="full.name.of.describer.n"]
 table(des_a1$N)
 prop.table(table(des_a1$N))
 
-write.csv(merge(des_a1[N>=2], df_describers[, c("full.name.of.describer.n", "residence.country.describer.full")],
-      by="full.name.of.describer.n", all.x=T, all.y=F),
-      paste0(dir_data, "eda0_sum/2019-10-28-taxonomist-country-res-morethanone.csv"))
+# Write datasets
+dataset_write = merge(des_a1[N>=2], 
+                      df_describers[, c("full.name.of.describer.n", 
+                                        "residence.country.describer.full"),
+                      by="full.name.of.describer.n", all.x=T, all.y=F]
+filename_write = paste0(dir_data, "eda0_sum/2019-10-28-taxonomist-country-res-morethanone.csv")
+write.csv(dataset_write, filename_write)
 
+filename_write = paste0(dir_data, "eda0_sum/2019-10-28-taxonomist-country-res-summary.csv")
 write.csv(df_describers[, .N,by=c("residence.country.describer.first")][order(-N)],
-          paste0(dir_data, "eda0_sum/2019-10-28-taxonomist-country-res-summary.csv"))  
+          filename_write)  

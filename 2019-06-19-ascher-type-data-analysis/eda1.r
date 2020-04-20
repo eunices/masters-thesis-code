@@ -1,7 +1,16 @@
 
-source('2019-06-19-ascher-type-data/init.r')
+# Information about code:
+# This code corresponds to exploratory data analyses for my MSc thesis.
+# They are pertaining to EDA for the authors 
+# (relevant for Chapter 3, the section on Determinants of taxonomic resources flow).
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+# Set up
+source('2019-06-19-ascher-type-data/init/init.R')
 source('2019-06-19-ascher-type-data/subset.r')
 
+# Libraries
 library(networkD3)
 library(ggplot2)
 

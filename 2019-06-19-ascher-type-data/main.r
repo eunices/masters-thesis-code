@@ -15,12 +15,12 @@ start <- proc.time()
 dir_script_td <- "2019-06-19-ascher-type-data/"
 
 # Cleaning/ data wrangling scripts
-source(paste0(dir_script_td, 'init.r'))
-source(paste0(dir_script_td, 'clean.r'))
-source(paste0(dir_script_td, 'df1.r'), encoding="utf-8")
-source(paste0(dir_script_td, 'df2.r'))
-source(paste0(dir_script_td, 'df3.r'))
-source(paste0(dir_script_td, 'df4.r'))
+source(paste0(dir_script_td, 'init/init.R'))
+source(paste0(dir_script_td, 'clean/clean.r'))
+source(paste0(dir_script_td, 'clean/df1.r'), encoding="utf-8")
+source(paste0(dir_script_td, 'clean/df2.r'))
+source(paste0(dir_script_td, 'clean/df3.r'))
+source(paste0(dir_script_td, 'clean/df4.r'))
 source(paste0(dir_script_td, 'subset.r'))
 print(proc.time()-start)
 rm(list=ls())

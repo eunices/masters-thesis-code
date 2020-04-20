@@ -1,4 +1,10 @@
-source('2019-06-19-ascher-type-data/var.R')
+# Information about code:
+# This code corresponds to a chapter in my MSc thesis for
+# Chapter 3, the section on Determinants of taxonomic resources flow: data preparation
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# Set up
+source('2019-06-19-ascher-type-data/init/var.R')
 source('2019-06-19-ascher-type-data/subset.R')
 
 # Libraries
@@ -32,25 +38,29 @@ lu_col <- lu_col[, c("DL_Col", "DL_ColRuler", "IndYear")]
 lu_col$col_check <- 1
 lu_col <- unique(lu_col)
 
-lu_adj <- fread('data/lookup/2019-11-01-country-adjacent_edit.csv',  encoding="UTF-8") # country_iso3 neighbor_iso3
+# country_iso3 neighbor_iso3
+lu_adj <- fread('data/lookup/2019-11-01-country-adjacent_edit.csv',  encoding="UTF-8") 
 lu_adj <- lu_adj[!(DL1 %in% c("No man's land", "Disputed land")), ]
 lu_adj <- lu_adj[!(DL2 %in% c("No man's land", "Disputed land")), ]
 lu_adj$adj_check <- 1
 
 # Modelling variables
-model_vars <- c("continent_check", "class_check", "col_check", "adj_check", "continent_ori", "Class_ori", "Class_des")
+model_vars <- c("continent_check", "class_check", "col_check", "adj_check", 
+                "continent_ori", "Class_ori", "Class_des")
 
 # Add SES & continent variables
 cols <- c("DL", "Class", "continent")
 flow <- merge(flow, lu[, ..cols], by.x="ori", by.y="DL", all.x=T, all.y=F)
-flow <- merge(flow, lu[, ..cols], by.x="des", by.y="DL", all.x=T, all.y=F,  suffixes=c("_ori", "_des"))
+flow <- merge(flow, lu[, ..cols], by.x="des", by.y="DL", all.x=T, all.y=F, 
+              suffixes=c("_ori", "_des"))
 lvls <- c("Low income", "Lower middle income", "Upper middle income", "High income",  "Unclassed")
 flow$Class_ori <- factor(flow$Class_ori, levels=lvls)
 flow$Class_des <- factor(flow$Class_des, levels=lvls)
 flow$class_check <-  ifelse(flow$Class_ori == "Unclassed" | flow$Class_des == "Unclassed", "Unclassed", 
     ifelse(as.numeric(flow$Class_ori) > as.numeric(flow$Class_des), "High-to-low",  
         ifelse(as.numeric(flow$Class_ori) == as.numeric(flow$Class_des), "Equal", "Low-to-high")))
-flow$continent_check <- ifelse(flow$continent_ori == flow$continent_des, "Same continent", "Different continent")
+flow$continent_check <- ifelse(flow$continent_ori == flow$continent_des, 
+                               "Same continent", "Different continent")
 
 # Add colonialism variable
 table(lu_col$DL_ColRuler) # 177
@@ -66,7 +76,9 @@ flow$adj_check <- ifelse(flow$adj_check == 1, "Adjacent",
     ifelse(flow$adj_check == 0, "Not adjacent", ""))
 
 # Final wrangling
-flow <- merge(flow, sum_flow, by.x="des", by.y="type.country.n", suffixes=c("_flow", "_total"), all.x=T, all.y=T)
+flow <- merge(flow, sum_flow, by.x="des", by.y="type.country.n", 
+              suffixes=c("_flow", "_total"), 
+              all.x=T, all.y=T)
 flow[is.na(N_total)]$N_total <- 0; dim(is.na(flow$ori))
 flow <- flow[!is.na(ori)]
 

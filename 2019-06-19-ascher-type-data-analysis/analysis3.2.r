@@ -1,4 +1,10 @@
+# Information about code:
+# This code corresponds to a chapter in my MSc thesis for
+# Chapter 3, the section on Gender analysis: utility  functions.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 # adapted from https://github.com/lukeholman/genderGapCode/
+
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - load data
@@ -6,7 +12,6 @@
 print(paste0(Sys.time(), " --- load data"))
 
 source('2019-06-19-ascher-type-data/analysis3_util.r') # util functions
-
 
 # Read/initialize all data/variables
 CURRENT_YEAR <- 2018

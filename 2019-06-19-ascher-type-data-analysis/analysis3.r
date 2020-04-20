@@ -1,4 +1,12 @@
+# Information about code:
+# This code corresponds to a chapter in my MSc thesis for
+# Chapter 3, the section on Gender analysis: utility  functions.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 # adapted from https://github.com/lukeholman/genderGapCode/
+
+
+# Set up
 source('2019-06-19-ascher-type-data/subset.r')
 
 # Libraries

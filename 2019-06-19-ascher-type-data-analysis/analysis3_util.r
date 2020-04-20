@@ -1,3 +1,9 @@
+# Information about code:
+# This code corresponds to a chapter in my MSc thesis for
+# Chapter 3, the section on Gender analysis: utility  functions
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 # adapted from https://github.com/lukeholman/genderGapCode/
 
 pfunc <- function(t, r, c) exp(0.5*r*t) / (2*exp(0.5*r*t) + c)
@@ -13,9 +19,10 @@ pfunc.deriv <- function(p, r) r*p*(0.5-p)
 # returns the negative log-likelihood to be minimised with optim()
 find.ll<-function(data, par) {
   suppressWarnings(with(data, 
-    -1 * sum(dbinom(x = nFemales, size = n, prob = pfunc(t = date, r = par[1], c = par[2]), log = TRUE)))) }
+    -1 * sum(dbinom(x=nFemales, size=n, prob=pfunc(t=date, r=par[1], c=par[2]), log=TRUE)))) }
 
-# Internal function to perform 1D optimisation and find the parameters r and c that optimises the log likelihood
+# Internal function to perform 1D optimisation and find 
+# the parameters r and c that optimises the log likelihood
 # for the focal set of data. Arbitrarily chosen starting values
 run.optimiser <- function(data) optim(par = c(0.1, 1), find.ll, data = data)
 
@@ -24,7 +31,8 @@ run.optimiser <- function(data) optim(par = c(0.1, 1), find.ll, data = data)
 get.CIs <- function(nFemales.column, nMales.column){
   CIs <- data.frame(lower = numeric(length(nFemales.column)), upper = NA)
   for(i in 1:length(nFemales.column)){
-    CIs.foc <- as.numeric(binom.test(nFemales.column[i], nFemales.column[i] + nMales.column[i])$conf.int)
+    CIs.foc <- as.numeric(binom.test(nFemales.column[i],
+                                     nFemales.column[i] + nMales.column[i])$conf.int)
     CIs$lowerCI[i] <- CIs.foc[1]
     CIs$upperCI[i] <- CIs.foc[2]
   }
@@ -38,8 +46,9 @@ Mode <- function(x) {
 ##############################
 
 find.response.variables <- function(data) {
-  # This function runs the optimiser on a focal bit of resampled data, and gets the current gender ratio, 
-  # rate of change, and the year at which the ratio got within 5% of gender parity using the pfunc model
+  # This function runs the optimiser on a focal bit of resampled data,
+  # and gets the current gender ratio, rate of change, and 
+  # the year at which the ratio got within 5% of gender parity using the pfunc model
   # with optimised parameters
   optim.results <- run.optimiser(data)
   r <- optim.results$par[1]
@@ -56,7 +65,8 @@ find.response.variables <- function(data) {
   predicted.gender.ratio <- pfunc(year.range, r, c)
   
   # check if female ratio increasing
-  is_female_ratio_increasing <- ifelse(predicted.gender.ratio[2] > predicted.gender.ratio[1], TRUE, FALSE)
+  is_female_ratio_increasing <- 
+    ifelse(predicted.gender.ratio[2] > predicted.gender.ratio[1], TRUE, FALSE)
 
   if(is_female_ratio_increasing) {              # becoming more female biased
     parity.year <- ifelse(gender.ratio.at.present < 0.5,

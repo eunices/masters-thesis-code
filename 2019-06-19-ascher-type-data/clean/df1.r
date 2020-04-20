@@ -14,7 +14,7 @@ print("######################################################")
 print("######################################################")
 # TODO: shift derived variables/dataframes to a different script?
 
-source('2019-06-19-ascher-type-data/init.r')
+source('2019-06-19-ascher-type-data/init/init.R')
 
 # Libraries
 #############

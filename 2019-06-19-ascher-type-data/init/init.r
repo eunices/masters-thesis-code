@@ -2,9 +2,8 @@
 # Section - Initializing
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-print(paste0(Sys.time(), " --- initializing with init.r"))
-source('2019-06-19-ascher-type-data/var.r')
-source('2019-07-15-edie-et-al/libraries.r')
+print(paste0(Sys.time(), " --- initializing with init/init.R"))
+source('2019-06-19-ascher-type-data/init/var.R')
 setwd(working_dir)
 
 # Set environment variables

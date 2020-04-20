@@ -1,6 +1,11 @@
-source('2019-06-19-ascher-type-data/subset.r')
 
-# Others
+# Information about code:
+# This code corresponds to data quality checks for my MSc thesis.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+# Set up
+source('2019-06-19-ascher-type-data/subset.r')
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - data quality
@@ -18,7 +23,8 @@ flag <- rbind(
     data.frame(table(spp2[status=="Synonym" & date.n <= 2018 & duplicated.row=="FALSE"]$source.of.latlon.n)))
 
 write.csv(flag,
-          paste0(dir_data, "eda5_oth/2019-09-22-type-data-quality2.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda5_oth/2019-09-22-type-data-quality2.csv"), 
+          na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - lat and lon
@@ -33,6 +39,7 @@ df_ll <- df_ll[!(is.na(lat) | is.na(lon)) &
 y <- dim(df_ll); round(y/x*100, 2)
 
 write.csv(df_ll[order(as.numeric(idx))], 
-          paste0(dir_data, "eda5_oth/2019-09-26-lat-lon.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda5_oth/2019-09-26-lat-lon.csv"), 
+          na='', row.names=F, fileEncoding="UTF-8")
 
 

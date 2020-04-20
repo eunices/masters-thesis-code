@@ -1,9 +1,14 @@
-# Done in Python, see folder 2019-09-24-coauthor-networkx
+# Information about code:
+# This code corresponds to a chapter in my MSc thesis for
+# Chapter 3, the section on Coauthor networks: data preparation
+# Note: analysis done in Python, see folder 2019-09-24-coauthor-networkx
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-source('2019-06-19-ascher-type-data/var.R')
+# Set up
+source('2019-06-19-ascher-type-data/init/var.R')
 source('2019-06-19-ascher-type-data/subset.R')
 
-
+# Wrangle data
 df0a <- get_df1(write=F)
 df0b <- get_df2(write=F)
 df0b <- df0b[status=="Synonym"]

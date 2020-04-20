@@ -1,3 +1,8 @@
+# Information about code:
+# This code corresponds to a chapter in my MSc thesis for
+# Chapter 3, the section on Determinants of taxonomic resources flow: visualisation
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 # Shiny App: Visualising resource flow - from taxonomist country of residence to type locality
 
 # Libraries

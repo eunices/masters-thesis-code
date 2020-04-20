@@ -1,4 +1,4 @@
-source('2019-06-19-ascher-type-data/init.r')
+source('2019-06-19-ascher-type-data/init/init.R')
 
 filepath <- paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_3.0-collectors.csv")
 coll <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')

@@ -1,5 +1,12 @@
-source('2019-06-19-ascher-type-data/var.R')
+# Information about code:
+# This code corresponds to a chapter in my MSc thesis for
+# Chapter 3, the section on Determinants of taxonomic resources flow: data analysis (GLM)
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+# Set up
+source('2019-06-19-ascher-type-data/init/var.R')
+
+# Libraries
 library(ResourceSelection) # mcfadden
 library(pscl) # hoslem
 library(caret) # cross validation
@@ -9,10 +16,11 @@ library(tidyr)
 # Read data
 df <- fread(paste0(dir_data, "eda1_flow/2019-11-01-flow-GLM.csv"), encoding="UTF-8")
 
-auth <- fread(paste0(dir_data, "2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final.csv"), encoding="UTF-8")
+auth <- fread(paste0(dir_data, basefile, " describers_5.0-describers-final.csv"), encoding="UTF-8")
 auth <- auth[ns_spp_N >=1,c("idx_auth", "residence.country.describer.n")]
 auth <- data.table(auth %>% separate_rows(residence.country.describer.n, sep="; "))
-auth_N <- auth[residence.country.describer.n != "[unknown]", list(N_taxonomist=.N), by=c("residence.country.describer.n")]
+auth_N <- auth[residence.country.describer.n != "[unknown]", list(N_taxonomist=.N), 
+               by=c("residence.country.describer.n")]
 auth <- auth[, idx:= 1:.N, by=c("idx_auth")]
 auth <- auth[!duplicated(idx_auth)]
 auth <- unique(auth[residence.country.describer.n != "[unknown]"]$residence.country.describer.n)
@@ -43,9 +51,11 @@ df$continent_ori <- factor(df$continent_ori,
                            levels=c("Oceania", "Africa", "Australia", 
                                     "Asia", "Europe", "North America", "South America"))
 df$Class_ori <- factor(df$Class_ori, 
-                       levels= c("Upper middle income", "Low income", "Lower middle income", "High income"))
+                       levels= c("Upper middle income", "Low income", 
+                                 "Lower middle income", "High income"))
 df$Class_des <- factor(df$Class_des, 
-                       levels= c("Upper middle income", "Low income", "Lower middle income", "High income"))
+                       levels= c("Upper middle income", "Low income",
+                                 "Lower middle income", "High income"))
 df$flow <- factor(df$flow, levels=c("No", "Yes"))
 
 sapply(df, function(x) any(is.na(x)))
@@ -74,8 +84,10 @@ newdata1 <- expand.grid(continent_check=c("Different continent", "Same continent
                         class_check=c("Equal", "High-to-low", "Low-to-high"),
                         col_check=c("Colonised", "Not colonised"),
                         adj_check=c("Adjacent", "Not adjacent"))
-newdata1$continent_check <- factor(newdata1$continent_check, levels=c("Same continent", "Different continent"))
-newdata1$class_check <- factor(newdata1$class_check, levels=c("Equal", "Low-to-high", "High-to-low"))
+newdata1$continent_check <- 
+    factor(newdata1$continent_check, levels=c("Same continent", "Different continent"))
+newdata1$class_check <- 
+    factor(newdata1$class_check, levels=c("Equal", "Low-to-high", "High-to-low"))
 newdata1$col_check <- factor(newdata1$col_check, levels=c("Not colonised", "Colonised"))
 newdata1$adj_check <- factor(newdata1$adj_check, levels=c("Not adjacent", "Adjacent"))
 newdata1$flow <- predict(a1, newdata = newdata1, type = "response")
@@ -121,10 +133,9 @@ confusionMatrix(data=pred, test$flow)
 # https://courses.washington.edu/b515/l14.pdf
 
 
-
-
 # Model 2: predict proportion
-a2 <- glm(cbind(N_flow, N_total-N_flow) ~ continent_check + class_check + col_check + adj_check + continent_ori, data=df, family="binomial")
+a2 <- glm(cbind(N_flow, N_total-N_flow) ~ continent_check + class_check + col_check + adj_check + 
+    continent_ori, data=df, family="binomial")
 summary(a2)
 par(mfrow=c(2,2)); plot(a2)
 
