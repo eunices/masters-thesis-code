@@ -1,7 +1,7 @@
 # compare models
 # adapted from https://betanalpha.github.io/assets/case_studies/rstan_workflow.html
 
-source('2019-07-15-edie-et-al/init_a.r')
+source('2019-07-15-edie-et-al/init/init_a.r')
 
 chosen_model <- "GLY-E0-C4-I8000-A0.8-T12"
 

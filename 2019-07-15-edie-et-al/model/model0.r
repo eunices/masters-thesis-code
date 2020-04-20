@@ -1,9 +1,9 @@
 # Wrangling data from original dataset
-source('2019-07-15-edie-et-al/init_a.r')
+source('2019-07-15-edie-et-al/init/init_a.r')
 print(paste0(Sys.time(), " --- wrangling data"))
 
 # filepaths
-filepath_input_regions <- 'data/2019-05-23-ascher-bee-data/2019-05-23-Apoidea world consensus file Sorted by name 2019 filtered_5-species-cty2-cty.csv'
+filepath_input_regions <- paste0(dir_data, basefile, ' filtered_5-species-cty2-cty.csv')
 
 # read lookup files
 filepath_input_biogeo <- 'data/geo_processed/teow/official/wwf_terr_ecos_dissolved.shp'
@@ -89,12 +89,11 @@ if (model_params$dataset == "GL") { # global
                 # get_nearest$BIOME_NAME <- sapply(nearestBM, function(x) x[[1]])
                 # st_geometry(get_nearest) <- NULL
                 # write.csv(data.frame(get_nearest), 
-                #           'data/2019-05-23-ascher-bee-data/eda4_edie/2019-10-14-nearest-loc.csv', 
+                #           paste0(dir_data, 'eda4_edie/2019-10-14-nearest-loc.csv'), 
                 #           row.names=F)
 
                 # Above script takes a long time (>3 h), thus its persisted
-                to_join_nearest <- 
-                    fread('data/2019-05-23-ascher-bee-data/eda4_edie/2019-10-14-nearest-loc.csv')
+                to_join_nearest <- fread(paste0(dir_data, '/eda4_edie/2019-10-14-nearest-loc.csv'))
 
                 # Join the "nearest" location to those not intersecting with biomes
                 join <- join(join, to_join_nearest[, c("idx", "BIOME_NAME")], by="idx")

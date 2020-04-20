@@ -1,5 +1,5 @@
 # Running model
-source('2019-07-15-edie-et-al/init_a.r')
+source('2019-07-15-edie-et-al/init/init_a.r')
 print(paste0(Sys.time(), " --- running stan model"))
 
 #  Write to logfile

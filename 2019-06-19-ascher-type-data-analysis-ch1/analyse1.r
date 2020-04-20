@@ -1,4 +1,5 @@
-source('2019-07-15-edie-et-al/init_e.r')
+# Set up
+source('2019-06-19-ascher-type-data-analysis-ch1/init/init.r')
 
 # Analyses
 #############

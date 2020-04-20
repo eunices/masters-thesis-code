@@ -11,8 +11,8 @@ memory.limit(size=12000)
 
 # Init
 #############
-source('2019-07-15-edie-et-al/init_a.r')
-source('2019-07-15-edie-et-al/analysis_loops_params.r')
+source('2019-07-15-edie-et-al/init/init_a.r')
+source('2019-07-15-edie-et-al/model/model_loops_params.r')
 
 # Model parameters
 #############
@@ -80,12 +80,12 @@ for (i in 1:length(model_param_list)) {
     # Analysis scripts
     analysis <- function(run=TRUE) {
         if(run) {
-            source(paste0(dir_script_ed, 'analyse0.r')) # data prep/wrangling
-            source(paste0(dir_script_ed, 'analyse1.r')) # formatting data
-            source(paste0(dir_script_ed, 'analyse2.r')) # model fitting
-            source(paste0(dir_script_ed, 'analyse3.r')) # model validation
-            source(paste0(dir_script_ed, 'analyse4.r')) # forecast
-            source(paste0(dir_script_ed, 'analyse5.r')) # plot
+            source(paste0(dir_script_ed, 'model/model0.r')) # data prep/wrangling
+            source(paste0(dir_script_ed, 'model/model1.r')) # formatting data
+            source(paste0(dir_script_ed, 'model/model2.r')) # model fitting
+            source(paste0(dir_script_ed, 'model/model3.r')) # model validation
+            source(paste0(dir_script_ed, 'model/model4.r')) # forecast
+            source(paste0(dir_script_ed, 'model/model5.r')) # plot
         }
     }
 
