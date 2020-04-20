@@ -42,7 +42,7 @@ model_vars <- c("continent_check", "class_check", "col_check", "adj_check", "con
 
 # Add SES & continent variables
 cols <- c("DL", "Class", "continent")
-flow <- merge(flow, lu[, ..cols lu[, ..cols], by.x="ori", by.y="DL", all.x=T, all.y=F)
+flow <- merge(flow, lu[, ..cols], by.x="ori", by.y="DL", all.x=T, all.y=F)
 flow <- merge(flow, lu[, ..cols], by.x="des", by.y="DL", all.x=T, all.y=F,  suffixes=c("_ori", "_des"))
 lvls <- c("Low income", "Lower middle income", "Upper middle income", "High income",  "Unclassed")
 flow$Class_ori <- factor(flow$Class_ori, levels=lvls)
