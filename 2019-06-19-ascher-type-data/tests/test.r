@@ -1,3 +1,7 @@
+# Information about code:
+# This code corresponds to tests scripts for the data in my MSc thesis.
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 
 # Purpose of this is to test 1) if foreign keys match and 2) if rows are consistent
 
@@ -5,21 +9,23 @@
 # - Do not repeat variables between dataframes
 # - Reduce variable dependences, and if there is ensure they are consistent
 
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - read all "source" dataframes
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- read all source dataframes"))
-source('2019-06-19-ascher-type-data/test-read-data.r')
+source('2019-06-19-ascher-type-data/test/test-read-data.r')
+
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - checks
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- checks"))
 
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # test 1) if foreign keys match 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 
 #############################
 # invalid_species and species - df1 and df2
