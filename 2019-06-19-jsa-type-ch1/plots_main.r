@@ -398,35 +398,37 @@ ggsave(paste0(dir_plot, 'fig-3.png'), gr, units="cm", width=18, height=15, dpi=3
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- Prop species describing <=N species"))
 
-taxonomic_effort$N_real_describers.1 <- taxonomic_effort$N_real_describers.1 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.2 <- taxonomic_effort$N_real_describers.2 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.3 <- taxonomic_effort$N_real_describers.3 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.4 <- taxonomic_effort$N_real_describers.4 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.5 <- taxonomic_effort$N_real_describers.5 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.6 <- taxonomic_effort$N_real_describers.6 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.7 <- taxonomic_effort$N_real_describers.7 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.8 <- taxonomic_effort$N_real_describers.8 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.9 <- taxonomic_effort$N_real_describers.9 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.10 <- taxonomic_effort$N_real_describers.10 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.1.prop <- taxonomic_effort$N_real_describers.1 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.2.prop <- taxonomic_effort$N_real_describers.2 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.3.prop <- taxonomic_effort$N_real_describers.3 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.4.prop <- taxonomic_effort$N_real_describers.4 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.5.prop <- taxonomic_effort$N_real_describers.5 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.6.prop <- taxonomic_effort$N_real_describers.6 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.7.prop <- taxonomic_effort$N_real_describers.7 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.8.prop <- taxonomic_effort$N_real_describers.8 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.9.prop <- taxonomic_effort$N_real_describers.9 / taxonomic_effort$N_real_describers * 100
+taxonomic_effort$N_real_describers.10.prop <- taxonomic_effort$N_real_describers.10 / taxonomic_effort$N_real_describers * 100
 
-cols <- names(taxonomic_effort)[grepl("N_real_describers.", names(taxonomic_effort))]
+cols <- names(taxonomic_effort)[grepl(".prop", names(taxonomic_effort))]
 cols <- c("years", cols)
 des_y <- melt(taxonomic_effort[, ..cols], id.vars="years")
 
 formatstr <- function(string) {
   string <- gsub("N_real_describers.", "", string)
-  ifelse(string=="1", paste0(string, " species", paste0("<=", string, " species"))
+  string <- gsub(".prop", "", string)
+  ifelse(string=="1", paste0(string, " species"), paste0("<=", string, " species"))
 }
 
 plot_tax <- ggplot(des_y, aes(x=years, y=value, group=variable)) + 
-    geom_line(size=.5, colour="grey", linetype='dashed') + geom_point(size=.5, color='grey') + 
+    geom_line(size=.5, colour="grey", linetype='dashed') + 
+    geom_point(size=.5, color='grey') + 
     geom_smooth(size=1, colour="black") +
     xlab("Year") + ylab("Proportion of PTEs describing <= N species (%)\n") +
     facet_wrap(. ~variable, ncol=2, labeller=labeller(variable=formatstr), dir="v") +
-    scale_y_continuous(limits=c(0, 1000)) +
+    scale_y_continuous(limits=c(0, 50), breaks=seq(0,50,10)) +
     theme
 
-ggsave(paste0(dir_plot, 'fig-4.png'), plot_tax, units="cm", width=15, height=9, dpi=300)
+ggsave(paste0(dir_plot, 'fig-4.png'), plot_tax, units="cm", width=10, height=9, dpi=300)
 
 #########################################################################################
 # Supporting Information
@@ -621,6 +623,52 @@ hist_mean_sp_per_auth <- ggplot(df_describers) +
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Mean number of species/ author over the years
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Mean number of species/ author over the years"))
+
+spp_per_auth <- df_describers_year[, list(mean=mean(N), 
+                                          median=median(N)), by=c("date.decade")][order(date.decade)]
+
+df_describers_year[date.decade=="1750s"]
+
+plot_spp_per_auth_per_decade <- 
+    ggplot(data=spp_per_auth, aes(x=date.decade, y=mean)) +
+        geom_bar(stat='identity') + 
+        xlab("\nDecade") + ylab("Mean number of species \ndescribed per author per year\n") +
+        theme + scale_fill_grey()
+
+ggsave(paste0(dir_plot, '_si/fig-3.png'), plot_spp_per_auth_per_decade, units="cm", width=21, height=5, dpi=300)
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Number of authors/ publication over the years
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Number of authors/ publication over the years"))
+
+n_auth <- df[, c("date.n", "date.decade", "idx", "full.name.of.describer")] %>% 
+    separate_rows(full.name.of.describer, sep="; ")
+n_auth <- data.table(n_auth)[order(idx)]
+n_auth <- n_auth[, list(N=.N), by=c("date.n", "date.decade", "idx")]
+n_auth$N <- as.character(n_auth$N)
+
+calc_median <- function(x){
+  return(c(y = -5, label = length(x)))
+  # experiment with the multiplier to find the perfect position
+}
+
+median_auth_per_sp_decade <- n_auth[, list(median_n_auth=median(N)), by='date.decade'][order(date.decade)]
+
+plot_n_auth_per_decade <- 
+    ggplot(data=n_auth, aes(x=date.decade, fill=N)) +
+        geom_bar(position = "fill") + 
+        xlab("\nDecade") + ylab("Proportion of number \nof authors per species\n") +
+        theme + scale_fill_grey()
+
+ggsave(paste0(dir_plot, '_si/fig-4.png'), plot_n_auth_per_decade, units="cm", width=21, height=5, dpi=300)
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Histogram of PTEs total spp described per year
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- Histogram of PTEs total spp described per year"))
@@ -628,26 +676,26 @@ print(paste0(Sys.time(), " --- Histogram of PTEs total spp described per year"))
 # Tabulate statistics of years active
 tax <- df_describers[spp_N_1st_auth_s>=1]
 
-highlight_auth <- tax[spp_N>750]$full.name.of.describer.n
-tax_highlight <- tax[full.name.of.describer.n %in% highlight_auth][,c("spp_N", "last.name")]
+highlight_auth <- tax[ns_spp_N>750]$full.name.of.describer.n
+tax_highlight <- tax[full.name.of.describer.n %in% highlight_auth][,c("ns_spp_N", "last.name")]
 
-x_axis <- seq(0, max(tax$spp_N), 1000)
-x_axis_minor <- seq(0, max(tax$spp_N), 100)
+x_axis <- seq(0, max(tax$ns_spp_N), 1000)
+x_axis_minor <- seq(0, max(tax$ns_spp_N), 100)
 
-hist_tl_spp <- ggplot(tax, aes(x=spp_N)) +
+hist_tl_spp <- ggplot(tax, aes(x=ns_spp_N)) +
     geom_histogram(mapping=aes(y=..count../sum(..count..) * 100), fill='grey30', binwidth=100) + 
-    geom_vline(xintercept=median(tax$spp_N), color='grey', size=.5) +
-    xlab("\nTotal number of species described per year, by PTE") + 
+    geom_vline(xintercept=median(tax$ns_spp_N), color='grey', size=.5) +
+    xlab("\nTotal number of valid species described, by PTE") + 
     ylab("Proportion of PTEs (%)\n") + 
     geom_label_repel(data=tax_highlight, 
-                     aes(x=spp_N, y=.1, label=last.name),
+                     aes(x=ns_spp_N, y=.1, label=last.name),
                      size=2, nudge_x=10, nudge_y=30,
                      fontface='bold', color='black', segment.color='grey80', force=1,
                      box.padding = unit(0.001, 'lines')) +
     scale_x_continuous(breaks=x_axis, minor_breaks=x_axis_minor) +
     # scale_y_continuous(breaks= seq(0, 12, 1), limits=c(0, 12)) +
     theme
-ggsave(paste0(dir_plot, '_si/fig-3.png'), hist_tl_spp, units="cm", width=10, height=8, dpi=300)
+ggsave(paste0(dir_plot, '_si/fig-5.png'), hist_tl_spp, units="cm", width=10, height=8, dpi=300)
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -667,20 +715,19 @@ hist_mean_spp <- ggplot(tax, aes(x=ns_species_per_year_active)) +
     xlab("\nMean number of species described per year, by PTE") +
     ylab("Proportion of PTEs (%)\n") + 
     scale_x_continuous(breaks= seq(0, max(tax$ns_species_per_year_active), 10)) +
-    scale_y_continuous(breaks= seq(0, 60, 10), limits=c(0, 60)) +
     geom_label_repel(data=tax_highlight, 
                      aes(x=ns_species_per_year_active, y=.1, label=paste0(last.name, " (", round(ns_species_per_year_active, 0),")")), 
                      size=2, nudge_x=20, nudge_y=30,
                      fontface='bold', color='black', segment.color='grey80', force=5,
                      box.padding = unit(0.001, 'lines')) +
 theme
-ggsave(paste0(dir_plot, '_si/fig-4.png'), hist_mean_spp, units="cm", width=10, height=8, dpi=300)
+ggsave(paste0(dir_plot, '_si/fig-6.png'), hist_mean_spp, units="cm", width=10, height=8, dpi=300)
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Other biodata info
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- Histogram of PTEs active years"))
+print(paste0(Sys.time(), " --- Other biodata info"))
 
 # Other biodata info
 # Who described the most bees

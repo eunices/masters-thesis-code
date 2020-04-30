@@ -3,6 +3,14 @@
 # They are pertaining to EDA for the authors (relevant for Chapter 1).
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+# TODO: 
+# Where are most of the describers? 
+# How many species in author lifetime? How many species per year?
+# How many authors per species over time?
+# What are the trends in species distribution (N number of species in publications)?
+# What is the description rate across countries?
+# Where are the specimens/ repositories/ publishers?
+
 # Set up
 source('2019-06-19-jsa-type/subset.r')
 
