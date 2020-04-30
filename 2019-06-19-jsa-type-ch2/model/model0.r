@@ -89,11 +89,11 @@ if (model_params$dataset == "GL") { # global
                 # get_nearest$BIOME_NAME <- sapply(nearestBM, function(x) x[[1]])
                 # st_geometry(get_nearest) <- NULL
                 # write.csv(data.frame(get_nearest), 
-                #           paste0(dir_data, 'eda4_edie/2019-10-14-nearest-loc.csv'), 
+                #           paste0(dir_data, 'ch2/2019-10-14-nearest-loc.csv'), 
                 #           row.names=F)
 
                 # Above script takes a long time (>3 h), thus its persisted
-                to_join_nearest <- fread(paste0(dir_data, '/eda4_edie/2019-10-14-nearest-loc.csv'))
+                to_join_nearest <- fread(paste0(dir_data, '/ch2/2019-10-14-nearest-loc.csv'))
 
                 # Join the "nearest" location to those not intersecting with biomes
                 join <- join(join, to_join_nearest[, c("idx", "BIOME_NAME")], by="idx")

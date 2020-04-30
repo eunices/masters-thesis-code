@@ -26,6 +26,7 @@ prop.table(table(authors$N))
 print(paste0(Sys.time(), " --- basic summary statistics for taxonomist dataset"))
 
 df_describers <- get_des(write=F)
+df_describers <- df_describers[full.name.of.describer.n != "Silas Bossert"]
 
 # How long are taxonomists active for? 
 ggplot(df_describers, aes(years_active)) + 

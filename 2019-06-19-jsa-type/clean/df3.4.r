@@ -30,6 +30,7 @@ describers_all[, names(describers_all) := lapply(.SD, function(x) gsub('\\"\\"',
 
 # For non-synonyms
 describers <- describers_all[!idxes %in% c(synonym_idxes, subsp_idxes, var_idxes)]
+describers <- describers[date.n<=2018,]
 describers[, ns_max:=max(date.n, na.rm=T), by="idx_auth"]
 describers[, ns_min:=min(date.n, na.rm=T), by="idx_auth"]
 describers[, ns_spp_N := length(unique(idxes)), by="idx_auth"]
@@ -46,6 +47,7 @@ describers <- data.table(unique(describers[,..cols]))
 
 # All
 describers_a <- describers_all[]
+describers_a <- describers_a[date.n<=2018,]
 describers_a[, max:=max(date.n, na.rm=T), by="idx_auth"]
 describers_a[, min:=min(date.n, na.rm=T), by="idx_auth"]
 describers_a[, spp_N := length(unique(idxes)), by="idx_auth"]
@@ -61,6 +63,7 @@ describers_a <- data.table(unique(describers_a[,..cols]))
 
 # Synonyms
 describers_s <- describers_all[idxes %in% synonym_idxes]
+describers_s <- describers_s[date.n<=2018,]
 describers_s[, syn_max:=max(date.n, na.rm=T), by="idx_auth"]
 describers_s[, syn_min:=min(date.n, na.rm=T), by="idx_auth"]
 describers_s[, syn_spp_N := length(unique(idxes)), by="idx_auth"]
@@ -103,7 +106,6 @@ describers[alive=="Y"]$max_corrected <- "2018"
 
 describers$ns_max_corrected <- describers$ns_max
 describers[alive=="Y"]$ns_max_corrected <- "2018"
-
 
 # Metrics
 describers$years_active <- as.numeric(describers$max_corrected) - as.numeric(describers$min) +1

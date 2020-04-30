@@ -9,7 +9,7 @@ source(paste0(dir_script, "subset.r"))
 # Read datasets
 print(paste0("Read df"))
 df <- get_df1(write=F)
-df <- df[date.n<2018]
+df <- df[date.n<=2018]
 df$date.decade <- paste0(substr(df$date.n, 1, 3), "0s")
 
 
@@ -19,12 +19,12 @@ table(df_country$duplicated.row)
 table(is.na(df_country$A.3))
 dim(df_country); df_country <- df_country[!is.na(A.3)]; dim(df_country)
 # df_country$duplicated.row <- NULL
-df_country <- merge(df_country, df[, c("idx", "date.n")], all.x=T, all.y=F)[date.n<2019]
+df_country <- merge(df_country, df[, c("idx", "date.n")], all.x=T, all.y=F)[date.n<=2018]
 
 
 print(paste0("Read df_publications  / df_publications_N"))
 df_publications <- get_pub(write=F)
-dim(df_publications)
+df_publications <- df_publications[date.n<=2018]
 df_publications$date.decade <- paste0(substr(df_publications$date.n, 1, 3), "0s")
 
 df_publications_N <- data.table(df_publications %>% separate_rows(idxes, sep="; "))
@@ -49,21 +49,21 @@ df_continent <- fread(paste0(dir_data, basefile, " filtered_5-species-cty3-conti
 table(df_continent$duplicated.row)
 table(is.na(df_continent$countries))
 df_continent$duplicated.row <- NULL
-df_continent <- df_continent[date.n<2019]
+df_continent <- df_continent[date.n<=2018]
 
 
 print(paste0("Read df_trop_type1"))
 df_trop_type1 <- fread(paste0(dir_data, basefile, " filtered_5-species-cty6-trop-type1.csv"),
                        integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 table(is.na(df_trop_type1$Latitude_type))
-df_trop_type1 <- df_trop_type1[date.n<2019]
+df_trop_type1 <- df_trop_type1[date.n<=2018]
 
 
 print(paste0("Read df_trop_type2"))
 df_trop_type2 <- fread(paste0(dir_data, basefile, " filtered_5-species-cty7-trop-type2.csv"),
                        integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 table(is.na(df_trop_type2$Latitude_type))
-df_trop_type2 <- df_trop_type2[date.n<2019]
+df_trop_type2 <- df_trop_type2[date.n<=2018]
 
 
 print(paste0("Read taxonomic_effort / taxonomic_effort_long"))
@@ -73,8 +73,9 @@ taxonomic_effort$species_per_real_taxonomist <-
     taxonomic_effort$N_species_described / taxonomic_effort$N_real_describers
 taxonomic_effort$species_per_real_taxonomist_weighted <- 
     taxonomic_effort$N_species_described / taxonomic_effort$N_weighted_real_describers
-taxonomic_effort_long <- data.table(taxonomic_effort %>% gather(type, N, N_describers:N_synonyms))
+taxonomic_effort <- taxonomic_effort[years<=2018]
 
+taxonomic_effort_long <- data.table(taxonomic_effort %>% gather(type, N, N_describers:N_synonyms))
 
 print(paste0("Read df_describers / df_describers_year "))
 df_describers <- get_des(write=F)
@@ -95,10 +96,12 @@ df_describers_year <- df %>% separate_rows(full.name.of.describer, sep="; ")
 df_describers_year <- df_describers_year[, c("idx", "full.name.of.describer", "date.n")]
 df_describers_year <- df_describers_year[, list(.N), by=c("full.name.of.describer", "date.n")]
 
-df_describers_year <- data.table(
-    merge(df_describers_template, df_describers_year, all.x=T, all.y=F, 
-          by=c("full.name.of.describer", "date.n")))
+df_describers_year <- merge(df_describers_template, df_describers_year, all.x=T, all.y=F, 
+                            by=c("full.name.of.describer", "date.n"))
+df_describers_year <- data.table(df_describers_year)
 df_describers_year[is.na(N)]$N <- 0
+df_describers_year$date.decade <- paste0(substr(df_describers_year$date.n, 1, 3), "0s")
+df_describers_year <- df_describers_year[date.n<=2018]
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Read shp files
