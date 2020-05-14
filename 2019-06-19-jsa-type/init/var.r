@@ -12,7 +12,7 @@ dir_ch3c <- paste0(dir_base, '-ch3-gender/')
 
 basefile <- '2019-05-23-Apoidea world consensus file Sorted by name 2019'
 source('keys.R')
-source(paste0(dir_script, 'init/helper.r'))
+source(paste0(dir_script, 'init/util.r'))
 source(paste0(dir_script, 'init/libraries.r'))
 
 # Initialize google api for geocoding

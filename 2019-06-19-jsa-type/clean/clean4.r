@@ -61,6 +61,7 @@ write.csv(df_s[order(as.numeric(idx))],
           paste0(dir_data, basefile, " oth_1-clean.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - clean fields specific to valid species
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -57,6 +57,7 @@ df$date.of.type.corrected <- NULL
 # calculate again
 df$years.lag <- as.numeric(df$date.n) - as.numeric(df$date.of.type.yyyy)
 
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - quick fixes
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -81,7 +81,7 @@ http://mc-stan.org/misc/warnings.html#bulk-ess
 Running the chains for more iterations may help. See
 http://mc-stan.org/misc/warnings.html#tail-ess
 
-fit <- stan( file="2019-07-15-edie-et-al/zip_count.stan",
+fit <- stan( file="2019-07-15-edie-et-al/model/zip_count.stan",
                    data=data,
                    chains=4,
                    warmup=2500,

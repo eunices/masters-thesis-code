@@ -1,5 +1,3 @@
-library(gamlss.dist)
-
 parse_model_identifier <- function(string) {
 
     #' Parses model identifier into a list of parameters
@@ -12,9 +10,10 @@ parse_model_identifier <- function(string) {
 
     for (i in 1:length(string)){
         if (i == 1) {
-            model_params$dataset <- substr(string[i], 1, 2)
-            model_params$ll <- substr(string[i], 3, 3)
-        } else {
+            model_params$dataset <- substr(string[i], 1, 2)     # 
+            model_params$ll <- substr(string[i], 3, 3)          # "Y" for using lat lon
+                                                                # "N" for using country distribution
+        } else {                                                
             first_letter <- substr(string[i], 1, 1)
             if (first_letter == "E" ) { # taxonomic effort
                 model_params$te <- as.numeric(substr(string[i], 2, nchar(string[i])))
@@ -55,7 +54,7 @@ initialize_model_params <- function(model_params) {
     "I", as.character(model_params$iter), "-",
     "A", as.character(model_params$ad), "-",
     "T", as.character(model_params$td))
-  dir_model_folder <- paste0(dir_analysis_edie_tmp, "/", model_identifier, "/")
+  dir_model_folder <- paste0(dir_analysis_edie_model, "/", model_identifier, "/")
 
   dir.create(dir_model_folder); dir.create(file.path(dir_model_folder, 'output'))
   filepath_log <- paste0(dir_model_folder, "/model.log")

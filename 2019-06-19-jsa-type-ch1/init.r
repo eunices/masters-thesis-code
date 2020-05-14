@@ -2,9 +2,13 @@
 # Section - Read datasets
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 dir_script <- '2019-06-19-jsa-type/'
-dir_script_ch1 <- '2019-06-19-jsa-type/'
+dir_script_ch1 <- '2019-06-19-jsa-type-ch1/'
 
 source(paste0(dir_script, "subset.r"))
+
+# Ancillary datasets
+lp_pop <- fread("data/2020-05-05-population-growth/WorldPopulationAnnual12000years_interpolated_HYDEandUNto2015.csv")
+names(lp_pop) <- c("year", "pop")
 
 # Read datasets
 print(paste0("Read df"))

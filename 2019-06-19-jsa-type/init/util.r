@@ -20,6 +20,17 @@ geocode_lat_long <- function(to_geocode) {
 
 library(revgeo)
 source('keys.r')
+# revgeo(longitude=103.959701, latitude=1.379857, provider = 'google', output='frame', API=geocode_api)
 
-# revgeo(longitude=103.959701, latitude=1.379857, provider = 'google', 
-#        output='frame', API=geocode_api)
+ybreaks.1 = function(lims) {ybreaks(lims, 0.1)}
+ybreaks1 = function(lims) {ybreaks(lims, 1)}
+ybreaks2 = function(lims) {ybreaks(lims, 2)}
+ybreaks5 = function(lims) {ybreaks(lims, 5)}
+ybreaks10 = function(lims) {ybreaks(lims, 10)}
+ybreaks20 = function(lims) {ybreaks(lims, 20)}
+ybreaks50 = function(lims) {ybreaks(lims, 50)}
+ybreaks100 = function(lims) {ybreaks(lims, 100)}
+ybreaks = function(lims, breaks) {
+  min = round(lims[1]/breaks, 0)
+  seq(min*breaks, lims[2], breaks)
+}

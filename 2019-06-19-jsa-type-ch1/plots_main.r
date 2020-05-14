@@ -40,7 +40,9 @@ p0 <- ggplot(species_per_year, aes(x=date.n, y=N)) +
     annotate("rect", xmin=pts[3,], xmax=pts[4,], ymin=0, ymax=Inf, fill="red", alpha=0.2) +
     geom_point(size=1, color='grey') + 
     geom_line(size=.5, color='grey', linetype='dashed') +
-    geom_line(size=1, y=rollmean(species_per_year$N, 10, fill = list(NA, NULL, NA))) 
+    geom_line(size=1, y=rollmean(species_per_year$N, 10, fill = list(NA, NULL, NA))) +
+    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
+    scale_y_continuous(breaks=ybreaks100, minor_breaks=ybreaks20)
 
 species_per_year2 <- melt(species_per_year, "date.n", stringsAsFactors=F)
 species_per_year2$variable <- factor(species_per_year2$variable, c("N_cumsum", "N"))
@@ -80,7 +82,8 @@ p3 <- ggplot(publications_per_year, aes(x=date.n, y=N)) +
     ggtitle("Number of publications by year") +
     geom_point(size=1, color='grey') + 
     geom_line(size=.5, color='grey', linetype='dashed') +
-    geom_line(size=1, y=rollmean(publications_per_year$N, 10, fill = list(NA, NULL, NA))) 
+    geom_line(size=1, y=rollmean(publications_per_year$N, 10, fill = list(NA, NULL, NA))) +
+    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10)
 
 # Per decade
 publications_per_decade <- df_publications[,.(.N), by=.(date.decade)]
@@ -102,7 +105,9 @@ p5 <- ggplot(species_and_pub_per_year, aes(x=date.n, y=species_per_publication))
     geom_line(size=.5, color='grey', linetype='dashed') +
     geom_smooth(fill=NA, color='black', size=1.5) +
     geom_line(size=1, y=rollmean(species_and_pub_per_year$species_per_publication, 10, 
-              fill = list(NA, NULL, NA)), color='grey50')
+              fill = list(NA, NULL, NA)), color='grey50') +
+    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
+    scale_y_continuous(breaks=ybreaks20, minor_breaks=ybreaks5)
 
 ## Correlation between species and publications per year
 c <- cor.test(species_and_pub_per_year$N_publications, species_and_pub_per_year$N_species, 
@@ -149,7 +154,34 @@ p8 <- ggplot(taxonomic_effort, aes(x=years, y=N_real_describers)) +
     geom_point(size=1, color='grey') + 
     geom_line(size=.5, color='grey', linetype='dashed') +
     geom_line(size=1, y=rollmean(taxonomic_effort$N_real_describers, 10, 
-              fill = list(NA, NULL, NA))) 
+              fill = list(NA, NULL, NA))) +
+    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10)
+
+taxonomic_effort_per_person <- merge(taxonomic_effort, lp_pop, by.x="years", by.y="year",
+                                     all.x=T, all.y=F) 
+# https://www.worldometers.info/world-population/
+taxonomic_effort_per_person[years=="2016"]$pop <- 7464022049	
+taxonomic_effort_per_person[years=="2017"]$pop <- 7547858925
+taxonomic_effort_per_person[years=="2018"]$pop <- 7631091040
+
+taxonomic_effort_per_person$tax_per_mil_person <- taxonomic_effort_per_person$N_real_describers /
+    (taxonomic_effort_per_person$pop /10^9)
+
+yscale = .5
+p8b <- ggplot(taxonomic_effort_per_person, aes(x=years, y=tax_per_mil_person)) + 
+    xlab("") + ylab("Number of PTEs \nper billion persons (black)") + 
+    theme +
+    ggtitle("Number of PTEs per billion persons by year") + 
+    geom_point(size=1, color='grey') + 
+    geom_line(size=.5, color='grey', linetype='dashed') +
+    geom_line(size=1, y=rollmean(taxonomic_effort_per_person$tax_per_mil_person, 10, 
+              fill = list(NA, NULL, NA))) +
+    geom_line(aes(y=pop/(10^9)/yscale), size=1, color='red') + 
+    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
+    scale_y_continuous(sec.axis = sec_axis(~ .*yscale, name="World population,\nbillions (red)"))
+
+max(taxonomic_effort_per_person$tax_per_mil_person)
+taxonomic_effort_per_person[years %in% 2015:2018]$tax_per_mil_person
 
 ## Correlation between species and PTEs per year
 c <- cor.test(taxonomic_effort$N_real_describers, taxonomic_effort$N_species_described, 
@@ -181,15 +213,21 @@ p10 <- ggplot(df_describers_year, aes(x=N)) +
 p10v <- p10 + scale_x_continuous(lim = c(-1, 10)) # for visualisation purposes
 p10d <- ggplot_build(p10)$data[[1]]
 
+bp_year = 1910; y=4.1
+# y = taxonomic_effort[which(years==bp_year)]$species_per_real_taxonomist
 p13 <- ggplot(data=taxonomic_effort, aes(x=years, y=species_per_real_taxonomist)) +
     xlab("Year") + ylab("Number of species/ PTE") + 
-    ggtitle("Number of species described/ PTE by year") + 
-    scale_y_continuous(lim = c(0, 12)) + theme + 
+    ggtitle("Number of species described/ PTE by year") + theme + 
     geom_point(size=1, color='grey') + 
     geom_line(size=.5, color='grey', linetype='dashed') +
     geom_smooth(fill=NA, color='black', size=1.5) +
     geom_line(size=1, y=rollmean(taxonomic_effort$species_per_real_taxonomist, 10, 
-              fill = list(NA, NULL, NA)), color='grey50')
+              fill = list(NA, NULL, NA)), color='grey50') +
+    annotate(geom='curve', x=bp_year+30, y=round(y+4,0), xend=bp_year, yend=y,
+             curvature=.1, arrow=arrow(length=unit(1, 'mm')), size=1, color='red') + 
+    annotate(geom='text', hjust='left', x=bp_year+33, y=round(y+4,0)+.2, label='Break point', size=4, color='red') + 
+    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
+    scale_y_continuous(breaks=ybreaks2, minor_breaks=ybreaks1, limits=c(0,12))
 
 # Weighted PTEs
 
@@ -213,7 +251,9 @@ p15 <- ggplot(data=taxonomic_effort, aes(x=years, y=N_weighted_real_describers))
     geom_point(size=1, color='grey') + 
     geom_line(size=.5, color='grey', linetype='dashed') +
     geom_line(size=1, y=rollmean(taxonomic_effort$N_weighted_real_describers, 10, 
-              fill = list(NA, NULL, NA))) 
+              fill = list(NA, NULL, NA))) +
+    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10)
+              
 
 p16 <- ggplot(data=taxonomic_effort, aes(x=years, y=species_per_real_taxonomist_weighted)) +
     xlab("Year") + ylab("Number of species \ndescribed/ PTE \n(wted)") + theme +
@@ -222,7 +262,9 @@ p16 <- ggplot(data=taxonomic_effort, aes(x=years, y=species_per_real_taxonomist_
     geom_line(size=.5, color='grey', linetype='dashed') +
     geom_smooth(fill=NA, color='black', size=1.5) +
     geom_line(size=1, y=rollmean(taxonomic_effort$species_per_real_taxonomist_weighted, 10, 
-              fill = list(NA, NULL, NA)), color='grey50')
+              fill = list(NA, NULL, NA)), color='grey50') +
+    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
+    scale_y_continuous(breaks=ybreaks2, minor_breaks=ybreaks1, limits=c(0,12))
 
 sum_p17 <- summary(taxonomic_effort$N_weighted_real_describers); sum_p17
 p17 <- ggplot(taxonomic_effort, aes(x=N_weighted_real_describers)) + 
@@ -232,7 +274,6 @@ p17 <- ggplot(taxonomic_effort, aes(x=N_weighted_real_describers)) +
                 ggtitle("Number of species/PTE (wted) \n(V+S)") # in their lifetime
 p17v <- p17 + scale_x_continuous(lim = c(0, sum_p17["3rd Qu."])) # for visualisation purposes
 p17d <- ggplot_build(p17)$data[[1]]
-
 
 cols <- c("years", "N_real_describers", "N_weighted_real_describers", "N_species_described")
 pub_auth_yr <- merge(species_and_pub_per_year[, c("date.n", "N_publications")],
@@ -316,6 +357,25 @@ gr <- grid.arrange(p3, p8, p6, p9, p15, p14, p18, p19, p, p0,
                                        c(2, 4, 7),
                                        c(5, 6, 8)))
 ggsave(paste0(dir_plot, 'fig-1.png'), gr, units="cm", width=21, height=18, dpi=300)
+
+# dataset for p0
+
+# dataset for p3
+# dataset for p8
+# dataset for p15
+
+# dataset for p
+
+## Draft 5
+# p <- ggplot() + theme
+# gr <- grid.arrange(p3, p8, p6, p9, p15, p14, p18, p19, p, p0, p8b,
+#                    widths=c(2, 1, 1),
+#                    layout_matrix=rbind(c(10, 9, 9),
+#                                        c(1, 3, 9),
+#                                        c(2, 4, 7),
+#                                        c(5, 6, 8),
+#                                        c(11, 9, 9)))
+# ggsave(paste0(dir_plot, 'fig-1.png'), gr, units="cm", width=21, height=21, dpi=300)
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Taxonomic effort - publications (boxplot + violin plot)
@@ -428,7 +488,21 @@ plot_tax <- ggplot(des_y, aes(x=years, y=value, group=variable)) +
     scale_y_continuous(limits=c(0, 50), breaks=seq(0,50,10)) +
     theme
 
-ggsave(paste0(dir_plot, 'fig-4.png'), plot_tax, units="cm", width=10, height=9, dpi=300)
+ggsave(paste0(dir_plot, 'fig-4.png'), plot_tax, units="cm", width=15, height=9, dpi=300)
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - In-text figures
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- in-text figures"))
+
+# Hyperdiverse Megachile
+meg <- df[tolower(genus)=="megachile", list(N=.N), by=c("type.repository.n_short", "country.of.type.repository.n_long")][order(-N)]
+sum(meg$N)
+sum(meg[type.repository.n_short != "[unknown]"][1:20]$N)
+table(meg[type.repository.n_short != "[unknown]"][1:20]$country.of.type.repository.n_long)
+
+
 
 #########################################################################################
 # Supporting Information
@@ -710,7 +784,7 @@ tax <- df_describers[spp_N_1st_auth_s>=1]
 tax_highlight <- tax[full.name.of.describer.n %in% highlight_auth][,c("ns_species_per_year_active", "last.name")]
 
 hist_mean_spp <- ggplot(tax, aes(x=ns_species_per_year_active)) +
-    geom_histogram(mapping=aes(y=..count../sum(..count..) * 100), fill='grey30', binwidth=5) + 
+    geom_histogram(mapping=aes(y=..count../sum(..count..) * 100), fill='grey30', binwidth=1) + 
     geom_vline(xintercept=median(tax$ns_species_per_year_active), color='grey', size=.5) +
     xlab("\nMean number of species described per year, by PTE") +
     ylab("Proportion of PTEs (%)\n") + 
@@ -723,6 +797,13 @@ hist_mean_spp <- ggplot(tax, aes(x=ns_species_per_year_active)) +
 theme
 ggsave(paste0(dir_plot, '_si/fig-6.png'), hist_mean_spp, units="cm", width=10, height=8, dpi=300)
 
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Tax per person
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- tax per person"))
+
+# ggsave(paste0(dir_plot, '_si/fig-7.png'), p8b, units="cm", width=21, height=5, dpi=300)
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Other biodata info

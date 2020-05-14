@@ -1,7 +1,3 @@
-# Wrangling data from original dataset
-source('2019-06-19-jsa-type-ch2/init/init_a.r')
-print(paste0(Sys.time(), " --- wrangling data"))
-
 # filepaths
 filepath_input_regions <- paste0(dir_data, basefile, ' filtered_5-species-cty2-cty.csv')
 
@@ -175,7 +171,6 @@ if(model_params$dataset == "HA") {
                               "Patellapis", "Halictus", "Dufourea", "Augochloropsis",
                               "Nomia", "Augochlora", "Neocorynura")]
 }
-
 
 write.csv(join, paste0(dir_model_folder, 'format.csv'), row.names=F, na="", fileEncoding = "UTF-8")
 

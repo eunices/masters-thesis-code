@@ -11,6 +11,11 @@
 # What is the description rate across countries?
 # Where are the specimens/ repositories/ publishers?
 
+# How many type repository in each genus?
+
+# Calculate effort it takes to describe all species?
+
+
 # Set up
 source('2019-06-19-jsa-type/subset.r')
 
