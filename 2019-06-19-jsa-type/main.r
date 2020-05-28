@@ -21,7 +21,6 @@ source(paste0(dir_script_td, 'clean/df1.r'), encoding="utf-8")
 source(paste0(dir_script_td, 'clean/df2.r'))
 source(paste0(dir_script_td, 'clean/df3.r'))
 source(paste0(dir_script_td, 'clean/df4.r'))
-source(paste0(dir_script_td, 'subset.r'))
 print(proc.time()-start)
 rm(list=ls())
 
