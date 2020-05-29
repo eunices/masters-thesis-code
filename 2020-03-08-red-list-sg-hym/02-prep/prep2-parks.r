@@ -17,7 +17,7 @@ library(rgeos)
 # UNIQUE_ is a unique identifier used to join all datasets here! it's not exactly a running number...
 parks = paste0(folder_new_parks, "parks-all-non-islands-edit.gpkg") # any manual edits should go here
 parks2a = paste0(folder_new_parks, "parks-all-non-islands-green.gpkg") # automated to calculate area and greenery
-parks2b = paste0(folder_new_parks, "parks-all-non-islands-green.gpkg") # automated to calculate area and greenery
+parks2b = paste0(folder_new_parks, "parks-all-non-islands-green-large.gpkg") # automated to calculate area and greenery
 parks3a = paste0(folder_new_parks, "parks-all-final.gpkg") # automated to calculate area and greenery
 
 natres = paste0(folder_final, "parks-nature-reserves.gpkg")
@@ -151,8 +151,8 @@ st_write(p2, parks2a, delete_dsn=T)
 # this script may go later into the package itself
 
 p = st_read(parks2a)
-p$TYPE = as.character(p$TYPE)
-unique(p$TYPE)
+p$habitat = as.character(p$TYPE)
+unique(p$habitat)
 
 # Mature secondary/ primary/ near
 # already added manually as "FRINGING FOREST"
@@ -167,25 +167,28 @@ isForestCover = p$veg_canopy_unmanaged >= UNMANAGED_TREES_THRESHOLD &
   p$prop_veg > VEGETATION_THRESHOLD
 
 # Mangrove
-p[isLarge & isMangrove,]$TYPE = "MANGROVE"
+p[isLarge & isMangrove,]$habitat = "MANGROVE"
 
 # Urban/semi-urban
-p[isLarge & !isMangrove & !isForestCover,]$TYPE = "URBAN/SEMI-URBAN"
+p[isLarge & !isMangrove & !isForestCover,]$habitat = "URBAN/SEMI-URBAN"
 
 # Young secondary
-p[isLarge & !isMangrove & isForestCover,]$TYPE = "YOUNG SECONDARY FOREST"
+p[isLarge & !isMangrove & isForestCover,]$habitat = "YOUNG SECONDARY FOREST"
 
 # Small parks
-p[!isLarge,]$TYPE = "SMALL GREEN SPACE"
+p[!isLarge,]$habitat = "SMALL GREEN SPACE"
 
 table(isLarge)
-table(p$TYPE)
+table(p$habitat)
 
 p[isLarge & !isMangrove & isForestCover,]$NAME
 
 st_write(p, paste0(folder_final, "parks-all.gpkg"), delete_dsn=T)
 
+
+
 large_p = p[isLarge,]
+st_write(large_p, parks2b, delete_dsn=T)
 large_pdf = large_p
 st_geometry(large_pdf) = NULL
 large_pdf = data.table(large_pdf)

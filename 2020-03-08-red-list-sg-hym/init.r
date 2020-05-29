@@ -6,6 +6,8 @@ register_google(key = geocode_api)
 # Filepaths
 folder_geo = "data/geo_processed/red-list-sg-ants/"
 folder_new_parks = paste0(folder_geo, "2020-05-25-sg-parks/")
+folder_rand = paste0(folder_geo, "2020-05-29-random-pts/")
+folder_rand_test = paste0(folder_rand, "test/")
 folder_final = paste0(folder_geo, "final/")
 folder_rast = paste0(folder_geo, "2020-03-08-high-res-sg-map/Figure 1/")
 
