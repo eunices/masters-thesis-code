@@ -4,6 +4,10 @@ source(paste0("2020-03-08-red-list-sg-hym/03-analyse/R/", "init.r"))
 library(sf)
 library(data.table)
 
+
+# TODO: write tests
+# TODO: put into package format
+
 #-------------------------------------------------------------------------------------------------
 
 #' Classify parks based on threshold
