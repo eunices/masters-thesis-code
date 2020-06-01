@@ -5,8 +5,9 @@ library(sf)
 library(data.table)
 
 
-# TODO: write tests
 # TODO: put into package format
+# TODO: write tests
+# TODO: how to deal with missing data
 
 #-------------------------------------------------------------------------------------------------
 
