@@ -7,7 +7,9 @@ library(data.table)
 
 # TODO: put into package format
 # TODO: write tests
+
 # TODO: how to deal with missing data
+# TODO: generate random points
 
 #-------------------------------------------------------------------------------------------------
 
