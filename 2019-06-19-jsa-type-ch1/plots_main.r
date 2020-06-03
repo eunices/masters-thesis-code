@@ -44,25 +44,6 @@ p0 <- ggplot(species_per_year, aes(x=date.n, y=N)) +
     scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
     scale_y_continuous(breaks=ybreaks100, minor_breaks=ybreaks20)
 
-species_per_year2 <- melt(species_per_year, "date.n", stringsAsFactors=F)
-species_per_year2$variable <- factor(species_per_year2$variable, c("N_cumsum", "N"))
-pt_sum <- data.table(species_per_year2)[, list(max=max(value)), by=c("variable")]
-pts <- data.frame(date.n=rep(c(1914, 1919, 1939, 1945), 2), 
-                  variable=c(rep("N_cumsum", 4), rep("N", 4)),
-                  value=c(rep(pt_sum[variable=="N_cumsum",]$max, 4), rep(pt_sum[variable=="N",]$max, 4)))
-
-labs <- c(`N` = "N species",
-          `N_cumsum` = "Cumulative N species")
-p1 <- ggplot(species_per_year2, aes(x=date.n, y=value)) + 
-    facet_wrap(.~variable, nrow=2, scales = "free_y", labeller= as_labeller(labs)) +
-    geom_ribbon(pts[c(1,2,5,6),], mapping=aes(x=date.n, ymin=0, ymax=value), fill="red", alpha=0.2) +
-    geom_ribbon(pts[c(1,2,5,6),], mapping=aes(x=date.n, ymin=0, ymax=value), fill="red", alpha=0.2) +
-    geom_ribbon(pts[c(3,4,7,8),], mapping=aes(x=date.n, ymin=0, ymax=value), fill="red", alpha=0.2) +
-    geom_ribbon(pts[c(3,4,7,8),], mapping=aes(x=date.n, ymin=0, ymax=value), fill="red", alpha=0.2) +
-    geom_line(size=1) + geom_smooth() +
-        xlab("") + ylab("") +
-            theme
-
 # Per decade
 species_per_decade <- df[,.(.N), by=.(date.decade)]
 p2 <- ggplot(species_per_decade, aes(x=date.decade, y=N)) + 
@@ -322,8 +303,6 @@ grid.arrange(p0, p3, p8, ncol=1) # time series
 grid.arrange(p7v, p10v) # histograms
 grid.arrange(p6, p9) # correlation
 
-# FIGURE: Thesis Fig 1 number of species
-p1
 
 # FIGURE: MS Fig 1: taxonomic effort over time
 ## Draft 1

@@ -1,20 +1,62 @@
 # Set up
 source('2019-06-19-jsa-type-ch1/init.r')
 
+# Parameters
+theme = theme_minimal()
+dir_plot = "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\_figures\\_ch2\\"
+
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - Species richness and area graph
+# Section - Fig. 1 time series of species description
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Fig. 1 time series of species description"))
+
+species_per_year <- df[,.(.N), by=.(date.n)][order(date.n)]
+template_year <- data.frame(date.n=min(species_per_year$date.n):max(species_per_year$date.n))
+species_per_year <- merge(template_year, species_per_year, by="date.n", all.x=T, all.y=F)
+species_per_year[is.na(species_per_year$N),]$N <- 0
+species_per_year$N_cumsum <- cumsum(species_per_year$N)
+
+species_per_year2 <- melt(species_per_year, "date.n", stringsAsFactors=F)
+species_per_year2$variable <- factor(species_per_year2$variable, c("N_cumsum", "N"))
+pt_sum <- data.table(species_per_year2)[, list(max=max(value)), by=c("variable")]
+pts <- data.frame(date.n=rep(c(1914, 1919, 1939, 1945), 2), 
+                  variable=c(rep("N_cumsum", 4), rep("N", 4)),
+                  value=c(rep(pt_sum[variable=="N_cumsum",]$max, 4), 
+                  rep(pt_sum[variable=="N",]$max, 4)))
+
+labs <- c(`N` = "N species",
+          `N_cumsum` = "Cumulative N species")
+p1 <- ggplot(species_per_year2, aes(x=date.n, y=value)) + 
+    facet_wrap(.~variable, nrow=2, scales = "free_y", labeller= as_labeller(labs)) +
+    geom_ribbon(pts[c(1,2,5,6),], mapping=aes(x=date.n, ymin=0, ymax=value), fill="red", alpha=0.2) +
+    geom_ribbon(pts[c(1,2,5,6),], mapping=aes(x=date.n, ymin=0, ymax=value), fill="red", alpha=0.2) +
+    geom_ribbon(pts[c(3,4,7,8),], mapping=aes(x=date.n, ymin=0, ymax=value), fill="red", alpha=0.2) +
+    geom_ribbon(pts[c(3,4,7,8),], mapping=aes(x=date.n, ymin=0, ymax=value), fill="red", alpha=0.2) +
+    geom_line(size=1) + geom_smooth() +
+        xlab("") + ylab("") +
+            theme
+
+ggsave(paste0(dir_plot, 'fig-1.png'), p1, units="cm", width=21, height=10, dpi=300)
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Fig 4. Species richness and area graph
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- Species richness and area graph"))
 area <- read.csv('data/lookup/2019-12-20-richness-area.csv')
 
-ggplot(area) + 
+p4 = ggplot(area) + 
     geom_point(aes(x=log(area), y=log(richness))) +
     stat_smooth(area, mapping=aes(x=log(area), y=log(richness)), method='lm', formula = y~x) +
     xlab("log(Area (million sq km))") + ylab("log(N species discovered)") +
     scale_y_continuous(limits=c(2, 10)) + 
     theme
 
+ggsave(paste0(dir_plot, 'fig-4.png'), p4, units="cm", width=10, height=10, dpi=300)
+
 summary(lm(log(richness) ~ log(area), area))
+
 
 
 ######## EXTRA EDA ########
