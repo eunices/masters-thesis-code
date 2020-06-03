@@ -16,7 +16,9 @@ flow <- fread(paste0(dir_data, "eda1_flow/2019-09-22-flow-map-type-loc-des-count
               encoding="UTF-8")
 flow[no_flow==FALSE, list(N_cty=length(unique(des))), by=c("ori")][order(-N_cty)]
 
-spp <- get_df1(write=F)
+spp1 <- get_df1(write=F)[, c("type.country.n", "full.name.of.describer")]
+spp2 <- get_df2(write=F)[status=="Synonym"][, c("type.country.n", "full.name.of.describer")]
+spp <- rbind(spp1, spp2)
 spp <- spp %>% separate_rows(full.name.of.describer, sep="; ")
 sum_flow <- spp[, .N, by="type.country.n"][order(-N)]
 flow <- flow[no_flow == "FALSE" ,c("ori", "des", "N")]
