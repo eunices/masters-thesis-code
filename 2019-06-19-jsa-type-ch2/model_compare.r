@@ -1,4 +1,4 @@
-# compare models
+# This script compares models that have already been run through model.r.
 
 library(forecast)
 library(ggplot2)

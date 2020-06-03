@@ -1,3 +1,4 @@
+# These are parameters to be fed into prep.r and model.r
 
 # Parameters
 #############

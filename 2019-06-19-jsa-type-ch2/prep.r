@@ -1,8 +1,8 @@
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("WELCOME TO DATA PREP SCRIPT FOR BEE TYPE DATA (EDIE ET AL)")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+# "prep.r" should be run before "model.r"
 # Note: this step may be omitted if data is already prepared in the desired format.
-
 
 # Init
 #############
