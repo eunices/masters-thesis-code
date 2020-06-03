@@ -1,15 +1,80 @@
 source('2019-06-19-jsa-type-ch3-flow/analysis1/prep.R')
 
-# 1) Summarising where there is no flow
+# Parameters
+theme = theme_classic()
+dir_plot = "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\_figures\\_ch3\\_ch3-flow\\"
 
-# Data processing
-table(t$no_flow)
-s1 <- t[, list(N=sum(N)), by='des']
-s2 <- t[no_flow=="TRUE", list(N=sum(N)), by='des']
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Where do describers come from?
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Where do describers come from?"))
+
+des = get_des(write=F) # get dataset
+dim(des)
+
+# number of authors with multiple countries
+des_multiple = separate_rows(des[, c("full.name.of.describer.n", "residence.country.describer.n")], 
+                             residence.country.describer.n, sep="; ")
+des_multiple = data.table(des_multiple)
+dim(des)
+dim(des) - dim(des_multiple)
+
+# number of describers with no country
+length(is.na(des$residence.country.describer.first))
+
+# number of countries for describers
+des_tabulate = des[!is.na(residence.country.describer.first), .N, 
+                   by="residence.country.describer.first"][order(-N)]
+dim(des_tabulate) 
+
+# top 3 countries with describers
+des_tabulate[1:3]
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Where do describers come from - by socioeconomic status
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Where do describers come from - by socioeconomic status"))
+
+cols <- c("DL", "Class", "continent")
+des_where = separate_rows(des[, c("full.name.of.describer.n", "residence.country.describer.n")], 
+                             residence.country.describer.n, sep="; ")
+des_where = data.table(des_where[!duplicated(des_where$full.name.of.describer.n),])
+des_where = merge(des_where, lu[, ..cols], 
+				  by.x="residence.country.describer.n", by.y="DL", all.x=T, all.y=T)
+lvls = c("Low income", "Lower middle income", "Upper middle income", "High income",  "Unclassed")
+des_where$Class = factor(des_where$Class, lvls)
+
+# For countries with describers: Distribution of classes
+des_where1 = des_where[!is.na(full.name.of.describer.n)]
+des_where1[grepl("unknown", tolower(residence.country.describer.n))] # !CHECK
+table(is.na(des_where1$Class)) # with no class due to unknown country of residence
+des_where_summary = des_where1[!is.na(des_where1$Class), .N, by=Class]
+des_where_summary
+des_where_summary$N / sum(des_where_summary$N) *100
+
+# For all countries, to investigate which countries have no describer
+des_where2 = unique(des_where[is.na(full.name.of.describer.n)])
+des_where2[duplicated(residence.country.describer.n)] # ! CHECK
+
+length(unique(des_where2[Class == "Unclassed"]$residence.country.describer.n)) # N unclassed
+des_where_summary2 = des_where2[Class != "Unclassed", .N, by=Class] 
+tl = sum(des_where_summary2$N); tl
+des_where_summary2
+des_where_summary2$N / tl *100
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Check if describers are insular
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Check if describers are insular"))
+
+table(t$no_flow) # "des" for destination (type locality) and "ori" for origin (describer)
+s1 <- t[, list(N=sum(N)), by='des']                   # total number of species
+s2 <- t[no_flow=="TRUE", list(N=sum(N)), by='des']    # described by taxonomists in the country
 ss <- merge(s1, s2, by='des', all.x=T, all.y=F, suffixes=c("_total", "_cty"))
 ss$prop <- ss$N_cty/ss$N_total
-ss <- merge(ss, lookup.cty[, c("GEC", "Country", "A.3", "Class")], 
-      by.x="des", by.y="GEC", all.x=T, all.y=F)
+ss <- merge(ss, lookup.cty[, c("DL", "GEC", "Country", "A.3", "Class")], 
+      		by.x="des", by.y="DL", all.x=T, all.y=F)
 ss[is.na(N_cty)]$N_cty <- 0
 ss[is.na(prop)]$prop <- 0
 ss$Class <- factor(ss$Class, levels=c("High income", 
@@ -17,25 +82,32 @@ ss$Class <- factor(ss$Class, levels=c("High income",
                                       "Lower middle income",
                                       "Low income", 
                                       "Unclassed"))
-ss[Class=="Unclassed"] # visual check
+ss[Class=="Unclassed"] # !CHECK
+ss[is.na(Country)]     # !CHECK
 
-# Plot
-ggplot(ss[!is.na(Class)], aes(x=Class, y=round(prop*100,2))) + 
-  geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
-    labs(x="\nWorld Bank classification", y = "Proportion of species described\n by describers residing in country (%)\n") +
-         theme_classic()
-
-# In text figures
-ss[N_cty>=1]
-summary(ss[prop>0 & N_total>=5]$prop*100)
-length(ss[prop>0 & N_total>=5]$prop*100)
-shapiro.test(ss[prop>0 & N_total>=5]$prop*100) # not normal
-ss[N_total>5][order(-prop)][1:10]
+dim(ss[N_cty>=1])
+dim(ss[N_total>=30 & N_cty>=1])
+summary(ss[N_total>=30 & N_cty>=1]$prop*100)
+shapiro.test(ss[N_total>=30 & N_cty>=1]$prop*100) # not normal
+ss[N_total>=30][order(-prop)][1:4]
 ss[Country=="Brazil"]
 
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Fig 2 socioeconomic status on proportion of species
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Fig 2 socioeconomic status on proportion of species"))
+
+# Plot
+p1 = ggplot(ss[!is.na(Class)], aes(x=Class, y=round(prop*100,2))) + 
+	geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
+	labs(x="\nWorld Bank classification", 
+		 y = "Proportion of species described\n by describers residing in country (%)\n") +
+	theme
+ggsave(paste0(dir_plot, 'fig-2.png'), p1, units="cm", width=20, height=10, dpi=300)
+
 # Statistical tests
-# http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
-kruskal.test(prop~Class, data = ss)
+# source: http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
+kruskal.test(prop~Class, data=ss)
 pairwise.wilcox.test(ss$prop, ss$Class, p.adjust.method = "BH")
 ss_summary <- ss[, list(mean=mean(prop),
                         median=median(prop),
@@ -45,12 +117,17 @@ ss_summary <- ss[, list(mean=mean(prop),
                   by=c("Class")]
 
 write.csv(ss_summary,
-          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop-summary.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop-summary.csv"),
+		  na='', row.names=F, fileEncoding="UTF-8")
 
 write.csv(ss[order(-prop)],
-          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop.csv"), 
+		  na='', row.names=F, fileEncoding="UTF-8")
 
-# 2) Count number of countries where there is flow
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Fig 3 socioeconomic status on number of countries contributed to
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Fig 3 socioeconomic status on number of countries contributed to"))
 
 # Data processing
 flow <- unique(spp_s[, c("type.country.n", "residence.country.describer.n")])
@@ -66,8 +143,6 @@ flow <- merge(flow,
               lookup.cty[, c("DL", "Class")], 
               by.x="residence.country.describer.n", by.y="DL", all.x=T, all.y=F)
 flow <- flow[!is.na(residence.country.describer.n) & residence.country.describer.n != "[unknown]"]
-# flow$Class <- ifelse(flow$Class == "High income", "High income", "Not high income")
-
 flow$Class <- factor(flow$Class, levels=c("High income", 
                                           "Upper middle income",
                                           "Lower middle income",
@@ -77,15 +152,18 @@ flow$Class <- factor(flow$Class, levels=c("High income",
 kruskal.test(N~Class, data = flow)
 pairwise.wilcox.test(flow$N, flow$Class, p.adjust.method = "BH")
 
-ggplot(flow, aes(x=Class, y=N)) + 
-  geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
-    labs(x="\nWorld Bank classification", y = "Number of countries\n to which there is taxonomic flow") +
-         theme_classic()
+p2 = ggplot(flow, aes(x=Class, y=N)) + 
+  	geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
+	labs(x="\nWorld Bank classification", 
+		 y = "Number of countries\n to which there is taxonomic flow") +
+	theme
+ggsave(paste0(dir_plot, 'fig-3.png'), p2, units="cm", width=20, height=10, dpi=300)
+
 flow$N <- as.numeric(flow$N)
 flow_summary <- flow[, list(mean=mean(N),
-                        median=median(N),
-                        quantile_1st = quantile(N, 0.25),
-                        quantile_3rd = quantile(N, 0.75),
+							median=median(N),
+							quantile_1st = quantile(N, 0.25),
+							quantile_3rd = quantile(N, 0.75),
                         N=.N),
                   by=c("Class")]
 flow[, list(mean=mean(N),
@@ -93,8 +171,20 @@ flow[, list(mean=mean(N),
             quantile_1st = quantile(N, 0.25),
             quantile_3rd = quantile(N, 0.75),
             N=.N)]
+          
 write.csv(flow_summary[order(-N)],
-          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-N-summary.csv"), na='', row.names=F, fileEncoding="UTF-8")
+          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-N-summary.csv"), 
+          na='', row.names=F, fileEncoding="UTF-8")
+
+# continue with analysis1b.r for GLM (determinants of flow)
+
+
+
+
+
+
+
+########################################### EXTRA EDA
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Location analysis suggested by Ascher
@@ -143,7 +233,6 @@ loc_pub_unique[order(-N)][1:10]
 # Where are the type localities?
 loc_type_loc <- spp[type.country.n.full != "", list(.N), by=c("type.country.n.full")][order(-N)]
 loc_type_loc[1:20]
-
 
 # Where are the describers?
 
