@@ -35,8 +35,9 @@ dat[, names(dat) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))]
 cols <- c('idxes', 'full.name.of.describer.n', 'idxes_author.order', 'date.n'); dat <- dat[,..cols]
 
 # Author info
-auth <- get_des(write=F)
-auth <- auth[, c('full.name.of.describer.n', 'residence.country.describer.n', 'describer.gender.n',
+auth_full <- get_des(write=F)
+auth_full <- auth_full[!is.na(min)]
+auth <- auth_full[, c('full.name.of.describer.n', 'residence.country.describer.n', 'describer.gender.n',
                  "min", "max_corrected")]
 auth$residence.country.describer.n <- sapply(auth$residence.country.describer.n, function(x) strsplit(x, "; ")[[1]][1])
 auth <- merge(auth, lu[, c("DL", "Country")], all.x=T, all.y=F, 
