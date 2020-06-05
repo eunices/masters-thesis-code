@@ -90,7 +90,6 @@ dim(ss[N_total>=30 & N_cty>=1])
 summary(ss[N_total>=30 & N_cty>=1]$prop*100)
 shapiro.test(ss[N_total>=30 & N_cty>=1]$prop*100) # not normal
 ss[N_total>=30][order(-prop)][1:4]
-ss[Country=="Brazil"]
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Fig 2 socioeconomic status on proportion of species
@@ -130,14 +129,18 @@ write.csv(ss[order(-prop)],
 print(paste0(Sys.time(), " --- Fig 3 socioeconomic status on number of countries contributed to"))
 
 # Data processing
-flow <- unique(spp_s[, c("type.country.n", "residence.country.describer.n")])
+flow <- unique(spp_s[, c("idx", "type.country.n", "residence.country.describer.n")])
+flow <- flow[!duplicated(idx)]
+flow <- unique(separate_rows(flow, residence.country.describer.n, sep="; "))
+flow <- unique(flow[, c("type.country.n", "residence.country.describer.n")])
 flow <- flow[type.country.n != residence.country.describer.n]
 flow <- flow[,.N, by=c("residence.country.describer.n")]
 
 des_countries <- unique(des$residence.country.describer.n); length(des_countries)
 des_countries <- des_countries[!des_countries %in% flow$residence.country.describer.n]
+des_countries <- unique(unlist(lapply(des_countries, strsplit, "; ")))
 des_countries <- data.frame(residence.country.describer.n=des_countries, N=0)
-flow <- rbind(flow, des_countries)         
+flow <- rbind(flow, des_countries)        
 
 flow <- merge(flow, 
               lookup.cty[, c("DL", "Class")], 
@@ -152,7 +155,7 @@ flow$Class <- factor(flow$Class, levels=c("High income",
 kruskal.test(N~Class, data = flow)
 pairwise.wilcox.test(flow$N, flow$Class, p.adjust.method = "BH")
 
-p2 = ggplot(flow, aes(x=Class, y=N)) + 
+p2 = ggplot(flow[!is.na(Class),], aes(x=Class, y=N)) + 
   	geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
 	labs(x="\nWorld Bank classification", 
 		 y = "Number of countries\n to which there is taxonomic flow") +
@@ -166,12 +169,7 @@ flow_summary <- flow[, list(mean=mean(N),
 							quantile_3rd = quantile(N, 0.75),
                         N=.N),
                   by=c("Class")]
-flow[, list(mean=mean(N),
-            median=median(N),
-            quantile_1st = quantile(N, 0.25),
-            quantile_3rd = quantile(N, 0.75),
-            N=.N)]
-          
+flow_summary          
 write.csv(flow_summary[order(-N)],
           paste0(dir_data, "eda1_flow/2019-09-22-summary-country-N-summary.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")

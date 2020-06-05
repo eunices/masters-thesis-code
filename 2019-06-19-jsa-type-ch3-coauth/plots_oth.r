@@ -1,9 +1,8 @@
 # Information about code:
 # This code corresponds to exploratory data analyses for my MSc thesis.
-# They are pertaining to EDA for the authors 
+# They are pertaining to visualisation (shiny and networkd3) for the authors 
 # (relevant for Chapter 3, the section on Coauthor networks).
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 
 # Set up
 source('2019-06-19-jsa-type/subset.r')
@@ -13,9 +12,11 @@ library(tidyverse)
 library(networkD3)
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - coauthor network
+# Section - prepare network data for shiny
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- coauthor network"))
+print(paste0(Sys.time(), " --- prepare network data for shiny"))
+
+# Note: these are data prep for shiny apps
 
 # Get table of valid/ invalid species
 spp1 <- get_df1(write=F)[, c("idx", "full.name.of.describer", "date.n")]
@@ -44,7 +45,6 @@ nw <- fread(paste0(dir_data, basefile, " describers_7.0-author-networks.csv"),
             integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 nw[, names(nw) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
 nw <- nw[!(is.na(p1) | is.na(p2))]
-
 write.csv(nw, paste0(dir_shiny, "eda2.1_shiny/data/7.0-author-networks.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
@@ -56,17 +56,18 @@ col_des <- c("idx_auth", "full.name.of.describer.n", "last.name",
              "max_corrected", "min",
              "n_pubs", "spp_N", "spp_N_1st_auth_s")
 
+# Get describer data
 des <- get_des(write=F)[, ..col_des]
 des$idx_auth <- as.numeric(des$idx_auth) -1
 des$residence.country.describer.first <- sapply(des$residence.country.describer.n, split_cty)
 
+# Get network data
 cols_des_join <- c("idx_auth", "full.name.of.describer.n")
 nw_f <- merge(nw, des[, ..cols_des_join],
               by.x="p1", by.y="full.name.of.describer.n", all.x=T, all.y=F)
 nw_f <- merge(nw_f, des[, ..cols_des_join],
               by.x="p2", by.y="full.name.of.describer.n", all.x=T, all.y=F, 
               suffixes=c("_p1", "_p2"))
-
 
 # Country level summary
 col_des_subset <- c("residence.country.describer.first", "full.name.of.describer.n")
@@ -77,15 +78,22 @@ nw_cty <- merge(nw_cty, des[, ..col_des_subset],
                 suffixes=c("_p1", "_p2"))
 
 nw_cty <- nw_cty[, list(N=sum(as.numeric(N))), 
-                by=c("residence.country.describer.first_p1", 
-                     "residence.country.describer.first_p2")]
+                 by=c("residence.country.describer.first_p1", 
+                      "residence.country.describer.first_p2")]
 nw_cty$check_same <- 
     nw_cty$residence.country.describer.first_p1 == nw_cty$residence.country.describer.first_p2
+
 write.csv(nw_cty, paste0(dir_data, 'eda2_auth/2019-09-22-auth-country-network.csv'), 
           na='', row.names=F, fileEncoding="UTF-8")
 
 
-# Using NetworkD3
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - visualisation with NetworkD3
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- visualisation with NetworkD3"))
+
+# Note: these are preliminary visualisations
 
 # network
 grp <- "residence.country.describer.first"

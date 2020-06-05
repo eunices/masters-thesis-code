@@ -8,21 +8,36 @@
 source('2019-06-19-jsa-type/init/var.R')
 source('2019-06-19-jsa-type/subset.R')
 
-# Wrangle data
+# Parameters
+dir_plot = "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\_figures\\_ch3\\_ch3-coauth\\"
+
+# Read/wrangle data
 df0a <- get_df1(write=F)
 df0b <- get_df2(write=F)
 df0b <- df0b[status=="Synonym"]
-
 df <- rbind(df0a[,c("full.name.of.describer", "idx", "date.n")],
             df0b[,c("full.name.of.describer", "idx", "date.n")])
-df$date.decade <- paste0(substr(as.character(df$date.n), 1, 3), "0s")
 
+df$date.decade <- paste0(substr(as.character(df$date.n), 1, 3), "0s")
 df <- df %>% separate_rows(full.name.of.describer, sep="; ")
 df <- unique(df)
 df <- df[order(date.n)]
 df <- df[, list(.N), by=c('idx', 'date.decade')]
 df <- df[order(date.decade)]
 df$N <- as.character(df$N)
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Proportion of authors across years
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Proportion of authors"))
+table(df$N)
+prop.table(table(df$N))*100
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Proportion of authors across years
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Proportion of authors across years"))
 
 calc_median <- function(x){
   return(c(y = -0.1, label = length(x)))
@@ -41,4 +56,6 @@ plot_auth_decade2 <-
         xlab("\nDecade") + ylab("Number of species with \nN number of authors\n") +
         theme_minimal() + scale_fill_grey()
 
-grid.arrange(plot_auth_decade1, plot_auth_decade2)
+gr = grid.arrange(plot_auth_decade1, plot_auth_decade2)
+ggsave(paste0(dir_plot, 'fig-3.png'), gr, units="cm", 
+       width=30, height=15, dpi=300)
