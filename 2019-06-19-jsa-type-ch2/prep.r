@@ -36,5 +36,5 @@ for (i in 1:len_params) {
     model_identifier <- filepaths[4]
 
     # Run data prep script
-    source(paste0(dir_script_ed, 'prep/prep.r')) # formatting data
+    source(paste0(dir_script_ed, 'prep/prep1.r')) # formatting data
 }
