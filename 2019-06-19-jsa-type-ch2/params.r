@@ -4,7 +4,7 @@
 #############
 
 # Model parameters
-model_folder_names <- c("GLY-E0-C4-I8000-A0.8-T12") # fast run
+model_folder_names <- c("BGY-E0-C4-I8000-A0.8-T12") # fast run
 
 # # Hyperparameters of models where chains could mix
 # model_folder_names <- 
