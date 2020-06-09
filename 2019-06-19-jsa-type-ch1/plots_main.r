@@ -574,7 +574,6 @@ prop.table(auth_throughout_life)*100
 print(paste0(Sys.time(), " --- Paragraph on taxonomic effort"))
 
 # Count number of statuses
-df2 <- get_df2(write=F)[,c("idx", "status", "date.n")]
 df_years <- rbind(df[, c("idx", "status", "date.n")], df2)
 status <- table(df_years$status)
 sum(status)

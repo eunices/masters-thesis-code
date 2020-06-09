@@ -121,7 +121,6 @@ get_dis <- function(write=T) {
     subset_df(fn_dis, "distribution", write=write)
 }
 
-
 write_datasets <- function() {
     get_df1()
     get_df2()
@@ -138,6 +137,18 @@ if (to_subset=="Y") {
 # TEST: 
 # df <- subset_df(fn_df2, "invalid_species", write=F)
 # df[idx==27576]
+
+########################################################
+
+# Non "subset_df" datasets
+# These are not in the ERD, but are derived datasets nonetheless used
+
+get_n_active_describers_by_year = function() {
+    filepath_describers_by_year <- paste0(dir_data, basefile, " describers_6.0-active-by-year.csv")
+     fread(filepath_describers_by_year, 
+           integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+}
+
 
 ########################################################
 

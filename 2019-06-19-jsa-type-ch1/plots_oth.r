@@ -15,7 +15,6 @@
 
 # Calculate effort it takes to describe all species?
 
-
 # Set up
 source('2019-06-19-jsa-type/subset.r')
 
@@ -128,6 +127,8 @@ dataset_write = merge(des_a1[N>=2],
                       df_describers[, c("full.name.of.describer.n", 
                                         "residence.country.describer.full"),
                       by="full.name.of.describer.n", all.x=T, all.y=F]
+
+
 filename_write = paste0(dir_data, "eda0_sum/2019-10-28-taxonomist-country-res-morethanone.csv")
 write.csv(dataset_write, filename_write)
 
