@@ -15,7 +15,7 @@ library(caret)  # cross validation
 # library(ROCR) # roc
 
 # Read and process describer data
-auth <- fread(paste0(dir_data, basefile, " describers_5.0-describers-final.csv"), encoding="UTF-8")
+auth <- get_des(write=F)
 auth <- auth[ns_spp_N >=1,c("idx_auth", "residence.country.describer.n")]
 auth <- data.table(auth %>% separate_rows(residence.country.describer.n, sep="; "))
 auth_N <- auth[residence.country.describer.n != "[unknown]", list(N_taxonomist=.N), 

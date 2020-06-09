@@ -164,6 +164,9 @@ get_describer_network = function() {
 ########################################################
 
 # Lookup files
+get_lp_statoid = function() {
+    fread('data/lookup/2019-05-29-statoid-country-codes.csv', na=c(''), encoding='UTF-8')
+}
 
 get_lp_pop = function() {
     folder = "data/2020-05-05-population-growth/"
@@ -173,12 +176,16 @@ get_lp_pop = function() {
     lp_pop
 }
 
-get_lp_statoid = function() {
-    fread('data/lookup/2019-05-29-statoid-country-codes.csv', na=c(''), encoding='UTF-8')
-}
-
 get_lp_biome = function() {
     fread('data/lookup/2019-10-14-biome-broad-cat.csv', na=c(''), encoding='UTF-8')
+}
+
+get_lp_col = function() {
+    fread('data/2019-10-30-colonial-history/coldata110_edit.csv',  encoding="UTF-8")
+}
+
+get_lp_adj_countries = function() {
+    fread('data/lookup/2019-11-01-country-adjacent_edit.csv',  encoding="UTF-8") 
 }
 
 ########################################################

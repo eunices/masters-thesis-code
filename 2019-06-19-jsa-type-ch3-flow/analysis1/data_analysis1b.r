@@ -24,14 +24,14 @@ sum_flow <- spp[, .N, by="type.country.n"][order(-N)]
 flow <- flow[no_flow == "FALSE" ,c("ori", "des", "N")]
 
 # Get statoid country codes (with socioeconomic status)
-lu <- fread('data/lookup/2019-05-29-statoid-country-codes.csv',  encoding="UTF-8")
+lu <- get_lp_statoid()
 comb <- expand.grid(lu$DL, lu$DL)
 names(comb) <- c("ori", "des")
 flow <- data.table(merge(comb, flow, by=c("ori", "des"), all.x=T, all.y=F))
 flow[is.na(flow)] <- 0
 
 # Get colonial history data
-lu_col <- fread('data/2019-10-30-colonial-history/coldata110_edit.csv',  encoding="UTF-8")
+lu_col <- get_lp_col()
 lu_col <- lu_col[, c("_A3", "_ColRulerA3", "_IndYear")]
 names(lu_col) <- gsub("_", "", names(lu_col))
 lu_col <- lu_col %>% separate_rows(A3, sep="; ")
@@ -45,7 +45,7 @@ lu_col <- unique(lu_col)
 
 # Get country adjacent data
 # country_iso3 neighbor_iso3
-lu_adj <- fread('data/lookup/2019-11-01-country-adjacent_edit.csv',  encoding="UTF-8") 
+lu_adj <- get_lp_adj_countries()
 lu_adj <- lu_adj[!(DL1 %in% c("No man's land", "Disputed land")), ]
 lu_adj <- lu_adj[!(DL2 %in% c("No man's land", "Disputed land")), ]
 lu_adj$adj_check <- 1

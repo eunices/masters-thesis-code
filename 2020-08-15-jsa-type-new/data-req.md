@@ -61,12 +61,15 @@ df0b = get_df2(write=F)
 nw = get_describer_network()
 
 
-
 ### 2019-06-19-jsa-type-ch3-flow
 
+#### analysis1b.r
+auth = get_des(write=F)
 
-
-
+#### data_analysis1b.r
+lu = get_lp_statoid()
+lu_col = get_lp_col()
+lu_adj = get_lp_adj_countries()
 
 ### 2019-06-19-jsa-type-ch3-gender
 
