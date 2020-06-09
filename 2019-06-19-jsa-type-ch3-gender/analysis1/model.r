@@ -23,15 +23,12 @@ un_path <- "data/2019-11-11-un-indicators/"
 df_r <- fread(paste0(un_path, '2019-11-12-indicators.csv'), encoding="UTF-8", stringsAsFactors=F, na=c(""))
 
 # Lookup table for countries
-lu <- fread('data/lookup/2019-05-29-statoid-country-codes.csv',  encoding="UTF-8")
-
+lu <- get_lp_statoid()
 
 # For species
 
 # Denormalised authors
-filepath <- '2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_4.0-denormalised2.csv'
-dat <- fread(paste0(dir_data, filepath), encoding="UTF-8", stringsAsFactors=F, na=c(""))
-dat[, names(dat) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+dat = get_species_denormalised()
 cols <- c('idxes', 'full.name.of.describer.n', 'idxes_author.order', 'date.n'); dat <- dat[,..cols]
 
 # Author info

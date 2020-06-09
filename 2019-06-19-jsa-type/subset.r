@@ -143,22 +143,34 @@ if (to_subset=="Y") {
 # These are not in the ERD, but are derived datasets nonetheless used
 
 get_n_active_describers_by_year = function() {
-    filepath_describers_by_year <- paste0(dir_data, basefile, " describers_6.0-active-by-year.csv")
+    file = " describers_6.0-active-by-year.csv"
+    filepath_describers_by_year <- paste0(dir_data, basefile, file)
      fread(filepath_describers_by_year, 
            integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 }
 
 get_species_country_distribution = function() {
-    filepath_input_regions <- paste0(dir_data, basefile, ' filtered_5-species-cty2-cty.csv')
+    file = ' filtered_5-species-cty2-cty.csv'
+    filepath_input_regions <- paste0(dir_data, basefile, file)
     fread(filepath_input_regions, na=c(''), encoding='UTF-8')
 }
 
 get_describer_network = function() {
-    nw = fread(paste0(dir_data, basefile, " describers_7.0-author-networks.csv"),
-          integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+    file = " describers_7.0-author-networks.csv"
+    nw = fread(paste0(dir_data, basefile, file),
+               integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
     nw[, names(nw) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
     # fread does not escape double quotes
     nw
+}
+
+get_species_denormalised = function() {
+    filepath <- ' describers_4.0-denormalised2.csv'
+    dat <- fread(paste0(dir_data, basefile, filepath), encoding="UTF-8", 
+                 stringsAsFactors=F, na=c(""))
+    dat[, names(dat) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+    # fread does not escape double quotes
+    dat
 }
 
 ########################################################

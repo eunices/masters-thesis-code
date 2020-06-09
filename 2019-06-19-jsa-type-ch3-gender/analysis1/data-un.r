@@ -50,7 +50,7 @@ names(df_r) <- unlist(sapply(names(df_r), function(name) {
 }))
 
 cols <- c("A-3", "Country")
-lu <- fread('data/lookup/2019-05-29-statoid-country-codes.csv',  encoding="UTF-8")[, ..cols]
+lu <- get_lp_statoid()[, ..cols]
 df_r <- merge(df_r, lu, by.x="country", by.y="A-3", all.x=T, all.y=F); rm(lu)
 df_r <- df_r[!is.na(country)]
 

@@ -73,7 +73,16 @@ lu_adj = get_lp_adj_countries()
 
 ### 2019-06-19-jsa-type-ch3-gender
 
+#### model.r
+auth_full <- get_des(write=F)
 
+dat = get_species_denormalised()
+
+lu = get_lp_statoid()
+
+#### data-un.r
+
+lu = get_lp_statoid()
 
 
 
