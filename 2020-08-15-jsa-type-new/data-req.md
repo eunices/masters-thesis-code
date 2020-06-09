@@ -32,9 +32,14 @@ dat = get_species_country_distribution()
 shp_grp = get_shp_biogeo()
 shp_grp = get_shp_biomes()
 
-
 ### 2019-06-19-jsa-type-ch3-coauth
 
+#### plots_main.r
+df0a = get_df1(write=F)
+df0b = get_df2(write=F)
+
+#### plots_oth.r
+nw = get_describer_network()
 
 ### 2019-06-19-jsa-type-ch3-flow
 

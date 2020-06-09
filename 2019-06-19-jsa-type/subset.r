@@ -153,6 +153,14 @@ get_species_country_distribution = function() {
     fread(filepath_input_regions, na=c(''), encoding='UTF-8')
 }
 
+get_describer_network = function() {
+    nw = fread(paste0(dir_data, basefile, " describers_7.0-author-networks.csv"),
+          integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+    nw[, names(nw) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+    # fread does not escape double quotes
+    nw
+}
+
 ########################################################
 
 # Lookup files
@@ -179,11 +187,12 @@ get_lp_biome = function() {
 
 get_shp_biogeo = function() {
     filepath_input_biogeo = 'data/geo_processed/teow/official/wwf_terr_ecos_dissolved.shp'
-    st_read(file_input, quiet=T)
+    st_read(filepath_input_biogeo, quiet=T)
 }
 
 get_shp_biomes = function() {
     filepath_input_biomes = 'data/geo/0_manual/Ecoregions2017/Ecoregions2017.shp'
+    st_read(filepath_input_biomes, quiet=T)
 
 }
 

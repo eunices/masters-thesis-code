@@ -41,9 +41,7 @@ write.csv(auth, paste0(dir_shiny, "eda2.1_shiny/data/authors.csv"),
           na='', row.names=F, fileEncoding="UTF-8")
 
 # Load data
-nw <- fread(paste0(dir_data, basefile, " describers_7.0-author-networks.csv"),
-            integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-nw[, names(nw) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+nw <- get_describer_network()
 nw <- nw[!(is.na(p1) | is.na(p2))]
 write.csv(nw, paste0(dir_shiny, "eda2.1_shiny/data/7.0-author-networks.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
