@@ -1,23 +1,13 @@
 ####################################################################################################
 
-# Filepaths
-
-# Dataset
-filepath_input_regions <- paste0(dir_data, basefile, ' filtered_5-species-cty2-cty.csv')
-
-# Shp files
-filepath_input_biogeo <- 'data/geo_processed/teow/official/wwf_terr_ecos_dissolved.shp'
-filepath_input_biomes <- 'data/geo/0_manual/Ecoregions2017/Ecoregions2017.shp'
-
 # Lookup files
-lookup_cty <- fread('data/lookup/2019-05-29-statoid-country-codes.csv', na=c(''), encoding='UTF-8')
+lookup_cty <- get_lp_statoid()
 lookup_cty_subset <- lookup_cty[prop_area_biogeo_wwf >= 0.6,] # subset for biogeo areas >=.6
-lookup_bm <- fread('data/lookup/2019-10-14-biome-broad-cat.csv', na=c(''), encoding='UTF-8')
+lookup_bm <- get_lp_biome()
 
 # Extra data lookup files 
 filepath_nearest_biome_for_missing <- paste0(dir_data, '/ch2/2019-10-14-nearest-loc.csv')
 # [this process took >3h so it was persisted instead]
-
 
 ####################################################################################################
 
@@ -47,7 +37,7 @@ if (model_params$ll == "Y") { # Using lat/lon
 } else if (model_params$ll == "N") { # Using country distribution
 
     # Using the country distribution dataset if not using lat/lon
-    dat <- fread(filepath_input_regions, na=c(''), encoding='UTF-8')
+    dat <- get_species_country_distribution()
 
 }
 
@@ -91,14 +81,14 @@ if (model_params$dataset == "GL") { # Analyse globally
         if (model_params$dataset %in% c("BG", "BM")) {
 
             # Read shapefile 
-            file_input <- ifelse(model_params$dataset=="BG", filepath_input_biogeo, 
-                ifelse(model_params$dataset=="BM", filepath_input_biomes, ""))
-            shp_grp <- sf::st_read(file_input, quiet=T)
+            if(model_params$dataset=="BG") {
+                shp_grp <- get_shp_biogeo()
+            } else if (model_params$dataset=="BM") {
+                shp_grp <- get_shp_biomes()
+            }
 
             # Create sf object from lat/lon
-            ll <- sf::st_as_sf(join_ll,
-                               coords = c('lon', 'lat'),
-                               crs = "+init=epsg:4326")
+            ll <- st_as_sf(join_ll, coords = c('lon', 'lat'), crs = "+init=epsg:4326")
             rm(join_ll)
 
             # Make spatial join

@@ -3,6 +3,13 @@
 # They are pertaining to EDA for the authors (relevant for Chapter 1).
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+# Set up
+source('2019-06-19-jsa-type/subset.r')
+
+# Parameters
+theme <- theme_minimal()
+
+
 # TODO: 
 # Where are most of the describers? 
 # How many species in author lifetime? How many species per year?
@@ -15,11 +22,6 @@
 
 # Calculate effort it takes to describe all species?
 
-# Set up
-source('2019-06-19-jsa-type/subset.r')
-
-# Parameters
-theme <- theme_minimal()
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - basic summary statistics for taxonomist analysis

@@ -2,7 +2,6 @@
 # This code corresponds to getting the various datasets for my MSc thesis.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-
 # Setup
 source('2019-06-19-jsa-type/init/var.R')
 
@@ -148,6 +147,46 @@ get_n_active_describers_by_year = function() {
      fread(filepath_describers_by_year, 
            integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 }
+
+get_species_country_distribution = function() {
+    filepath_input_regions <- paste0(dir_data, basefile, ' filtered_5-species-cty2-cty.csv')
+    fread(filepath_input_regions, na=c(''), encoding='UTF-8')
+}
+
+########################################################
+
+# Lookup files
+
+get_lp_pop = function() {
+    folder = "data/2020-05-05-population-growth/"
+    filepath = paste0(folder, "WorldPopulationAnnual12000years_interpolated_HYDEandUNto2015.csv")
+    lp_pop = fread(filepath)
+    names(lp_pop) <- c("year", "pop")
+    lp_pop
+}
+
+get_lp_statoid = function() {
+    fread('data/lookup/2019-05-29-statoid-country-codes.csv', na=c(''), encoding='UTF-8')
+}
+
+get_lp_biome = function() {
+    fread('data/lookup/2019-10-14-biome-broad-cat.csv', na=c(''), encoding='UTF-8')
+}
+
+########################################################
+
+# Shapefiles filepath
+
+get_shp_biogeo = function() {
+    filepath_input_biogeo = 'data/geo_processed/teow/official/wwf_terr_ecos_dissolved.shp'
+    st_read(file_input, quiet=T)
+}
+
+get_shp_biomes = function() {
+    filepath_input_biomes = 'data/geo/0_manual/Ecoregions2017/Ecoregions2017.shp'
+
+}
+
 
 
 ########################################################

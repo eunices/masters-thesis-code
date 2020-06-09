@@ -6,16 +6,13 @@ dir_script_ch1 <- '2019-06-19-jsa-type-ch1/'
 
 source(paste0(dir_script, "subset.r"))
 
-# Ancillary datasets
-
-# Lookup
-lp_pop <- fread("data/2020-05-05-population-growth/WorldPopulationAnnual12000years_interpolated_HYDEandUNto2015.csv")
-names(lp_pop) <- c("year", "pop")
-
-
 ####################################################################################################
+# Datasets
 
-# Read datasets
+# Lookup datasets
+lp_pop <- get_lp_pop()
+
+# Other datasets
 print(paste0("Read valid species"))
 df <- get_df1(write=F)
 df <- df[date.n<=2018]
