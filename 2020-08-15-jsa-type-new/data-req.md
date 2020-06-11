@@ -87,7 +87,60 @@ lu = get_lp_statoid()
 
 ## TODO: Identify fields that need to be cleaned
 
-Check clean folder.
+## variables cleaned with new names
+
+### used
+date = date.n
+type.country = type.country.n
+type.country = type.country.n.full (lookup)
+
+### not used
+type.state = type.state.n
+type.state = type.state.n.full
+date.of.type = date.of.type.string
+date.of.type = date.of.type.dd
+date.of.type = date.of.type.mm
+date.of.type = date.of.type.yyyy
+date.of.type = date.of.type.yyyy
+type.repository = type.repository.n_short
+type.repository = type.repository.n_long 
+country.of.type.repository = country.of.type.repository.n_long
+
+## variables cleaned but with old names
+
+
+# TODO:
+### used
+
+
+### not used
+
+
+
+## new variables
+### used
+flag
+source.of.latlon.n
+duplicated.row
+
+N_synonyms
+N_ss
+N_var
+
+### not used
+years.lag
+
+# derived datasets
+
+## used
+### describer dataset
+
+
+## not used
+### collector dataset
+
+# TODO: identify datasets used by ch1-3, 
+# TODO: add those code in here for processing from raw dataset
 
 ## TODO: Identify functions to be reused from cleaning scripts
 
