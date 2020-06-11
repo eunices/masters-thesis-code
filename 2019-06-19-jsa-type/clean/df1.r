@@ -30,11 +30,37 @@ source('2019-06-19-jsa-type/init/init.R')
 #############
 
 
+# Functions
+#############
+
+format_short <- function(x){
+    auths <- strsplit(x, split="; ")[[1]]
+    len <- length(auths)
+    auths <- fn[auths]
+
+    if(len==1) {
+        string <- auths
+    } else if(len==2) {
+        string <- paste0(auths[1], " and ", auths[2])
+    } else if(len>=3) {
+        string <- auths[1]
+        for (i in 2:(len-1)) {
+            string <- paste0(string, ", ", auths[i])
+        }
+        string <- paste0(string, ", and ", auths[len])
+    }
+    string
+}
+
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - clean  journal names
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- clean journal names"))
 
+
+
+# Read data
 filepath <- paste0(dir_data, basefile, " filtered_1-clean.csv")
 dfx1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx1[, names(dfx1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
@@ -43,37 +69,49 @@ filepath <- paste0(dir_data, basefile, " oth_1-clean.csv")
 dfx2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-cols <- c("idx", "genus", "species", "date.n", "author", "paper.type", 
-          "title", "journal", "volume", "issue", "page.numbers.publication")
 
-dfx <- rbind(dfx1[,..cols], dfx2[,..cols])
 
-df_n <- data.table(dfx %>%
-  group_by(date.n, author, title, journal,  volume,  issue, page.numbers.publication) %>%
-  summarise(idxes=paste0(idx, collapse='; ')))
 
-filename_write = paste0(dir_data, "clean/journal_details.csv")
-write.csv(df_n, filename_write, na='', row.names=F, fileEncoding="UTF-8")
+# Clean journal names
+# # Create journal dataset for cleaning
+# cols <- c("idx", "genus", "species", "date.n", "author", "paper.type", 
+#           "title", "journal", "volume", "issue", "page.numbers.publication")
+# dfx <- rbind(dfx1[,..cols], dfx2[,..cols])
 
+# df_n <- data.table(dfx %>%
+#   group_by(date.n, author, title, journal,  volume,  issue, page.numbers.publication) %>%
+#   summarise(idxes=paste0(idx, collapse='; ')))
+# filename_write = paste0(dir_data, "clean/journal_details.csv")
+# write.csv(df_n, filename_write, na='', row.names=F, fileEncoding="UTF-8")
+
+# Merge results back
 filename_journal <- paste0(dir_data, "clean/journal_names_edit.csv")
 df_n <- fread(filename_journal, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 df_n <- df_n[, c("journal_new", "idxes")]
-
 df_n <- df_n %>% separate_rows(idxes)
 
+# Merge back for valid species
 dfx1 <- merge(dfx1, df_n, by.x='idx', by.y='idxes', all.x=T, all.y=F)
 dfx1$journal <- dfx1$journal_new
 dfx1$journal_new <- NULL
 
+# Merge back for non-valid species
 dfx2 <- merge(dfx2, df_n, by.x='idx', by.y='idxes', all.x=T, all.y=F)
 dfx2$journal <- dfx2$journal_new
 dfx2$journal_new <- NULL
 
+
+
+
+# Write data
 filename_dfx1 = paste0(dir_data, basefile, " filtered_4.0-clean-journals.csv")
 write.csv(dfx1[order(as.numeric(idx))], filename_dfx1, na='', row.names=F, fileEncoding="UTF-8")
 
 filename_dfx2 = paste0(dir_data, basefile, " oth_4.0-clean-journals.csv")
 write.csv(dfx2[order(as.numeric(idx))], filename_dfx2, na='', row.names=F, fileEncoding="UTF-8")
+
+
+
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - clean journal fields
@@ -81,6 +119,9 @@ write.csv(dfx2[order(as.numeric(idx))], filename_dfx2, na='', row.names=F, fileE
 print(paste0(Sys.time(), " --- clean other publication fields"))
 # "publication.type", "country.of.publication", "city.of.publication", "paper.authors"
 
+
+
+# Read data
 filename_dfx1 <- paste0(dir_data, basefile, " filtered_4.0-clean-journals.csv")
 dfx1 <- fread(filename_dfx1, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx1[, names(dfx1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
@@ -89,7 +130,11 @@ filename_dfx2 <- paste0(dir_data, basefile, " oth_4.0-clean-journals.csv")
 dfx2 <- fread(filename_dfx2, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
-# # Iterative cleaning process
+
+
+
+# Clean publications
+# # Create publications dataset
 # filepath <- paste0(dir_data, basefile, " pub_1.0-clean3.csv")
 # auth <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')
 # auth[, names(auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
@@ -105,6 +150,7 @@ dfx2[, names(dfx2) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))]
 # write.csv(auth, filename_write2, na='', row.names=F, fileEncoding="UTF-8")
 # # = old name journal_details*.csv
 
+# Merge back info
 filename_read2 <- paste0(dir_data, basefile, " pub_1.0-clean.csv")
 auth <- fread(filename_read2, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 auth[, names(auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
@@ -116,6 +162,7 @@ auth2$volume <- gsub("^'*", "", (gsub("^'*", "", auth2$volume)))
 auth2$issue <- gsub("^'*", "", (gsub("^'*", "", auth2$issue)))
 auth2$page.numbers.publication <- gsub("^'*", "",(gsub("^'*", "", auth2$page.numbers.publication)))
 
+# Merge back for valid species
 dfx1 <- merge(dfx1, auth2, all.x=T, all.y=F, by.x='idx', by.y='idxes',
               suffixes=c("", "_new"))
 
@@ -143,6 +190,7 @@ dfx1[!is.na(city.of.publication_new)]$city.of.publication <- dfx1[!is.na(city.of
 dfx1[!is.na(paper.authors_new)]$paper.authors <- dfx1[!is.na(paper.authors_new)]$paper.authors_new; dfx1$paper.authors_new <- NULL
 dim(dfx1)
 
+# Merge back for non-valid species
 dfx2 <- merge(dfx2, auth2, all.x=T, all.y=F, by.x='idx', by.y='idxes', suffixes=c("", "_new"))
 
 table(is.na(dfx2$author_new))
@@ -168,7 +216,10 @@ dfx2[!is.na(country.of.publication_new)]$country.of.publication <- dfx2[!is.na(c
 dfx2[!is.na(city.of.publication_new)]$city.of.publication <- dfx2[!is.na(city.of.publication_new)]$city.of.publication_new; dfx2$city.of.publication_new <- NULL
 dfx2[!is.na(paper.authors_new)]$paper.authors <- dfx2[!is.na(paper.authors_new)]$paper.authors_new; dfx2$paper.authors_new <- NULL
 
-# Row-based changes
+
+
+
+# Manual edits
 dfx2[idx=="21229", ]$author <- 'Linnaeus'
 dfx2[idx=="22983", ]$author <- 'Verhoeff [C.]'
 dfx2[idx=="23832", ]$author <- 'Evans [W.]'
@@ -183,16 +234,22 @@ dfx2[idx=="33101", ]$author <- 'Cockerell'
 
 dfx1$idxes <- gsub(';$', '', dfx$idxes)
 
+# *TODO: Missing records
+auth[author=="Yasumatsu" & date.n=="1937"]
+dfx2[idx==23428][,c("genus", "species", "author.date")]
+dfx2[idx==23429][,c("genus", "species", "author.date")]
+
+
+
+
+# Write data
 filename_write = paste0(dir_data, basefile, " filtered_4.1-clean-journals_species.csv")
 write.csv(dfx1, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
 filename_write = paste0(dir_data, basefile, " oth_4.1-clean-journals_species.csv")
 write.csv(dfx2, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
-# *TODO: Missing records
-auth[author=="Yasumatsu" & date.n=="1937"]
-dfx2[idx==23428][,c("genus", "species", "author.date")]
-dfx2[idx==23429][,c("genus", "species", "author.date")]
+
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -200,6 +257,9 @@ dfx2[idx==23429][,c("genus", "species", "author.date")]
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- ensuring author name and full name are consistent"))
 
+
+
+# Read data
 filepath <- paste0(dir_data, basefile, " filtered_4.1-clean-journals_species.csv")
 dfx1 <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 dfx1[, names(dfx1) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
@@ -212,6 +272,9 @@ filepath <- paste0(dir_data, "clean/missing_authors_edit.csv")
 auth <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 auth[, names(auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
+
+# Update full name of describers with the lookup table missing_authors_edit.csv
+# For valid species
 dfx1 <- merge(dfx1, auth, by="author", all.x=T, all.y=F, suffixes=c("", "_new"))
 table(is.na(dfx1$full.name.of.describer_new))
 dfx1 <- data.table(dfx1)
@@ -219,6 +282,7 @@ dfx1 <- data.table(dfx1)
 dfx1$full.name.of.describer <- dfx1$full.name.of.describer_new
 dfx1$full.name.of.describer_new <- NULL
 
+# For non-valid species
 dfx2 <- merge(dfx2, auth, by="author", all.x=T, all.y=F, suffixes=c("", "_new"))
 table(is.na(dfx2$full.name.of.describer_new))
 dfx2 <- data.table(dfx2)
@@ -226,7 +290,9 @@ dfx2 <- data.table(dfx2)
 dfx2$full.name.of.describer <- dfx2$full.name.of.describer_new
 dfx2$full.name.of.describer_new <- NULL
 
-# Row-based changes
+
+
+# Manual changes
 dfx1[idx==14019]$author = "Sakagami and Ebmer"
 dfx1[idx==14019]$full.name.of.describer = "Andreas Werner Ebmer; Yasuo Maeta"
 dfx1[idx==15197]$author = "Astafurova and Proshchalykin"
@@ -251,30 +317,14 @@ dfx2[idx %in% c(29157, 29158)]$full.name.of.describer = "Bronislaw Debski"
 dfx2[idx == 30619]$full.name.of.describer = "James R. Baker"
 dfx2[idx == 22956]$full.name.of.describer = "G. Trautmann; Woldemar Trautmann"
 
+
+
+
 # Clean short names from full names
 filepath <- paste0(dir_data, "clean/last_name.csv")
 ln <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 fn <- ln$last.name
 names(fn) <- ln$full.name.of.describer.n
-
-format_short <- function(x){
-    auths <- strsplit(x, split="; ")[[1]]
-    len <- length(auths)
-    auths <- fn[auths]
-
-    if(len==1) {
-        string <- auths
-    } else if(len==2) {
-        string <- paste0(auths[1], " and ", auths[2])
-    } else if(len>=3) {
-        string <- auths[1]
-        for (i in 2:(len-1)) {
-            string <- paste0(string, ", ", auths[i])
-        }
-        string <- paste0(string, ", and ", auths[len])
-    }
-    string
-}
 
 authors_redone <- lapply(dfx1$full.name.of.describer, format_short)
 authors_redone <- as.data.frame(do.call(rbind, authors_redone), stringsAsFactors=F)
@@ -288,17 +338,29 @@ names(authors_redone) <- "x"
 authors_redone$x <- as.character(authors_redone$x)
 dfx2$author <- authors_redone$x
 
+
+
+
+# Write data
 filename_write = paste0(dir_data, basefile, " filtered_4.2-clean-auth-full-name.csv")
 write.csv(dfx1, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
 filename_write = paste0(dir_data, basefile, " oth_4.2-clean-auth-full-name.csv")
 write.csv(dfx2, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
+
+
+
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - count number of species in publication
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- count number of species in publication"))
 
+
+
+
+# Read data
 filename <- paste0(dir_data, basefile, " pub_1.0-clean.csv")
 auth <- fread(filename, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 auth[, names(auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
@@ -312,6 +374,10 @@ filename <- paste0(dir_data, basefile, " oth_4.2-clean-auth-full-name.csv")
 dfx2 <- fread(filename, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')[, ..cols]
 dfx2$idx <- as.numeric(dfx2$idx)
 
+
+
+
+# Calculate publication-related metrics
 max0 <- max(dfx1$idx)
 min1 <- min(dfx2[status=="Synonym"]$idx); max1 <- max(dfx2[status=="Synonym"]$idx)
 min2 <- min(dfx2[status=="Valid subspecies"]$idx); max2 <- max(dfx2[status=="Valid subspecies"]$idx)
@@ -329,5 +395,9 @@ summarise <- auth2[, list(idxes=paste0(idxes,collapse='; '),
         by=c("date.n", "author", "title", "journal", "volume", "issue", "page.numbers.publication", 
              "paper.type", "country.of.publication", "city.of.publication", "paper.authors")]
 
+
+
+
+# Write data
 filename_write = paste0(dir_data, basefile, " pub_2.0-metrics.csv")
 write.csv(summarise, filename_write, na='', row.names=F, fileEncoding="UTF-8")

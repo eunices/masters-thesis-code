@@ -133,17 +133,19 @@ years.lag
 # derived datasets
 
 ## used only for cleaning purposes
-lat-lon-edit.csv for initial cleaned lat/lon
-df-state-check_edit.csv for correspondence of lat/lon to country/state
-df-geocoded_edit.csv for new geocoded lat/lon
-df-check-state2_edit.csv to add country/state for those with lat/lon but no country/state
+lat-lon-edit.csv for initial cleaned lat/lon*
+df-state-check_edit.csv for correspondence of lat/lon to country/state*
+df-geocoded_edit.csv for new geocoded lat/lon*
+df-check-state2_edit.csv to add country/state for those with lat/lon but no country/state*
 
-check-type-repo2_edit.csv for repositories
+check-type-repo2_edit.csv for repositories*
 
-date_discrepancy.csv for years.lag <0
-missing_authors_edit.csv for missing authors
+date_discrepancy.csv for years.lag <0*
+missing_authors_edit.csv for missing authors*
 
+idx-idx_original.csv which is the coloured version of excel converted into csv
 
+journal_names_edit.csv for journal names
 
 
 ## used
