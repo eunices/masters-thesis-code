@@ -15,7 +15,8 @@ print(paste0(Sys.time(), " --- cleaning repository"))
 # Read data
 filepath <- paste0(dir_data, basefile, '-idx-1-geocoded.csv')
 df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+# fread does not escape double quotes
 
 
 
@@ -23,7 +24,8 @@ df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread doe
 # Clean repository
 filepath <- paste0(dir_data, "clean/check-type-repo2_edit.csv")
 edit <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+# fread does not escape double quotes
 
 # !CHECK
 dim(edit[country.of.type.repository.n_short != "[unknown]"][

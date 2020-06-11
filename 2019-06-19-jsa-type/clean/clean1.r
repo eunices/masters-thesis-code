@@ -163,7 +163,7 @@ df$cty.state <- NULL
 
 
 
-# Incorporate manually cleaned lat and lon, and flag
+# Incorporate manually cleaned lat and lon from initial cleaning script
 filepath <- paste0(dir_data, 'clean/lat-lon-edit.csv')
 ll <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 ll <- ll[, c("idx", "lat", "lon", "type.country.n", "type.state.n", "flag")]
