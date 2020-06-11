@@ -37,7 +37,7 @@ if (model_params$ll == "Y") { # Using lat/lon
 } else if (model_params$ll == "N") { # Using country distribution
 
     # Using the country distribution dataset if not using lat/lon
-    dat <- get_species_country_distribution()
+    dat <- get_dis()
 
 }
 

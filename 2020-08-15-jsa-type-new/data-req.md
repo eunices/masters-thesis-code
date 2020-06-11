@@ -32,7 +32,7 @@ df_describers = get_des(write=F)
 #### prep1.r
 df = get_df1(write=F)
 
-dat = get_species_country_distribution()
+dat = get_dis()
 shp_grp = get_shp_biogeo()
 shp_grp = get_shp_biomes()
 
@@ -81,7 +81,6 @@ dat = get_species_denormalised()
 lu = get_lp_statoid()
 
 #### data-un.r
-
 lu = get_lp_statoid()
 
 

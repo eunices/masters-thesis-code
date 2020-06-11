@@ -142,17 +142,17 @@ if (to_subset=="Y") {
 # Non "subset_df" datasets
 # These are not in the ERD, but are derived datasets nonetheless used
 
+get_raw_data = function() {
+    file = "-idx.csv"
+    filepath = paste0(dir_data, basefile, file)
+    fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+}
+
 get_n_active_describers_by_year = function() {
     file = " describers_6.0-active-by-year.csv"
     filepath_describers_by_year <- paste0(dir_data, basefile, file)
-     fread(filepath_describers_by_year, 
-           integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-}
-
-get_species_country_distribution = function() {
-    file = ' filtered_5-species-cty2-cty.csv'
-    filepath_input_regions <- paste0(dir_data, basefile, file)
-    fread(filepath_input_regions, na=c(''), encoding='UTF-8')
+    fread(filepath_describers_by_year, integer64='character', 
+          na.strings=c('', 'NA'), encoding='UTF-8')
 }
 
 get_describer_network = function() {
