@@ -10,13 +10,16 @@ source('2019-06-19-jsa-type/clean/functions.R')
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- describer raw dataset"))
 
-filepath <- paste0(dir_data, basefile, " oth_4.3-clean-coll.csv")
-df_s <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 
-filepath <- paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv")
-df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
 
+# Read data
+df <- read_escaped_data(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"))
+df_s <- read_escaped_data(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"))
+
+
+
+
+# Subset data
 describer_cols <- c("idx", "author", "full.name.of.describer", "describer.gender",
                     "dob.describer", "dod.describer", "origin.country.describer",
                     "residence.country.describer", "institution.of.describer")
@@ -25,17 +28,26 @@ describers_info_valid_species <- df[,..describer_cols]
 describers_info_synonyms <- df_s[,..describer_cols]
 describers_info <- rbind(describers_info_valid_species, describers_info_synonyms)
 
+
+
+
+# Write data
 filename_write = paste0(dir_data, basefile, " describers_1.0-all.csv")
 write.csv(describers_info[order(author)], filename_write, na='', row.names=F, fileEncoding="UTF-8")
+
+
+
+
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section -  individual author species rows 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': individual author species rows"))
 
-filename_read = paste0(dir_data, basefile, " describers_1.0-all.csv")
-describers_info <- fread(filename_read, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-describers_info[, names(describers_info) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape 
+
+
+# Read data
+describers_info = read_escaped_data(paste0(dir_data, basefile, " describers_1.0-all.csv"))
 
 # A loop was written because currently this doesn't really work!~
 # describers <- describers_info %>% separate_rows(full.name.of.describer, 
@@ -45,116 +57,36 @@ describers_info[, names(describers_info) := lapply(.SD, function(x) gsub('\\"\\"
 #                                                 institution.of.describer, 
 #                                                 sep=";|,", convert=T)
 
+
+
+
 # # =================
 # # DONE ONCE ONLY ##
 # # =================
 
-# Split authors by ;
-split_semicolon <- function(x) {
-    strsplit(x, "; ")
-}
-split_gender <- function(x) {
-    strsplit(x, "")
-}
-
-run_loop <- function() {
-    describers_info$full.name.of.describer.n <- 
-        lapply(describers_info$full.name.of.describer, split_semicolon)
-    describers_info$describer.gender.n <-
-        lapply(describers_info$describer.gender, split_gender)
-    describers_info$dob.describer.n <- 
-        lapply(describers_info$dob.describer, split_semicolon)
-    describers_info$dod.describer.n <- 
-        lapply(describers_info$dod.describer,split_semicolon)
-    describers_info$origin.country.describer.n <- 
-        lapply(describers_info$origin.country.describer,split_semicolon)
-    describers_info$residence.country.describer.n <- 
-        lapply(describers_info$residence.country.describer, split_semicolon)
-    describers_info$institution.of.describer.n <- 
-        lapply(describers_info$institution.of.describer, split_semicolon)
-
-    # Create a new row for each author
-    describers <- data.frame(idx=character(), full.name.of.describer.n=character(),
-                            describer.gender.n=character(), dob.describer.n=character(),
-                            dod.describer.n=character(), origin.country.describer.n=character(),
-                            residence.country.describer.n=character(), 
-                            institution.of.describer.n=character(),
-                            author.order=integer())
-    n_rows <- dim(describers_info)[1]
-    for (i in 1:n_rows) {
-    # for (i in 1:2) {
-        idx_row <- describers_info[i]$idx
-        describer_row <- describers_info[i]$full.name.of.describer.n[[1]][[1]]
-        gender_row <- describers_info[i]$describer.gender.n[[1]][[1]]
-        dob_row <- describers_info[i]$dob.describer.n[[1]][[1]]
-        dod_row <- describers_info[i]$dod.describer.n[[1]][[1]]
-        origin_row <- describers_info[i]$origin.country.describer.n[[1]][[1]]
-        residence_row <- describers_info[i]$residence.country.describer.n[[1]][[1]]
-        inst_row <- describers_info[i]$institution.of.describer.n[[1]][[1]]
-
-        if(!identical(describer_row, character(0))){
-            for (j in 1:length(describer_row)) {
-                if(is.na(describer_row[j])) {
-                    to_merge <- data.frame(idx=idx_row, full.name.of.describer.n=NA,
-                            describer.gender.n=NA, dob.describer.n=NA,
-                            dod.describer.n=NA, origin.country.describer.n=NA,
-                            residence.country.describer.n=NA, institution.of.describer.n=NA,author.order=NA)
-                } else {
-
-                    gender <- ifelse(is.na(gender_row[j]) || identical(gender_row[j], logical(0)) , NA, gender_row[j])
-                    dob <- ifelse(is.na(dob_row[j]) || identical(dob_row[j], logical(0)), NA, dob_row[j])
-                    dod <- ifelse(is.na(dod_row[j]) || identical(dod_row[j], logical(0)), NA, dod_row[j])
-                    origin <- ifelse(is.na(origin_row[j]) || identical(origin_row[j], logical(0)), NA, origin_row[j])
-                    residence <- ifelse(is.na(residence_row[j]) || identical(residence_row[j], logical(0)), NA, residence_row[j])
-                    inst <- ifelse(is.na(inst_row[j]) || identical(inst_row[j], logical(0)), NA, inst_row[j])
-                    order <- ifelse(j==1, 1, 
-                        ifelse(j==length(describer_row) & length(describer_row) != 2, "L", 
-                            ifelse(j==length(describer_row) & length(describer_row) == 2, "S", j)))
-
-                    to_merge <- data.frame(idx=idx_row,
-                                        full.name.of.describer.n=describer_row[j],
-                                        describer.gender.n=gender,
-                                        dob.describer.n=dob,
-                                        dod.describer.n=dod,
-                                        origin.country.describer.n=origin,
-                                        residence.country.describer.n=residence,
-                                        institution.of.describer.n=inst,
-                                        author.order=order)
-                    describers <- rbind(describers, to_merge)
-                }
-            }
-        } else {
-            to_merge <- data.frame(idx=idx_row, full.name.of.describer.n=NA,
-                            describer.gender.n=NA, dob.describer.n=NA,
-                            dod.describer.n=NA, origin.country.describer.n=NA,
-                            residence.country.describer.n=NA, institution.of.describer.n=NA,
-                            author.order=NA)
-            describers <- rbind(describers, to_merge)
-        }
-        percent <- round(i/n_rows*100, 2)
-        if(percent %% 10 == 0) {
-            print(paste0(percent , "% completed"))
-        }
-    }
-    describers
-}
-
 if (loop_3=='Y') {
-    describers <- run_loop()
-    describers <- data.table(describers)
+
+    # Split data
+    describers <- data.table(run_describer_split_loop())
+
+    # Clean dob
     describers$dob.describer.n <- gsub("[^0-9]", "", describers$dob.describer.n)
     describers$dob.describer.n <- as.numeric(describers$dob.describer.n)
     describers[dob.describer.n>3000]$dob.describer.n <- NA
 
+    # Clean dod
     describers$dod.describer.n <- gsub("[^0-9]", "", describers$dod.describer.n)
     describers$dod.describer.n <- as.numeric(describers$dod.describer.n)
     describers[dob.describer.n>3000]$dob.describer.n <- NA
 
+    # Clean gender
     describers[!describer.gender.n %in% c("M", "F", "U")]$describer.gender.n <- ""
 
+    # Remove digits from institution
     describers$institution.of.describer.n <- gsub("[[:digit:]]", "", 
         describers$institution.of.describer.n)
 
+    # Write data
     filename_write = paste0(dir_data, basefile, " describers_2.0-denormalised.csv")
     write.csv(describers, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 }

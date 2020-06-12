@@ -148,6 +148,9 @@ journal_names_edit.csv for journal names
 
 collectors_2.0-denormalised_edit4.csv to clean collectors which is fed back into the main collector file
 
+describer_edits.csv for edited describers
+
+last_name.csv for last names
 
 
 ## used

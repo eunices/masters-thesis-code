@@ -3,32 +3,38 @@
 # This code is for creating the describer dataset with details.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+source('2019-06-19-jsa-type/clean/functions.R')
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - summarizing describer information
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': summarizing describer information"))
 
-filename_read <- paste0(dir_data, basefile, " oth_1-clean.csv")
-synonyms <- fread(filename_read, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+
+
+# Get synonyms idxes
+synonyms <- read_escaped_data(paste0(dir_data, basefile, " oth_1-clean.csv"))
 synonym_idxes <- synonyms[status=="Synonym",]$idx
 subsp_idxes <- synonyms[status=="Valid subspecies",]$idx
 var_idxes <- synonyms[status=="Infrasubspecific",]$idx
 rm(synonyms)
 
-filepath <- paste0(dir_data, basefile, " describers_3.0-by-author.csv")
-cols <- c("idx_auth", "full.name.of.describer.n", "describer.gender.n", "dob.describer.n",
+
+
+# Read data
+describers_template <- read_escaped_data(paste0(dir_data, basefile, " describers_3.0-by-author.csv"))
+cols <- c("idx_auth", "full.name.of.describer.n", 
+          "describer.gender.n", "dob.describer.n",
           "dod.describer.n", "alive", "origin.country.describer.n", 
           "residence.country.describer.n", "institution.of.describer.n")
-describers_template <- fread(filepath, na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[
-    ,..cols]
-describers_template[, names(describers_template) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+describers_template <- describers_template[ ,..cols]
 
-filename_read = paste0(dir_data, basefile, " describers_4.0-denormalised2.csv")
-describers_all <- fread(filename_read, na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
-describers_all[, names(describers_all) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+describers_all = read_escaped_data(paste0(dir_data, basefile, " describers_4.0-denormalised2.csv"))
 
-# For non-synonyms
+
+
+
+# Calculate metrics for non-synonyms
 describers <- describers_all[!idxes %in% c(synonym_idxes, subsp_idxes, var_idxes)]
 describers <- describers[date.n<=2018,]
 describers[, ns_max:=max(date.n, na.rm=T), by="idx_auth"]
@@ -45,7 +51,10 @@ cols <- c("idx_auth", "full.name.of.describer.n",
           "ns_spp_N_not_1st_auth", "ns_spp_N_lst_auth", "ns_spp_idxes")
 describers <- data.table(unique(describers[,..cols]))
 
-# All
+
+
+
+# Calculate metrics for all
 describers_a <- describers_all[]
 describers_a <- describers_a[date.n<=2018,]
 describers_a[, max:=max(date.n, na.rm=T), by="idx_auth"]
@@ -61,7 +70,10 @@ cols <- c("idx_auth", "full.name.of.describer.n",
           "spp_N_not_1st_auth", "spp_N_lst_auth", "spp_idxes")
 describers_a <- data.table(unique(describers_a[,..cols]))
 
-# Synonyms
+
+
+
+# Calculate metrics for synonyms
 describers_s <- describers_all[idxes %in% synonym_idxes]
 describers_s <- describers_s[date.n<=2018,]
 describers_s[, syn_max:=max(date.n, na.rm=T), by="idx_auth"]
@@ -107,7 +119,10 @@ describers[alive=="Y"]$max_corrected <- "2018"
 describers$ns_max_corrected <- describers$ns_max
 describers[alive=="Y"]$ns_max_corrected <- "2018"
 
-# Metrics
+
+
+
+# Other metrics
 describers$years_active <- as.numeric(describers$max_corrected) - as.numeric(describers$min) +1
 describers$years_alive <- as.numeric(describers$dod.describer.n) - as.numeric(describers$dob.describer.n) + 1
 describers$years_discrepancy <- describers$years_alive - describers$years_active
@@ -123,7 +138,10 @@ describers$prop_species_as_1st_author_s <- round(describers$spp_N_1st_auth_s
 describers$prop_species_syn <- round(describers$syn_spp_N
 / describers$spp_N,2)
 
-# countries
+
+
+
+# Clean countries
 describers.origin.cty <- data.table(describers[,c("idx_auth", "origin.country.describer.n")] %>%
     separate_rows(origin.country.describer.n), " ")[order(as.numeric(idx_auth))] # technically no need for this
 describers.res.cty <- data.table(describers[,c("idx_auth", "residence.country.describer.n")] %>% 
@@ -172,14 +190,18 @@ describers_final <- merge(describers_final, describers.res.cty.grp,
 describers_final <- merge(describers_final, describers.res.cty.first,
                           by='idx_auth', all.x=T, all.y=F)
 
-# Count pub/author metrics
-pub <- fread(paste0(dir_data, basefile, " pub_1.0-clean.csv"), 
-             na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
-df1 <- fread(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"),
-             na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
-df2 <- fread(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"),
-             na.strings=c('', 'NA'), encoding="UTF-8", quote='"')[,c("idx", "full.name.of.describer")]
 
+
+
+# Other metrics: count pub/author metrics
+
+# Read ata
+pub <- read_escaped_data(paste0(dir_data, basefile, " pub_1.0-clean.csv"))
+df1 <- read_escaped_data(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"))
+df2 <- read_escaped_data(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"))[
+    ,c("idx", "full.name.of.describer")]
+
+# Process data
 pubs <- pub %>% separate_rows(idxes)
 df <- rbind(df1, df2)
 df$full.name.of.describer <- gsub('\\"\\"', '\\"', df$full.name.of.describer)
@@ -195,11 +217,10 @@ df_sp_per_pub$date.pub <- paste0(df_sp_per_pub$date.n, " (", df_sp_per_pub$N, ")
 author_ss <- df_sp_per_pub[, list(spp_per_pub_mean=mean(N),
                                   spp_per_pub_sd=sd(N),
                                   n_pubs=.N, 
-                                  pub_years =paste0(sort(date.pub), 
-                                                   collapse= "; ")),
+                                  pub_years =paste0(sort(date.pub), collapse= "; ")),
                                  , by="full.name.of.describer"]
-describers_final$full.name.of.describer.n <- gsub('\\"\\"', '\\"', 
-                                                  describers_final$full.name.of.describer.n)
+describers_final$full.name.of.describer.n <- 
+    gsub('\\"\\"', '\\"', describers_final$full.name.of.describer.n)
                                                   
 describers_final <- merge(describers_final, author_ss, 
                           by.x="full.name.of.describer.n",
@@ -223,16 +244,20 @@ author_ss2 <- df_sp_per_pub2[pub_yr_cat != "",
                                   n_spp=sum(N),
                                   n_pubs=.N),
                                 by=c("full.name.of.describer", "pub_yr_cat")]
-head(author_ss2)
 authors_ss2 <- dcast(author_ss2, full.name.of.describer  ~ pub_yr_cat,
                      value.var=c("spp_per_pub_mean", "spp_per_pub_sd", "n_spp", "n_pubs"))
 
+# Merge back info
 describers_final <- merge(describers_final, authors_ss2, 
                           by.x="full.name.of.describer.n",
                           by.y="full.name.of.describer", all.x=T, all.y=F)
 
-ln <- fread(paste0(dir_data, "clean/last_name.csv"), na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
-ln[, names(ln) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+
+
+
+# Clean last name
+# Read last name data
+ln <- read_escaped_data(paste0(dir_data, "clean/last_name.csv"))
 ln <- ln[, c("full.name.of.describer.n", "last.name", "last.name.no.initials")]
 
 describers_final <- merge(describers_final, ln, by="full.name.of.describer.n", all.x=T, all.y=F)
@@ -242,10 +267,20 @@ setcolorder(describers_final, c(2, 1, 3:length(names(describers_final))))
 # 2. for those containing special characters, get second last word
 # 3. for those with duplicated surname, abbrev. name and add in sq brackets
 
+
+
+
+
 # Quick fixes
 cockerell <- 
     strsplit(describers_final[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$spp_idxes, ", ")[[1]]
 cockerell <- data.frame(cockerell_idx=cockerell)
+
+
+
+
+
+# Write data
 filename_write = paste0(dir_data, basefile, " describers_5.0-describers-final-cockerell.csv")
 write.csv(cockerell, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 

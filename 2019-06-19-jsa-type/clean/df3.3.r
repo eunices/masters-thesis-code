@@ -10,23 +10,37 @@ source('2019-06-19-jsa-type/clean/functions.R')
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- 'describers': further denormalization of data with cleaned describer data"))
 
-filepath <- paste0(dir_data, basefile, " describers_3.0-by-author.csv")
-describers <- fread(filepath, na.strings=c('', 'NA'), encoding="UTF-8", quote='"')
-describers[, names(describers) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
+
+
+# Read data
+describers <- read_escaped_data(paste0(dir_data, basefile, " describers_3.0-by-author.csv"))
+
+
 
 # Denormalization
 describers <- describers %>% separate_rows(idxes, idxes_author.order)
 
+
+
+
 # Joining with dates
-filepath <- paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv")
-dfx1 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-filepath <- paste0(dir_data, basefile, " oth_4.3-clean-coll.csv")
-dfx2 <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-dfx <- rbind(dfx1[,c("idx", "date.n")], dfx2[,c("idx", "date.n")])
+dfx1 <- read_escaped_data(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"))
+dfx2 <- read_escaped_data(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"))
+
+# Combine data with relevant columns
+cols = c("idx", "date.n")
+dfx <- rbind(dfx1[, ..cols], dfx2[, ..cols])
 dfx <- dfx[!duplicated(idx)]
 dfx$idx <- as.numeric(dfx$idx)
 describers$idxes <- as.numeric(describers$idxes)
+
+# Merge
 describers <- merge(describers, dfx, by.x="idxes", by.y="idx", all.x=T, all.y=F)
 
+
+
+
+
+# Write data
 filename_write = paste0(dir_data, basefile, " describers_4.0-denormalised2.csv")
 write.csv(describers, filename_write, na='', row.names=F, fileEncoding="UTF-8")
