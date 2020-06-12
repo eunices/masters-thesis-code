@@ -226,7 +226,7 @@ write.csv(dfx2, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - ensuring author name and full name are consistent
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- ensuring author name and full name are consistent"))
+print(paste0(Sys.time(), " --- check auth short & full name consistent"))
 
 
 
