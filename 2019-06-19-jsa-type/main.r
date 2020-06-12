@@ -17,7 +17,7 @@ dir_script_td <- "2019-06-19-jsa-type/"
 # Cleaning/ data wrangling scripts
 source(paste0(dir_script_td, 'init/init.R'))    # initialise libraries, util, variables
 source(paste0(dir_script_td, 'clean/clean.r'))  # cleaning
-source(paste0(dir_script_td, 'df/df.r'))     # derived datasets
+source(paste0(dir_script_td, 'df/df.r'))        # derived datasets
 rm(list=ls())
 
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")

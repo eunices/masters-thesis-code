@@ -1,6 +1,9 @@
 # Information about code:
 # This code corresponds to cleaning code for my MSc thesis.
 # A series of other codes are named as clean1|2|3|4|5|6.r
+# The scope of these scripts include making the data consistent &
+# denormalising the tables (e.g. creating describer, collector, 
+# non-valid species, publications tables)
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 print("")

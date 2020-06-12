@@ -1,6 +1,7 @@
 # Information about code:
 # This code corresponds to cleaning code for my MSc thesis.
-# A series of other codes are named as clean1|2|3|4.r
+# A series of other codes named as df1|df2.r
+# These code converts the denormalised data into derived datasets.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 print("")

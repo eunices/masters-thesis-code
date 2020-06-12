@@ -1,7 +1,7 @@
 # Variables
 dir_data <- 'data/2019-05-23-ascher-bee-data/'
 
-version = "v2" # data version
+version = "v1" # data version
 # v1 on 2019-05-23
 
 # Output data
