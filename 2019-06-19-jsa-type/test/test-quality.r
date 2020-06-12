@@ -23,7 +23,7 @@ flag <- rbind(
     data.frame(table(spp2[status=="Synonym" & date.n <= 2018 & duplicated.row=="FALSE"]$source.of.latlon.n)))
 
 write.csv(flag,
-          paste0(dir_data, "test/2019-09-22-type-data-quality2.csv"), 
+          paste0(dir_data_raw, "test/2019-09-22-type-data-quality2.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -39,7 +39,7 @@ df_ll <- df_ll[!(is.na(lat) | is.na(lon)) &
 y <- dim(df_ll); round(y/x*100, 2)
 
 write.csv(df_ll[order(as.numeric(idx))], 
-          paste0(dir_data, "test/2019-09-26-lat-lon.csv"), 
+          paste0(dir_data_raw, "test/2019-09-26-lat-lon.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
 

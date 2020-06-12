@@ -13,7 +13,7 @@ print(paste0(Sys.time(), " --- 'describers': summarizing describer information")
 
 
 # Get synonyms idxes
-synonyms <- read_escaped_data(paste0(dir_data, basefile, " oth_1-clean.csv"))
+synonyms <- read_escaped_data(paste0(dir_data_raw, basefile, " oth_1-clean.csv"))
 synonym_idxes <- synonyms[status=="Synonym",]$idx
 subsp_idxes <- synonyms[status=="Valid subspecies",]$idx
 var_idxes <- synonyms[status=="Infrasubspecific",]$idx
@@ -22,14 +22,14 @@ rm(synonyms)
 
 
 # Read data
-describers_template <- read_escaped_data(paste0(dir_data, basefile, " describers_3.0-by-author.csv"))
+describers_template <- read_escaped_data(paste0(dir_data_raw, basefile, " describers_3.0-by-author.csv"))
 cols <- c("idx_auth", "full.name.of.describer.n", 
           "describer.gender.n", "dob.describer.n",
           "dod.describer.n", "alive", "origin.country.describer.n", 
           "residence.country.describer.n", "institution.of.describer.n")
 describers_template <- describers_template[ ,..cols]
 
-describers_all = read_escaped_data(paste0(dir_data, basefile, " describers_4.0-denormalised2.csv"))
+describers_all = read_escaped_data(paste0(dir_data_raw, basefile, " describers_4.0-denormalised2.csv"))
 
 
 
@@ -196,9 +196,9 @@ describers_final <- merge(describers_final, describers.res.cty.first,
 # Other metrics: count pub/author metrics
 
 # Read ata
-pub <- read_escaped_data(paste0(dir_data, basefile, " pub_1.0-clean.csv"))
-df1 <- read_escaped_data(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"))
-df2 <- read_escaped_data(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"))
+pub <- read_escaped_data(paste0(dir_data_raw, basefile, " pub_1.0-clean.csv"))
+df1 <- read_escaped_data(paste0(dir_data_raw, basefile, " filtered_4.3-clean-coll.csv"))
+df2 <- read_escaped_data(paste0(dir_data_raw, basefile, " oth_4.3-clean-coll.csv"))
 
 # Process data
 pubs <- pub %>% separate_rows(idxes)
@@ -257,7 +257,7 @@ describers_final <- merge(describers_final, authors_ss2,
 
 # Clean last name
 # Read last name data
-ln <- read_escaped_data(paste0(dir_data, "clean/last_name.csv"))
+ln <- read_escaped_data(paste0(dir_data_raw_clean, "last_name.csv"))
 ln <- ln[, c("full.name.of.describer.n", "last.name", "last.name.no.initials")]
 
 describers_final <- merge(describers_final, ln, by="full.name.of.describer.n", all.x=T, all.y=F)
@@ -281,16 +281,16 @@ cockerell <- data.frame(cockerell_idx=cockerell)
 
 
 # Write data
-filename_write = paste0(dir_data, basefile, " describers_5.0-describers-final-cockerell.csv")
+filename_write = paste0(dir_data_raw, basefile, " describers_5.0-describers-final-cockerell.csv")
 write.csv(cockerell, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
-filename_write = paste0(dir_data, basefile, " describers_5.0-describers-final.csv")
+filename_write = paste0(dir_data_raw, basefile, " describers_5.0-describers-final.csv")
 write.csv(describers_final[order(as.numeric(idx_auth))], filename_write, 
           na='', row.names=F, fileEncoding="UTF-8")
 
 describers_final[full.name.of.describer.n=="Theodore Dru Alison Cockerell"]$spp_idxes <- 
     paste0("Check ", basefile, " describers_5.0-describers-final-cockerell.csv")
 
-filename_write = paste0(dir_data, basefile, " describers_5.0-describers-final-view.csv")
+filename_write = paste0(dir_data_raw, basefile, " describers_5.0-describers-final-view.csv")
 write.csv(describers_final[order(as.numeric(idx_auth))], filename_write, 
           na='', row.names=F, fileEncoding="UTF-8")

@@ -39,8 +39,8 @@ print(paste0(Sys.time(), " --- clean journal names"))
 
 
 # Read data
-dfx1 <- read_escaped_data(paste0(dir_data, basefile, " filtered_1-clean.csv"))
-dfx2 <- read_escaped_data(paste0(dir_data, basefile, " oth_1-clean.csv"))
+dfx1 <- read_escaped_data(paste0(dir_data_raw, basefile, " filtered_1-clean.csv"))
+dfx2 <- read_escaped_data(paste0(dir_data_raw, basefile, " oth_1-clean.csv"))
 
 
 
@@ -54,11 +54,11 @@ dfx2 <- read_escaped_data(paste0(dir_data, basefile, " oth_1-clean.csv"))
 # df_n <- data.table(dfx %>%
 #   group_by(date.n, author, title, journal,  volume,  issue, page.numbers.publication) %>%
 #   summarise(idxes=paste0(idx, collapse='; ')))
-# filename_write = paste0(dir_data, "clean/journal_details.csv")
+# filename_write = paste0(dir_data_raw_clean, "journal_details.csv")
 # write.csv(df_n, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
 # Read data
-df_n = read_escaped_data(paste0(dir_data, "clean/journal_names_edit.csv"))
+df_n = read_escaped_data(paste0(dir_data_raw_clean, "journal_names_edit.csv"))
 
 # Merge results back
 df_n <- df_n[, c("journal_new", "idxes")]
@@ -78,10 +78,10 @@ dfx2$journal_new <- NULL
 
 
 # Write data
-filename_dfx1 = paste0(dir_data, basefile, " filtered_4.0-clean-journals.csv")
+filename_dfx1 = paste0(dir_data_raw, basefile, " filtered_4.0-clean-journals.csv")
 write.csv(dfx1[order(as.numeric(idx))], filename_dfx1, na='', row.names=F, fileEncoding="UTF-8")
 
-filename_dfx2 = paste0(dir_data, basefile, " oth_4.0-clean-journals.csv")
+filename_dfx2 = paste0(dir_data_raw, basefile, " oth_4.0-clean-journals.csv")
 write.csv(dfx2[order(as.numeric(idx))], filename_dfx2, na='', row.names=F, fileEncoding="UTF-8")
 
 
@@ -96,15 +96,15 @@ print(paste0(Sys.time(), " --- clean other publication fields"))
 
 
 # Read data
-dfx1 <- read_escaped_data(paste0(dir_data, basefile, " filtered_4.0-clean-journals.csv"))
-dfx2 <- read_escaped_data(paste0(dir_data, basefile, " oth_4.0-clean-journals.csv"))
+dfx1 <- read_escaped_data(paste0(dir_data_raw, basefile, " filtered_4.0-clean-journals.csv"))
+dfx2 <- read_escaped_data(paste0(dir_data_raw, basefile, " oth_4.0-clean-journals.csv"))
 
 
 
 
 # # Clean publications
 # # Read data
-# auth <- read_escaped_data(paste0(dir_data, basefile, " pub_1.0-clean3.csv"))
+# auth <- read_escaped_data(paste0(dir_data_raw, basefile, " pub_1.0-clean3.csv"))
 
 # # Separate rows by idxes
 # auth2 <- data.table(auth %>% separate_rows(idxes))
@@ -120,12 +120,12 @@ dfx2 <- read_escaped_data(paste0(dir_data, basefile, " oth_4.0-clean-journals.cs
 # auth = data.table(auth)
 
 # # Write data
-# filename_write2 = paste0(dir_data, basefile, " pub_1.0-clean4.csv")
+# filename_write2 = paste0(dir_data_raw, basefile, " pub_1.0-clean4.csv")
 # write.csv(auth, filename_write2, na='', row.names=F, fileEncoding="UTF-8")
 # # = old name journal_details*.csv
 
 # Merge back info
-auth <- read_escaped_data(paste0(dir_data, basefile, " pub_1.0-clean.csv"))
+auth <- read_escaped_data(paste0(dir_data_raw, basefile, " pub_1.0-clean.csv"))
 auth2 <- data.table(auth %>% separate_rows(idxes, sep="; "))
 dim(auth2); auth2 <- unique(auth2); dim(auth2)
 
@@ -214,10 +214,10 @@ dfx2[idx==23429][,c("genus", "species", "author.date")]
 
 
 # Write data
-filename_write = paste0(dir_data, basefile, " filtered_4.1-clean-journals_species.csv")
+filename_write = paste0(dir_data_raw, basefile, " filtered_4.1-clean-journals_species.csv")
 write.csv(dfx1, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
-filename_write = paste0(dir_data, basefile, " oth_4.1-clean-journals_species.csv")
+filename_write = paste0(dir_data_raw, basefile, " oth_4.1-clean-journals_species.csv")
 write.csv(dfx2, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
 
@@ -231,9 +231,9 @@ print(paste0(Sys.time(), " --- check auth short & full name consistent"))
 
 
 # Read data
-dfx1 = read_escaped_data(paste0(dir_data, basefile, " filtered_4.1-clean-journals_species.csv"))
-dfx2 = read_escaped_data(paste0(dir_data, basefile, " oth_4.1-clean-journals_species.csv"))
-auth = read_escaped_data(paste0(dir_data, "clean/missing_authors_edit.csv"))
+dfx1 = read_escaped_data(paste0(dir_data_raw, basefile, " filtered_4.1-clean-journals_species.csv"))
+dfx2 = read_escaped_data(paste0(dir_data_raw, basefile, " oth_4.1-clean-journals_species.csv"))
+auth = read_escaped_data(paste0(dir_data_raw_clean, "missing_authors_edit.csv"))
 
 
 
@@ -288,7 +288,7 @@ dfx2[idx == 22956]$full.name.of.describer = "G. Trautmann; Woldemar Trautmann"
 
 
 # Clean short names from full names
-filepath <- paste0(dir_data, "clean/last_name.csv")
+filepath <- paste0(dir_data_raw_clean, "last_name.csv")
 ln <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
 
 # Create the lookup table
@@ -313,10 +313,10 @@ dfx2$author <- authors_redone$x
 
 
 # Write data
-filename_write = paste0(dir_data, basefile, " filtered_4.2-clean-auth-full-name.csv")
+filename_write = paste0(dir_data_raw, basefile, " filtered_4.2-clean-auth-full-name.csv")
 write.csv(dfx1, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
-filename_write = paste0(dir_data, basefile, " oth_4.2-clean-auth-full-name.csv")
+filename_write = paste0(dir_data_raw, basefile, " oth_4.2-clean-auth-full-name.csv")
 write.csv(dfx2, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
 
@@ -332,15 +332,15 @@ print(paste0(Sys.time(), " --- count number of species in publication"))
 
 
 # Read data
-auth <- read_escaped_data(paste0(dir_data, basefile, " pub_1.0-clean.csv"))
+auth <- read_escaped_data(paste0(dir_data_raw, basefile, " pub_1.0-clean.csv"))
 
 cols <- c("idx", "status")
 
-dfx1 = read_escaped_data(paste0(dir_data, basefile, " filtered_4.2-clean-auth-full-name.csv"))
+dfx1 = read_escaped_data(paste0(dir_data_raw, basefile, " filtered_4.2-clean-auth-full-name.csv"))
 dfx1 = dfx1[, ..cols]
 dfx1$idx <- as.numeric(dfx1$idx)
 
-dfx2 = read_escaped_data(paste0(dir_data, basefile, " oth_4.2-clean-auth-full-name.csv"))
+dfx2 = read_escaped_data(paste0(dir_data_raw, basefile, " oth_4.2-clean-auth-full-name.csv"))
 dfx2 <- dfx2[, ..cols]
 dfx2$idx <- as.numeric(dfx2$idx)
 
@@ -372,5 +372,5 @@ summarise <- auth2[, list(idxes=paste0(idxes,collapse='; '),
 
 
 # Write data
-filename_write = paste0(dir_data, basefile, " pub_2.0-metrics.csv")
+filename_write = paste0(dir_data_raw, basefile, " pub_2.0-metrics.csv")
 write.csv(summarise, filename_write, na='', row.names=F, fileEncoding="UTF-8")

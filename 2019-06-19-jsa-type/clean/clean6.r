@@ -37,8 +37,8 @@ print(paste0(Sys.time(), " --- collector raw dataset"))
 
 
 # Read data
-df = read_escaped_data(paste0(dir_data, basefile, " filtered_1-clean.csv"))
-df_s = read_escaped_data(paste0(dir_data, basefile, " oth_1-clean.csv"))
+df = read_escaped_data(paste0(dir_data_raw, basefile, " filtered_1-clean.csv"))
+df_s = read_escaped_data(paste0(dir_data_raw, basefile, " oth_1-clean.csv"))
 
 
 
@@ -61,7 +61,7 @@ print(paste0("There are ", table(is.na(collectors_info$collector.of.type))[2],
 
 # Write data
 write.csv(collectors_info[order(full.name.of.collector)],
-          paste0(dir_data, basefile, " collectors_1.0-all.csv"), 
+          paste0(dir_data_raw, basefile, " collectors_1.0-all.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
 
@@ -75,7 +75,7 @@ print(paste0(Sys.time(), " --- denormalise collector dataset"))
 
 
 # Read data
-collectors_info = read_escaped_data(paste0(dir_data, basefile, " collectors_1.0-all.csv"))
+collectors_info = read_escaped_data(paste0(dir_data_raw, basefile, " collectors_1.0-all.csv"))
 
 
 
@@ -128,7 +128,7 @@ if (loop_2 == "Y") {
     
     # Write file
     write.csv(collectors[order(full.name.of.collector.n)], 
-              paste0(dir_data, basefile, " collectors_2.0-denormalised.csv"),
+              paste0(dir_data_raw, basefile, " collectors_2.0-denormalised.csv"),
               na='', row.names=F, fileEncoding="UTF-8")
 
 }
@@ -150,7 +150,7 @@ print(paste0(Sys.time(), " --- clean collector dataset"))
 
 # Read data (this data is edited)
 collectors <- 
-    read_escaped_data(paste0(dir_data, basefile, " collectors_2.0-denormalised_edit4.csv"))
+    read_escaped_data(paste0(dir_data_raw, basefile, " collectors_2.0-denormalised_edit4.csv"))
 
 
 
@@ -174,7 +174,7 @@ print(paste0("Number of certain species-author rows: ", sum(collectors$uncertain
 #                                     "info.about.collector.n")][order(-N)]
 #
 # write.csv(collectors_group, 
-#           paste0(dir_data, basefile, " collectors_2.0-denormalised_edit4.csv"),
+#           paste0(dir_data_raw, basefile, " collectors_2.0-denormalised_edit4.csv"),
 #           na='', row.names=F, fileEncoding="UTF-8")
 
 
@@ -209,7 +209,7 @@ print(paste0("There are ", sum(collectors_grouped2$N), " uncertain rows."))
 
 # Write data
 write.csv(collectors_grouped[order(uncertain, -N, full.name.of.collector.n)], 
-          paste0(dir_data, basefile, " collectors_3.0-collectors.csv"), 
+          paste0(dir_data_raw, basefile, " collectors_3.0-collectors.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
 
@@ -224,7 +224,7 @@ print(paste0(Sys.time(), " --- merge back into main dataframe"))
 
 
 # Read data
-collectors = read_escaped_data(paste0(dir_data, basefile, " collectors_3.0-collectors.csv"))
+collectors = read_escaped_data(paste0(dir_data_raw, basefile, " collectors_3.0-collectors.csv"))
 
 # Separate by idxes
 collectors <- data.table(collectors %>% separate_rows(idxes))
@@ -253,7 +253,7 @@ collectors2 <-
 # Merge back data for dfx1
 
 # Read data
-dfx1 <- read_escaped_data(paste0(dir_data, basefile, " filtered_4.2-clean-auth-full-name.csv"))
+dfx1 <- read_escaped_data(paste0(dir_data_raw, basefile, " filtered_4.2-clean-auth-full-name.csv"))
 
 # Remove irrelevant columns
 irrelevant_columns = c('collector.of.type.n_new',
@@ -287,7 +287,7 @@ table(is.na(dfx1$title.of.collector.n))
 # Do the same for dfx2 - merge back data
 
 # Read data
-dfx2 <- read_escaped_data(paste0(dir_data, basefile, " oth_4.2-clean-auth-full-name.csv"))
+dfx2 <- read_escaped_data(paste0(dir_data_raw, basefile, " oth_4.2-clean-auth-full-name.csv"))
 
 # logic in having df3.r here is a little odd, as cleaning is cyclical
 # if collector-variable_new exist in the dataframe, then do not run this code
@@ -314,8 +314,8 @@ table(is.na(dfx2$title.of.collector.n))
 
 
 # Write data
-write.csv(dfx1, paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"),
+write.csv(dfx1, paste0(dir_data_raw, basefile, " filtered_4.3-clean-coll.csv"),
           na='', row.names=F, fileEncoding="UTF-8")
 
-write.csv(dfx2, paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"),
+write.csv(dfx2, paste0(dir_data_raw, basefile, " oth_4.3-clean-coll.csv"),
           na='', row.names=F, fileEncoding="UTF-8")

@@ -16,7 +16,7 @@ print(paste0(Sys.time(), " --- 'describers': summarize by species idx for checks
 
 # Read data
 describers_merged <- 
-        read_escaped_data(paste0(dir_data, basefile, " describers_2.0-denormalised.csv"))
+        read_escaped_data(paste0(dir_data_raw, basefile, " describers_2.0-denormalised.csv"))
 
 # # CHECK:
 # unique(describers_merged[full.name.of.describer.n=="Ricardo Ayala Barajas"]$dod.describer.n)
@@ -137,7 +137,7 @@ describers_idx$idx_auth <- 1:dim(describers_idx)[1]
 
 
 # Make edits with describer_edits.csv
-describers_template_edits <- read_escaped_data(paste0(dir_data, "clean/describer_edits.csv")) 
+describers_template_edits <- read_escaped_data(paste0(dir_data_raw_clean, "describer_edits.csv")) 
 # changed to DL
 
 # Remove rows with all NAs
@@ -186,5 +186,5 @@ describers_idx[full.name.of.describer.n=="Francisco Javier Ortiz-Sanchez", "full
 
 
 # Write file
-filename_write = paste0(dir_data, basefile, " describers_3.0-by-author.csv")
+filename_write = paste0(dir_data_raw, basefile, " describers_3.0-by-author.csv")
 write.csv(describers_idx, filename_write, na='', row.names=F, fileEncoding="UTF-8")

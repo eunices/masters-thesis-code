@@ -18,7 +18,7 @@ print(paste0(Sys.time(), " --- initial formatting"))
 
 
 # Read dataset
-df <- read_escaped_data(paste0(dir_data, basefile, '-idx.csv'))
+df <- read_escaped_data(paste0(dir_data_raw, basefile, '-idx.csv'))
 
 
 
@@ -167,7 +167,7 @@ df$cty.state <- NULL
 # Incorporate manually cleaned lat and lon from initial cleaning script
 
 # Read data
-ll <- read_escaped_data(paste0(dir_data, 'clean/lat-lon-edit.csv'), escape=F)
+ll <- read_escaped_data(paste0(dir_data_raw_clean, 'lat-lon-edit.csv'), escape=F)
 ll <- ll[, c("idx", "lat", "lon", "type.country.n", "type.state.n", "flag")]
 ll$idx <- as.character(ll$idx)
 
@@ -212,13 +212,13 @@ df[, c("lat_n", "lon_n", "type.country.n_n", "type.state.n_n", "flag_n"):=NULL]
 # cols <- c("idx", "type.country.n", "type.state.n", "type.country.n.full",
 #           "type.state.n.full", "type.country", "type.state", "geo_cty", "geo_state", "DL",
 #           "type.locality.verbatim", "type.locality.updated", "check1", "check2", "geometry")
-# write.csv(countries[, ..cols], paste0(dir_data, 'clean/df-state-check.csv'), 
+# write.csv(countries[, ..cols], paste0(dir_data_raw, 'clean/df-state-check.csv'), 
 #           na='', row.names=F, fileEncoding="UTF-8")
 
 # Merge back info
 
 # Read
-add <- read_escaped_data(paste0(dir_data, "clean/df-state-check_edit.csv"))
+add <- read_escaped_data(paste0(dir_data_raw, "clean/df-state-check_edit.csv"))
 add$idx <- as.character(add$idx)
 
 new_cols <- c("idx", "type.country.n_N",
@@ -294,11 +294,11 @@ df[,c("lat_N", "lon_N", "type.country.n.full_N", "type.state.n.full_N"):=NULL]
 # to_geocode <- df[check1 & !is.na(search_locality), c("idx", "search_locality")]
 # geocoded <- geocode_lat_long(to_geocode$search_locality)
 # geocoded2 <- cbind(to_geocode, geocoded)
-# write.csv(geocoded2, paste0(dir_data, 'clean/df-geocoded.csv'), row.names=F)
+# write.csv(geocoded2, paste0(dir_data_raw, 'clean/df-geocoded.csv'), row.names=F)
 # df[,c("search_locality", "check1", "check2"):=NULL]
 
 # Merge back info
-add <- read_escaped_data(paste0(dir_data, "clean/df-geocoded_edit.csv"))
+add <- read_escaped_data(paste0(dir_data_raw, "clean/df-geocoded_edit.csv"))
 
 # Add duplicated
 new_cols <- c("idx", "lat", "lon")
@@ -335,10 +335,10 @@ df[,c("lat_N", "lon_N"):=NULL]
 # countries$check.country2 <- countries$type.country.n == countries$country
 # countries$check.state <- countries$NAME_1 == countries$type.state.n.full
 # write.csv(countries[!(check.country | check.country2) | !check.state],
-#           paste0(dir_data, "clean/df-check-state2.csv"), row.names=F)
+#           paste0(dir_data_raw_clean, "df-check-state2.csv"), row.names=F)
 
 # Merge back info
-add <- read_escaped_data(paste0(dir_data, "clean/df-check-state2_edit.csv"))
+add <- read_escaped_data(paste0(dir_data_raw_clean, "df-check-state2_edit.csv"))
 new_cols <- c("idx", "type.country.n_N", "type.state.n_N", "lat_N", "lon_N")
 add <- add[!duplicated(idx)][, ..new_cols]
 add$idx <- as.numeric(add$idx)
@@ -421,5 +421,5 @@ df[!check0 & check3 & !check4 & !check5]$source.of.latlon.n <-
 
 df <- df[!duplicated(idx)]
 
-write.csv(df[order(as.numeric(idx))], paste0(dir_data, basefile, "-idx-1-geocoded.csv"), 
+write.csv(df[order(as.numeric(idx))], paste0(dir_data_raw, basefile, "-idx-1-geocoded.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")

@@ -14,10 +14,10 @@ print(paste0(Sys.time(), " --- by country"))
 
 
 # Read data
-df <- read_escaped_data(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"))
+df <- read_escaped_data(paste0(dir_data_raw, basefile, " filtered_4.3-clean-coll.csv"))
 df$idx <- as.integer(df$idx)
 
-df_mapper2 <- read_escaped_data(paste0(dir_data, basefile, " filtered_5-species-cty1.csv"))
+df_mapper2 <- read_escaped_data(paste0(dir_data_raw, basefile, " filtered_5-species-cty1.csv"))
 df_mapper2 <- df_mapper2[, c("idx", "A.3")]
 df_mapper2$idx <- as.integer(df_mapper2$idx)
 
@@ -41,7 +41,7 @@ df_mapper2 <- df_mapper2[date.n <=2018][duplicated.row=="FALSE"][order(as.numeri
 
 
 # Write data
-output_filepath <- paste0(dir_data, basefile, " filtered_5-species-cty2-cty.csv")
+output_filepath <- paste0(dir_data_raw, basefile, " filtered_5-species-cty2-cty.csv")
 write.csv(df_mapper2, output_filepath, na='', row.names=F, fileEncoding="UTF-8")
 
 
@@ -66,7 +66,7 @@ group <- df_mapper2[, list(no_cty_in_trop = length(unique(A.3)),
 
 
 # Write data
-output_filepath <- paste0(dir_data, basefile, " filtered_5-species-cty3-continent.csv")
+output_filepath <- paste0(dir_data_raw, basefile, " filtered_5-species-cty3-continent.csv")
 write.csv(group, output_filepath, na='', row.names=F, fileEncoding="UTF-8")
 
 
@@ -89,7 +89,7 @@ group <- df_mapper2[, list(no_cty_in_trop = length(unique(A.3)),
 
 
 # Write data
-output_filepath <- paste0(dir_data, basefile, " filtered_5-species-cty4-biogeo.csv")
+output_filepath <- paste0(dir_data_raw, basefile, " filtered_5-species-cty4-biogeo.csv")
 write.csv(group, output_filepath, na='', row.names=F, fileEncoding="UTF-8")
 
 
@@ -112,7 +112,7 @@ group <- df_mapper2[, list(no_cty_in_trop = length(unique(A.3)),
 
 
 # Write data
-output_filepath <- paste0(dir_data, basefile, " filtered_5-species-cty6-trop-type1.csv")
+output_filepath <- paste0(dir_data_raw, basefile, " filtered_5-species-cty6-trop-type1.csv")
 write.csv(group, output_filepath, na='', row.names=F, fileEncoding="UTF-8")
 
 
@@ -130,7 +130,7 @@ group <- df_mapper2[, list(no_cty_in_trop = length(unique(A.3)),
 
 
 # Write data
-output_filepath <- paste0(dir_data, basefile, " filtered_5-species-cty7-trop-type2.csv")
+output_filepath <- paste0(dir_data_raw, basefile, " filtered_5-species-cty7-trop-type2.csv")
 write.csv(group, output_filepath, na='', row.names=F, fileEncoding="UTF-8")
 
 

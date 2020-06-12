@@ -1,12 +1,20 @@
 # Variables
 dir_data <- 'data/2019-05-23-ascher-bee-data/'
-dir_data_ch1 <- paste0(data_dir, 'ch1/')
-dir_data_ch2 <- paste0(data_dir, 'ch2/')
-dir_data_ch3_coauth <- paste0(data_dir, 'ch3-coauth/')
-dir_data_ch3_flow <- paste0(data_dir, 'ch3-flow/')
-dir_data_ch3_gender <- paste0(data_dir, 'ch3-gender/')
 
+version = "v1" # data version
+# v1 on 2019-05-23
 
+# Output data
+dir_data_analysis <- paste0(dir_data, "analysis/", version, "/")
+dir_data_ch1 <- paste0(dir_data_analysis, 'ch1/')
+dir_data_ch2 <- paste0(dir_data_analysis, 'ch2/')
+dir_data_ch3_coauth <- paste0(dir_data_analysis, 'ch3-coauth/')
+dir_data_ch3_flow <- paste0(dir_data_analysis, 'ch3-flow/')
+dir_data_ch3_gender <- paste0(dir_data_analysis, 'ch3-gender/')
+
+# Raw data
+dir_data_raw <- paste0(dir_data, version, "/")
+dir_data_raw_clean <- paste0(dir_data_raw, "clean/")
 
 dir_base <- '2019-06-19-jsa-type'
 dir_script <- paste0(dir_base, '/')

@@ -13,7 +13,7 @@ print(paste0(Sys.time(), " --- get distribution from global mapper"))
 
 
 # Read data
-df <- read_escaped_data(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"))
+df <- read_escaped_data(paste0(dir_data_raw, basefile, " filtered_4.3-clean-coll.csv"))
 
 
 
@@ -68,5 +68,5 @@ dim(df_mapper2); df_mapper2 <- unique(df_mapper2); dim(df_mapper2)
 
 # Write data
 write.csv(df_mapper2[order(as.numeric(idx)),c("idx", "A.3")], 
-          paste0(dir_data, basefile, " filtered_5-species-cty1.csv"),
+          paste0(dir_data_raw, basefile, " filtered_5-species-cty1.csv"),
           na='', row.names=F, fileEncoding="UTF-8")

@@ -16,8 +16,8 @@ print(paste0(Sys.time(), " --- describer raw dataset"))
 
 
 # Read data
-df <- read_escaped_data(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"))
-df_s <- read_escaped_data(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"))
+df <- read_escaped_data(paste0(dir_data_raw, basefile, " filtered_4.3-clean-coll.csv"))
+df_s <- read_escaped_data(paste0(dir_data_raw, basefile, " oth_4.3-clean-coll.csv"))
 
 
 
@@ -35,7 +35,7 @@ describers_info <- rbind(describers_info_valid_species, describers_info_synonyms
 
 
 # Write data
-filename_write = paste0(dir_data, basefile, " describers_1.0-all.csv")
+filename_write = paste0(dir_data_raw, basefile, " describers_1.0-all.csv")
 write.csv(describers_info[order(author)], filename_write, na='', row.names=F, fileEncoding="UTF-8")
 
 
@@ -50,7 +50,7 @@ print(paste0(Sys.time(), " --- 'describers': individual author species rows"))
 
 
 # Read data
-describers_info = read_escaped_data(paste0(dir_data, basefile, " describers_1.0-all.csv"))
+describers_info = read_escaped_data(paste0(dir_data_raw, basefile, " describers_1.0-all.csv"))
 
 # A loop was written because currently this doesn't really work!~
 # describers <- describers_info %>% separate_rows(full.name.of.describer, 
@@ -90,7 +90,7 @@ if (loop_3=='Y') {
         describers$institution.of.describer.n)
 
     # Write data
-    filename_write = paste0(dir_data, basefile, " describers_2.0-denormalised.csv")
+    filename_write = paste0(dir_data_raw, basefile, " describers_2.0-denormalised.csv")
     write.csv(describers, filename_write, na='', row.names=F, fileEncoding="UTF-8")
 }
 

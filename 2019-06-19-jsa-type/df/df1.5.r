@@ -14,9 +14,9 @@ print(paste0(Sys.time(), " --- 'describers': creating dataset for network"))
 
 
 # Read data
-ps <- read_escaped_data(paste0(dir_data, basefile, " describers_1.0-all.csv"))
-dfx1 <- read_escaped_data(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"))
-dfx2 <- read_escaped_data(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"))
+ps <- read_escaped_data(paste0(dir_data_raw, basefile, " describers_1.0-all.csv"))
+dfx1 <- read_escaped_data(paste0(dir_data_raw, basefile, " filtered_4.3-clean-coll.csv"))
+dfx2 <- read_escaped_data(paste0(dir_data_raw, basefile, " oth_4.3-clean-coll.csv"))
 
 
 
@@ -64,5 +64,5 @@ ps2 <- rbind(ps2, ps4)
 
 
 # Write data
-write.csv(ps2[order(-N)], paste0(dir_data, basefile, " describers_7.0-author-networks.csv"),
+write.csv(ps2[order(-N)], paste0(dir_data_raw, basefile, " describers_7.0-author-networks.csv"),
           na='', row.names=F, fileEncoding="UTF-8")

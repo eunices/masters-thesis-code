@@ -13,14 +13,15 @@ print(paste0(Sys.time(), " --- 'describers': number of taxonomist active per yea
 
 
 # Read and filter data
-describer_data <- read_escaped_data(paste0(dir_data, basefile, " describers_5.0-describers-final.csv"))
+describer_data <- read_escaped_data(paste0(dir_data_raw, basefile, " describers_5.0-describers-final.csv"))
 describer_data <- describer_data[years_active > 0] # latest year: 2018
 # # CHECK: since cut-off year is 2018, to exclude Silas Bossert
 # describer_data[full.name.of.describer.n =="Silas Bossert"]
 # describers[!is.finite(as.numeric(describers$ns_species_per_year_active))]
 
-describer_date <- read_escaped_data(paste0(dir_data, basefile, " describers_4.0-denormalised2.csv"))
-synonyms <- read_escaped_data(paste0(dir_data, basefile, " oth_1-clean.csv"))
+describer_date <- 
+    read_escaped_data(paste0(dir_data_raw, basefile, " describers_4.0-denormalised2.csv"))
+synonyms <- read_escaped_data(paste0(dir_data_raw, basefile, " oth_1-clean.csv"))
 
 
 
@@ -171,5 +172,5 @@ per_year2 <- data.table(per_year2)
 
 
 # Write data
-filepath <- paste0(dir_data, basefile, " describers_6.0-active-by-year.csv") 
+filepath <- paste0(dir_data_raw, basefile, " describers_6.0-active-by-year.csv") 
 write.csv(per_year2[years<=2018], filepath, na='', row.names=F, fileEncoding="UTF-8")

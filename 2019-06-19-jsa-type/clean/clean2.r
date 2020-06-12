@@ -19,12 +19,12 @@ print(paste0(Sys.time(), " --- cleaning repository"))
 
 
 # Read data
-df <- read_escaped_data(paste0(dir_data, basefile, '-idx-1-geocoded.csv'))
+df <- read_escaped_data(paste0(dir_data_raw, basefile, '-idx-1-geocoded.csv'))
 
 
 
 # Clean repository
-edit <- read_escaped_data(paste0(dir_data, "clean/check-type-repo2_edit.csv"))
+edit <- read_escaped_data(paste0(dir_data_raw_clean, "check-type-repo2_edit.csv"))
 
 # !CHECK
 dim(edit[country.of.type.repository.n_short != "[unknown]"][
@@ -40,5 +40,5 @@ df <- merge(df, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")
 
 
 # Write output
-write.csv(df[order(as.numeric(idx))], paste0(dir_data, basefile, "-idx-2-clean-repo.csv"), 
+write.csv(df[order(as.numeric(idx))], paste0(dir_data_raw, basefile, "-idx-2-clean-repo.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")

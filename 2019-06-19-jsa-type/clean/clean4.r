@@ -20,7 +20,7 @@ print(paste0(Sys.time(), " --- splitting dataset"))
 
 
 # Read data
-df = read_escaped_data(paste0(dir_data, basefile, '-idx-3-clean-fields.csv'))
+df = read_escaped_data(paste0(dir_data_raw, basefile, '-idx-3-clean-fields.csv'))
 
 
 
@@ -50,7 +50,7 @@ df_s <- df_s[duplicated.row == "FALSE"][order(as.numeric(idx))]
 
 
 # Clean genus and species relationships
-idxdf <- read_escaped_data(paste0(dir_data, "clean/idx-idx_original.csv"))
+idxdf <- read_escaped_data(paste0(dir_data_raw_clean, "idx-idx_original.csv"))
 # copy and pasted from Excel for colour
 idxdf$correct_synonym <- gsub('=', '', idxdf$taxonomic_notes)
 idxdf[status=="Valid subspecies"]$correct_synonym <- 
@@ -80,7 +80,7 @@ df_s$taxonomicnotes.subspecies.synonyms.etc <- NULL
 
 
 # Write data
-write.csv(df_s[order(as.numeric(idx))], paste0(dir_data, basefile, " oth_1-clean.csv"), 
+write.csv(df_s[order(as.numeric(idx))], paste0(dir_data_raw, basefile, " oth_1-clean.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
 
@@ -115,6 +115,6 @@ df <- df[order(as.numeric(idx))]
 
 
 # Write data
-write.csv(df[order(as.numeric(idx))], paste0(dir_data, basefile, " filtered_1-clean.csv"), 
+write.csv(df[order(as.numeric(idx))], paste0(dir_data_raw, basefile, " filtered_1-clean.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
     

@@ -14,7 +14,7 @@ source('2019-06-19-jsa-type/init/var.R')
 to_subset <- "N"
 
 # Load data.frame variable names
-var <- data.table(read.xlsx2(paste0(dir_data, '2019-09-16-metadata.xlsx'), 
+var <- data.table(read.xlsx2(paste0(dir_data_raw, '2019-09-16-metadata.xlsx'), 
                              sheetIndex=1, stringsAsFactors=F), as.data.frame=T)
 names(var)
 var$order <- as.integer(var$order)
@@ -58,7 +58,7 @@ c_pub_i <- c( "paper.authors", "title", "journal", "volume", "issue",
              "paper.type", "country.of.publication", "city.of.publication")
 
 # Load dataframes
-construct_filepath <- function(filename) {paste0(dir_data, filename)}
+construct_filepath <- function(filename) {paste0(dir_data_raw, filename)}
 subset_df <- function(filepath, table, write=T) {
 
     # fn_df2 <- "2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll.csv"
@@ -144,20 +144,20 @@ if (to_subset=="Y") {
 
 get_raw_data = function() {
     file = "-idx.csv"
-    filepath = paste0(dir_data, basefile, file)
+    filepath = paste0(dir_data_raw, basefile, file)
     fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
 }
 
 get_n_active_describers_by_year = function() {
     file = " describers_6.0-active-by-year.csv"
-    filepath_describers_by_year <- paste0(dir_data, basefile, file)
+    filepath_describers_by_year <- paste0(dir_data_raw, basefile, file)
     fread(filepath_describers_by_year, integer64='character', 
           na.strings=c('', 'NA'), encoding='UTF-8')
 }
 
 get_describer_network = function() {
     file = " describers_7.0-author-networks.csv"
-    nw = fread(paste0(dir_data, basefile, file),
+    nw = fread(paste0(dir_data_raw, basefile, file),
                integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
     nw[, names(nw) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
     # fread does not escape double quotes
@@ -166,7 +166,7 @@ get_describer_network = function() {
 
 get_species_denormalised = function() {
     filepath <- ' describers_4.0-denormalised2.csv'
-    dat <- fread(paste0(dir_data, basefile, filepath), encoding="UTF-8", 
+    dat <- fread(paste0(dir_data_raw, basefile, filepath), encoding="UTF-8", 
                  stringsAsFactors=F, na=c(""))
     dat[, names(dat) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
     # fread does not escape double quotes

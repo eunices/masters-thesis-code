@@ -20,14 +20,14 @@ print(paste0(Sys.time(), " --- cleaning other fields"))
 
 
 # Read data
-df <- read_escaped_data(paste0(dir_data, basefile, '-idx-2-clean-repo.csv'))
+df <- read_escaped_data(paste0(dir_data_raw, basefile, '-idx-2-clean-repo.csv'))
 
 
 
 
 # Clean date.n based on pub_1.0-clean.csv
 # note: not cleaning actual date field as data is captured actually in publications table 
-pub <- read_escaped_data(paste0(dir_data, basefile, " pub_1.0-clean.csv"))
+pub <- read_escaped_data(paste0(dir_data_raw, basefile, " pub_1.0-clean.csv"))
 
 # Separate by species
 pub <- pub %>% separate_rows(idxes, sep="; ")
@@ -75,7 +75,7 @@ df$years.lag <- as.numeric(df$date.n) - as.numeric(df$date.of.type.yyyy)
 # those which have unresolved discrepancies (-ve date with no reason), will be changed to NA
 # field to merge is "date.of.type.corrected" (it is in YYYY format)
 
-date_discrepancy <- read_escaped_data(paste0(dir_data, "clean/date_discrepancy.csv"))
+date_discrepancy <- read_escaped_data(paste0(dir_data_raw_clean, "date_discrepancy.csv"))
 date_discrepancy <- date_discrepancy[, c("idx", "date.of.type.corrected")]
 
 # Merge back
@@ -99,7 +99,7 @@ df$years.lag <- as.numeric(df$date.n) - as.numeric(df$date.of.type.yyyy)
 #           paste0(data_dir, "clean/missing_authors.csv")]
 
 # Add missing authors
-missing_auth <- read_escaped_data(paste0(dir_data, "clean/missing_authors_edit.csv"))
+missing_auth <- read_escaped_data(paste0(dir_data_raw_clean, "missing_authors_edit.csv"))
 df1 <- df[is.na(full.name.of.describer)]
 df2 <- df[!is.na(full.name.of.describer)]
 
@@ -139,5 +139,5 @@ df[genus=="Nomada" & subfamily=="Apinae"]$subfamily <- "Nomadinae"
 
 
 # Write data
-write.csv(df[order(as.numeric(idx))], paste0(dir_data, basefile, "-idx-3-clean-fields.csv"), 
+write.csv(df[order(as.numeric(idx))], paste0(dir_data_raw, basefile, "-idx-3-clean-fields.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
