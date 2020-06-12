@@ -1,7 +1,12 @@
 # Information about code:
 # This code corresponds to cleaning code for my MSc thesis.
-# A series of other codes are named as clean1|2|3|4.r
+# A series of other codes are named as clean1|2|3|4|5|6.r
+# Cleans lat/lon/country/state.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+print("######################################################")
+print(paste0(Sys.time(), " --- starting clean1.r"))
+print("######################################################")
 
 source('2019-06-19-jsa-type/clean/functions.R')
 

@@ -3,7 +3,7 @@
 # This code is for creating describer-based dataset from denormalised data.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-source('2019-06-19-jsa-type/clean/functions.R')
+source('2019-06-19-jsa-type/df/functions.R')
 
 
 

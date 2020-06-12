@@ -1,18 +1,13 @@
 # Information about code:
 # This code corresponds to data wrangling code for my MSc thesis.
-# This code is for wrangling publication fields and author names,
-# as well as to tabulate publication-specific metrics.
+# A series of other codes are named as clean1|2|3|4|5|6.r
+# Cleans publications, and adds some publication-related metrics.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
 print("######################################################")
+print(paste0(Sys.time(), " --- starting clean5.r"))
 print("######################################################")
-print("######################################################")
-print(paste0(Sys.time(), " --- starting df1.r"))
-print("######################################################")
-print("######################################################")
-print("######################################################")
-# TODO: shift derived variables/dataframes to a different script?
 
 source('2019-06-19-jsa-type/init/init.R')
 source('2019-06-19-jsa-type/clean/functions.R')

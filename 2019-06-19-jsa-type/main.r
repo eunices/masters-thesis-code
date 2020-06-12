@@ -15,12 +15,9 @@ start <- proc.time()
 dir_script_td <- "2019-06-19-jsa-type/"
 
 # Cleaning/ data wrangling scripts
-source(paste0(dir_script_td, 'init/init.R'))
-source(paste0(dir_script_td, 'clean/clean.r'))
-source(paste0(dir_script_td, 'clean/df1.r'), encoding="utf-8")
-source(paste0(dir_script_td, 'clean/df2.r'))
-source(paste0(dir_script_td, 'clean/df3.r'))
-source(paste0(dir_script_td, 'clean/df4.r'))
+source(paste0(dir_script_td, 'init/init.R'))    # initialise libraries, util, variables
+source(paste0(dir_script_td, 'clean/clean.r'))  # cleaning
+source(paste0(dir_script_td, 'df/df.r'))     # derived datasets
 print(proc.time()-start)
 rm(list=ls())
 

@@ -5,15 +5,11 @@
 
 
 print("######################################################")
-print("######################################################")
-print("######################################################")
-print(paste0(Sys.time(), " --- starting df4.r"))
-print("######################################################")
-print("######################################################")
+print(paste0(Sys.time(), " --- starting df2.r"))
 print("######################################################")
 
 source('2019-06-19-jsa-type/init/init.R')
-source('2019-06-19-jsa-type/clean/functions.R')
+source('2019-06-19-jsa-type/df/functions.R')
 
 # Libraries
 #############
@@ -27,5 +23,5 @@ source('2019-06-19-jsa-type/clean/functions.R')
 
 # Scripts
 #############
-source('2019-06-19-jsa-type/clean/df4.1.r', local=T)
-source('2019-06-19-jsa-type/clean/df4.2.r', local=T)
+source('2019-06-19-jsa-type/df/df2.1.r', local=T)
+source('2019-06-19-jsa-type/df/df2.2.r', local=T)

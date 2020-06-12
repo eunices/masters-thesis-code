@@ -3,7 +3,7 @@
 # This code is for creating denormalised describer-species dataset.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-source('2019-06-19-jsa-type/clean/functions.R')
+source('2019-06-19-jsa-type/df/functions.R')
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - create describer raw dataset

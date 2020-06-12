@@ -1,15 +1,13 @@
 # Information about code:
 # This code corresponds to data wrangling code for my MSc thesis.
-# This code is for wrangling collector-specific fields.
+# A series of other codes are named as clean1|2|3|4|5|6.r
+# Cleans collectors for those that described >100 species
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 print("######################################################")
+print(paste0(Sys.time(), " --- starting clean6.r"))
 print("######################################################")
-print("######################################################")
-print(paste0(Sys.time(), " --- starting df2.r"))
-print("######################################################")
-print("######################################################")
-print("######################################################")
+
 
 source('2019-06-19-jsa-type/init/init.R')
 source('2019-06-19-jsa-type/clean/functions.R')
