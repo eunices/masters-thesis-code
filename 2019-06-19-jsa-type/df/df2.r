@@ -3,8 +3,7 @@
 # This code is for creating distribution datasets by country and other groups.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-
-print("######################################################")
+print("")
 print(paste0(Sys.time(), " --- starting df2.r"))
 print("######################################################")
 

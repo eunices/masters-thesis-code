@@ -18,9 +18,9 @@ dir_script_td <- "2019-06-19-jsa-type/"
 source(paste0(dir_script_td, 'init/init.R'))    # initialise libraries, util, variables
 source(paste0(dir_script_td, 'clean/clean.r'))  # cleaning
 source(paste0(dir_script_td, 'df/df.r'))     # derived datasets
-print(proc.time()-start)
 rm(list=ls())
 
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("BEE TYPE DATA CLEANING COMPLETE.")
+print(paste0("Cleaning took ", proc.time()-start))
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")

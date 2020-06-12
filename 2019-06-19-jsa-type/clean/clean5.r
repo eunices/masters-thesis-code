@@ -4,8 +4,7 @@
 # Cleans publications, and adds some publication-related metrics.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-
-print("######################################################")
+print("")
 print(paste0(Sys.time(), " --- starting clean5.r"))
 print("######################################################")
 

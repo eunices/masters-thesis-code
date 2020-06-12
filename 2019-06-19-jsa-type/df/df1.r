@@ -3,7 +3,7 @@
 # They format the original datasets into other datasets for analyses.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-print("######################################################")
+print("")
 print(paste0(Sys.time(), " --- starting df1.r"))
 print("######################################################")
 

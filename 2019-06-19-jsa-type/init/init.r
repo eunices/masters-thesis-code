@@ -2,7 +2,7 @@
 # Section - Initializing
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-print(paste0(Sys.time(), " --- initializing with init/init.R"))
+# print(paste0(Sys.time(), " --- initializing with init/init.R"))
 source('2019-06-19-jsa-type/init/var.R')
 setwd(working_dir)
 
