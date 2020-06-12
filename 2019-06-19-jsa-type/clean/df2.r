@@ -39,7 +39,7 @@ print(paste0(Sys.time(), " --- collector raw dataset"))
 
 
 # Read data
-df = read_escaped_data(paste0(dir_data, basefile, " filtered_1-clean"))
+df = read_escaped_data(paste0(dir_data, basefile, " filtered_1-clean.csv"))
 df_s = read_escaped_data(paste0(dir_data, basefile, " oth_1-clean.csv"))
 
 
