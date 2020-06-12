@@ -8,7 +8,7 @@ source('2019-06-19-jsa-type/df/functions.R')
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - further denormalization of data with cleaned describer data
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- 'describers': further denormalization of data with cleaned describer data"))
+print(paste0(Sys.time(), " --- 'describers': further denorm. w/ clean describer data"))
 
 
 

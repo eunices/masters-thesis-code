@@ -116,11 +116,11 @@ ss_summary <- ss[, list(mean=mean(prop),
                   by=c("Class")]
 
 write.csv(ss_summary,
-          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop-summary.csv"),
+          paste0(dir_data_ch3_flow, "2019-09-22-summary-country-prop-summary.csv"),
 		  na='', row.names=F, fileEncoding="UTF-8")
 
 write.csv(ss[order(-prop)],
-          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-prop.csv"), 
+          paste0(dir_data_ch3_flow, "2019-09-22-summary-country-prop.csv"), 
 		  na='', row.names=F, fileEncoding="UTF-8")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -270,4 +270,4 @@ names(merge5)[which(names(merge5) == "N")] <- "N_des-N"
 merge5[is.na(merge5)] <- 0
 
 write.csv(merge5[country.of.type.repository.n_long!=0][order(country.of.type.repository.n_long)], 
-          paste0(dir_data, 'eda1_flow/2019-10-03-loc.csv'), row.names=F)
+          paste0(dir_data_ch3_flow, '2019-10-03-loc.csv'), row.names=F)

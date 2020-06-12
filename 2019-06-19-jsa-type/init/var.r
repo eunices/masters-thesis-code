@@ -1,5 +1,12 @@
 # Variables
 dir_data <- 'data/2019-05-23-ascher-bee-data/'
+dir_data_ch1 <- paste0(data_dir, 'ch1/')
+dir_data_ch2 <- paste0(data_dir, 'ch2/')
+dir_data_ch3_coauth <- paste0(data_dir, 'ch3-coauth/')
+dir_data_ch3_flow <- paste0(data_dir, 'ch3-flow/')
+dir_data_ch3_gender <- paste0(data_dir, 'ch3-gender/')
+
+
 
 dir_base <- '2019-06-19-jsa-type'
 dir_script <- paste0(dir_base, '/')

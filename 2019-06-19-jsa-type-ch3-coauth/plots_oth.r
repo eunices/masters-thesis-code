@@ -81,7 +81,7 @@ nw_cty <- nw_cty[, list(N=sum(as.numeric(N))),
 nw_cty$check_same <- 
     nw_cty$residence.country.describer.first_p1 == nw_cty$residence.country.describer.first_p2
 
-write.csv(nw_cty, paste0(dir_data, 'eda2_auth/2019-09-22-auth-country-network.csv'), 
+write.csv(nw_cty, paste0(dir_data_ch3, '2019-09-22-auth-country-network.csv'), 
           na='', row.names=F, fileEncoding="UTF-8")
 
 

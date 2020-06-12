@@ -131,9 +131,9 @@ dataset_write = merge(des_a1[N>=2],
                       by="full.name.of.describer.n", all.x=T, all.y=F]
 
 
-filename_write = paste0(dir_data, "eda0_sum/2019-10-28-taxonomist-country-res-morethanone.csv")
+filename_write = paste0(dir_data_ch1, "others/2019-10-28-taxonomist-country-res-morethanone.csv")
 write.csv(dataset_write, filename_write)
 
-filename_write = paste0(dir_data, "eda0_sum/2019-10-28-taxonomist-country-res-summary.csv")
+filename_write = paste0(dir_data_ch1, "others/2019-10-28-taxonomist-country-res-summary.csv")
 write.csv(df_describers[, .N,by=c("residence.country.describer.first")][order(-N)],
           filename_write)  

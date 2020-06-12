@@ -12,7 +12,7 @@ library(data.table)
 library(tidyr)
 
 # Data wrangling
-flow <- fread(paste0(dir_data, "eda1_flow/2019-09-22-flow-map-type-loc-des-country.csv"), 
+flow <- fread(paste0(dir_data_ch3_flow, "2019-09-22-flow-map-type-loc-des-country.csv"), 
               encoding="UTF-8")
 flow[no_flow==FALSE, list(N_cty=length(unique(des))), by=c("ori")][order(-N_cty)]
 
@@ -90,5 +90,5 @@ flow <- flow[!is.na(ori)]
 
 # Persist dataset
 vars <- c("ori", "des", "N_flow", "N_total", model_vars)
-write.csv(flow[, ..vars], paste0(dir_data, "eda1_flow/2019-11-01-flow-GLM.csv"), 
+write.csv(flow[, ..vars], paste0(dir_data_ch3_flow, "2019-11-01-flow-GLM.csv"), 
           fileEncoding="UTF-8", row.names=F)

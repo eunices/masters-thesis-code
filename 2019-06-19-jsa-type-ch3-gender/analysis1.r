@@ -21,11 +21,10 @@ source('2019-06-19-jsa-type-ch3-gender/analysis1/util.r') # util functions
 # get data from UN's API and save locally
 source('2019-06-19-jsa-type-ch3-gender/analysis1/model.r') # read local/ bee data
 
-dir_data_subf = paste0(dir_data, "eda3_gender/")
-dir_data_subf1 = paste0(dir_data_subf, "time-series-spp/")
-dir_data_subf2 = paste0(dir_data_subf, "time-series-tax/")
+dir_data_subf1 = paste0(dir_data_ch3_gender, "time-series-spp/")
+dir_data_subf2 = paste0(dir_data_ch3_gender, "time-series-tax/")
 
-if(!dir.exists(dir_data_subf)) dir.create(dir_data_subf)
+if(!dir.exists(dir_data_ch3_gender)) dir.create(dir_data_ch3_gender)
 if(!dir.exists(dir_data_subf1)) dir.create(dir_data_subf1)
 if(!dir.exists(dir_data_subf2)) dir.create(dir_data_subf2)
 
@@ -95,7 +94,7 @@ prop_tax[F+M+U>5][1:10]
 len = dim(prop_tax[F+M+U>5])[1]
 prop_tax[F+M+U>5][(len-10):len]
 
-write.csv(prop_tax, paste0(dir_data_subf, "2019-11-15-prop-taxonomist.csv"), 
+write.csv(prop_tax, paste0(dir_data_ch3_gender, "2019-11-15-prop-taxonomist.csv"), 
           row.names=F, fileEncoding='UTF-8')
 
 # Proportion of papers (! NOT USED)
@@ -110,7 +109,7 @@ write.csv(prop_tax, paste0(dir_data_subf, "2019-11-15-prop-taxonomist.csv"),
 # prop_t_countries$prop_F <- prop_t_countries$F / prop_t_countries$N
 # prop_t_countries <- prop_t_countries[order(-prop_F)]
 
-# write.csv(prop_t_countries, paste0(dir_data_subf, "2019-11-15-prop-taxonomist-spp.csv"), 
+# write.csv(prop_t_countries, paste0(dir_data_ch3_gender, "2019-11-15-prop-taxonomist-spp.csv"), 
 #           row.names=F, fileEncoding='UTF-8')
 
 

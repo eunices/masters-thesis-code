@@ -550,7 +550,7 @@ des3 <- dcast(des2,
 des4 <- merge(des1, des3,
               by=c("check_young", "check_few.spp.pub", "check_few.pub.near.death", "check_few.spp"))
 
-write.csv(des4, paste0(dir_data, 'ch1/2019-10-02-taxonomist-one-large-mono.csv'),
+write.csv(des4, paste0(dir_data_ch1, '2019-10-02-taxonomist-one-large-mono.csv'),
           row.names=F)
 
 # Checks
@@ -796,7 +796,7 @@ tax_most_spp$full.name.of.describer.n <- paste0(tax_most_spp$full.name.of.descri
 tax_most_spp <- tax_most_spp[, c("full.name.of.describer.n", "ns_spp_N", "n_pubs")]
 summary(df_describers$ns_spp_N)
 write.csv(tax_most_spp[1:10], 
-          paste0(dir_data, 'ch1/2019-10-03-tax-1-most-spp.csv'), row.names=F)
+          paste0(dir_data_ch1, '2019-10-03-tax-1-most-spp.csv'), row.names=F)
 
 # Who had the most number of publications
 tax_most_pub <- df_describers[order(-n_pubs)]
@@ -804,7 +804,7 @@ tax_most_pub$full.name.of.describer.n <- paste0(tax_most_pub$full.name.of.descri
     tax_most_pub$min, "-", tax_most_pub$max_corrected, ")")
 tax_most_pub <- tax_most_pub[, c("full.name.of.describer.n", "n_pubs")]
 write.csv(tax_most_pub[1:10], 
-          paste0(dir_data, 'ch1/2019-10-03-tax-2-highest-pub.csv'), row.names=F)
+          paste0(dir_data_ch1, '2019-10-03-tax-2-highest-pub.csv'), row.names=F)
 
 # Who had the most synonyms
 check <- df_describers$spp_N >= 10
@@ -818,5 +818,5 @@ summary(df_describers[check]$prop_species_syn)
 df_describers[full.name.of.describer.n=="Francis Walker"]
 
 write.csv(tax_highest_prop_syn[1:10], 
-          paste0(dir_data, 'ch1/2019-10-03-tax-3-highest-syn.csv'), row.names=F)
+          paste0(dir_data_ch1, '2019-10-03-tax-3-highest-syn.csv'), row.names=F)
 

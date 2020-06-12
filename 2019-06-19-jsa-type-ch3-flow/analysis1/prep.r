@@ -55,7 +55,7 @@ t$Geom <- paste0("LINESTRING (", as.character(t$oX),
 t$no_flow <- t$ori == t$des
 
 write.csv(t,
-          paste0(dir_data, "eda1_flow/2019-09-22-flow-map-type-loc-des-country.csv"), 
+          paste0(dir_data_ch3_flow, "2019-09-22-flow-map-type-loc-des-country.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
 write.csv(t,

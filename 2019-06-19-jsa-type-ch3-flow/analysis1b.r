@@ -25,7 +25,7 @@ auth <- auth[!duplicated(idx_auth)]
 auth <- unique(auth[residence.country.describer.n != "[unknown]"]$residence.country.describer.n)
 
 # Read bee data
-df <- fread(paste0(dir_data, "eda1_flow/2019-11-01-flow-GLM.csv"), encoding="UTF-8")
+df <- fread(paste0(dir_data_ch3_flow, "2019-11-01-flow-GLM.csv"), encoding="UTF-8")
 df <- df[class_check != 'Unclassed']
 df <- df[continent_ori != 'Unclassed']
 df <- df[ori %in% auth]

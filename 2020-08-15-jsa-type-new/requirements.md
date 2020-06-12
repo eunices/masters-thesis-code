@@ -107,13 +107,7 @@ country.of.type.repository = country.of.type.repository.n_long
 
 ## variables cleaned but with old names
 
-
-# TODO:
-### used
-
-
-### not used
-
+SHOULD BE NONE!
 
 
 ## new variables
@@ -153,18 +147,7 @@ describer_edits.csv for edited describers
 last_name.csv for last names
 
 
-## used
-### describer dataset
-
-
-## not used
-### collector dataset
-
-### repository dataset
-
-# TODO: identify datasets used by ch1-3, 
-# TODO: add those code in here for processing from raw dataset
-
-## TODO: Identify functions to be reused from cleaning scripts
-
-Ideally the derived datasets.
+# others
+nonvalid species: 2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll
+describers: 2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final-view.csv
+collectors: 2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_3.0-collectors.csv 
