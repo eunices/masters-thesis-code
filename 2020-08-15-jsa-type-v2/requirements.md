@@ -7,8 +7,6 @@
 3. List datasets that are not using subset.r below, also put them into subset.r
 4. Rename where necessary so that the names are all consistent so that when the new dataset comes, it can be cleaned and piped quickly into the old scripts.
 
-
-
 ### 2019-06-19-jsa-type-ch1
 
 #### init.r
@@ -144,10 +142,13 @@ collectors_2.0-denormalised_edit4.csv to clean collectors which is fed back into
 
 describer_edits.csv for edited describers
 
-last_name.csv for last names
-
 
 # others
 nonvalid species: 2019-05-23-Apoidea world consensus file Sorted by name 2019 oth_4.3-clean-coll
 describers: 2019-05-23-Apoidea world consensus file Sorted by name 2019 describers_5.0-describers-final-view.csv
 collectors: 2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_3.0-collectors.csv 
+
+
+
+# Updating the dataset steps:
+

@@ -288,8 +288,7 @@ dfx2[idx == 22956]$full.name.of.describer = "G. Trautmann; Woldemar Trautmann"
 
 
 # Clean short names from full names
-filepath <- paste0(dir_data_raw_clean, "last_name.csv")
-ln <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
+ln = read_escaped_data("lookup/2019-09-16-last-name.csv"))
 
 # Create the lookup table
 fn <- ln$last.name
