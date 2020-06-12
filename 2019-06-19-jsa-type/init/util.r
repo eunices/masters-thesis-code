@@ -1,5 +1,5 @@
-library(ggmap)
-library(revgeo)
+suppressMessages(library(ggmap))
+suppressMessages(library(revgeo))
 source('keys.r')
 
 
