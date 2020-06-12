@@ -3,6 +3,8 @@
 # A series of other codes are named as clean1|2|3|4.r
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+source('2019-06-19-jsa-type/clean/functions.R')
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - initial formatting
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -11,33 +13,27 @@ print(paste0(Sys.time(), " --- initial formatting"))
 
 
 # Read dataset
-filepath <- paste0(dir_data, basefile, '-idx.csv')
-df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] # fread does not escape double quotes
-# csv double quotes are escaped by \\"\\", fread reads them as "" instead of "
-df[] <- lapply(df, gsub, pattern='[\r\n]', replacement=' ') # remove line carriages (otherwise funky things will happen with write.csv)
+df <- read_escaped_data(paste0(dir_data, basefile, '-idx.csv'))
 
 
 
+
+# Cleaning rows and column names
+
+# Remove line carriages
+df[] <- lapply(df, gsub, pattern='[\r\n]', replacement=' ') 
+# otherwise funky things will happen with write.csv 
 
 # Replace unknown values with NA
-replace_na <- c('other,_unknown,_or none', 'other,_unknown,_or_other', 'other,_unknown,_or_none')
-for (i in 1:length(replace_na)){
-    df[, names(df) := lapply(.SD, function(x) gsub(replace_na[i], NA, x))]
-}
-
-
-
+df = replace_df_nas(df)
 
 # Rename column names
-names(df) <- gsub("\\.\\.", "\\.", gsub(" ", ".", gsub("[[:punct:]]", "", tolower(names(df)))))
-names(df) <- iconv(names(df), from = 'UTF-8', to = 'ASCII//TRANSLIT')
-if (any(grepl("full.name.a.e", names(df)))) {
-    names(df)[which(grepl("full.name.a.e", names(df)))] <- 'full.name' # renaming this long name
-}
+df = rename_df_names(df)
 
 
 
+
+# Add new variables 
 
 # Initialize flag column
 df$flag <- '' 
@@ -164,15 +160,21 @@ df$cty.state <- NULL
 
 
 # Incorporate manually cleaned lat and lon from initial cleaning script
-filepath <- paste0(dir_data, 'clean/lat-lon-edit.csv')
-ll <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+
+# Read data
+ll <- read_escaped_data(paste0(dir_data, 'clean/lat-lon-edit.csv'), escape=F)
 ll <- ll[, c("idx", "lat", "lon", "type.country.n", "type.state.n", "flag")]
 ll$idx <- as.character(ll$idx)
+
+# Merge back data
 df <- merge(df, ll, all.x=T, all.y=F, by="idx", suffixes=c("", "_n"))
+
 df[!(is.na(lat_n))]$lat <- df[!(is.na(lat_n))]$lat_n 
 df[!(is.na(lat_n))]$lon <- df[!(is.na(lat_n))]$lon_n
 df[!(is.na(lat_n))]$type.country.n <- df[!(is.na(lat_n))]$type.country.n_n
 df[!(is.na(lat_n))]$flag <- df[!(is.na(lat_n))]$flag_n
+
+# Remove irrelevant columns
 df[, c("lat_n", "lon_n", "type.country.n_n", "type.state.n_n", "flag_n"):=NULL]
 
 
@@ -209,37 +211,54 @@ df[, c("lat_n", "lon_n", "type.country.n_n", "type.state.n_n", "flag_n"):=NULL]
 #           na='', row.names=F, fileEncoding="UTF-8")
 
 # Merge back info
-filepath <- paste0(dir_data, "clean/df-state-check_edit.csv")
-add <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')
-add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-new_cols <- c("idx", "type.country.n_N", "type.state.n_N", 
-             "lat_N", "lon_N")
-add <- add[!duplicated(idx)][, ..new_cols]
+
+# Read
+add <- read_escaped_data(paste0(dir_data, "clean/df-state-check_edit.csv"))
 add$idx <- as.character(add$idx)
+
+new_cols <- c("idx", "type.country.n_N",
+              "type.state.n_N", "lat_N", "lon_N")
+add <- add[!duplicated(idx)][, ..new_cols]
+
+# Merge 
 add <- merge(add, lookup.cty[,c("DL", "Country", "GEC")],
              by.x="type.country.n_N", by.y="DL", all.x.T=, all.y=T)
 names(add)[which(names(add)=="Country")] <- "type.country.n.full_N"
+
+# Concatenate country and state
 add$cty.state <- paste0(add$GEC, ".", add$type.state.n_N)
+
+# Merge to lookup
 lookup <- lookup.pri_div[!duplicated(lookup.pri_div$CTY.STATE.CODE), 
                          c("CTY.STATE.CODE", "NAME_1")]
 add <- merge(add, lookup, by.x="cty.state", by.y="CTY.STATE.CODE", all.x=T, all.y=F)
 names(add)[which(names(add)=="NAME_1")] <- "type.state.n.full_N"
 add$cty.state <- NULL; add$GEC <- NULL
+
+# Merge back to df
 df <- merge(df, add, by='idx', all.x=T, all.y=F)
+
 df[!is.na(type.country.n_N)]$type.country.n.full <-
     df[!is.na(type.country.n_N)]$type.country.n.full_N
+
 df[!is.na(type.country.n_N)]$type.state.n.full <- 
     df[!is.na(type.country.n_N)]$type.state.n.full_N
+
 df[!is.na(type.country.n_N)]$type.country.n <- 
     df[!is.na(type.country.n_N)]$type.country.n_N
+
 df[!is.na(type.country.n_N)]$type.state.n <- 
     df[!is.na(type.country.n_N)]$type.state.n_N
+
 df[!is.na(type.country.n_N)]$lat <- 
     as.numeric(df[!is.na(type.country.n_N)]$lat_N)
+
 df[!is.na(type.country.n_N)]$lon <- 
     as.numeric(df[!is.na(type.country.n_N)]$lon_N)
+
 df[!is.na(type.country.n_N) & !(is.na(lat)|is.na(lon))]$flag <- 
     "COORDINATES_DOUBLE_CHECKED_TO_STATE_COUNTRY_MANUAL"
+
 df[type.country.n_N == "REMOVE"]$type.country.n <- ""
 df[,c("type.country.n_N", "type.state.n_N"):=NULL]
 df[,c("lat_N", "lon_N", "type.country.n.full_N", "type.state.n.full_N"):=NULL]
@@ -274,12 +293,14 @@ df[,c("lat_N", "lon_N", "type.country.n.full_N", "type.state.n.full_N"):=NULL]
 # df[,c("search_locality", "check1", "check2"):=NULL]
 
 # Merge back info
-filepath <- paste0(dir_data, "clean/df-geocoded_edit.csv")
-add <- fread(filepath, integer64='character', na.strings=c('NA'), encoding='UTF-8')
-add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+add <- read_escaped_data(paste0(dir_data, "clean/df-geocoded_edit.csv"))
+
+# Add duplicated
 new_cols <- c("idx", "lat", "lon")
 add <- add[!duplicated(idx)][, ..new_cols][!is.na(lat)]
 add$idx <- as.character(add$idx)
+
+# Merge back data
 df <- merge(df, add, by='idx', all.x=T, all.y=F, suffixes=c("", "_N"))
 df[!is.na(lat_N)]$lat <- as.numeric(df[!is.na(lat_N)]$lat_N)
 df[!is.na(lat_N)]$lon <- as.numeric(df[!is.na(lat_N)]$lon_N)
@@ -312,47 +333,61 @@ df[,c("lat_N", "lon_N"):=NULL]
 #           paste0(dir_data, "clean/df-check-state2.csv"), row.names=F)
 
 # Merge back info
-filepath <- paste0(dir_data, "clean/df-check-state2_edit.csv")
-add <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')
-add[, names(add) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-new_cols <- c("idx", "type.country.n_N", "type.state.n_N", 
-             "lat_N", "lon_N")
+add <- read_escaped_data(paste0(dir_data, "clean/df-check-state2_edit.csv"))
+new_cols <- c("idx", "type.country.n_N", "type.state.n_N", "lat_N", "lon_N")
 add <- add[!duplicated(idx)][, ..new_cols]
 add$idx <- as.numeric(add$idx)
 
 add <- merge(add, lookup.cty[,c("DL", "Country", "GEC")],
              by.x="type.country.n_N", by.y="DL", all.x.T=, all.y=F)
-
 names(add)[which(names(add)=="Country")] <- "type.country.n.full_N"
+
+# Create country/date
 add$cty.state <- paste0(add$GEC, ".", add$type.state.n_N)
+
+# Create lookup
 lookup <- lookup.pri_div[!duplicated(lookup.pri_div$CTY.STATE.CODE), 
                          c("CTY.STATE.CODE", "NAME_1")]
-add <- merge(add, lookup,
-             by.x="cty.state", by.y="CTY.STATE.CODE", all.x=T, all.y=F)
+
+# Merge lookup
+add <- merge(add, lookup, by.x="cty.state", by.y="CTY.STATE.CODE", all.x=T, all.y=F)
 names(add)[which(names(add)=="NAME_1")] <- "type.state.n.full_N"
 add$cty.state <- NULL; add$GEC <- NULL
 add$idx <- as.character(add$idx)
+
+# Merge back to df
 df <- merge(df, add, by='idx', all.x=T, all.y=F)
 
+# Replace columns
 df[!is.na(type.country.n_N)]$type.country.n.full <- 
     df[!is.na(type.country.n_N)]$type.country.n.full_N
+
 df[!is.na(type.country.n_N)]$type.state.n.full <- 
     df[!is.na(type.country.n_N)]$type.state.n.full_N
+
 df[!is.na(type.country.n_N)]$type.country.n <- 
     df[!is.na(type.country.n_N)]$type.country.n_N
+
 df[!is.na(type.country.n_N)]$type.state.n <- 
     df[!is.na(type.country.n_N)]$type.state.n_N
+
 df[!is.na(type.country.n_N)]$lat <- 
     as.numeric(df[!is.na(type.country.n_N)]$lat_N)
+
 df[!is.na(type.country.n_N)]$lon <- 
     as.numeric(df[!is.na(type.country.n_N)]$lon_N)
+
 df[!is.na(type.country.n_N) & !(is.na(lat)|is.na(lon))]$flag <- 
     "COORDINATES_DOUBLE_CHECKED_TO_STATE_COUNTRY_MANUAL"
+
 df[type.country.n_N == "REMOVE"]$type.country.n  <- ""
 
-df[,c("type.country.n_N", "type.state.n_N", 
-        "lat_N", "lon_N",
-        "type.country.n.full_N", "type.state.n.full_N"):=NULL]
+df[,c("type.country.n_N",
+      "type.state.n_N", 
+      "lat_N",
+      "lon_N",
+      "type.country.n.full_N",
+      "type.state.n.full_N"):=NULL]
 
 
 

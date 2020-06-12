@@ -3,7 +3,7 @@
 # A series of other codes are named as clean1|2|3|4.r
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-
+source('2019-06-19-jsa-type/clean/functions.R')
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -15,10 +15,7 @@ print(paste0(Sys.time(), " --- splitting dataset"))
 
 
 # Read data
-filepath <- paste0(dir_data, basefile, '-idx-3-clean-fields.csv')
-df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-# fread does not escape double quotes
+df = read_escaped_data(paste0(dir_data, basefile, '-idx-3-clean-fields.csv'))
 
 
 
@@ -48,9 +45,8 @@ df_s <- df_s[duplicated.row == "FALSE"][order(as.numeric(idx))]
 
 
 # Clean genus and species relationships
-filepath <- paste0(dir_data, "clean/idx-idx_original.csv") # copy and pasted from Excel for colour
-idxdf <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-idxdf[, names(idxdf) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+idxdf <- read_escaped_data(paste0(dir_data, "clean/idx-idx_original.csv"))
+# copy and pasted from Excel for colour
 idxdf$correct_synonym <- gsub('=', '', idxdf$taxonomic_notes)
 idxdf[status=="Valid subspecies"]$correct_synonym <- 
     gsub("([A-Za-z]+).*", "\\1", idxdf[status=="Valid subspecies"]$correct_synonym)

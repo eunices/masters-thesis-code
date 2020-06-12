@@ -84,7 +84,6 @@ lu = get_lp_statoid()
 lu = get_lp_statoid()
 
 
-
 ## TODO: Identify fields that need to be cleaned
 
 ## variables cleaned with new names
@@ -146,6 +145,9 @@ missing_authors_edit.csv for missing authors*
 idx-idx_original.csv which is the coloured version of excel converted into csv
 
 journal_names_edit.csv for journal names
+
+collectors_2.0-denormalised_edit4.csv to clean collectors which is fed back into the main collector file
+
 
 
 ## used

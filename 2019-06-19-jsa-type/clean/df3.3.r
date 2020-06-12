@@ -3,6 +3,7 @@
 # This code is for creating an enhanced denormalised describer-species dataset.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+source('2019-06-19-jsa-type/clean/functions.R')
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - further denormalization of data with cleaned describer data

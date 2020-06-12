@@ -3,6 +3,8 @@
 # A series of other codes are named as clean1|2|3|4.r
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+source('2019-06-19-jsa-type/clean/functions.R')
+
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - cleaning other fields
@@ -12,37 +14,28 @@ print(paste0(Sys.time(), " --- cleaning other fields"))
 
 
 
-# Functions
-paste_nine = function(numeric){
-    char <- strsplit(as.character(numeric), "")[[1]]
-    word <- paste0(char[1], "9", char[3], char[4])
-    as.character(word)
-}
-
-
-
-
 # Read data
-filepath <- paste0(dir_data, basefile, '-idx-2-clean-repo.csv')
-df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-# fread does not escape double quotes
+df <- read_escaped_data(paste0(dir_data, basefile, '-idx-2-clean-repo.csv'))
 
 
 
 
 # Clean date.n based on pub_1.0-clean.csv
 # note: not cleaning actual date field as data is captured actually in publications table 
-filepath <- paste0(dir_data, basefile, " pub_1.0-clean.csv")
-pub <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
+pub <- read_escaped_data(paste0(dir_data, basefile, " pub_1.0-clean.csv"))
+
+# Separate by species
 pub <- pub %>% separate_rows(idxes, sep="; ")
 pub <- unique(pub[, c("idxes", "date.n")])
 pub <- pub[!duplicated(idxes)]
+
+# Merge to df
 df <- merge(df, pub, all.x=T, all.y=F, by.x="idx", by.y="idxes")
 
 
 
-# Clean date.of.type field
+# Clean date.of.type fields
+
 # Create a string data field
 df$date.of.type.string <- paste0("'", df$date.of.type)
 df$date.of.type.dd <- as.numeric(sub("\\D*(\\d+).*", "\\1", df$date.of.type))
@@ -73,12 +66,14 @@ df$years.lag <- as.numeric(df$date.n) - as.numeric(df$date.of.type.yyyy)
 
 # Checks for years.lag <0
 # Merge info back
-filepath <- paste0(dir_data, "clean/date_discrepancy.csv")
+
 # those which have unresolved discrepancies (-ve date with no reason), will be changed to NA
 # field to merge is "date.of.type.corrected" (it is in YYYY format)
-date_discrepancy <- fread(filepath, integer64='character', na.strings=c(''), encoding='UTF-8')
+
+date_discrepancy <- read_escaped_data(paste0(dir_data, "clean/date_discrepancy.csv"))
 date_discrepancy <- date_discrepancy[, c("idx", "date.of.type.corrected")]
-date_discrepancy[, names(date_discrepancy) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+
+# Merge back
 date_discrepancy$idx <- as.character(date_discrepancy$idx)
 df <- merge(df, date_discrepancy, by="idx", all.x=T, all.y=F)
 df[!is.na(date.of.type.corrected)]$date.of.type.yyyy <- 
@@ -99,9 +94,7 @@ df$years.lag <- as.numeric(df$date.n) - as.numeric(df$date.of.type.yyyy)
 #           paste0(data_dir, "clean/missing_authors.csv")]
 
 # Add missing authors
-filepath <- paste0(dir_data, "clean/missing_authors_edit.csv")
-missing_auth <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-missing_auth[, names(missing_auth) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+missing_auth <- read_escaped_data(paste0(dir_data, "clean/missing_authors_edit.csv"))
 df1 <- df[is.na(full.name.of.describer)]
 df2 <- df[!is.na(full.name.of.describer)]
 

@@ -3,6 +3,7 @@
 # A series of other codes are named as clean1|2|3|4.r
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+source('2019-06-19-jsa-type/clean/functions.R')
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - cleaning repository
@@ -13,26 +14,19 @@ print(paste0(Sys.time(), " --- cleaning repository"))
 
 
 # Read data
-filepath <- paste0(dir_data, basefile, '-idx-1-geocoded.csv')
-df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-# fread does not escape double quotes
-
+df <- read_escaped_data(paste0(dir_data, basefile, '-idx-1-geocoded.csv'))
 
 
 
 # Clean repository
-filepath <- paste0(dir_data, "clean/check-type-repo2_edit.csv")
-edit <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-edit[, names(edit) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-# fread does not escape double quotes
+edit <- read_escaped_data(paste0(dir_data, "clean/check-type-repo2_edit.csv"))
 
 # !CHECK
 dim(edit[country.of.type.repository.n_short != "[unknown]"][
 	duplicated(country.of.type.repository.n_short)])
 
 # Merge info back
-edit <- edit[, c("country.of.type.repository.n_short", "country.of.type.repository.n_long",
+edit <- edit[, c("country.of.type.repository.n_short","country.of.type.repository.n_long",
                  "type.repository.n_short", "type.repository.n_long", "idxes")]
 edit <- edit %>% separate_rows(idxes, sep="; ")
 df <- merge(df, edit, all.x=T, all.y=F, by.x="idx", by.y="idxes")

@@ -38,8 +38,8 @@ ybreaks50 = function(lims) {ybreaks(lims, 50)}
 ybreaks100 = function(lims) {ybreaks(lims, 100)}
 
 
-read_escaped_data = function(filepath) {
+read_escaped_data = function(filepath, escape=T) {
     df <- fread(filepath, integer64='character', na.strings=c('', 'NA'), encoding='UTF-8')
-    df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
+    if(escape) df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
     df
 }

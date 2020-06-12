@@ -1,5 +1,80 @@
-###################################### df2.r
+###################################### clean1.r
 
+
+
+replace_df_nas = function(df) {
+	replace_na <- c('other,_unknown,_or none', 
+				    'other,_unknown,_or_other',
+					'other,_unknown,_or_none')
+
+	for (i in 1:length(replace_na)){
+		df[, names(df) := lapply(.SD, function(x) gsub(replace_na[i], NA, x))]
+	}
+	
+	return(df)
+}
+
+
+
+
+rename_df_names = function(df) {
+
+    # Remove punctuations
+    names(df) <- gsub("\\.\\.", "\\.", 
+        gsub(" ", ".", gsub("[[:punct:]]", "", 
+            tolower(names(df)))))
+
+    # Convert "funky" alphabets
+    names(df) <- iconv(names(df), from='UTF-8', to='ASCII//TRANSLIT') 
+
+    # Renaming this long name
+    if (any(grepl("full.name.a.e", names(df)))) {
+        names(df)[which(grepl("full.name.a.e", names(df)))] <- 'full.name' 
+    }
+
+    return(df)
+}
+
+
+
+###################################### clean3.r
+
+
+
+paste_nine = function(numeric){
+    char <- strsplit(as.character(numeric), "")[[1]]
+    word <- paste0(char[1], "9", char[3], char[4])
+    as.character(word)
+}
+
+
+
+###################################### df1.r
+
+
+
+format_short <- function(x){
+    auths <- strsplit(x, split="; ")[[1]]
+    len <- length(auths)
+    auths <- fn[auths]
+
+    if(len==1) {
+        string <- auths
+    } else if(len==2) {
+        string <- paste0(auths[1], " and ", auths[2])
+    } else if(len>=3) {
+        string <- auths[1]
+        for (i in 2:(len-1)) {
+            string <- paste0(string, ", ", auths[i])
+        }
+        string <- paste0(string, ", and ", auths[len])
+    }
+    string
+}
+
+
+
+###################################### df2.r
 
 
 run_collectors_loop <- function(collectors_unique) {
