@@ -14,7 +14,7 @@ print(paste0(Sys.time(), " --- by country"))
 
 
 # Read data
-df <- read_escaped_data(dir_data, basefile, " filtered_4.3-clean-coll.csv")
+df <- read_escaped_data(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"))
 df$idx <- as.integer(df$idx)
 
 df_mapper2 <- read_escaped_data(paste0(dir_data, basefile, " filtered_5-species-cty1.csv"))

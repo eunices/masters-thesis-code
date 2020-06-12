@@ -346,7 +346,7 @@ dfx1 = read_escaped_data(paste0(dir_data, basefile, " filtered_4.2-clean-auth-fu
 dfx1 = dfx1[, ..cols]
 dfx1$idx <- as.numeric(dfx1$idx)
 
-dfx2 = read_escaped_data((dir_data, basefile, " oth_4.2-clean-auth-full-name.csv"))
+dfx2 = read_escaped_data(paste0(dir_data, basefile, " oth_4.2-clean-auth-full-name.csv"))
 dfx2 <- dfx2[, ..cols]
 dfx2$idx <- as.numeric(dfx2$idx)
 

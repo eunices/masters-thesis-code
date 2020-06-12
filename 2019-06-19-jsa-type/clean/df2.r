@@ -264,7 +264,7 @@ irrelevant_columns = c('collector.of.type.n_new',
                        'collector.gender.n_new',
                        'title.of.collector.n_new')
 
-if(any(names(dfx1) %in% irrelevant_columns) {
+if(any(names(dfx1) %in% irrelevant_columns)) {
     dfx1$collector.of.type.n_new <- NULL
     dfx1$full.name.of.collector.n_new <- NULL
     dfx1$uncertain_new <- NULL

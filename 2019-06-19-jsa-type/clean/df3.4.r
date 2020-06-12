@@ -198,12 +198,12 @@ describers_final <- merge(describers_final, describers.res.cty.first,
 # Read ata
 pub <- read_escaped_data(paste0(dir_data, basefile, " pub_1.0-clean.csv"))
 df1 <- read_escaped_data(paste0(dir_data, basefile, " filtered_4.3-clean-coll.csv"))
-df2 <- read_escaped_data(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"))[
-    ,c("idx", "full.name.of.describer")]
+df2 <- read_escaped_data(paste0(dir_data, basefile, " oth_4.3-clean-coll.csv"))
 
 # Process data
 pubs <- pub %>% separate_rows(idxes)
-df <- rbind(df1, df2)
+cols = c("idx", "full.name.of.describer")
+df <- rbind(df1[, ..cols], df2[, ..cols])
 df$full.name.of.describer <- gsub('\\"\\"', '\\"', df$full.name.of.describer)
 df <- data.table(df %>% separate_rows(full.name.of.describer, sep="; "))
 df$idx <- as.integer(df$idx); pubs$idx <- as.integer(pubs$idx)
