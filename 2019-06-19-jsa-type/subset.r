@@ -177,7 +177,7 @@ get_species_denormalised = function() {
 
 # Lookup files
 get_lp_statoid = function() {
-    fread(paste0('data/lookup/2019-05-29-statoid-country-codes.csv', na=c(''), encoding='UTF-8'))
+    fread('data/lookup/2019-05-29-statoid-country-codes.csv', na=c(''), encoding='UTF-8')
 }
 
 get_lp_pop = function() {

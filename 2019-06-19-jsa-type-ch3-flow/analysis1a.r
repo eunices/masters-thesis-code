@@ -30,6 +30,7 @@ dim(des_tabulate)
 # top 3 countries with describers
 des_tabulate[1:3]
 
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Where do describers come from - by socioeconomic status
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

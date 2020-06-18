@@ -24,7 +24,6 @@ sum_flow <- spp[, .N, by="type.country.n"][order(-N)]
 flow <- flow[no_flow == "FALSE" ,c("ori", "des", "N")]
 
 # Get statoid country codes (with socioeconomic status)
-lu <- get_lp_statoid()
 comb <- expand.grid(lu$DL, lu$DL)
 names(comb) <- c("ori", "des")
 flow <- data.table(merge(comb, flow, by=c("ori", "des"), all.x=T, all.y=F))

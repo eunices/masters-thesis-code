@@ -4,11 +4,15 @@
 # Cleans lat/lon/country/state.
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+
+
 print("")
 print(paste0(Sys.time(), " --- starting clean1.r"))
 print("######################################################")
 
 source('2019-06-19-jsa-type/clean/functions.R')
+# TODO: modularise this (if possible - secondary)
+
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - initial formatting

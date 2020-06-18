@@ -14,6 +14,9 @@ source('2019-06-19-jsa-type/subset.r')
 library(networkD3)
 library(ggplot2)
 
+# Read lookup
+lu <- get_lp_statoid()
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - resource flow
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

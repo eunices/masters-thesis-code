@@ -152,7 +152,6 @@ yscale = .5
 p8b <- ggplot(taxonomic_effort_per_person, aes(x=years, y=tax_per_mil_person)) + 
     xlab("") + ylab("Number of PTEs \nper billion persons (black)") + 
     theme +
-    ggtitle("Number of PTEs per billion persons by year") + 
     geom_point(size=1, color='grey') + 
     geom_line(size=.5, color='grey', linetype='dashed') +
     geom_line(size=1, y=rollmean(taxonomic_effort_per_person$tax_per_mil_person, 10, 
