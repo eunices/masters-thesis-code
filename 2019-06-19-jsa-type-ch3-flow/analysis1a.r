@@ -36,22 +36,62 @@ des_tabulate[1:3]
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- Where do describers come from - by socioeconomic status"))
 
+
 cols <- c("DL", "Class", "continent")
 des_where = separate_rows(des[, c("full.name.of.describer.n", "residence.country.describer.n")], 
                              residence.country.describer.n, sep="; ")
 des_where = data.table(des_where[!duplicated(des_where$full.name.of.describer.n),])
 des_where = merge(des_where, lu[, ..cols], 
 				  by.x="residence.country.describer.n", by.y="DL", all.x=T, all.y=T)
-lvls = c("Low income", "Lower middle income", "Upper middle income", "High income",  "Unclassed")
-des_where$Class = factor(des_where$Class, lvls)
+lvls_class = c("Low income", "Lower middle income", "Upper middle income", "High income",  "Unclassed")
+des_where$Class = factor(des_where$Class, lvls_class)
+lvls_continent = c("Africa", "Oceania", "Asia", "Australia", "South America", "North America",  "Europe")
+lvls_continent = rev(lvls_continent)
+des_where$continent = factor(des_where$continent, lvls_continent)
+
 
 # For countries with describers: Distribution of classes
 des_where1 = des_where[!is.na(full.name.of.describer.n)]
 des_where1[grepl("unknown", tolower(residence.country.describer.n))] # !CHECK
 table(is.na(des_where1$Class)) # with no class due to unknown country of residence
-des_where_summary = des_where1[!is.na(des_where1$Class), .N, by=Class]
-des_where_summary
+des_where_summary = des_where1[!is.na(des_where1$Class), .N, by=c("Class", "continent")] # TODO:
+des_where_summary = dcast(des_where_summary, Class ~ continent, value.var="N")
+des_where_summary[is.na(des_where_summary)] = 0
 des_where_summary$N / sum(des_where_summary$N) *100
+
+
+# By class
+des_where_by_class = cbind(des_where_summary[,1], rowSums(des_where_summary[,-1]))
+des_where_by_class$name = paste0(des_where_by_class$Class, "\n(", des_where_by_class$V2, ")")
+# By continent
+des_where_by_continent = data.frame(col=colSums(des_where_summary[,-1]))
+des_where_by_continent$name = paste0(rownames(des_where_by_continent), " (",
+                                     des_where_by_continent$col, ")")
+# By continent x class
+des_where_summary_plot = melt(des_where_summary, id.vars="Class", 
+                              measure.vars=names(des_where_summary)[-1])
+# des_where_summary_plot$Class = des_where_by_class[match(des_where_summary_plot$Class, 
+#                                                         des_where_by_class$Class),]$name
+# des_where_summary_plot$variable = 
+#     des_where_by_continent[match(des_where_summary_plot$variable, 
+#                                  rownames(des_where_by_continent)),]$name
+des_whereplot = ggplot(des_where_summary_plot, aes(x=Class, y=variable, fill=value)) + 
+    geom_tile() + 
+    xlab("") +
+    ylab("") + 
+    scale_fill_gradient(name="", low="grey40", high="grey90") +
+    geom_text(aes(label = ifelse(value >0, round(value, 1), ""))) +
+    # scale_fill_continuous(name="") +
+    scale_x_discrete(labels=des_where_by_class[match(lvls_class, des_where_by_class$Class),]$name) +
+    scale_y_discrete(labels=des_where_by_continent[match(lvls_continent, rownames(des_where_by_continent)),]$name) +
+    theme
+ggsave(paste0(dir_plot, 'fig-2.png'), des_whereplot, units="cm", width=20, height=10, dpi=300)
+
+# Chisq test of association
+des_where1_test = des_where1[!is.na(Class) & !is.na(continent)]
+chisq.test(des_where1_test$Class, des_where1_test$continent)
+# Cannot be run as the marginal values are low 
+
 
 # For all countries, to investigate which countries have no describer
 des_where2 = unique(des_where[is.na(full.name.of.describer.n)])
@@ -62,6 +102,8 @@ des_where_summary2 = des_where2[Class != "Unclassed", .N, by=Class]
 tl = sum(des_where_summary2$N); tl
 des_where_summary2
 des_where_summary2$N / tl *100
+
+
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -92,6 +134,8 @@ summary(ss[N_total>=30 & N_cty>=1]$prop*100)
 shapiro.test(ss[N_total>=30 & N_cty>=1]$prop*100) # not normal
 ss[N_total>=30][order(-prop)][1:4]
 
+
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Fig 2 socioeconomic status on proportion of species
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -103,7 +147,7 @@ p1 = ggplot(ss[!is.na(Class)], aes(x=Class, y=round(prop*100,2))) +
 	labs(x="\nWorld Bank classification", 
 		 y = "Proportion of species described\n by describers residing in country (%)\n") +
 	theme
-ggsave(paste0(dir_plot, 'fig-2.png'), p1, units="cm", width=20, height=10, dpi=300)
+ggsave(paste0(dir_plot, 'fig-3.png'), p1, units="cm", width=20, height=10, dpi=300)
 
 # Statistical tests
 # source: http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
@@ -123,6 +167,8 @@ write.csv(ss_summary,
 write.csv(ss[order(-prop)],
           paste0(dir_data_ch3_flow, "2019-09-22-summary-country-prop.csv"), 
 		  na='', row.names=F, fileEncoding="UTF-8")
+
+
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Fig 3 socioeconomic status on number of countries contributed to
@@ -161,7 +207,7 @@ p2 = ggplot(flow[!is.na(Class),], aes(x=Class, y=N)) +
 	labs(x="\nWorld Bank classification", 
 		 y = "Number of countries\n to which there is taxonomic flow") +
 	theme
-ggsave(paste0(dir_plot, 'fig-3.png'), p2, units="cm", width=20, height=10, dpi=300)
+ggsave(paste0(dir_plot, 'fig-4.png'), p2, units="cm", width=20, height=10, dpi=300)
 
 flow$N <- as.numeric(flow$N)
 flow_summary <- flow[, list(mean=mean(N),
@@ -172,7 +218,7 @@ flow_summary <- flow[, list(mean=mean(N),
                   by=c("Class")]
 flow_summary          
 write.csv(flow_summary[order(-N)],
-          paste0(dir_data, "eda1_flow/2019-09-22-summary-country-N-summary.csv"), 
+          paste0(dir_data_ch3_flow, "2019-09-22-summary-country-N-summary.csv"), 
           na='', row.names=F, fileEncoding="UTF-8")
 
 # continue with analysis1b.r for GLM (determinants of flow)

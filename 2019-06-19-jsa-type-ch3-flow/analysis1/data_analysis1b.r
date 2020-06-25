@@ -51,7 +51,7 @@ lu_adj$adj_check <- 1
 
 # Modelling variables
 model_vars <- c("continent_check", "class_check", "col_check", "adj_check", 
-                "continent_ori", "Class_ori", "Class_des")
+                "continent_ori", "continent_des", "Class_ori", "Class_des")
 
 # Add SES & continent variables
 cols <- c("DL", "Class", "continent")
