@@ -13,6 +13,7 @@ library(data.table)
 # With wendy's data later: 
 # TODO: process data first (dealing with missing no)
 # TODO: try the code on wendy's data
+# TODO: write code to lapply for species maps/ tabulate % in each category 
 # TODO: write intro
 
 #-------------------------------------------------------------------------------------------------
@@ -44,6 +45,7 @@ classify_parks <- function(min_park_size = 10000,
 	if (is.na(v_parks_all)) {
 
 		p <- st_read(g_parks_all)
+		# p <- get_data_and_assign(v_parks_all)
 
 	} else {
 
@@ -116,11 +118,14 @@ classify_parks <- function(min_park_size = 10000,
 #' @export 
 generate_iucn_categories <- function(df_species, 
 								     df_species_epsg,
+
 									 coord_names = c("X", "Y"),
+
 									 identifier_columns = c("id", 
 									 						"species",
 															"collection_date",
 															"type"),
+
 								     vector_layers = list(v_islands = NA, 
 									 				      v_parks_nat_res = NA,
 									 				      v_parks_all = NA,
@@ -132,6 +137,8 @@ generate_iucn_categories <- function(df_species,
 	# Islands from Teo Siyang's base layers
 	if (is.na(vector_layers$v_islands)) {
 		v_islands <- st_read(g_islands)
+		# v_islands <- get_data_and_assign(v_islands)
+		
 	} else {
 		v_islands <- vector_layers$v_islands
 	} 
@@ -139,6 +146,8 @@ generate_iucn_categories <- function(df_species,
 	# Parks (natural reserves) from Ascher et al. (2020)
 	if (is.na(vector_layers$v_parks_nat_res)) {
 		v_parks_nat_res <- st_read(g_parks_nat_res)
+		# v_parks_nat_res <- get_data_and_assign(v_parks_nat_res)
+		
 	} else {
 		v_parks_nat_res <- vector_layers$v_parks_nat_res
 	}
@@ -146,6 +155,8 @@ generate_iucn_categories <- function(df_species,
 	# Parks (all) using SCDP parks layer, from Data.gov.sg
 	if (is.na(vector_layers$v_parks_all)) {
 		v_parks_all <- st_read(g_parks_all)
+		# v_parks_all <- get_data_and_assign(v_parks_all)
+
 	} else {
 		v_parks_all <- vector_layers$v_parks_all
 	}
@@ -153,6 +164,8 @@ generate_iucn_categories <- function(df_species,
 	# Greenery in Singapore (contiguous unmanaged tree cover >=1 ha based on Gaw et al. [2019])
 	if (is.na(vector_layers$v_greenery)) {
 		v_greenery <- st_read(g_greenery)
+		# v_greenery <- get_data_and_assign(v_greenery)
+		
 	} else {
 		v_greenery <- vector_layers$v_greenery
 	}
@@ -160,6 +173,8 @@ generate_iucn_categories <- function(df_species,
 	# URA planning areas (2014) from Data.gov.sg
 	if(is.na(vector_layers$v_planning_areas)) {
 		v_planning_areas <- st_read(g_planning_areas)
+		# v_planning_areas <- get_data_and_assign(v_planning_areas)
+
 	} else {
 		v_planning_areas <- vector_layers$v_planning_areas
 	}
@@ -177,7 +192,7 @@ generate_iucn_categories <- function(df_species,
 	df_planning_areas <- get_data_from_sf(st_join(v_species, v_planning_areas)) # planning areas
 
 
-	# Generate inital habitat dataset 
+	# Generate ALL intersecting habitats for each record 
 	df_habitat <- generate_initial_habitat(df_islands, 
 				 						   df_parks_nat_res,
 				 	                       df_parks_all, 
@@ -186,12 +201,20 @@ generate_iucn_categories <- function(df_species,
    										   identifier_columns)
 
 
-	# Generate final site name/ habitat
+	# Generate final site name/ habitat for each record
 	df_habitat <- generate_final_habitat(df_habitat, identifier_columns)
+
+	
+	# Generate habitat matrix (count unique sites) for each species
+	df_habitat_mat <- generate_habitat_matrix(df_habitat)
+
+
+	# Generate boolean checks
+	df_bool <- generate_boolean_check_vars(df_species)
 
 
 	# Generate IUCN status
-	df_iucn <- generate_iucn_status(df_habitat)
+	df_iucn <- generate_iucn_status(df_habitat_mat, df_bool)
 
 
 	df_iucn
@@ -228,7 +251,7 @@ generate_initial_habitat <- function(df_islands,
 									 df_planning_areas,
 									 identifier_columns) {
 
-	# Create one dataset from all the spatial joins
+	# Create one dataset from all the spatial join datasets by merging
 
 	df_habitat <- merge(df_islands, 
 						df_parks_nat_res,
@@ -271,8 +294,10 @@ generate_initial_habitat <- function(df_islands,
 
 generate_final_habitat <- function(df_habitat, identifier_columns) {
 
+	# Create the final habitat variable for each record
+	# base on hierachy of island > parks (nat. res.) > 
+	# parks (others) > greenery > planning area > none
 
-	# Create the final habitat variable
 	df_habitat$habitat_final <- 
 		"NONE"
 
@@ -345,44 +370,71 @@ generate_final_habitat <- function(df_habitat, identifier_columns) {
 		"Primary/ mature secondary"
 
 
-	df_habitat
+	cols <- unique(c(identifier_columns, "site_name_final", "habitat_IUCN"))
+	df_habitat[, ..cols]
 
 }
 
 
-generate_iucn_status <- function(df_habitat, 
-								 date_cut_off = as.Date("1960-01-01")) {
+generate_habitat_matrix <- function(df_habitat_final) {
+	
+	# Generate habitat matrix
+	# by counting number of unique sites of  habitat for each species
 
-	# Rule based assignment following flow chart
+	cols <- c("species", "site_name_final", "habitat_IUCN")
+	df_habitat_mat <- unique(df_habitat_final[, ..cols])
 
-	# Specimens last record date and number of specimens
-	df_iucn1 <- df_habitat[, list(coll_date_last = max(collection_date), 
+	df_habitat_mat <- dcast(df_habitat_mat, 
+				            species~habitat_IUCN,
+					        fun.aggregate = length,
+					        value.var = "site_name_final")
+
+	# Format habitat names
+	names(df_habitat_mat) <- gsub("__", "_", 
+					              tolower(
+									  gsub("[^[:alnum:]\\-\\.\\s]", "_", names(df_habitat_mat))
+									  	 )
+								 )
+
+	names(df_habitat_mat)[2:length(names(df_habitat_mat))] <- 
+		paste0("n_sites_", names(df_habitat_mat)[2:length(names(df_habitat_mat))])
+
+	df_habitat_mat
+
+}
+
+
+generate_boolean_check_vars <- function(df_species) {
+
+	# Create matrix for specimen last record date, N specimens, N reproductive specimens
+	# used in boolean checks for red list (first half)
+	# based on cut off date, singleton/doubleton of reproductive caste
+
+	df_bool <- df_species[, list(coll_date_last = max(collection_date), 
 							  	  n_specimens_non_repro = .N,
 							  	  n_specimens_repro = sum(type=="reproductive")), by="species"]
 
-	df_iucn1$coll_since_1960 <- ifelse(df_iucn1$coll_date_last < date_cut_off, "n", "y")
+	df_bool$coll_since_cut_off <- ifelse(df_bool$coll_date_last < date_cut_off, "n", "y")
+
+	df_bool
+
+}
 
 
-	# Number of unique sites for habitats
-	df_iucn2 <- unique(df_habitat[, c("species", "site_name_final", "habitat_IUCN")])
+generate_iucn_status <- function(df_habitat,
+								 df_bool,
 
-	df_iucn2 <- dcast(df_iucn2, 
-				      species~habitat_IUCN,
-					  fun.aggregate = length,
-					  value.var = "site_name_final")
+								 date_cut_off = as.Date("1960-01-01"),
+								 site_cut_off = 2
+								 ) {
 
-	names(df_iucn2) <- gsub("__", "_", 
-					        tolower(gsub("[^[:alnum:]\\-\\.\\s]", "_", names(df_iucn2))))
-
-	names(df_iucn2)[2:length(names(df_iucn2))] <- 
-		paste0("n_sites_", names(df_iucn2)[2:length(names(df_iucn2))])
-
+	# Rule based assignment following flow chart
 
 	# Combining these datasets
-	df_iucn <- merge(df_iucn1,
-				    df_iucn2,
-					by = "species", 
-					all.x = T, all.y = T)
+	df_iucn <- merge(df_habitat,
+				     df_boolean,
+					 by = "species", 
+					 all.x = T, all.y = T)
 
 	cols_site <- names(df_iucn)[grep("n_sites", names(df_iucn))] # renaming col names
 
@@ -399,7 +451,7 @@ generate_iucn_status <- function(df_habitat,
 		df_iucn$n_specimens_repro <= 2 & df_iucn$n_specimens_non_repro <= 0
 
 	# Site check
-	isRecordedInTwoOrLessSites <- df_iucn$n_sites_total <= 2
+	isRecordedInTwoOrLessSites <- df_iucn$n_sites_total <= site_cut_off
 
 	# AOO checks
 	isAOOinPrimaryMatSec <- df_iucn$n_sites_primary_mature_secondary >= 1
@@ -425,7 +477,7 @@ generate_iucn_status <- function(df_habitat,
 		isAOOinPrimaryMatSec & !isAOOinYoungSec & !isAOOinUrban
 
 
-	# Creating the final dataset based on flowchart
+	# Creating the final dataset template based on flowchart
 	df_final <- data.table(species=df_iucn$species, 
 						   isRecordedSinceMurphy,
 						   isSingletonOrDoubletonReproductive,
@@ -477,7 +529,9 @@ generate_iucn_status <- function(df_habitat,
 	df_final[isEndangered]$category_IUCN <- "Endangered"
 
 	# Summarise results and return
-	df_final[, c("species", "category_IUCN")]
+	df_final
 
 }
 
+
+#-------------------------------------------------------------------------------------------------
