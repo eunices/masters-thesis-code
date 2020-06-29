@@ -1,7 +1,6 @@
 {
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
-    "editor.tabSize": 2,
     "r.linting.assignmentType": false,
     "r.linting.doubleQuotes": false,
     "r.linting.enable": true,

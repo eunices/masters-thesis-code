@@ -1,3 +1,4 @@
+# This will be the R script to call various functions from the package
 # Initialise
 source(paste0("2020-03-08-red-list-sg-hym/03-analyse/R/", "init.r"))
 source(paste0(folder_script, "util.r"))
@@ -30,10 +31,10 @@ p
 # Assign IUCN category
 
 df_iucn = generate_iucn_categories(df_test, 4326, c("X", "Y"), list(v_islands=NA, 
-				                                                    v_parks_nat_res=NA,
-				                                                    v_parks_all=NA,
-				                                                    v_greenery=NA,
-				                                                    v_planning_areas=NA))
+									                                v_parks_nat_res=NA,
+									                                v_parks_all=NA,
+									                                v_greenery=NA,
+									                                v_planning_areas=NA))
 df_iucn
 
 #-------------------------------------------------------------------------------------------------

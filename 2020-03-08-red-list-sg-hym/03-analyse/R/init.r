@@ -1,9 +1,11 @@
+# These will be converted to use_data()
 
 # Libraries
 library(sf)
 library(data.table)
 
 # Folders
+# setwd("C:/_dev/msc/thesis")
 folder_data_root = "data/geo_processed/red-list-sg-ants/"
 folder_data = paste0(folder_data_root, "final/")
 folder_test = paste0(folder_data_root, "2020-05-29-random-pts/test/") # test data
@@ -24,12 +26,12 @@ g_reservoirs = paste0(folder_data, "reservoirs.gpkg")
 csv_test = paste0(folder_test, "test-points.csv")
 
 # Read geospatial files
-vec_islands = st_read(g_islands)
-vec_parks_nat_res = st_read(g_parks_nat_res)
-vec_parks_all = st_read(g_parks_all)
-vec_greenery = st_read(g_greenery)
-vec_planning_areas = st_read(g_planning_areas)
+v_islands = st_read(g_islands)
+v_parks_nat_res = st_read(g_parks_nat_res)
+v_parks_all = st_read(g_parks_all)
+v_greenery = st_read(g_greenery)
+v_planning_areas = st_read(g_planning_areas)
 
-vec_reservoirs = st_read(g_reservoirs)
+v_reservoirs = st_read(g_reservoirs)
 
 df_test = fread(csv_test)
