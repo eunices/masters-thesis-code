@@ -74,7 +74,8 @@ df_bp = rbind(df_coauth, df_did_not_coauth)
 df_bp$coauth = factor(df_bp$coauth, levels=c("Coauthor", "Did not coauthor"))
 
 df_bp[, list(mean=mean(date.n),
-             sd=sd(date.n)), by=coauth]
+             se=sd(date.n)/sqrt(.N),
+             n=.N), by=coauth]
 
 # Plot
 plot_bp = ggplot(df_bp) + 
@@ -92,7 +93,7 @@ plot_bp
 
 res = t.test(df_coauth$date.n, df_did_not_coauth$date.n, alternative = "two.sided", var.equal = FALSE)
 res$p.value
-
+res
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Proportion of authors across years
