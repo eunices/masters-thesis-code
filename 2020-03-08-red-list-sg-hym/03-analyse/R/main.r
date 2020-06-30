@@ -7,18 +7,12 @@ source(paste0(folder_script, "fun.r"))
 # Libraries
 library(sf)
 
+# Parameters
+set.seed(2020)
+
 # Scripts/tests
 
-
 #-------------------------------------------------------------------------------------------------
-# Read all the shapefiles layers
-#! to be done externally; done in init.r
-
-
-# Read the ant coordinates, supplied as a matrix or data.frame
-#! to be done externally; done in init.r for test data
-
-
 # Geocode localities with only road names
 #! to be done externally
 
@@ -30,12 +24,31 @@ p
 #-------------------------------------------------------------------------------------------------
 # Assign IUCN category
 
-df_iucn = generate_iucn_categories(df_test, 4326, c("X", "Y"), list(v_islands=NA, 
-									                                v_parks_nat_res=NA,
-									                                v_parks_all=NA,
-									                                v_greenery=NA,
-									                                v_planning_areas=NA))
-df_iucn
+df_species <- df_test
+
+df_species_epsg <- 4326
+
+coord_names <- c("X", "Y")
+
+geolayers <- list(v_islands=NA, 
+				  v_parks_nat_res=NA,
+				  v_parks_all=NA,
+				  v_greenery=NA,
+				  v_planning_areas=NA) 
+
+# TODO: clean data - georeference localities 
+
+# function
+v_species <- create_species_sf_obj(df_species, df_species_epsg, coord_names)
+
+
+
+
+
+
+
+# df_iucn <- generate_iucn_categories(df_test, epsg, coords, geolayers)
+# df_iucn
 
 #-------------------------------------------------------------------------------------------------
 # Plotting these points on a map
