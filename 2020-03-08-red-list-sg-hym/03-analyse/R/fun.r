@@ -116,21 +116,20 @@ classify_parks <- function(min_park_size = 10000,
 #' @return This returns a data.table of species and assigned IUCN statuses. 
 #' 
 #' @export 
-generate_iucn_categories <- function(df_species, 
+generate_iucn_table <- function(df_species, 
 
-								     df_species_epsg = 4326,
+								date_cut_off = as.Date("1960-01-01"),
+								coord_columns = c("X", "Y"),
+								identifier_columns = c("id", "species", "type"),
+								collection_date_column = "collection_date",
+								
+								df_species_epsg = 4326,
 
-									 date_cut_off = as.Date("1960-01-01"),
-
-									 coord_columns = c("X", "Y"),
-									 identifier_columns = c("id", "species", "type"),
-									 collection_date_column = "collection_date",
-
-								     vector_layers = list(v_islands = NA, 
-									 				      v_parks_nat_res = NA,
-									 				      v_parks_all = NA,
-									 				      v_greenery = NA,
-									 				      v_planning_areas = NA)) {
+								vector_layers = list(v_islands = NA, 
+												      v_parks_nat_res = NA,
+												      v_parks_all = NA,
+												      v_greenery = NA,
+												      v_planning_areas = NA)) {
 
 	df_habitat <- 
 		generate_habitat(df_species, vector_layers, identifier_columns, coord_columns)
@@ -450,7 +449,7 @@ generate_habitat <- function(df_species,
 }
 
 
-generate_habitat_sp_matrix <- function(df_final_habitat,
+generate_habitat_sp_matrix <- function(df_habitat,
 									   collection_date_column = "collection_date", 
 									   date_cut_off = as.Date("1960-01-01")) {
 	

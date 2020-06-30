@@ -25,6 +25,10 @@ p
 #-------------------------------------------------------------------------------------------------
 # Assign IUCN category
 
+
+
+#------------------ Data 
+
 df_species <- df_test
 df_species$id <- 1:dim(df_species)[1]
 
@@ -41,6 +45,11 @@ identifier_columns <- c("id", "species", "type")
 collection_date_column <- "collection_date"
 
 date_cut_off <- as.Date("1960-01-01")
+
+
+
+#------------------ Individual functions
+
 
 # TODO: clean data - georeference localities 
 
@@ -65,8 +74,15 @@ df_iucn <-
 table(df_iucn$category_IUCN)
 
 
-# df_iucn <- generate_iucn_categories(df_test, epsg, coords, geolayers)
-# df_iucn
+#------------------ Entire pipeline
+
+df_iucn <- generate_iucn_table(df_species, date_cut_off, 
+							   coord_columns, identifier_columns, collection_date_column)
+
+df_iucn[, list(.N, 
+			   .N/dim(df_iucn)[1] * 100), by="category_IUCN"]
+
+
 
 #-------------------------------------------------------------------------------------------------
 # Plotting these points on a map
