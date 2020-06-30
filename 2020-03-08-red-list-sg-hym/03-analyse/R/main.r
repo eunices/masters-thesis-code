@@ -69,7 +69,7 @@ df_bool <-
 	generate_boolean_check_vars(df_species, date_cut_off)
 
 df_iucn <- 
-	generate_iucn_status(df_habitat_sp_mat, df_bool)
+	generate_iucn_status(df_bool, df_habitat_sp_mat)
 
 table(df_iucn$category_IUCN)
 
@@ -81,8 +81,6 @@ df_iucn <- generate_iucn_table(df_species, date_cut_off,
 
 df_iucn[, list(.N, 
 			   .N/dim(df_iucn)[1] * 100), by="category_IUCN"]
-
-
 
 #-------------------------------------------------------------------------------------------------
 # Plotting these points on a map
