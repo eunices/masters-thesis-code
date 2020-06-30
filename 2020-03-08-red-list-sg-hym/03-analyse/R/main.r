@@ -2,6 +2,7 @@
 # Initialise
 source(paste0("2020-03-08-red-list-sg-hym/03-analyse/R/", "init.r"))
 source(paste0(folder_script, "util.r"))
+source(paste0(folder_script, "lookup.r"))
 source(paste0(folder_script, "fun.r"))
 
 # Libraries
@@ -25,26 +26,43 @@ p
 # Assign IUCN category
 
 df_species <- df_test
+df_species$id <- 1:dim(df_species)[1]
 
-df_species_epsg <- 4326
+coord_columns <- c("X", "Y")
 
-coord_names <- c("X", "Y")
+vector_layers <- list(v_islands=NA, 
+		     		  v_parks_nat_res=NA,
+		     		  v_parks_all=NA,
+		     		  v_greenery=NA,
+		     		  v_planning_areas=NA) 
 
-geolayers <- list(v_islands=NA, 
-				  v_parks_nat_res=NA,
-				  v_parks_all=NA,
-				  v_greenery=NA,
-				  v_planning_areas=NA) 
+
+identifier_columns <- c("id", "species", "type")
+collection_date_column <- "collection_date"
+
+date_cut_off <- as.Date("1960-01-01")
 
 # TODO: clean data - georeference localities 
 
-# function
-v_species <- create_species_sf_obj(df_species, df_species_epsg, coord_names)
+df_habitat <- 
+	generate_habitat(df_species, vector_layers, identifier_columns, coord_columns)
 
+# TODO: manual cleaning of those records with no site_name_final, habitat_final and habitat_IUCN
+# These have column "note" as "HABITAT ASSIGNMENT: MANUAL"
 
+# Site names, habitat, habitat_IUCN be the same as those provided 
+# in the lookup list using "generate_site_names()"
 
+df_habitat_sp_mat <- 
+	generate_habitat_sp_matrix(df_habitat, collection_date_column, date_cut_off)
 
+df_bool <- 
+	generate_boolean_check_vars(df_species, date_cut_off)
 
+df_iucn <- 
+	generate_iucn_status(df_habitat_sp_mat, df_bool)
+
+table(df_iucn$category_IUCN)
 
 
 # df_iucn <- generate_iucn_categories(df_test, epsg, coords, geolayers)

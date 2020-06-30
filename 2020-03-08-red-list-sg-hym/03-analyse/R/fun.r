@@ -94,7 +94,7 @@ classify_parks <- function(min_park_size = 10000,
 #' This function assigns each species to an IUCN status, using a rule-based method following a flow
 #' chart. It takes in species occurrence records \code{df_species} and its corresponding 
 #' projection (defaults to WGS84) \code{df_species_epsg} and coordinate label names 
-#' \code{coord_names}, and vector layers which are objects in a list \code{vector_layers}, 
+#' \code{coord_columns}, and vector layers which are objects in a list \code{vector_layers}, 
 #' comprising of islands \code{vector_layers$v_islands}, nature reserves 
 #' \code{vector_layers$v_parks_nat_res}, parks \code{vector_layers$v_parks_all}, unmanaged
 #' greenery \code{vector_layers$v_greenery}, administrative planning areas
@@ -105,8 +105,8 @@ classify_parks <- function(min_park_size = 10000,
 #' and worker/alate status "type" at the minimal. 
 #' @param df_species_epsg This is EPSG code (integer) that specifies the projection of the 
 #' coordinates of df_species. It defaults to WGS84 (EPSG 4326).
-#' @param coord_names This is the coordinate names of df_species, which defaults to "X" and "Y" for 
-#' longitude and latitude respectively, in the WGS84 context.
+#' @param coord_columns This is the coordinate names of df_species, which defaults to "X" and "Y" 
+#' for longitude and latitude respectively, in the WGS84 context.
 #' @param vector_layers This is a list that presents a series of sf objects, which are to be used 
 #' as spatial joins to the df_species. This includes the islands, parks, nature reserves, unmanaged
 #' greenery and administrative planning areas. If they are NA, the default layers from the package 
@@ -117,14 +117,14 @@ classify_parks <- function(min_park_size = 10000,
 #' 
 #' @export 
 generate_iucn_categories <- function(df_species, 
-								     df_species_epsg,
 
-									 coord_names = c("X", "Y"),
+								     df_species_epsg = 4326,
 
-									 identifier_columns = c("id", 
-									 						"species",
-															"collection_date",
-															"type"),
+									 date_cut_off = as.Date("1960-01-01"),
+
+									 coord_columns = c("X", "Y"),
+									 identifier_columns = c("id", "species", "type"),
+									 collection_date_column = "collection_date",
 
 								     vector_layers = list(v_islands = NA, 
 									 				      v_parks_nat_res = NA,
@@ -132,17 +132,17 @@ generate_iucn_categories <- function(df_species,
 									 				      v_greenery = NA,
 									 				      v_planning_areas = NA)) {
 
-	# Generate habitat matrix
-	df_habitat <- generate_habitat(df_species, vector_layers, identifier_columns)
+	df_habitat <- 
+		generate_habitat(df_species, vector_layers, identifier_columns, coord_columns)
 
-	# Generate habitat matrix (count unique sites) for each species
-	df_habitat_sp_mat <- generate_habitat_sp_matrix(df_final_habitat)
+	df_habitat_sp_mat <- 
+		generate_habitat_sp_matrix(df_habitat, collection_date_column, date_cut_off)
 
-	# Generate boolean checks
-	df_bool <- generate_boolean_check_vars(df_species)
+	df_bool <- 
+		generate_boolean_check_vars(df_species, date_cut_off)
 
-	# Generate IUCN status
-	df_iucn <- generate_iucn_status(df_habitat_mat, df_bool)
+	df_iucn <- 
+		generate_iucn_status(df_habitat_sp_mat, df_bool)
 
 	df_iucn
 	
@@ -150,21 +150,19 @@ generate_iucn_categories <- function(df_species,
 
 
 create_species_sf_obj <- function(df_species,
-							      df_species_epsg,
-								  coord_names) {
+								  coord_columns,
+							      df_species_epsg = 4326) {
 
 	# Constants
 	epsg_svy21 <- 3414
 
-	# Assign an index for merging
-	df_species$id <- 1:dim(df_species)[1] 
 
 	# Filter records with lat/lon
-	df_species_latlon <- df_species[!is.na(get(coord_names[1])) &
-								    !is.na(get(coord_names[2]))]
+	df_species_latlon <- df_species[!is.na(get(coord_columns[1])) &
+								    !is.na(get(coord_columns[2]))]
 
 	# Change species coordinates to sf object
-	v_species <- st_as_sf(df_species, coords=coord_names) 
+	v_species <- st_as_sf(df_species, coords=coord_columns) 
 	# needs to have columns "species", "collection_date", "type", and coord columns
 
 	if(is.na(st_crs(v_species))) v_species <- st_set_crs(v_species, df_species_epsg)
@@ -172,17 +170,16 @@ create_species_sf_obj <- function(df_species,
 	v_species <- st_transform(v_species, epsg_svy21)
 	
 
-
 	# Filter results without lat/lon
-	df_species_nolatlon <- df_species[is.na(get(coord_names[1])) |
-								      is.na(get(coord_names[2]))]
+	df_species_nolatlon <- df_species[is.na(get(coord_columns[1])) |
+								      is.na(get(coord_columns[2]))]
 
 
-
-	list(v_species = v_species, 
-		 df_species_nolatlon = df_species_nolatlon)
+	# Returns those with lat/lon as sf object, those without as data.table
+	list(v_species = v_species, df_species_nolatlon = df_species_nolatlon)
 
 }
+
 
 generate_initial_habitat <- function(v_species, 
 									 vector_layers,
@@ -235,15 +232,15 @@ generate_initial_habitat <- function(v_species,
 
 
 	# Get data.table from each spatial join table									 
-	df_islands <- get_data_from_sf(st_join(v_species, v_islands))               # islands
-	df_parks_nat_res <- get_data_from_sf(st_join(v_species, v_parks_nat_res))   # parks, nat res
-	df_parks_all <- get_data_from_sf(st_join(v_species, v_parks_all))           # parks, others
-	df_greenery <- get_data_from_sf(st_join(v_species, v_greenery))             # greenery
-	df_planning_areas <- get_data_from_sf(st_join(v_species, v_planning_areas)) # planning areas
+	df_islands <- get_data_from_sp_sf(st_join(v_species, v_islands))               # islands
+	df_parks_nat_res <- get_data_from_sp_sf(st_join(v_species, v_parks_nat_res))   # parks, nat res
+	df_parks_all <- get_data_from_sp_sf(st_join(v_species, v_parks_all))           # parks, others
+	df_greenery <- get_data_from_sp_sf(st_join(v_species, v_greenery))             # greenery
+	df_planning_areas <- get_data_from_sp_sf(st_join(v_species, v_planning_areas)) # planning areas
 
 									
 	# Create one dataset from all the spatial join datasets by merging
-	df_habitat <- merge(df_islands, 
+	df_habitat <- merge(df_islands,
 						df_parks_nat_res,
 						by = identifier_columns, 
 				        all.x = T, all.y = T,
@@ -285,10 +282,15 @@ generate_initial_habitat <- function(v_species,
 generate_final_habitat <- function(df_habitat, 
 							       identifier_columns) {
 
+	# Original columns
+	original_cols <- names(df_habitat)
+
+
 	# Create the final habitat variable for each record
 	# base on hierachy of island > parks (nat. res.) > 
 	# parks (others) > greenery > planning area > none
 
+	# For habitat,
 	df_habitat$habitat_final <- 
 		"NONE"
 
@@ -308,13 +310,13 @@ generate_final_habitat <- function(df_habitat,
 		"ISLAND"
 
 
-	# Create the final site name variable
+	# For site name,
 	df_habitat$site_name_final <- "NONE"
 
 	df_habitat[!is.na(site_name_pa)]$site_name_final <- 
 		df_habitat[!is.na(site_name_pa)]$site_name_pa 
 
-	df_habitat[!is.na(site_name_greenery)]$habitat_final <- 
+	df_habitat[!is.na(site_name_greenery)]$site_name_final <- 
 		df_habitat[!is.na(site_name_greenery)]$site_name_greenery  
 
 	df_habitat[!is.na(site_name_parks_all)]$site_name_final <- 
@@ -327,91 +329,179 @@ generate_final_habitat <- function(df_habitat,
 		df_habitat[!is.na(site_name_island)]$site_name_island
 
 
-	# Remove irrelevant columns
-	subsetted_columns <- c(identifier_columns, c("site_name_final", "habitat_final"))
-
-	df_habitat <- df_habitat[, ..subsetted_columns]
-
 
 	# Create the broader habitat types for the IUCN assessment
-	df_habitat$habitat_IUCN <- ""
-
-	# Urban/ semi-urban
-	df_habitat[grepl("PLANNING AREA", toupper(habitat_final))]$habitat_IUCN <- 
-		"Urban/semi-urban"
-
-	df_habitat[grepl("URBAN/SEMI-URBAN", toupper(habitat_final))]$habitat_IUCN <- 
-		"Urban/semi-urban"
-
-	# Young secondary
-	df_habitat[grepl("GREENERY", toupper(habitat_final))]$habitat_IUCN <- 
-		"Young secondary"
-
-	df_habitat[grepl("ISLAND", toupper(habitat_final))]$habitat_IUCN <- 
-		"Young secondary"
-
-	df_habitat[grepl("YOUNG SECONDARY FOREST", toupper(habitat_final))]$habitat_IUCN <- 
-		"Young secondary"
-
-	# Primary/ mature secondary
-	df_habitat[grepl("MANGROVE", toupper(habitat_final))]$habitat_IUCN <- 
-		"Primary/ mature secondary"
-
-	df_habitat[grepl("NATURE RESERVE", toupper(habitat_final))]$habitat_IUCN <- 
-		"Primary/ mature secondary"
+	df_habitat <- match_habitat_to_broad_iucn_habitat(df_habitat, "habitat_final")
 
 
-	cols <- unique(c(identifier_columns, "site_name_final", "habitat_IUCN"))
-	df_habitat[, ..cols]
+	# Create note column
+	df_habitat$note <- "HABITAT ASSIGNMENT: SPATIAL JOIN"
+
+	# Remove irrelevant columns and return
+	relevant_cols <- c(identifier_columns, 
+					   "site_name_final", 
+					   "habitat_final", 
+					   "habitat_IUCN", 
+					   "note")
+	df_habitat[, ..relevant_cols]
+
+}
+
+
+generate_final_habitat_nll <- function(df_species_nolatlon, 
+									   identifier_columns,
+									   habitat_name = "habitat") {
+
+	
+	# Original columns
+	original_cols <- names(df_species_nolatlon)
+
+	# Create dummy dataset
+	cols <- c(identifier_columns, "site_name_final", "habitat_final", "habitat_IUCN", "note")
+	df_dummy <- initialize_empty_data_table(cols)
+
+	# If habitat column is not NA, 
+	if (!is.na(habitat_name)) {
+
+		# If habitat column defined is present,
+		if (habitat_name %in% names(df_species_nolatlon)) {
+
+			# Remove records with no habitat
+			df <- df_species_no_latlon[!( get(habitat_name) == "" | is.na(get(habitat_name)) )]
+			rm(df_species_no_latlon)
+
+			# Assign habitat column to habitat_IUCN column
+			df[, habitat_final := get(habitat_name)]
+
+			# Create dummy variables for manual checking
+			df[, site_name_final := ""]
+			df[, note := "HABITAT ASSIGNMENT: MANUAL"]
+
+			return(df)
+
+		} else {
+
+			return(df_dummy)
+		
+		}		
+
+	} else {
+
+		return(df_dummy)
+
+	}
 
 }
 
 
 generate_habitat <- function(df_species,
-						         vector_layers, 
-							     identifier_columns) {
+						     vector_layers, 
 
-	# Create species sf object
-	sf_li <- create_species_sf_obj(df_species, df_species_epsg, coord_names)
+							 identifier_columns,
+							 coord_columns,
+
+							 df_species_epsg = 4236
+							 ) {
+
+
+	# Separate records with and without lat/lon
+
+	# Those with lat/lon as sf object
+	# Those without lat/lon as data.table
+
+	sf_li <- create_species_sf_obj(df_species, coord_columns, df_species_epsg)
 	v_species <- sf_li$v_species                       # used in coming up with site species matrix
 	df_species_nolatlon <- sf_li$df_species_nolatlon   # check manually to assign habitat and site
 
-	# Create spatial joins between species lat/lon and vector layers
-	# returns a data.table not sf object
+
+
+	# For records with lat/lon,
+
+	# Make spatial joins between species lat/lon and vector layers
+	# Returns data.table not sf object
 	df_initial_habitat <- generate_initial_habitat(v_species, vector_layers, identifier_columns)
 
 	# Generate final site name/ habitat for each record
 	df_final_habitat <- generate_final_habitat(df_initial_habitat, identifier_columns)
 
-	df_final_habitat
+
+
+	# For records without lat/lon,
+
+	# Generate final habitat for each record based on habitat column
+	df_final_habitat_nll <- generate_final_habitat_nll(df_species_nolatlon, 
+													   identifier_columns,
+									  			       habitat_name = "habitat")
+
+
+	# Combine records with and without lat/lon
+	df_final_habitat_all <- rbind(df_final_habitat, df_final_habitat_nll)
+	
+	# Merge back to original data
+	df_final_habitat_all <- merge(df_species,
+								  df_final_habitat_all,
+								  by = identifier_columns, 
+								  all.x = T, all.y = T)
+
+
+	# Return all records for manual checking
+	df_final_habitat_all[order(id)]
 
 }
 
 
-generate_habitat_sp_matrix <- function(df_habitat_final) {
+generate_habitat_sp_matrix <- function(df_final_habitat,
+									   collection_date_column = "collection_date", 
+									   date_cut_off = as.Date("1960-01-01")) {
 	
 	# Generate habitat matrix
 	# by counting number of unique sites of  habitat for each species
 
-	cols <- c("species", "site_name_final", "habitat_IUCN")
-	df_habitat_mat <- unique(df_habitat_final[, ..cols])
 
-	df_habitat_mat <- dcast(df_habitat_mat, 
+	# Subset data from cut-off date
+	df_habitat <- df_habitat[get(collection_date_column) >= date_cut_off]
+
+
+	# Subset relevant columns
+	cols <- c("species", "site_name_final", "habitat_IUCN")
+	df_habitat_sp_mat <- df_habitat[, ..cols]
+	
+
+	# Only take unique sites
+	df_habitat_sp_mat <- unique(df_habitat_sp_mat)
+
+
+	# Subset only those falling within these categories
+	categories_habitat_IUCN <- c("Urban/semi-urban", 
+								 "Young secondary", 
+								 "Primary/ mature secondary")
+
+	df_habitat_sp_mat <- df_habitat_sp_mat[habitat_IUCN %in% categories_habitat_IUCN]
+
+	df_habitat_sp_mat$habitat_IUCN <- factor(df_habitat_sp_mat$habitat_IUCN, 
+										  levels = categories_habitat_IUCN)
+
+
+	# Reshape data and count number of sites by habitat_IUCN
+	df_habitat_sp_mat <- dcast(df_habitat_sp_mat, 
 				            species~habitat_IUCN,
 					        fun.aggregate = length,
-					        value.var = "site_name_final")
+					        value.var = "species")
+
 
 	# Format habitat names
-	names(df_habitat_mat) <- gsub("__", "_", 
+	names(df_habitat_sp_mat) <- gsub("__", "_", 
 					              tolower(
-									  gsub("[^[:alnum:]\\-\\.\\s]", "_", names(df_habitat_mat))
+									  gsub("[^[:alnum:]\\-\\.\\s]", "_", names(df_habitat_sp_mat))
 									  	 )
 								 )
 
-	names(df_habitat_mat)[2:length(names(df_habitat_mat))] <- 
-		paste0("n_sites_", names(df_habitat_mat)[2:length(names(df_habitat_mat))])
+	names(df_habitat_sp_mat)[2:length(names(df_habitat_sp_mat))] <- 
+		paste0("n_sites.", names(df_habitat_sp_mat)[2:length(names(df_habitat_sp_mat))])
 
-	df_habitat_mat
+
+	# Return matrix
+	df_habitat_sp_mat
 
 }
 
@@ -434,21 +524,33 @@ generate_boolean_check_vars <- function(df_species,
 }
 
 
-generate_iucn_status <- function(df_habitat,
-								 df_bool,
+generate_iucn_status <- function(df_bool, 
+								 df_habitat_sp_mat,
 								 site_cut_off = 2) {
 
 	# Rule based assignment following flow chart
 
 	# Combining these datasets
-	df_iucn <- merge(df_habitat,
-				     df_boolean,
+	df_iucn <- merge(df_bool,
+				     df_habitat_sp_mat,
 					 by = "species", 
 					 all.x = T, all.y = T)
+	# Note that specimens with records only earlier than the cut-off date will have 0 site
+	# occurrences in the df_habitat_sp_mat
 
-	cols_site <- names(df_iucn)[grep("n_sites", names(df_iucn))] # renaming col names
 
-	df_iucn$n_sites_total <- rowSums(df_iucn[, ..cols_site])     # tabulating row sums
+
+	# Get variables with site names
+	cols_site <- names(df_iucn)[grep("n_sites", names(df_iucn))]
+
+	# Replace NA by 0
+	for (i in 1:length(cols_site)) {
+		df_iucn[is.na(get(cols_site[i])), cols_site[i]] <- 0
+	}
+
+	# Tabulate total number of sites
+	df_iucn$n_sites_total <- rowSums(df_iucn[, ..cols_site])     
+
 
 
 	# Boolean checks
@@ -464,9 +566,9 @@ generate_iucn_status <- function(df_habitat,
 	isRecordedInTwoOrLessSites <- df_iucn$n_sites_total <= site_cut_off
 
 	# AOO checks
-	isAOOinPrimaryMatSec <- df_iucn$n_sites_primary_mature_secondary >= 1
-	isAOOinYoungSec <- df_iucn$n_sites_young_secondary >= 1
-	isAOOinUrban <- df_iucn$n_sites_urban_semi_urban >= 1
+	isAOOinPrimaryMatSec <- df_iucn$n_sites.primary_mature_secondary >= 1
+	isAOOinYoungSec <- df_iucn$n_sites.young_secondary >= 1
+	isAOOinUrban <- df_iucn$n_sites.urban_semi_urban >= 1
 
 	isAreaOfOccupancyInAllThree <- 
 		isAOOinPrimaryMatSec & isAOOinYoungSec & isAOOinUrban
@@ -545,3 +647,37 @@ generate_iucn_status <- function(df_habitat,
 
 
 #-------------------------------------------------------------------------------------------------
+
+generate_site_names = function() {
+
+	# Column to be used to define site name
+	cols <- c("NAME")
+
+	# Get data from each of the geospatial layers
+	df_greenery <- get_data_from_sf(get_data_and_assign("v_greenery"))[, ..cols]
+	df_greenery$habitat_final <- "GREENERY"
+
+	df_islands <- get_data_from_sf(get_data_and_assign("v_islands"))[, ..cols]
+	df_islands$habitat_final <- "ISLAND"
+
+	parks_cols <- c(cols, "habitat")
+	df_parks_all <- get_data_from_sf(get_data_and_assign("v_parks_all"))[, ..parks_cols]
+	df_parks_all$habitat_final <- paste0("PARKS (ALL) -- ", df$habitat)
+	df_parks_all$habitat <- NULL
+
+	df_parks_nat_res <- get_data_from_sf(get_data_and_assign("v_parks_nat_res"))[, ..cols]
+	df_parks_nat_res$habitat_final <- "PARKS (NATURE RESERVE)"
+
+	df_planning_area <- get_data_from_sf(get_data_and_assign("v_planning_areas"))[, ..cols]
+	df_planning_area$habitat_final <- "PLANNING AREA"
+
+	# Combine these datasets
+	df_habitat_sites <- 
+		rbind(df_greenery, df_islands, df_parks_all, df_parks_nat_res, df_planning_area)
+
+	# Create the habitat_IUCN variable
+	df_habitat_sites <- match_habitat_to_broad_iucn_habitat(df_habitat_sites, "habitat_final")
+
+	df_habitat_sites
+	
+}
