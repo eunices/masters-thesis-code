@@ -79,8 +79,7 @@ table(df_iucn$category_IUCN)
 df_iucn <- generate_iucn_table(df_species, date_cut_off, 
 							   coord_columns, identifier_columns, collection_date_column)
 
-df_iucn[, list(.N, 
-			   .N/dim(df_iucn)[1] * 100), by="category_IUCN"]
+df_iucn[, list(N=.N, Percentage=.N/dim(df_iucn)[1] * 100), by="category_IUCN"]
 
 #-------------------------------------------------------------------------------------------------
 # Plotting these points on a map

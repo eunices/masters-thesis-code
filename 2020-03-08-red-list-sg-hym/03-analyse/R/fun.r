@@ -132,7 +132,7 @@ generate_iucn_table <- function(df_species,
 												      v_planning_areas = NA)) {
 
 	df_habitat <- 
-		generate_habitat(df_species, vector_layers, identifier_columns, coord_columns)
+		generate_habitat(df_species, identifier_columns, coord_columns)
 
 	df_habitat_sp_mat <- 
 		generate_habitat_sp_matrix(df_habitat, collection_date_column, date_cut_off)
@@ -394,13 +394,17 @@ generate_final_habitat_nll <- function(df_species_nolatlon,
 
 
 generate_habitat <- function(df_species,
-						     vector_layers, 
 
 							 identifier_columns,
 							 coord_columns,
 
-							 df_species_epsg = 4236
-							 ) {
+							 df_species_epsg = 4236,
+							 
+							 vector_layers = list(v_islands = NA, 
+												  v_parks_nat_res = NA,
+												  v_parks_all = NA,
+												  v_greenery = NA,
+												  v_planning_areas = NA)) {
 
 
 	# Separate records with and without lat/lon
@@ -483,9 +487,9 @@ generate_habitat_sp_matrix <- function(df_habitat,
 
 	# Reshape data and count number of sites by habitat_IUCN
 	df_habitat_sp_mat <- dcast(df_habitat_sp_mat, 
-				            species~habitat_IUCN,
-					        fun.aggregate = length,
-					        value.var = "species")
+				               species~habitat_IUCN,
+					           fun.aggregate = length,
+					           value.var = "species")
 
 
 	# Format habitat names
@@ -569,15 +573,6 @@ generate_iucn_status <- function(df_bool,
 	isAOOinYoungSec <- df_iucn$n_sites.young_secondary >= 1
 	isAOOinUrban <- df_iucn$n_sites.urban_semi_urban >= 1
 
-	isAreaOfOccupancyInAllThree <- 
-		isAOOinPrimaryMatSec & isAOOinYoungSec & isAOOinUrban
-
-	isAreaOfOccupancyInUrbanOnly <- 
-		!isAOOinPrimaryMatSec & !isAOOinYoungSec & isAOOinUrban
-
-	isAreaOfOccupancyInAllThreeOrUrban <- 
-		isAreaOfOccupancyInAllThree | isAreaOfOccupancyInUrbanOnly
-
 	isAreaOfOccupancyInYoungSecAndPriMatSecOnly <- 
 		isAOOinPrimaryMatSec & isAOOinYoungSec & !isAOOinUrban
 
@@ -593,7 +588,7 @@ generate_iucn_status <- function(df_bool,
 						   isRecordedSinceMurphy,
 						   isSingletonOrDoubletonReproductive,
 						   isRecordedInTwoOrLessSites,
-						   isAreaOfOccupancyInAllThreeOrUrban,
+						   isAOOinUrban,
 						   isAreaOfOccupancyInYoungSecAndPriMatSecOnly,
 						   isAreaOfOccupancyInYoungSecOnly,
 						   isAreaOfOccupancyInPriMatSecOnly)
@@ -613,7 +608,7 @@ generate_iucn_status <- function(df_bool,
 
 	isLeastConcern <- isRecordedSinceMurphy & 
 		!isRecordedInTwoOrLessSites & 
-		isAreaOfOccupancyInAllThreeOrUrban
+		isAOOinUrban
 
 	isNearThreatened <- isRecordedSinceMurphy & 
 		!isRecordedInTwoOrLessSites & 
@@ -629,19 +624,19 @@ generate_iucn_status <- function(df_bool,
 
 
 	# Appending statuses to dataset
-	df_final$category_IUCN <- "No status"
-	df_final[isDataDeficient1]$category_IUCN <- "Data Deficient"
-	df_final[isToBeManuallyDefined]$category_IUCN <- "! MANUAL CHECK (DD/NE)"
-	df_final[isCriticallyEndangered]$category_IUCN <- "Critically Endangered"
-	df_final[isDataDeficient2]$category_IUCN <- "Data Deficient"
-	df_final[isLeastConcern]$category_IUCN <- "Least Concern"
-	df_final[isNearThreatened]$category_IUCN <- "Near Threatened"
-	df_final[isVulnerable]$category_IUCN <- "Vulnerable"
-	df_final[isEndangered]$category_IUCN <- "Endangered"
+	df_final$category_iucn <- "No status"
+	df_final[isDataDeficient1]$category_iucn <- "Data Deficient"
+	df_final[isToBeManuallyDefined]$category_iucn <- "! MANUAL CHECK (DD/NE)"
+	df_final[isCriticallyEndangered]$category_iucn <- "Critically Endangered"
+	df_final[isDataDeficient2]$category_iucn <- "Data Deficient"
+	df_final[isLeastConcern]$category_iucn <- "Least Concern"
+	df_final[isNearThreatened]$category_iucn <- "Near Threatened"
+	df_final[isVulnerable]$category_iucn <- "Vulnerable"
+	df_final[isEndangered]$category_iucn <- "Endangered"
 
 	# Summarise results and return
 	df_final
-
+	
 }
 
 
