@@ -5,13 +5,10 @@ library(sf)
 library(data.table)
 
 # For package
-# TODO: modularise code further
-# TODO: put into package format
-# TODO: write tests
+# TODO: brainstorm/write tests
 # TODO: setup github actions for CI
 
 # With wendy's data later: 
-# TODO: process data first (dealing with missing no)
 # TODO: try the code on wendy's data
 # TODO: write code to lapply for species maps/ tabulate % in each category 
 # TODO: write intro
