@@ -6,8 +6,8 @@ register_google(key = geocode_api)
 library(data.table)
 library(googleway)
 
-d1 <- fread('data/2020-03-09-red-list-sg-ants/2020-03-09-park-site-habitat-data.csv')
-d2 <- fread('data/2020-03-09-red-list-sg-ants/2020-03-09-park-site-habitat-data-bee.csv')
+d1 <- fread('data/red-list-sg-ants/2020-03-09/2020-03-09-park-site-habitat-data.csv')
+d2 <- fread('data/red-list-sg-ants/2020-03-09/2020-03-09-park-site-habitat-data-bee.csv')
 
 # Reverse geocode d1 for place # TODO:
 to_rev_geo <- d1[, c('lat', 'lon')]
@@ -40,5 +40,5 @@ for (i in 2:dim(to_rev_geo)[1]) {
 # Geocode d2
 to_geocode <- paste0(d2$`Site name`, ", ", "Singapore")
 geocoded <- geocode_lat_long(to_geocode)
-filename <- 'data/2020-03-09-red-list-sg-ants/2020-03-09-park-site-habitat-data-bee-geocoded.csv'
+filename <- 'data/red-list-sg-ants/2020-03-09/2020-03-09-park-site-habitat-data-bee-geocoded.csv'
 write.csv(cbind(to_geocode, geocoded), filename, na='', row.names=F, fileEncoding="UTF-8") 

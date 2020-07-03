@@ -30,7 +30,7 @@ new_parks6 = paste0(folder_new_parks, "parks-all-non-islands-edit.gpkg")
 # PART 1
 
 # Read bee sites
-sites = fread("data/2020-03-09-red-list-sg-ants/2020-03-09-park-site-habitat-data-bee-geocoded-clean.csv")
+sites = fread("data/red-list-sg-ants/2020-03-09/2020-03-09-park-site-habitat-data-bee-geocoded-clean.csv")
 s = st_as_sf(sites, coords = c("lon", "lat")) 
 s = st_set_crs(s, wgs84) # set geographic CRS
 s = st_transform(s, svy21)
