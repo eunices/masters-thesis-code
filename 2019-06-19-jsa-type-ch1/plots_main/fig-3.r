@@ -1,66 +1,52 @@
-print(paste0(Sys.time(), " --- Catch per effort graph"))
+print(paste0(Sys.time(), " --- Histogram of PTEs total spp described"))
+
+# Tabulate statistics of years active
+tax <- df_describers[spp_N_1st_auth_s>=1]
+
+highlight_auth <- tax[ns_spp_N>750]$full.name.of.describer.n
+tax_highlight <- tax[full.name.of.describer.n %in% highlight_auth][,c("ns_spp_N", "last.name")]
+
+x_axis <- seq(0, max(tax$ns_spp_N), 1000)
+x_axis_minor <- seq(0, max(tax$ns_spp_N), 100)
+
+hist_tl_spp <- ggplot(tax, aes(x=ns_spp_N)) +
+    geom_histogram(mapping=aes(y=..count../sum(..count..) * 100), fill='grey30', binwidth=100) + 
+    geom_vline(xintercept=median(tax$ns_spp_N), color='grey', size=.5) +
+    xlab("\nTotal number of valid species described, by PTE") + 
+    ylab("Proportion of PTEs (%)\n") + 
+    geom_label_repel(data=tax_highlight, 
+                     aes(x=ns_spp_N, y=.1, label=last.name),
+                     size=2, nudge_x=10, nudge_y=30,
+                     fontface='bold', color='black', segment.color='grey80', force=1,
+                     box.padding = unit(0.001, 'lines')) +
+    scale_x_continuous(breaks=x_axis, minor_breaks=x_axis_minor) +
+    # scale_y_continuous(breaks= seq(0, 12, 1), limits=c(0, 12)) +
+    theme
+
+ggsave(paste0(dir_plot, '_si/fig-3.png'), hist_tl_spp, units="cm", width=10, height=8, dpi=300)
 
 
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Histogram of PTEs mean sp described per year
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- Histogram of PTEs mean sp described per year"))
 
+# Tabulate statistics of years active
+tax <- df_describers[spp_N_1st_auth_s>=1]
 
-species_and_pub_per_year <- df_publications_N[, list(species_per_publication=mean(n_species),
-                                            N_publications=length(n_species),
-                                            N_species=sum(n_species)), by="date.n"][order(date.n)]
+# Highlight auths from previous section
+tax_highlight <- tax[full.name.of.describer.n %in% highlight_auth][,c("ns_species_per_year_active", "last.name")]
 
-p5 <- ggplot(species_and_pub_per_year, aes(x=date.n, y=species_per_publication)) + 
-    xlab("") + ylab("Number of species/ publication") + 
-    theme +
-    ggtitle("") +
-    # ggtitle("Number of species/ publication by year") +
-    geom_point(size=1, color='grey') + 
-    geom_line(size=.5, color='grey', linetype='dashed') +
-    geom_smooth(fill=NA, color='black', size=1.5) +
-    geom_line(size=1, y=rollmean(species_and_pub_per_year$species_per_publication, 10, 
-              fill = list(NA, NULL, NA)), color='grey50') +
-    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
-    scale_y_continuous(breaks=ybreaks20, minor_breaks=ybreaks5)
-
-
-
-
-bp_year = 1910; y=4.1
-# y = taxonomic_effort[which(years==bp_year)]$species_per_real_taxonomist
-p13 <- ggplot(data=taxonomic_effort, aes(x=years, y=species_per_real_taxonomist)) +
-    xlab("Year") + ylab("Number of species/ PTE") + 
-    ggtitle("") +
-    # ggtitle("Number of species described/ PTE by year") + 
-    theme + 
-    geom_point(size=1, color='grey') + 
-    geom_line(size=.5, color='grey', linetype='dashed') +
-    geom_smooth(fill=NA, color='black', size=1.5) +
-    geom_line(size=1, y=rollmean(taxonomic_effort$species_per_real_taxonomist, 10, 
-              fill = list(NA, NULL, NA)), color='grey50') +
-    annotate(geom='curve', x=bp_year+30, y=round(y+4,0), xend=bp_year, yend=y,
-             curvature=.1, arrow=arrow(length=unit(1, 'mm')), size=1, color='red') + 
-    annotate(geom='text', hjust='left', x=bp_year+33, y=round(y+4,0)+.2, 
-             label='Break point', size=4, color='red') + 
-    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
-    scale_y_continuous(breaks=ybreaks2, minor_breaks=ybreaks1, limits=c(0,12))
-
-
-
-
-p16 <- ggplot(data=taxonomic_effort, aes(x=years, y=species_per_real_taxonomist_weighted)) +
-    xlab("Year") + ylab("Number of species \ndescribed/ PTE \n(wted)") + theme +
-    # ggtitle("Number of species described/ PTE (wted) by year") + 
-    ggtitle("") +
-    geom_point(size=1, color='grey') + 
-    geom_line(size=.5, color='grey', linetype='dashed') +
-    geom_smooth(fill=NA, color='black', size=1.5) +
-    geom_line(size=1, y=rollmean(taxonomic_effort$species_per_real_taxonomist_weighted, 10, 
-              fill = list(NA, NULL, NA)), color='grey50') +
-    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
-    scale_y_continuous(breaks=ybreaks2, minor_breaks=ybreaks1, limits=c(0,12))
-
-
-
-
-
-ggsave(paste0(dir_plot, 'fig-3a.png'), p5, units="cm", width=18, height=5, dpi=300)
-ggsave(paste0(dir_plot, 'fig-3b.png'), p13, units="cm", width=18, height=5, dpi=300)
-ggsave(paste0(dir_plot, 'fig-3c.png'), p16, units="cm", width=18, height=5, dpi=300)
+hist_mean_spp <- ggplot(tax, aes(x=ns_species_per_year_active)) +
+    geom_histogram(mapping=aes(y=..count../sum(..count..) * 100), fill='grey30', binwidth=1) + 
+    geom_vline(xintercept=median(tax$ns_species_per_year_active), color='grey', size=.5) +
+    xlab("\nMean number of species described per year, by PTE") +
+    ylab("Proportion of PTEs (%)\n") + 
+    scale_x_continuous(breaks= seq(0, max(tax$ns_species_per_year_active), 10)) +
+    geom_label_repel(data=tax_highlight, 
+                     aes(x=ns_species_per_year_active, y=.1, label=paste0(last.name, " (", round(ns_species_per_year_active, 0),")")), 
+                     size=2, nudge_x=20, nudge_y=30,
+                     fontface='bold', color='black', segment.color='grey80', force=5,
+                     box.padding = unit(0.001, 'lines')) +
+theme
+ggsave(paste0(dir_plot, 'fig-4.png'), hist_mean_spp, units="cm", width=10, height=8, dpi=300)
