@@ -46,9 +46,9 @@ source("2019-06-19-jsa-type-ch1/plots_main/si-A.r")
 source("2019-06-19-jsa-type-ch1/plots_main/si-B-fig-1.r")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - SI 2C Fig 1,2
+# Section - SI 2C Fig 1
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-source("2019-06-19-jsa-type-ch1/plots_main/si-C-fig-2,3.r")
+source("2019-06-19-jsa-type-ch1/plots_main/si-C-fig-1.r")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - SI 2D Table 1
@@ -57,9 +57,9 @@ source("2019-06-19-jsa-type-ch1/plots_main/si-C-fig-2,3.r")
 source("2019-06-19-jsa-type-ch1/plots_main/si-D-table-1.r")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - SI 2E Fig 4 - Tax per person
+# Section - SI 2E Fig 2,3
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-source("2019-06-19-jsa-type-ch1/plots_main/si-E-fig-4.r")
+source("2019-06-19-jsa-type-ch1/plots_main/si-E-fig-2,3.r")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - SI 2F Tables - Ancillary info on describers
