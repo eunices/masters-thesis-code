@@ -21,19 +21,15 @@ source("2019-06-19-jsa-type-ch1/plots_main/fig-1.r")
 source("2019-06-19-jsa-type-ch1/plots_main/fig-2.r")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - Fig. 3,4
+# Section - Fig. 3
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-source("2019-06-19-jsa-type-ch1/plots_main/fig-3,4.r")
+source("2019-06-19-jsa-type-ch1/plots_main/fig-3.r")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - Fig. 5
+# Section - Fig. 4  Prop species describing <=N species
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-source("2019-06-19-jsa-type-ch1/plots_main/fig-5.r")
+source("2019-06-19-jsa-type-ch1/plots_main/fig-4.r")
 
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - Fig. 7 Prop species describing <=N species
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-source("2019-06-19-jsa-type-ch1/plots_main/fig-6.r")
 
 #########################################################################################
 # Supporting Information

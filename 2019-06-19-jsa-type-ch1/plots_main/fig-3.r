@@ -61,6 +61,6 @@ p16 <- ggplot(data=taxonomic_effort, aes(x=years, y=species_per_real_taxonomist_
 
 
 
-ggsave(paste0(dir_plot, 'fig-5a.png'), p5, units="cm", width=18, height=5, dpi=300)
-ggsave(paste0(dir_plot, 'fig-5b.png'), p13, units="cm", width=18, height=5, dpi=300)
-ggsave(paste0(dir_plot, 'fig-5c.png'), p16, units="cm", width=18, height=5, dpi=300)
+ggsave(paste0(dir_plot, 'fig-3a.png'), p5, units="cm", width=18, height=5, dpi=300)
+ggsave(paste0(dir_plot, 'fig-3b.png'), p13, units="cm", width=18, height=5, dpi=300)
+ggsave(paste0(dir_plot, 'fig-3c.png'), p16, units="cm", width=18, height=5, dpi=300)

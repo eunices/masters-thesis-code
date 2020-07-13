@@ -30,4 +30,4 @@ plot_tax <- ggplot(des_y, aes(x=years, y=value, group=variable)) +
     scale_y_continuous(limits=c(0, 50), breaks=seq(0,50,10)) +
     theme
 
-ggsave(paste0(dir_plot, 'fig-6.png'), plot_tax, units="cm", width=15, height=9, dpi=300)
+ggsave(paste0(dir_plot, 'fig-4.png'), plot_tax, units="cm", width=15, height=9, dpi=300)
