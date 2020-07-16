@@ -15,7 +15,7 @@ calc_median <- function(x){
 
 plot_tax_pub_decade <- 
     ggplot(data=df_publications_N, aes(x=date.decade, y=n_species)) +
-        geom_violin(width=3, fill="grey", alpha=.7, color="grey40") + 
+        geom_violin(width=3, fill="grey", alpha=.7, color="grey40", trim=T) + 
         # geom_boxplot(width=0.2, outlier.size=NULL, fill="white") +
         geom_jitter(shape=16, position=position_jitter(0.2), 
                     size=0.2, alpha=0.2, color='grey10') +
@@ -57,9 +57,9 @@ plot_tax_des_decade <-
         geom_line(data=N_spp_per_des_decade[date.decade != "1750s"], 
                   mapping=aes(x=date.decade, y=median_N_spp, group=1),
                   size=1, color='black') +
-        geom_line(data=N_spp_per_des_decade[date.decade != "1750s"], 
-                  mapping=aes(x=date.decade, y=mean_N_spp, group=1),
-                  size=1, color='grey') +
+        # geom_line(data=N_spp_per_des_decade[date.decade != "1750s"], 
+        #           mapping=aes(x=date.decade, y=mean_N_spp, group=1),
+        #           size=1, color='grey') +
         scale_y_continuous(limit=c(-5, 40)) +
         # stat_summary(fun.data=calc_median, geom="text", fun=median,
         #              position=position_dodge(width = 0.75), size=3) +
@@ -72,3 +72,13 @@ plot_tax_des_decade <-
 # Combined plots
 ggsave(paste0(dir_plot, 'fig-2a.png'), plot_tax_pub_decade, units="cm", width=21, height=8, dpi=300)
 ggsave(paste0(dir_plot, 'fig-2b.png'), plot_tax_des_decade, units="cm", width=21, height=8, dpi=300)
+
+
+# Trend analysis
+median_N_spp_per_pub_decade[date.decade != "1750s"]$median_N_spp
+N_spp_per_des_decade[date.decade != "1750s"]$median_N_spp
+
+res <- MannKendall(median_N_spp_per_pub_decade[date.decade != "1750s"]$median_N_spp)
+summary(res)
+res <- MannKendall(N_spp_per_des_decade[date.decade != "1750s"]$median_N_spp)
+summary(res)

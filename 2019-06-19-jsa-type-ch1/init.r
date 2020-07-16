@@ -52,6 +52,20 @@ taxonomic_effort$species_per_real_taxonomist_weighted <-
     taxonomic_effort$N_species_described / taxonomic_effort$N_weighted_real_describers
 taxonomic_effort <- taxonomic_effort[years<=2018]
 
+taxonomic_effort$N_real_describers_roll <- 
+    rollmean(taxonomic_effort$N_real_describers, 10, 
+             fill = list(NA, NULL, NA))
+taxonomic_effort$N_weighted_real_describers_roll <- 
+    rollmean(taxonomic_effort$N_weighted_real_describers, 10, 
+             fill = list(NA, NULL, NA))
+taxonomic_effort$species_per_real_taxonomist_roll <-
+    rollmean(taxonomic_effort$species_per_real_taxonomist, 10, 
+             fill = list(NA, NULL, NA))    
+taxonomic_effort$species_per_real_taxonomist_weighted_roll <-
+    rollmean(taxonomic_effort$species_per_real_taxonomist_weighted, 10, 
+             fill = list(NA, NULL, NA))
+
+
 taxonomic_effort_long <- data.table(taxonomic_effort %>% gather(type, N, N_describers:N_synonyms))
 
 

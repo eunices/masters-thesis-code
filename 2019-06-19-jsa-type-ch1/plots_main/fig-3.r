@@ -23,7 +23,7 @@ hist_tl_spp <- ggplot(tax, aes(x=ns_spp_N)) +
     # scale_y_continuous(breaks= seq(0, 12, 1), limits=c(0, 12)) +
     theme
 
-ggsave(paste0(dir_plot, '_si/fig-3.png'), hist_tl_spp, units="cm", width=10, height=8, dpi=300)
+ggsave(paste0(dir_plot, 'fig-4a.png'), hist_tl_spp, units="cm", width=7, height=6, dpi=300)
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -49,4 +49,4 @@ hist_mean_spp <- ggplot(tax, aes(x=ns_species_per_year_active)) +
                      fontface='bold', color='black', segment.color='grey80', force=5,
                      box.padding = unit(0.001, 'lines')) +
 theme
-ggsave(paste0(dir_plot, 'fig-4.png'), hist_mean_spp, units="cm", width=10, height=8, dpi=300)
+ggsave(paste0(dir_plot, 'fig-4b.png'), hist_mean_spp, units="cm", width=7, height=6, dpi=300)

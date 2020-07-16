@@ -5,6 +5,13 @@ source('2019-06-19-jsa-type-ch1/init.r')
 library(zoo)
 library(ggrepel)
 
+library(forecast)
+library(tseries)
+
+library(Kendall)
+
+library(segmented)
+
 # Parameters
 theme <- theme_minimal(base_size=7)
 year_end <- 2018
