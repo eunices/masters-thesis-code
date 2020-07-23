@@ -1,5 +1,5 @@
 # Init
-data_dir <- "data/2020-07-07-dl-sr/"
+data_dir <- "data/2020-07-07-deep-learning-sys-rev/"
 
 # Libraries
 library(data.table)
