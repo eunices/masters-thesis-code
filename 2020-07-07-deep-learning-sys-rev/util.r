@@ -8,6 +8,7 @@ get_files_in_folder <- function(dir, year) {
 }
 
 read_files <- function(files, encoding) {
+    # note: chinese characters could not be read properly
     li <- lapply(files, fread, encoding = encoding, stringsAsFactors = FALSE)
     df <- rbindlist(li, fill = TRUE)
     df[!duplicated(df)]
