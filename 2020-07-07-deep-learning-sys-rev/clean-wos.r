@@ -46,6 +46,7 @@ df_wos$prelim__is_english <- "MANUAL CHECK LATER"
 df_wos$prelim__is_not_duplicate <- "MANUAL CHECK LATER"
 
 df_wos$eligibility__is_pri_research <- "MANUAL CHECK LATER"
+df_wos$eligibility__is_not_software <- "MANUAL CHECK LATER"
 df_wos$eligibility__is_deep_learning <- "MANUAL CHECK LATER"
 df_wos$eligibility__is_complete_paper_avail <- "MANUAL CHECK LATER"
 
