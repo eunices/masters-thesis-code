@@ -7,7 +7,7 @@ source("2020-07-07-deep-learning-sys-rev/init.r")
 
 year <- 2019
 files <- get_files_in_folder(data_dir_sco_raw, year)
-df_sco <- read_files(files, "UTF-8")
+df_sco <- read_files(files, "ASCII")
 
 # Rename names
 names(df_sco) <- gsub(" |\\.", "_", tolower(names(df_sco)))   # remove spaces and dots
@@ -35,7 +35,7 @@ df_sco$biblio__page_start <- df_sco$page_start
 df_sco$biblio__page_end <- df_sco$page_end
 df_sco$biblio__page_e <- df_sco$art_no
 df_sco$biblio__doi <- df_sco$doi
-df_sco$biblio__abstract <- df_sco$doi
+df_sco$biblio__abstract <- df_sco$abstract
 
 df_sco$prelim__is_journal <- ifelse(df_sco$biblio__type == "J", "T", "F")
 df_sco$prelim__is_abstract <- ifelse(df_sco$biblio__abstract == "" |

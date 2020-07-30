@@ -17,5 +17,6 @@ df$duplicated <- duplicated(check)
 
 table(df$db_source, df$biblio__type)
 
-write.csv(df, paste0(data_dir, "2020-07-29-compare-sco-wos-2019.csv"),
+write.csv(df, paste0(data_dir_rev, "2020-07-29-compare-sco-wos-2019.csv"),
           row.names = F, fileEncoding = "UTF-8")
+
