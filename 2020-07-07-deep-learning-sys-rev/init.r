@@ -15,6 +15,6 @@ data_dir_lp <- paste0(data_dir, "lookup/")
 
 # Lookup files
 lp_file_cols <- paste0(pub_dir_table, "2020-07-08-dl-studies.xlsx")
-lp_cols <- names(read.xlsx2(lp_file_cols, sheetName = "all"))[1:22]
+lp_cols <- names(read.xlsx2(lp_file_cols, sheetName = "all"))[1:23]
 
 lp_biblio__type <- fread(paste0(data_dir_lp, "2020-07-29-lp-biblio__type.csv"))
