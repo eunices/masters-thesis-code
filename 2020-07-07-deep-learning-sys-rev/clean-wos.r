@@ -39,13 +39,16 @@ df_wos$biblio__doi <- df_wos$DI
 df_wos$biblio__abstract <- df_wos$AB
 
 df_wos$prelim__is_journal <- ifelse(df_wos$biblio__type == "J", "T", "F")
+df_wos$prelim__is_not_duplicate <- "MANUAL CHECK LATER"
 df_wos$prelim__is_abstract <- ifelse(df_wos$biblio__abstract == "" |
                                      is.na(df_wos$biblio__abstract),
                                      "F", "T")
-df_wos$prelim__is_english <- "MANUAL CHECK LATER"
-df_wos$prelim__is_not_duplicate <- "MANUAL CHECK LATER"
 
 df_wos$eligibility__is_pri_research <- "MANUAL CHECK LATER"
+df_wos$eligibility__is_english <- 
+    ifelse(grepl("[\\p{Han}]", df_wos$biblio__article_title, perl = TRUE), "F", ifelse(
+        grepl("\\[", df_wos$biblio__article_title), "F (check)", "T"
+    ))
 df_wos$eligibility__is_not_software <- "MANUAL CHECK LATER"
 df_wos$eligibility__is_deep_learning <- "MANUAL CHECK LATER"
 df_wos$eligibility__is_complete_paper_avail <- "MANUAL CHECK LATER"
