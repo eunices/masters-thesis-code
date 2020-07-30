@@ -44,14 +44,14 @@ df_wos$prelim__is_abstract <- ifelse(df_wos$biblio__abstract == "" |
                                      is.na(df_wos$biblio__abstract),
                                      "F", "T")
 
-df_wos$eligibility__is_pri_research <- "MANUAL CHECK LATER"
+df_wos$eligibility__is_complete_paper_avail <- "MANUAL CHECK LATER"
 df_wos$eligibility__is_english <- 
     ifelse(grepl("[\\p{Han}]", df_wos$biblio__article_title, perl = TRUE), "F", ifelse(
         grepl("\\[", df_wos$biblio__article_title), "F (check)", "T"
     ))
+df_wos$eligibility__is_pri_research <- "MANUAL CHECK LATER"
 df_wos$eligibility__is_not_software <- "MANUAL CHECK LATER"
 df_wos$eligibility__is_deep_learning <- "MANUAL CHECK LATER"
-df_wos$eligibility__is_complete_paper_avail <- "MANUAL CHECK LATER"
 
 file <- paste0(data_dir_wos_cle, year, ".csv")
 write.csv(df_wos[, ..lp_cols], file, na = "", fileEncoding = "UTF-8", row.names = FALSE)

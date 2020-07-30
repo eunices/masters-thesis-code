@@ -43,14 +43,14 @@ df_sco$prelim__is_abstract <- ifelse(df_sco$biblio__abstract == "" |
                                      is.na(df_sco$biblio__abstract),
                                      "F", "T")
 
-df_sco$eligibility__is_pri_research <- "MANUAL CHECK LATER"
+df_sco$eligibility__is_complete_paper_avail <- "MANUAL CHECK LATER"
 df_sco$eligibility__is_english <- 
     ifelse(grepl("[\\p{Han}]", df_sco$biblio__article_title, perl = TRUE), "F", ifelse(
         grepl("\\[", df_sco$biblio__article_title), "F (check)", "T"
     ))
+df_sco$eligibility__is_pri_research <- "MANUAL CHECK LATER"
 df_sco$eligibility__is_not_software <- "MANUAL CHECK LATER"
 df_sco$eligibility__is_deep_learning <- "MANUAL CHECK LATER"
-df_sco$eligibility__is_complete_paper_avail <- "MANUAL CHECK LATER"
 
 
 file <- paste0(data_dir_sco_cle, year, ".csv")
