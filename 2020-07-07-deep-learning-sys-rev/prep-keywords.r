@@ -1,9 +1,5 @@
 # Init
-data_dir <- "data/2020-07-07-deep-learning-sys-rev/"
-
-# Libraries
-library(data.table)
-
+source("2020-07-07-deep-learning-sys-rev/init.r")
 
 # Generate search string --------------------------------------------------------------------------
 
@@ -20,3 +16,4 @@ bd <- gsub(" ", "+", bd)
 comb <- expand.grid(dl, bd)
 comb <- paste0("(", comb$Var1, " AND ", comb$Var2, ")")
 paste0(comb, collapse = " OR ")
+
