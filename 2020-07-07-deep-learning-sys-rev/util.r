@@ -11,6 +11,8 @@ read_files <- function(files, encoding) {
     # note: chinese characters could not be read properly
     li <- lapply(files, fread, encoding = encoding, stringsAsFactors = FALSE)
     df <- rbindlist(li, fill = TRUE)
+    # escape ""
+    df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
     df[!duplicated(df)]
 }
 

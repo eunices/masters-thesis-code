@@ -10,10 +10,12 @@ dl <- keywords[dl != ""]$dl
 bd <- keywords[biod != ""]$biod
 paste(paste0('"', bd, '"'), collapse=", ")
 
-dl <- gsub(" ", "+", dl)
-bd <- gsub(" ", "+", bd)
+# dl <- gsub(" ", "+", dl)
+# bd <- gsub(" ", "+", bd)
 
 comb <- expand.grid(dl, bd)
-comb <- paste0("(", comb$Var1, " AND ", comb$Var2, ")")
-paste0(comb, collapse = " OR ")
+comb <- paste0('("', comb$Var1,  '" AND ', comb$Var2, ")")
+comb <- paste0(comb, collapse = " OR ")
+comb <- gsub('\\"\\"', '\\"', comb)
 
+write.csv(comb, paste0(data_dir, "keywords_output.csv"))
