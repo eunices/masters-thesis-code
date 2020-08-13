@@ -10,6 +10,7 @@ source('2019-06-19-jsa-type-ch3-flow/analysis1/data_analysis1b.R')
 
 # Libraries
 library(tidyr)
+library(car)
 library(ResourceSelection) # mcfadden
 library(pscl)              # hoslem
 library(caret)             # cross validation
@@ -79,9 +80,14 @@ a1 <- glm(flow ~ continent_check + adj_check + col_check + class_check + N_taxon
 # anova(a0, a1, test="Chisq") # if significant = keep complex model
 
 # Using origin continent
+table(df$flow)
 a1 <- glm(flow ~ continent_check + adj_check + col_check + class_check + continent_ori + continent_des, 
-          data=df, family="binomial")
-
+          data=df, family=binomial)
+# in v1 i was using logit (assumes flow has equal classes)
+# see https://fukamilab.github.io/BIO202/04-B-binary-data.html
+# to change to cloglog as flow is highly inbalanced
+# this resulted in decreased but similar effect sizes
+vif(a1)
 
 # Model summary ------------------------------------------------------------------------------------
 glm_summary = summary(a1)
