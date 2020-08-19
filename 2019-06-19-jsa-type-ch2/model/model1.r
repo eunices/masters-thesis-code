@@ -75,7 +75,8 @@ if(model_params$te == 0){ # no taxonomic effort
     pub.matrix[] <- 0 # set offset to zero
 }
 
-data <- list(N = N, P = P, str = as.numeric(starts), end = rep(max(dim(count.matrix)[1]), P), 
+data <- list(N = N, P = P, str = as.numeric(starts), 
+             end = rep(max(dim(count.matrix)[1]), P), 
              counts = cc, off = t(pub.matrix))
 
 

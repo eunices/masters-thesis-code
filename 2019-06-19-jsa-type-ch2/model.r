@@ -25,6 +25,16 @@ print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 len_params <- length(model_folder_names)
 model_param_list <- lapply(model_folder_names, function(x) parse_model_identifier(x))
 
+analysis <- function(run=TRUE) {
+    if(run) {
+        source(paste0(dir_script_ed, 'model/model1.r')) # formatting data
+        source(paste0(dir_script_ed, 'model/model2.r')) # model fitting
+        source(paste0(dir_script_ed, 'model/model3.r')) # model validation
+        source(paste0(dir_script_ed, 'model/model4.r')) # forecast
+        source(paste0(dir_script_ed, 'model/model5.r')) # plot
+    }
+}
+
 # Loop through list
 print(paste0(Sys.time(), " --- Start modelling loop for ", len_params, " parameters."))
 for (i in 1:len_params) {
@@ -40,18 +50,11 @@ for (i in 1:len_params) {
     model_identifier <- filepaths[4]
 
     # Analysis scripts
-    analysis <- function(run=TRUE) {
-        if(run) {
-            source(paste0(dir_script_ed, 'model/model1.r')) # formatting data
-            source(paste0(dir_script_ed, 'model/model2.r')) # model fitting
-            source(paste0(dir_script_ed, 'model/model3.r')) # model validation
-            source(paste0(dir_script_ed, 'model/model4.r')) # forecast
-            source(paste0(dir_script_ed, 'model/model5.r')) # plot
-        }
-    }
-
     tryCatch(
-        withCallingHandlers(analysis(), warning = function(w) {write_to_log(w, warnings_log)}),
+        withCallingHandlers(analysis(), 
+                            warning = function(w) {
+                                write_to_log(w, warnings_log)
+                            }),
         error = function(e) {print(paste0("ERROR: ", conditionMessage(e)))}
     ) # Solution from: https://stackoverflow.com/questions/37836392/ 
 }

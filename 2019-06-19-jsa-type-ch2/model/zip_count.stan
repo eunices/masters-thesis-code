@@ -47,9 +47,9 @@ functions {
 			// dependent on previous time step
 			// two state markov process
 			if(y[i-1] == 0) { 
-				theta[i] = gamma 
+				theta[i] = gamma; 
 			} else {
-				theta[i] = eta
+				theta[i] = eta;
 			}
 			
 		}

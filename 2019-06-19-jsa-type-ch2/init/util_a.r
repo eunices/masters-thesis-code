@@ -62,7 +62,10 @@ initialize_model_params <- function(model_params) {
   warnings_log <- paste0(dir_model_folder, "/warnings.log")
   if (!file.exists(warnings_log)) file.create(warnings_log)
 
-  c(dir_model_folder, filepath_log, warnings_log, model_identifier)
+  c(dir_model_folder, 
+    filepath_log,
+    warnings_log,
+    model_identifier)
 } 
 
 write_to_log <- function(w, warn_log_fp) {
