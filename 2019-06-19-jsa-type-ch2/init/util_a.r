@@ -39,7 +39,7 @@ parse_model_identifier <- function(string) {
 # string <- "BMY-C4-I5000-A0.99-T15"
 # parse_model_identifier(string)
 
-initialize_model_params <- function(model_params) {
+initialize_model_params <- function(model_params, custom=NA) {
 
     #' Parses list of model params and initializes necessary folders
     #'
@@ -54,7 +54,10 @@ initialize_model_params <- function(model_params) {
     "I", as.character(model_params$iter), "-",
     "A", as.character(model_params$ad), "-",
     "T", as.character(model_params$td))
-  dir_model_folder <- paste0(dir_analysis_edie_model, "/", model_identifier, "/")
+  
+  dir_model_folder <- paste0(dir_analysis_edie_model, "/", 
+                             model_identifier, "/")
+  if(!is.na(custom)) dir_model_folder <- custom
 
   dir.create(dir_model_folder); dir.create(file.path(dir_model_folder, 'output'))
   filepath_log <- paste0(dir_model_folder, "/model.log")
