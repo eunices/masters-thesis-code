@@ -256,6 +256,8 @@ posterior_forecast <- function(data, ftime, model) {
 		len <- length(all_toff)
 
 		# Generate offset segment by sampling past ftime of offsets
+		# TODO: use naive method from
+		# https://otexts.com/fpp2/simple-methods.html
 		toff <- sample(all_toff[(len-ftime):len], ftime, replace = TRUE)
 
 		# By time point
@@ -275,13 +277,13 @@ posterior_forecast <- function(data, ftime, model) {
 		for(jj in 2:ftime) {
 
 			lambda[jj] <- exp(coef0[ii] + coef1[ii] * jj) +
-						alp[ii] * oo[jj - 1] + 
-						bet[ii] * lambda[jj - 1]
+						  alp[ii] * oo[jj - 1] + 
+						  bet[ii] * lambda[jj - 1]
 
 			z <- ifelse(oo[jj - 1] == 0, 1, 0)
 
 			theta[jj] <- (z * gam[ii]) + 
-						((1 - z) * eta[ii])
+					     ((1 - z) * eta[ii])
 
 			co[jj] <- gamlss.dist::rZIP(
 				1, 

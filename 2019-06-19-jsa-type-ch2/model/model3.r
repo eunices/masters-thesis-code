@@ -1,4 +1,6 @@
 # Run posterior simulation to check model fit
+
+# Set up
 source('2019-06-19-jsa-type-ch2/init/init_a.r')
 
 
@@ -7,6 +9,7 @@ set.seed(420) # for reproducibility
 
 
 # Script
+
 print(paste0(Sys.time(), " --- Posterior simulation for model fit"))
 
 # Load data
