@@ -131,24 +131,29 @@ transformed parameters {
 
 model {
 
+	// Zero inflation
 	for(p in 1:P) {
 		alpha[p] ~ beta(1, 3);
 		beta_unc[p] ~ beta(1, 3);
 	}
 
+	// ACP t=0
 	phi ~ lognormal(mu_phi, sigma_phi);
 	mu_phi ~ normal(0, 1);
 	sigma_phi ~ cauchy(0, 1);
 
-	Omega ~ lkj_corr(2);
-
-	tau ~ cauchy(0, 1);
+	// ACP t>0
 	mu[1] ~ normal(0, 5);
 	mu[2] ~ normal(0, 1); 
+
+	tau ~ cauchy(0, 1);
+	Omega ~ lkj_corr(2);
+
 	for(p in 1:P) {
 		delta[p] ~ multi_normal(mu, Sigma);
 	}
 
+	// Update log prob
 	for(p in 1:P) {
 		target += count_series_lp(
 			

@@ -18,7 +18,7 @@ zips <- fit; rm(fit)
 
 # simulate the forecast
 forecast <- mclapply(1:1000, mc.cores=1, function(ii) {
-   post.forecast(data=data, ftime=ftime, model=zips) 
+   posterior_forecast(data=data, ftime=ftime, model=zips) 
 })
 
 # save forecast
