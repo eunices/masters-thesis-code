@@ -23,15 +23,18 @@ print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
 # Create list of model params
 len_params <- length(model_folder_names)
-model_param_list <- lapply(model_folder_names, function(x) parse_model_identifier(x))
+model_param_list <- lapply(model_folder_names, 
+    function(x) parse_model_identifier(x)
+)
 
 analysis <- function(run=TRUE) {
     if(run) {
         source(paste0(dir_script_ed, 'model/model1.r')) # formatting data
         source(paste0(dir_script_ed, 'model/model2.r')) # model fitting
-        source(paste0(dir_script_ed, 'model/model3.r')) # model validation
-        source(paste0(dir_script_ed, 'model/model4.r')) # forecast
-        source(paste0(dir_script_ed, 'model/model5.r')) # plot
+
+        source(paste0(dir_script_ed, 'model/analyse1.r')) # posterior sampling
+        source(paste0(dir_script_ed, 'model/analyse2.r')) # forecast
+        source(paste0(dir_script_ed, 'model/analyse3.r')) # visualise
     }
 }
 

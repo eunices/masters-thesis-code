@@ -148,8 +148,9 @@ results <- data.frame(
     slowdown = round(signif(mean_cf2$slowdown, 3), 4),
     slowdown_CI_lower = round(signif(CI80_cf2[, 2], 3), 4),
     slowdown_CI_higher = round(signif(CI80_cf2[, 3], 3), 4),
-    row.names=NULL) %>% 
-arrange(slowdown)
+    row.names=NULL
+) %>% 
+    arrange(slowdown)
 
 # compile results of lambda (poisson parameter)
 lambda <- lapply(seq(data$P), function(ii) { # for each group

@@ -181,7 +181,8 @@ posterior_sim <- function(data, model) {
 	for(ii in seq(p)) {
 
 		# Offset segment starts at first year
-		start <- data$str[ii]; end <- data$end[ii]
+		start <- data$str[ii]
+		end <- data$end[ii]
 		toff <- data$off[ii, ][start:end]
 		
 		# By time point
@@ -249,7 +250,9 @@ posterior_forecast <- function(data, ftime, model) {
 	# By group
 	out <- list()
 	for(ii in seq(p)) {
-		start <- data$str[ii]; end <- data$end[ii]
+		
+		start <- data$str[ii]
+		end <- data$end[ii]
 
 		# Offset starts at first naming year
 		all_toff <- data$off[ii, ][start:end]

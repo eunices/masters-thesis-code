@@ -33,8 +33,11 @@ zips <- fit; rm(fit)
 
 # Save traceplot TODO: still does not work
 
-png(paste0(dir_model_folder, 'traceplot.png'), 
-    width = 24, height = 16, units = "cm", res = 150)
+png(
+    paste0(dir_model_folder, 'traceplot.png'), 
+    width = 24, height = 16, 
+    units = "cm", res = 150
+)
 
 traceplot(zips, pars=names(zips))
 
@@ -61,3 +64,5 @@ save(allsim, file=paste0(dir_model_folder, "post.data"))
 
 # Clear memory
 rm(allsim, zips, data)
+
+
