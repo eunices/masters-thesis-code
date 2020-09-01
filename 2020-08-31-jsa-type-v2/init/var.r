@@ -1,5 +1,7 @@
 # Variables
-v2_dir_data <- 'data/2019-05-23-ascher-bee-data/'
+v2_data <- "data/"
+v2_lookup <- paste0(v2_data, "lookup/")
+v2_dir_data <- paste0(v2_data, "2019-05-23-ascher-bee-data/")
 
 updated_version <- "v2" # data version
 
@@ -15,6 +17,7 @@ v2_dir_data_ch3_gender <- paste0(v2_dir_data_analysis, 'ch3-gender/')
 v2_dir_data_raw <- paste0(v2_dir_data, updated_version, "/")
 v2_dir_data_raw_raw <- paste0(v2_dir_data_raw, "raw/")
 v2_dir_data_raw_clean <- paste0(v2_dir_data_raw, "clean/")
+
 
 # Script folder
 v2_dir_ref <- '2019-06-19-jsa-type'
@@ -46,3 +49,28 @@ data_dirs = c(v2_dir_data, v2_dir_data_analysis, v2_dir_data_ch1,
 lapply(data_dirs, function(folder) {
   if(!dir.exists(folder)) dir.create(folder)
 })
+
+
+# Read vectors
+v2_data_geo <- "data/geo/"
+v2_data_geo_m <- paste0(v2_data_geo, "0_manual/")
+v2_data_geo_s <- paste0(v2_data_geo, "1_separate/")
+
+f_v_ecoregions <- paste0(v2_data_geo_m, "Ecoregions2017/Ecoregions2017.shp")
+v_ecoregions <- st_read(f_v_ecoregions)
+
+
+v2_data_geop <- "data/geo_processed/"
+
+f_v_continent <- paste0(v2_data_geop, "gadm/gadm36_0_utf8_continents.shp")
+v_continent <- st_read(f_v_continent)
+
+
+wgs84 <- 4326
+
+# Lookup files
+f_lp_country <- paste0(v2_lookup, "2019-05-29-statoid-country-codes.csv")
+lp_country <- fread(f_lp_country, na.strings = "")
+
+f_lp_dl <- paste0(v2_lookup, "2019-09-26-location-codes.csv")
+lp_dl <- fread(f_lp_dl, na.strings = "")

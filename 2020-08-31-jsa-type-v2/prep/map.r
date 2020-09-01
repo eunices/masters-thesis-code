@@ -3,13 +3,18 @@ source('2020-08-31-jsa-type-v2/init/init.r')
 
 
 # To use old functions from v1
-source(paste0(v2_dir_script, "/init/util.r"))
-source(paste0(v2_dir_script, "subset.r"))
-source(paste0(v2_dir_script, "/clean/functions.r"))
+# source(paste0(v2_dir_script, "/init/util.r"))
+# source(paste0(v2_dir_script, "subset.r"))
+# source(paste0(v2_dir_script, "/clean/functions.r"))
 
 
 # Have a table old v new variables
-variables_v1 = names(rename_df_names(get_raw_data()))
+
+# variables_v1 = names(rename_df_names(get_raw_data()))
+file <- paste0(v2_dir_data_raw_clean,"old-names.csv")
+# fwrite(data.table(variables_v1), file)
+variables_v1 = fread(file)$variables_v1
+
 variables_v2 = names(read_escaped_data_v2(
 	paste0(v2_dir_data_raw, v2_basefile, "_1 format.csv")
 ))
