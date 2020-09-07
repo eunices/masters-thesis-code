@@ -16,7 +16,7 @@ file <- paste0(v2_dir_data_raw_clean,"old-names.csv")
 variables_v1 = fread(file)$variables_v1
 
 variables_v2 = names(read_escaped_data_v2(
-	paste0(v2_dir_data_raw, v2_basefile, "_1 format.csv")
+	paste0(v2_dir_data_raw, v2_basefile, "_1.csv")
 ))
 
 
@@ -57,7 +57,7 @@ for (i in 1:dim(matched_names)[1]) {
 # Output data
 write.csv(
 	df,
-	paste0(v2_dir_data_raw, v2_basefile, "_2 map.csv"),
+	paste0(v2_dir_data_raw, v2_basefile, "_2.csv"),
 	na = '', 
 	row.names = F, 
 	fileEncoding = "UTF-8"

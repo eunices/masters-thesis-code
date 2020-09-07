@@ -12,5 +12,5 @@ df[] <- lapply(df, gsub, pattern='[\r\n]', replacement=' ')
 
 names(df) <- format_names(names(df))
 
-output <- paste0(v2_dir_data_raw, v2_basefile, "_1 format.csv")
+output <- paste0(v2_dir_data_raw, v2_basefile, "_1.csv")
 fwrite(df, output, na = "")

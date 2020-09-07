@@ -1,0 +1,30 @@
+# Purpose: clean dates / journal names / publication
+
+source('2020-08-31-jsa-type-v2/init/init.r')
+
+file <- paste0(v2_dir_data_raw, v2_basefile, "_5.csv")
+df <- read_escaped_data_v2(file)
+
+
+# Year of collection -----------------------------------------------------------
+# TODO: 
+
+
+# Description date -------------------------------------------------------------
+# TODO: 
+
+# Manual edits
+
+
+# Publication names ------------------------------------------------------------
+# TODO: 
+
+
+# Publications -----------------------------------------------------------------
+# TODO: 
+
+
+
+
+file <- paste0(v2_dir_data_raw, v2_basefile, "_6.csv")
+fwrite(df, file)

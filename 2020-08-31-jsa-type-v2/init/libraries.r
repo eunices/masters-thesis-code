@@ -1,4 +1,5 @@
 suppressMessages(library(ggplot2))
+suppressMessages(library(tidyr))
 suppressMessages(library(ggmap))
 suppressMessages(library(data.table))
 suppressMessages(library(readxlsb))

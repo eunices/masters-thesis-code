@@ -17,10 +17,11 @@ v2_dir_data_ch3_gender <- paste0(v2_dir_data_analysis, 'ch3-gender/')
 v2_dir_data_raw <- paste0(v2_dir_data, updated_version, "/")
 v2_dir_data_raw_raw <- paste0(v2_dir_data_raw, "raw/")
 v2_dir_data_raw_clean <- paste0(v2_dir_data_raw, "clean/")
+v2_dir_data_raw_check <- paste0(v2_dir_data_raw, "check/")
 
 
 # Script folder
-v2_dir_ref <- '2019-06-19-jsa-type'
+v2_dir_ref <- '2019-06-19-jsa-type/'
 v2_dir_base <- paste0('2020-08-31-jsa-type-', updated_version)
 v2_dir_script <- paste0(v2_dir_ref, '/')
 v2_dir_shiny <- paste0(v2_dir_ref, '-shiny/')
@@ -45,7 +46,8 @@ register_google(key = geocode_api)
 data_dirs = c(v2_dir_data, v2_dir_data_analysis, v2_dir_data_ch1,
               v2_dir_data_ch2, v2_dir_data_ch3_coauth, v2_dir_data_ch3_flow, 
               v2_dir_data_ch3_gender,
-              v2_dir_data_raw, v2_dir_data_raw_raw, v2_dir_data_raw_clean)
+              v2_dir_data_raw, v2_dir_data_raw_raw, v2_dir_data_raw_clean,
+              v2_dir_data_raw_check)
 lapply(data_dirs, function(folder) {
   if(!dir.exists(folder)) dir.create(folder)
 })

@@ -70,7 +70,7 @@ describers_info = read_escaped_data(paste0(dir_data_raw, basefile, " describers_
 if (loop_3=='Y') {
 
     # Split data
-    describers <- data.table(run_describer_split_loop())
+    describers <- data.table(run_describer_split_loop(describers_info))
 
     # Clean dob
     describers$dob.describer.n <- gsub("[^0-9]", "", describers$dob.describer.n)

@@ -4,7 +4,8 @@
 
 
 
-run_describer_split_loop <- function() {
+run_describer_split_loop <- function(describers_info, 
+                                     strsplit_cty = "; ") {
 
     # Split authors by ;
     describers_info$full.name.of.describer.n <- 
@@ -20,10 +21,12 @@ run_describer_split_loop <- function() {
         lapply(describers_info$dod.describer, strsplit, split="; ")
 
     describers_info$origin.country.describer.n <- 
-        lapply(describers_info$origin.country.describer, strsplit, split="; ")
+        lapply(describers_info$origin.country.describer, strsplit, 
+               split=strsplit_cty)
 
     describers_info$residence.country.describer.n <- 
-        lapply(describers_info$residence.country.describer, strsplit, split="; ")
+        lapply(describers_info$residence.country.describer, strsplit,
+               strsplit_cty)
 
     describers_info$institution.of.describer.n <- 
         lapply(describers_info$institution.of.describer, strsplit, split="; ")
