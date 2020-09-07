@@ -45,13 +45,10 @@ df[tolower(tribe) %in% c("none", "uncertain"), .N, tribe]
 df[grepl("\\?", tolower(genus)), .N, genus]
 
 
-
 # Species type status ----------------------------------------------------------
 
 # Check synonyms have a valid species associated
 # df$correct_synonym
-
-
 
 
 # Species type locality --------------------------------------------------------
