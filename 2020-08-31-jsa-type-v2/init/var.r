@@ -52,6 +52,10 @@ lapply(data_dirs, function(folder) {
   if(!dir.exists(folder)) dir.create(folder)
 })
 
+# Columns for quick ref
+bcol <- c("genus", "species", "date", "author", "status")
+pcol <- c("title", "journal")
+
 
 # Read vectors
 v2_data_geo <- "data/geo/"

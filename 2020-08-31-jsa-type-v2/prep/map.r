@@ -11,7 +11,7 @@ source('2020-08-31-jsa-type-v2/init/init.r')
 # Have a table old v new variables
 
 # variables_v1 = names(rename_df_names(get_raw_data()))
-file <- paste0(v2_dir_data_raw_clean,"old-names.csv")
+file <- paste0(v2_dir_data_raw_clean,"map-old-names.csv")
 # fwrite(data.table(variables_v1), file)
 variables_v1 = fread(file)$variables_v1
 
@@ -38,7 +38,7 @@ fwrite(
 
 
 # !MANUAL: Check through this table
-matched_names = fread(paste0(v2_dir_data_raw_clean, "map-names_edit.csv"))
+matched_names <- fread(paste0(v2_dir_data_raw_clean, "map-names_edit.csv"))
 
 
 # Remove those columns that did not exist in old dataset

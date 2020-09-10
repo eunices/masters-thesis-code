@@ -42,5 +42,9 @@ read_escaped_data_v2 = function(filepath, escape=T) {
         df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
     }
 
+    if("idx" %in% names(df)) {
+        df$idx <- as.integer(df$idx)
+    }
+
     df
 }

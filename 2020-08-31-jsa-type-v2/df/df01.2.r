@@ -6,23 +6,6 @@ file <- paste0(v2_dir_data_raw, v2_basefile, "_5.csv")
 df <- read_escaped_data_v2(file)
 
 
-# Year of collection -----------------------------------------------------------
-# TODO: 
-
-
-# Description date -------------------------------------------------------------
-# TODO: 
-
-# Manual edits
-
-
-# Publication names ------------------------------------------------------------
-# TODO: 
-
-
-# Publications -----------------------------------------------------------------
-# TODO: 
-
 
 
 

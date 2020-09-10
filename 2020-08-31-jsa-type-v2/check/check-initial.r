@@ -129,7 +129,7 @@ table(is.na(df$lat_n) | is.na(df$lon_n))
 
 # Are lat/ lon in land
 df_geo <- df[!(is.na(lat_n) | is.na(lon_n) )]
-df_geo <- df[!(abs(lat_n) > 90 | abs(lon_n) > 180)]
+df_geo <- df_geo[!(abs(lat_n) > 90 | abs(lon_n) > 180)]
 v_df <- st_as_sf(df_geo, coords = c("lon_n", "lat_n"), crs = wgs84)
 v_df <- st_join(v_df, v_ecoregions, join = st_intersects)
 
@@ -207,6 +207,16 @@ fwrite(
         "lat", "lon", "type.country", 
         "GID_0")],
       paste0(v2_dir_data_raw_check, "10-lat-lon-type-country-mismatch.csv")
+)
+
+fwrite(
+    df_country[(is.na(type.country) | type.country == "") & 
+        !(GID_0 == "" | is.na(GID_0))
+        !(is.na(lat.n) | is.na(lon.n)), 
+      c("idx", "file", "genus", "species", 
+        "author", "date", "status",
+        "lat", "lon", "type.country", "GID_0", "type.locality.verbatim")],
+      paste0(v2_dir_data_raw_check, "26-no-country-with-lat-lon.csv")
 )
 
 
@@ -338,7 +348,7 @@ names(df_auth)
 
 fwrite(
     df_auth,
-    paste0(v2_dir_data_raw_clean, "df-auth.csv")
+    paste0(v2_dir_data_raw_check, "df-auth.csv")
 )
 
 df[idx %in% c(2, 3), c("idx", "full.name.of.describer", "dob.describer")]
@@ -359,7 +369,7 @@ df$date.of.type.n <- paste0("''", df$date.of.type)
 fwrite(
     df[date.of.type.yyyy > date, c("idx", "file", "genus", "species", 
      "date", "author.date", "date.of.type.n", "date.of.type.yyyy")],
-    paste0(v2_dir_data_raw_check, "13-date-of-coll.csv")
+    paste0(v2_dir_data_raw_check, "19-date-of-coll.csv")
 )
 
 # Taxonomic ranks present
@@ -374,4 +384,138 @@ fwrite(
     paste0(v2_dir_data_raw, "test.csv")
 )
 
+# Date of collection erroneous?
+
+# Create a string data field
+df$date.of.type.string <- paste0("'", df$date.of.type)
+df$date.of.type.dd <- as.numeric(sub("\\D*(\\d+).*", "\\1", df$date.of.type))
+df[df$date.of.type.dd>31,]$date.of.type.dd <- NA
+
+# Create month field
+df$date.of.type.mm <- 
+    gsub(".*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec).*", "\\1", df$date.of.type)
+df[!df$date.of.type.mm %in% c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),]$date.of.type.mm <- ""
+
+# Create year field
+df$date.of.type.yyyy <- as.integer(sub('.*(\\d{4}).*', '\\1', df$date.of.type))
+
+fwrite(
+    df[as.numeric(df$date.of.type.yyyy) <1700, 
+        c("idx", "file", "genus", "species", 
+          "date", "author.date", "status", "date.of.type")],
+    paste0(v2_dir_data_raw_check, "20-date-of-coll-1700.csv")
+)
+
+fwrite(
+    df[date.of.type.mm == "" & date.of.type.string != "'NA" & 
+    grepl("[A-z]", date.of.type.string),
+    c("idx", "file", "genus", "species", "date", "author.date", "status",
+    "date.of.type.string", "date.of.type.mm")],
+    paste0(v2_dir_data_raw_check, "21-date-of-coll-month.csv")
+)
+
+fwrite(
+    df[is.na(date.of.type.yyyy) &
+    grepl("[0-9]", date.of.type.string),
+    c("idx", "file", "genus", "species", "date", "author.date", "status",
+    "date.of.type.string", "date.of.type.yyyy")],
+    paste0(v2_dir_data_raw_check, "22-date-of-coll-year.csv")
+)
+
+# Valid species field with non-standard format
+
+# Check synonyms have a valid species associated
+valid_species <- gsub("  ", " ", gsub(
+    "\\([^\\]]*\\)", "", gsub("\\[[^\\]]*\\]", "",
+    df$valid.genus.species.subspecies, perl = TRUE), perl = TRUE))
+
+valid_species <- lapply(
+    valid_species, 
+    strsplit,
+    split = " "
+)
+
+df$valid_genus <- unlist(lapply(
+    valid_species,
+    function(x) gsub("'|=|^-", "", x[[1]][1])
+))
+
+df$valid_species <- unlist(lapply(
+    valid_species,
+    function(x) {
+        if(length(x[[1]]) <=3) {
+            gsub("'|=|^-", "", x[[1]][2])
+        } else {
+            NA
+        }
+    }
+))
+
+df$valid_subspecies <- unlist(lapply(
+    valid_species,
+    function(x) {
+        if(length(x[[1]]) <=3) {
+            gsub("'|=|^-", "", x[[1]][3])
+        } else { 
+            NA
+        }
+    }
+))
+
+
+
+valid_species_len <- unlist(lapply(
+    valid_species, 
+    function(x) length(x[[1]])
+))
+
+
+fwrite(
+    df[valid_species_len > 3 , 
+    c("idx", "file", "genus", "species", "date", "author.date", "status",
+    "valid.genus.species.subspecies", "valid_genus",
+      "valid_species", "valid_subspecies")], 
+      paste0(v2_dir_data_raw_check, "23-valid-species.csv")
+)
+
+df$corrected_valid_species <- ""
+df[status=="Synonym", ]$corrected_valid_species <- 
+    paste0(
+        df[status=="Synonym", ]$valid_genus, " ",
+        df[status=="Synonym", ]$valid_species
+    )
+
+li_valid_species <- unique(paste0(
+    df[tolower(status) == "valid species"]$genus, " ",
+    df[tolower(status) == "valid species"]$species
+))
+
+df$binomial <- paste0(df$genus, " ", df$species)
+
+df$check_binomial <- ifelse(df$binomial == df$corrected_valid_species, 
+    "Same", "Different")
+
+fwrite(
+    df[check_binomial == "Same" &
+        tolower(status) == "synonym" & 
+       !(corrected_valid_species %in% li_valid_species), 
+       c("idx", "file", "genus", "species", "date", "author.date", "status",
+        "valid.genus.species.subspecies", "valid_genus", "valid_species",
+        "check_binomial")],
+    paste0(v2_dir_data_raw_check, "24-valid-species-same.csv")
+)
+
+fwrite(
+    df[check_binomial == "Different" &
+        tolower(status) == "synonym" & 
+       !(corrected_valid_species %in% li_valid_species), 
+       c("idx", "file", "genus", "species", "date", "author.date", "status",
+        "valid.genus.species.subspecies", "valid_genus", "valid_species",
+        "check_binomial")],
+    paste0(v2_dir_data_raw_check, "25-valid-species-not-in-li.csv")
+)
+
+
 # Are full name of describer and describer the same?
+
