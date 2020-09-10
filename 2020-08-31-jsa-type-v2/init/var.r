@@ -53,7 +53,7 @@ lapply(data_dirs, function(folder) {
 })
 
 # Columns for quick ref
-bcol <- c("genus", "species", "date", "author", "status")
+bcol <- c("idx", "genus", "species", "date", "author", "status")
 pcol <- c("title", "journal")
 
 
