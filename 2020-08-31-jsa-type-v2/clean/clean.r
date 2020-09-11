@@ -1,17 +1,5 @@
-# TODO: outline/add cleaning steps, using old folder as a template
-# idea: cyclical cleaning, i.e. clean > manual > clean again, using flags (for the manual part)
-
-# Describers on publication level
-
-
-# Describers on species level
-
-
-# Publications
-
-
-# Distribution
-
-
-# Year of description
-
+source("2020-08-31-jsa-type-v2/clean/clean01.r")
+source("2020-08-31-jsa-type-v2/clean/clean02.r")
+source("2020-08-31-jsa-type-v2/clean/clean03.r")
+# source("2020-08-31-jsa-type-v2/clean/clean04.r")
+# source("2020-08-31-jsa-type-v2/clean/clean05.r")

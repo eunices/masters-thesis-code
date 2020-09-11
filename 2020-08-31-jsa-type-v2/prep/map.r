@@ -38,21 +38,26 @@ fwrite(
 
 
 # !MANUAL: Check through this table
-matched_names <- fread(paste0(v2_dir_data_raw_clean, "map-names_edit.csv"))
+cfile <- paste0(v2_dir_data_raw_clean, "map-names_edit.csv")
+if(file.exists(cfile)) {
+	matched_names <- fread(cfile)
 
 
-# Remove those columns that did not exist in old dataset
-matched_names = matched_names[old != ""]
+	# Remove those columns that did not exist in old dataset
+	matched_names = matched_names[old != ""]
 
 
-# Replace the name in dataset
+	# Replace the name in dataset
 
-for (i in 1:dim(matched_names)[1]) {
-	old_name = matched_names[i,]$old
-	new_name = matched_names[i,]$new
-	if (new_name != old_name) names(df)[which(names(df)==old_name)] = new_name
+	for (i in 1:dim(matched_names)[1]) {
+		old_name = matched_names[i,]$old
+		new_name = matched_names[i,]$new
+		if (new_name != old_name) {
+			names(df)[which(names(df)==old_name)] = new_name
+		}
+	}
+
 }
-
 
 # Output data
 write.csv(

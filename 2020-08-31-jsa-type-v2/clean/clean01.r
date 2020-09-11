@@ -1,6 +1,5 @@
 # Purpose: filter species / taxonomic ranks / species status / 
-# format dates
-# clean lat & lon & locality related info
+# format dates / clean lat & lon & locality related info
 
 source('2020-08-31-jsa-type-v2/init/init.r')
 
@@ -68,10 +67,11 @@ df[!df$date.of.type.mm %in% c("Jan", "Feb", "Mar", "Apr", "May",
 
 
 # Type year
+df$date_old <- df$date
 df$date <- as.integer(gsub("\\[[^\\]]*\\]", "", df$date, perl = TRUE))
 
 # Calculate lag between collection and date
-df$years.lag <- as.numeric(df$date) - as.numeric(df$date.of.type.yyyy)
+df$date.lag <- as.numeric(df$date.of.type.yyyy) - as.numeric(df$date)
 
 table(is.na(df$date.of.type.yyyy)) #!CHECK: missing type year
 table(is.na(df$date.of.type.mm)) #!CHECK: missing type month
@@ -124,13 +124,16 @@ df[status=="Synonym", ]$corrected_valid_species <-
         df[status=="Synonym", ]$valid_species
     )
 
-check_binomial <- ifelse(df$binomial == df$corrected_valid_species, 
-                         "Same", "Different")
+check_binomial <- ifelse(
+    df$binomial == df$corrected_valid_species, 
+    "Same", "Different"
+)
 
 li_valid_species <- unique(paste0(
     df[tolower(status) == "valid species"]$genus, " ",
     df[tolower(status) == "valid species"]$species
 ))
+
 
 dim(
     df[check_binomial == "Same" &
@@ -138,6 +141,8 @@ dim(
        !(corrected_valid_species %in% li_valid_species),
        c(..bcol, "valid.genus.species.subspecies")]
 ) #!CHECK: for synonym, valid species name and binomial nomenclature is same
+# TODO: make code to change status to "valid species"? 
+
 
 dim(
     df[check_binomial == "Different" &
@@ -145,6 +150,9 @@ dim(
        !(corrected_valid_species %in% li_valid_species),
        c(..bcol, "valid.genus.species.subspecies")]
 ) #!CHECK: for synonym, valid species does not exist
+# TODO: make code to check names from other fields and incorporate the
+# valid name?
+
 
 rm(check_binomial, li_valid_species)
 
@@ -152,6 +160,12 @@ rm(check_binomial, li_valid_species)
 # Species type locality --------------------------------------------------------
 
 # Manual edits due to inconsistent lat/lon; out-of-range lat/lon
+
+# Out-of-range / weird characters
+# TODO: 
+
+# In the sea (EcoRegions / GADM)
+# TODO:
 
 ## Inconsistent
 df$lat_n <- as.numeric(df$lat)
@@ -161,6 +175,7 @@ dim(
     df[(is.na(lat_n) & df$lat != "") | (is.na(lon_n) & df$lon != ""), 
        c(..bcol, "lat", "lon", "lat_n", "lon_n")]
 ) #!CHECK: lat/lon with odd characters
+# TODO: make file to incorporate changes (if insufficiently cleaned)
 
 ## Out of range
 
@@ -168,6 +183,7 @@ dim(
     df[(abs(lat_n) > 90 | abs(lon_n) > 180),
        c(..bcol, "lat", "lon", "lat_n", "lon_n")]
 ) #!CHECK: lat/lon out of range
+# TODO: make file to incorporate changes (if insufficiently cleaned)
 
 
 # Convert all lat/lon which are in the sea to NA / manual georef
@@ -226,13 +242,17 @@ df <- merge(
     by = "idx", all.x = T, all.y = F
 )
 
+
 dim(df[is.na(lat_n) | is.na(lon_n)]) #!CHECK: no lat/lon
+
 
 dim(  
     df[!(is.na(lat_n) | is.na(lon_n)) &
         (is.na(sj.realm) | sj.realm == "N/A"),
        c(..bcol, "lat_n", "lon_n", "sj.realm")]       
 ) #!CHECK: likely in the sea (or near to sea); spatial join (EcoRegion2017)
+# TODO: make file to incorporate changes (if insufficiently cleaned)
+
 
 dim(  
     df[!(is.na(lat_n) | is.na(lon_n)) &
@@ -240,12 +260,16 @@ dim(
         (is.na(sj.type.country_A3) | sj.type.country_A3 == ""),
        c(..bcol, "lat_n", "lon_n", "sj.realm")]       
 ) #!CHECK: likely in the sea (or near to sea); spatial join (GADM)
+# TODO: make file to incorporate changes (if insufficiently cleaned)
+
 
 dim(
     df[!(is.na(lat_n) | is.na(lon_n)) &
        sj.type.country_DL != type.country_n,
        c(..bcol, "lat_n", "lon_n", "type.country_n", "sj.type.country_DL")]  
 ) #!CHECK: GADM country assigned is not the same as the type.country
+# TODO: make file to incorporate changes (if insufficiently cleaned)
+
 
 dim(
     df[!(is.na(lat_n) | is.na(lon_n)) &
@@ -262,6 +286,9 @@ df[!(is.na(lat_n) | is.na(lon_n)) &
        (type.country_n == "" | is.na(type.country_n)) &
        !(sj.type.country_DL == "" | is.na(sj.type.country_DL))
        ]$sj.type.country_DL
+
+
+
 
 file <- paste0(v2_dir_data_raw, v2_basefile, "_3.csv")
 fwrite(df, file)

@@ -54,25 +54,35 @@ lapply(data_dirs, function(folder) {
 
 # Columns for quick ref
 bcol <- c("idx", "genus", "species", "date", "author", "status")
+
 pcol <- c("title", "journal")
 
+ppcol <- c("date", "paper.authors", "paper.editors", 
+           "title", "journal", "volume", "issue",
+           "page.numbers.publication", "country.of.publication",
+           "city.of.publication", "paper.type")
 
 # Read vectors
 v2_data_geo <- "data/geo/"
 v2_data_geo_m <- paste0(v2_data_geo, "0_manual/")
 v2_data_geo_s <- paste0(v2_data_geo, "1_separate/")
 
-f_v_ecoregions <- paste0(v2_data_geo_m, "Ecoregions2017/Ecoregions2017.shp")
-v_ecoregions <- st_read(f_v_ecoregions)
+if(!exists("v_ecoregions")) {
+  f_v_ecoregions <- paste0(v2_data_geo_m, "Ecoregions2017/Ecoregions2017.shp")
+  v_ecoregions <- st_read(f_v_ecoregions)
+}
 
 
 v2_data_geop <- "data/geo_processed/"
 
-f_v_continent <- paste0(v2_data_geop, "gadm/gadm36_0_utf8_continents.shp")
-v_continent <- st_read(f_v_continent)
+if(!exists("v_continent")) {
+  f_v_continent <- paste0(v2_data_geop, "gadm/gadm36_0_utf8_continents.shp")
+  v_continent <- st_read(f_v_continent)
+}
 
 
 wgs84 <- 4326
+
 
 # Lookup files
 f_lp_country <- paste0(v2_lookup, "2019-05-29-statoid-country-codes.csv")

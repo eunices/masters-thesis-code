@@ -62,14 +62,83 @@ table(is.na(df_map$`A-3`)) #!CHECK: number of NA
 
 df_map <- df_map[!is.na(`A-3`)]
 
-df_map <- df_map[, 
-    list(global.mapper_n = paste0(sort(global.mapper), collapse = " ")),
+df_map <- unique(df_map)
+
+# Tabulate by biogeographic realms (WWF and EcoRegions2017), continent,
+# tropics or not (type 1 & type 2)
+
+cols_lp_country <- c(
+    "DL", 
+    "continent",
+    "biogeo_wwf", "prop_area_biogeo_wwf",
+    "biogeo_ecor2017", "prop_area_biogeo_ecor2017",
+    "Latitude_type", "Latitude_type2", "prop_area_Latitude_type2"
+)
+
+df_map <- merge(
+    df_map, 
+    lp_country[, ..cols_lp_country],
+    by.x = "global.mapper", 
+    by.y = "DL",
+    all.x = TRUE, 
+    all.y = FALSE
+)
+
+df_map1 <- df_map[, 
+    list(
+        global.mapper_n = paste0(unique(sort(global.mapper)), collapse = "; "),
+        continents.mapper_n = paste0(unique(sort(continent)), collapse = "; ")
+    ),
     by = "idx"
 ]
+
+threshold <- .6
+
+df_map2 <- df_map[prop_area_biogeo_wwf >= threshold, 
+    list(
+        biogeo_wwf.mapper_n = paste0(unique(sort(biogeo_wwf)), collapse = "; ")
+    ),
+    by = "idx"
+]
+
+df_map3 <- df_map[prop_area_biogeo_ecor2017 >= threshold, 
+    list(
+        biogeo_ecor2017.mapper_n = paste0(
+            unique(sort(biogeo_ecor2017)), 
+            collapse = "; "
+        )
+    ),
+    by = "idx"
+]
+
+df_map4 <- df_map[prop_area_Latitude_type2 >= threshold, 
+    list(
+        latitude_type2.mapper_n = paste0(
+            unique(sort(Latitude_type)), 
+            collapse = "; "
+        )
+    ),
+    by = "idx"
+]
+
+df_map <- merge(
+    df_map1, df_map2, by = "idx", all.x = TRUE, all.y = TRUE
+)
+
+df_map <- merge(
+    df_map, df_map3, by = "idx", all.x = TRUE, all.y = TRUE
+)
+
+df_map <- merge(
+    df_map, df_map4, by = "idx", all.x = TRUE, all.y = TRUE
+)
+
+df_map[grepl("; ", continents.mapper_n)]
 
 df <- merge(
     df, 
     df_map,
+    by = "idx", 
     all.x = TRUE,
     all.y = F
 )
