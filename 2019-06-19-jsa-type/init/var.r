@@ -39,7 +39,8 @@ register_google(key = geocode_api)
 
 # If data dir does not exist, create it
 data_dirs = c(dir_data, dir_data_analysis, dir_data_ch1,
-              dir_data_ch2, dir_data_ch3_coauth, dir_data_ch3_flow, dir_data_ch3_gender,
+              dir_data_ch2, dir_data_ch3_coauth, dir_data_ch3_flow, 
+              dir_data_ch3_gender,
               dir_data_raw, dir_data_raw_clean)
 lapply(data_dirs, function(folder) {
   if(!dir.exists(folder)) dir.create(folder)

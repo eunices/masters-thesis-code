@@ -55,12 +55,14 @@ lapply(data_dirs, function(folder) {
 # Columns for quick ref
 bcol <- c("idx", "genus", "species", "date", "author", "status")
 
+jcol <- c("journal", "country.of.publication",
+           "city.of.publication", "paper.type")
+
 pcol <- c("title", "journal")
 
 ppcol <- c("date", "paper.authors", "paper.editors", 
            "title", "journal", "volume", "issue",
-           "page.numbers.publication", "country.of.publication",
-           "city.of.publication", "paper.type")
+           "page.numbers.publication", "paper.type")
 
 # Read vectors
 v2_data_geo <- "data/geo/"
