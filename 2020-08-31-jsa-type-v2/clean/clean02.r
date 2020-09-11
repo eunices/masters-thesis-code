@@ -52,7 +52,7 @@ cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-auth_edit.csv")
 
 if(file.exists(cfile)) {
 
-    df_auth <- read_escaped_data_v2(file)
+    df_auth <- read_escaped_data_v2(cfile)
 
     df_auth <- df_auth[!grepl("\\[CHECK", full.name.of.describer_edit)]
 

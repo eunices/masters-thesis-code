@@ -69,7 +69,7 @@ v2_data_geo_s <- paste0(v2_data_geo, "1_separate/")
 
 if(!exists("v_ecoregions")) {
   f_v_ecoregions <- paste0(v2_data_geo_m, "Ecoregions2017/Ecoregions2017.shp")
-  v_ecoregions <- st_read(f_v_ecoregions)
+  v_ecoregions <- st_read(f_v_ecoregions, quiet = TRUE)
 }
 
 
@@ -77,7 +77,7 @@ v2_data_geop <- "data/geo_processed/"
 
 if(!exists("v_continent")) {
   f_v_continent <- paste0(v2_data_geop, "gadm/gadm36_0_utf8_continents.shp")
-  v_continent <- st_read(f_v_continent)
+  v_continent <- st_read(f_v_continent, quiet = TRUE)
 }
 
 
