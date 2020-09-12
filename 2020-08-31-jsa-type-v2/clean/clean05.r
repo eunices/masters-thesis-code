@@ -8,6 +8,15 @@ df <- read_escaped_data_v2(file)
 
 # Clean author biodata ---------------------------------------------------------
 
+# TODO:
+
+# Add in scripts for clean05.r (Tues)
+# Add in scripts for dfs (Wed)
+# Add in tabulation by ecoregion (Tues)
+# Test HPC (Thu)
+# Modify analysis scripts (take into account location of describer at time point)
+
+
 # copy script from 
 # run_describer_split_loop(df_auth, strsplit_cty = " ")
 
