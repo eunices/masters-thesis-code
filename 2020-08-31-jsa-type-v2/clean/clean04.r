@@ -26,7 +26,7 @@ df[date.of.type.yyyy<1500]$date.of.type.yyyy <- NA
 
 # Lag between dates
 cols <- unique(
-    c(bcol, "date", "date.of.type", "date.of.type.yyyy", "date.lags"), 
+    c(bcol, "date", "date.of.type", "date.of.type.yyyy", "date.lag"), 
     fromLast = TRUE
 )
 
