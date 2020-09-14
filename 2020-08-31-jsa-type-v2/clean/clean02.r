@@ -93,7 +93,7 @@ df_auth <- df_auth[,
 cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-auth.csv")
 fwrite(df_auth, cfile)
 
-# Create surname lookup file called "lp-surname.csv" from this
+# Create author lookup file called "lp-surname.csv" from this
 
 # Full name consistent with author ---------------------------------------------
 

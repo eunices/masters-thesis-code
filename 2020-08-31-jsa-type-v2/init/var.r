@@ -18,6 +18,7 @@ v2_dir_data_raw <- paste0(v2_dir_data, updated_version, "/")
 v2_dir_data_raw_raw <- paste0(v2_dir_data_raw, "raw/")
 v2_dir_data_raw_clean <- paste0(v2_dir_data_raw, "clean/")
 v2_dir_data_raw_check <- paste0(v2_dir_data_raw, "check/")
+v2_dir_data_raw_tmp <- paste0(v2_dir_data_raw, "tmp/")
 
 
 # Script folder
@@ -43,11 +44,12 @@ source(paste0(v2_dir_script, 'init/libraries.r'))
 register_google(key = geocode_api)
 
 # If data dir does not exist, create it
-data_dirs = c(v2_dir_data, v2_dir_data_analysis, v2_dir_data_ch1,
-              v2_dir_data_ch2, v2_dir_data_ch3_coauth, v2_dir_data_ch3_flow, 
-              v2_dir_data_ch3_gender,
-              v2_dir_data_raw, v2_dir_data_raw_raw, v2_dir_data_raw_clean,
-              v2_dir_data_raw_check)
+data_dirs <- c(v2_dir_data, v2_dir_data_analysis, v2_dir_data_ch1,
+               v2_dir_data_ch2, v2_dir_data_ch3_coauth, v2_dir_data_ch3_flow, 
+               v2_dir_data_ch3_gender,
+               v2_dir_data_raw, v2_dir_data_raw_raw, v2_dir_data_raw_clean,
+               v2_dir_data_raw_check, v2_dir_data_raw_tmp)
+
 lapply(data_dirs, function(folder) {
   if(!dir.exists(folder)) dir.create(folder)
 })
@@ -63,6 +65,11 @@ pcol <- c("title", "journal")
 ppcol <- c("date", "paper.authors", "paper.editors", 
            "title", "journal", "volume", "issue",
            "page.numbers.publication", "paper.type")
+
+dcol <- c("idx", "author", "full.name.of.describer", 
+          "describer.gender", "dob.describer",
+          "dod.describer", "origin.country.describer",
+          "residence.country.describer", "institution.of.describer")
 
 # Read vectors
 v2_data_geo <- "data/geo/"

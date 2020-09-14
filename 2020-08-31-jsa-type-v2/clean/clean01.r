@@ -4,12 +4,20 @@
 source('2020-08-31-jsa-type-v2/init/init.r')
 
 # Read 
-
 file <- paste0(v2_dir_data_raw, v2_basefile, "_2.csv")
-df <- read_escaped_data_v2(file)
+df <- read_escaped_data_v2(file)[order(idx)]
 
+df[idx %in% c(18341, 18592)][, c(..bcol, ..pcol)]
 
 # Species statuses -------------------------------------------------------------
+
+# Standardize status
+df[status == "Valid Species"]$status <- "Valid species"
+df$status <- factor(
+    df$status,
+    c("Valid species", "Synonym", "Valid subspecies", "Nominate subspecies")
+)
+
 
 # Remove "z"
 df <- df[!(genus == "z" | status == "z"), ]
@@ -17,14 +25,6 @@ df <- df[!(genus == "z" | status == "z"), ]
 
 # Remove numbers
 df <- df[!grepl("[0-9]", genus)]
-
-
-# Remove duplicated valid species
-is_dup <- duplicated(
-    df[, c("genus", "species", "author", "date", "status")]
-)
-
-df <- df[!is_dup]
 
 
 # Remove morphospecies
@@ -35,6 +35,98 @@ df <- df[status != "Morphospecies"]
 df <- df[family != "Uncertain"]
 df <- df[!grepl("\\?", family)]
 
+# Tag duplicated species
+
+# Based on unique combination 
+df$duplicated <- duplicated(
+    df[, c("genus", "species", "author", "date", "status")]
+)
+
+# Check for non-obvious duplicates
+dups <- df[duplicated(paste0(genus, " ", species)), c("genus", "species")]
+
+dups <- 
+    df[
+        duplicated == FALSE &
+        status %in% c("Synonym", "Valid species") &
+        paste0(genus, " ", species) %in% paste0(dups$genus, " ", dups$species)
+    ]
+
+dups$date <- gsub("\\[[^\\]]*\\]", "", dups$date, perl = TRUE)
+
+dups <- 
+    dups[,
+         list(n = .N, 
+              idxes = paste0(idx, collapse = ", "),
+              status = paste0(sort(unique(status)), collapse = "; "),
+              date = paste0(sort(unique(date)), collapse = "; "),
+              author = paste0(sort(unique(author)), collapse = "; "),
+              file = paste0(sort(unique(file)), collapse = "; ")),
+         by = c("genus", "species")]
+
+# cfile <- paste0(v2_dir_data_raw_check, "33-34-dups.csv")
+# fwrite(dups, cfile)
+
+
+# Valid species with duplicated names 
+
+dups_valid <- separate_rows(
+    dups[status == "Valid species", c("idxes")],
+    "idxes",
+    sep = ", "
+)
+
+cols <- c(bcol, pcol)
+dups_valid <- df[idx %in% dups_valid$idxes, ..cols][
+    order(genus, species, status)
+]
+
+dups_valid$duplicated <- duplicated(
+    dups_valid[, c("genus", "species")]   # take the first duplicate
+)
+
+df <- merge(
+    df, dups_valid[, c("idx", "duplicated")],
+    all.x = TRUE, all.y = FALSE,
+    by.x = "idx", by.y = "idx",
+    suffixes = c("", "_n")
+)
+
+df[!is.na(duplicated_n)]$duplicated <- df[!is.na(duplicated_n)]$duplicated_n
+df$duplicated_n <- NULL
+
+
+# Duplicates (synonyms and valid species) but with same date or author
+dups_nonvalid <- separate_rows(
+    dups[status == "Valid species; Synonym" &
+         (!grepl("; ", date) & !grepl("; ", author)), 
+         c("idxes")],
+    "idxes",
+    sep = ", "
+)
+
+dups_nonvalid <- df[idx %in% dups_nonvalid$idxes, ..cols][
+    order(genus, species, status)
+]
+
+dups_nonvalid$duplicated <- duplicated(      
+    dups_nonvalid[, c("genus", "species")]  # take the first duplicate
+)
+
+# cfile <- paste0(v2_dir_data_raw_clean, "clean01-nonvalid-dups.csv")
+# fwrite(dups_nonvalid, cfile)
+
+df <- merge(
+    df, dups_nonvalid[, c("idx", "duplicated")],
+    all.x = TRUE, all.y = FALSE,
+    by.x = "idx", by.y = "idx",
+    suffixes = c("", "_n")
+)
+
+df[!is.na(duplicated_n)]$duplicated <- df[!is.na(duplicated_n)]$duplicated_n
+df$duplicated_n <- NULL
+
+table(df$duplicated) #!CHECK:
 
 # Taxonomic ranks --------------------------------------------------------------
 
@@ -156,6 +248,22 @@ dim(
 
 rm(check_binomial, li_valid_species)
 
+
+# Duplicated subspecies --------------------------------------------------------
+
+dups <- 
+    unique(df[grepl("subspecies", status) &
+       duplicated(valid.genus.species.subspecies)]$valid.genus.species.subspecies)
+
+cfile <- paste0(v2_dir_data_raw_check, "35-36-subspecies-dups-missing.csv")
+fwrite(
+    df[grepl("subspecies", status) & 
+       valid.genus.species.subspecies %in% dups][
+    , c("file", ..bcol, ..pcol, "valid_subspecies",
+        "valid.genus.species.subspecies", "duplicated")
+    ][order(genus, species, valid_subspecies),],
+    cfile    
+)
 
 # Species type locality --------------------------------------------------------
 

@@ -324,36 +324,6 @@ fwrite(
     paste0(v2_dir_data_raw_check, "12-pub.csv")
 )
 
-# Author -----------------------------------------------------------------------
-names(df)
-
-source(paste0(v2_dir_ref, "df/functions.r"))
-
-df_auth <- df[, c(1, 70:77)]
-# df_auth <- 
-#     df_auth[,
-#         list(
-#             N = .N,
-#             idxes = paste0(idx, collapse = ", ")
-#         ) ,
-#         c("title.of.describer", "full.name.of.describer",
-#           "dob.describer", "dod.describer", "describer.gender",
-#           "origin.country.describer", "residence.country.describer",
-#           "institution.of.describer")]
-
-df_auth <- run_describer_split_loop(df_auth, strsplit_cty = " ")
-df_auth[] <- lapply(df_auth, as.character)
-df_auth[4,]
-names(df_auth)
-
-fwrite(
-    df_auth,
-    paste0(v2_dir_data_raw_check, "df-auth.csv")
-)
-
-df[idx %in% c(2, 3), c("idx", "full.name.of.describer", "dob.describer")]
-df[idx == 6515, c("idx", "full.name.of.describer", "dob.describer")]
-
 
 # Collector  -------------------------------------------------------------------
 
