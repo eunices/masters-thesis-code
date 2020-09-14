@@ -135,8 +135,8 @@ sample_model_posterior_parameters <- function(model) {
     bet <- apply(outs$beta, 2, function(x) sample(x, 1))
 
     # Regression portion
-    coef0 <- apply(outs$coef[, , 1], 2, function(x) sample(x, 1))
-    coef1 <- apply(outs$coef[, , 2], 2, function(x) sample(x, 1))
+    coef0 <- apply(outs$delta[, , 1], 2, function(x) sample(x, 1))
+    coef1 <- apply(outs$delta[, ,2], 2, function(x) sample(x, 1))
 
     # markov
     gam <- apply(outs$gamma, 2, function(x) sample(x, 1))
@@ -168,7 +168,7 @@ posterior_sim <- function(data, model) {
 
 	# Sample from model posterior
 	mp <- sample_model_posterior_parameters(model)
-	list2env(mp); rm(mp)
+	list2env(mp, .GlobalEnv); rm(mp)
 
 	# Number of groups
 	p <- data$P

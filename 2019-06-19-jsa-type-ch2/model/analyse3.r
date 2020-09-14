@@ -114,7 +114,7 @@ obs_count <- Z %>%
   group_by(group) %>%
   dplyr::summarize(count = cml_value)
 
-# outs$coef[2] is the coefficient that estimates the long-term trend in
+# outs$delta[, ,2] is the coefficient that estimates the long-term trend in
 # description rate, it's in log units, i.e. need to exponentiate it
 
 # where 0 means stable trend, positive means increasing description
@@ -122,20 +122,23 @@ obs_count <- Z %>%
 
 # `coef` is an array where 
 # [posterior sample [1:N samples], group number[1:N groups], coefficient[1:2]]
-coef <- rstan::extract(zips, par = "coef")[[1]]
+coef <- rstan::extract(zips, par = "delta")[[1]]
 
 group.cf1 <- apply(coef, 1, function(i) i[, 1])
 group.cf2 <- apply(coef, 1, function(i) i[, 2])
 
 # get mean and 80 CI
-mean_cf2 <- data.frame(provid=1:nrow(group.cf2),
-                       slowdown=apply(group.cf2, 1, mean))
+mean_cf2 <- data.frame(
+    provid = 1:nrow(group.cf2),
+    slowdown = apply(group.cf2, 1, mean)
+)
 
-CI80_cf2 <- data.frame(provid=1:nrow(group.cf2), 
-                       slowdown=t(apply(group.cf2, 
-                                        1, 
-                                        quantile, 
-                                        probs=c(0.1, 0.9))))
+CI80_cf2 <- data.frame(
+    provid = 1:nrow(group.cf2), 
+    slowdown = t(apply(
+        group.cf2, 1, quantile, probs = c(0.1, 0.9)
+    ))
+)
 
 # compile results into table
 results <- data.frame(

@@ -29,8 +29,8 @@ model_param_list <- lapply(model_folder_names,
 
 analysis <- function(run=TRUE) {
     if(run) {
-        source(paste0(dir_script_ed, 'model/model1.r')) # formatting data
-        source(paste0(dir_script_ed, 'model/model2.r')) # model fitting
+        # source(paste0(dir_script_ed, 'model/model1.r')) # formatting data
+        # source(paste0(dir_script_ed, 'model/model2.r')) # model fitting
 
         source(paste0(dir_script_ed, 'model/analyse1.r')) # posterior sampling
         source(paste0(dir_script_ed, 'model/analyse2.r')) # forecast

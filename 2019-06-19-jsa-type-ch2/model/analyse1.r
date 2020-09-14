@@ -39,7 +39,7 @@ png(
     units = "cm", res = 150
 )
 
-traceplot(zips, pars=names(zips))
+traceplot(zips, pars = names(zips))
 
 dev.off() 
 
@@ -59,7 +59,7 @@ allsim <- mclapply(1:1000, function(ii) {
 
 
 # Save posterior simulations
-save(allsim, file=paste0(dir_model_folder, "post.data"))
+save(allsim, file = paste0(dir_model_folder, "post.data"))
 
 
 # Clear memory
