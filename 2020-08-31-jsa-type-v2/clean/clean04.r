@@ -119,6 +119,7 @@ if(file.exists(cfile)) {
         names(df_pubs_edit) := lapply(.SD, function(x) gsub("'", "", x))
     ] 
     
+    # Add that data back into df
     df[idx %in% df_j_edit$idxes]$paper.authors <- 
         df_j_edit[
             match(df[idx %in% df_j_edit$idxes]$idx, idxes)

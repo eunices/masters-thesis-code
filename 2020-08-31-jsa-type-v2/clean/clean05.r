@@ -348,6 +348,8 @@ for(c in 2:length(columns)) { # exclude first  column
 
 }
 
+names(df_ds) <- gsub("\\.n$", "", names(df_ds))
+
 file <- paste0(v2_dir_data_raw, v2_basefile, "-describer_1.csv")
 fwrite(df_ds, file)
 

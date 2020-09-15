@@ -34,7 +34,7 @@ read_escaped_data_v2 = function(filepath, escape=T) {
     df <- fread(
         filepath, 
         integer64 = 'character', 
-        na.strings = c('', 'NA'), 
+        na.strings = c(''), 
         encoding = 'UTF-8'
     )
     

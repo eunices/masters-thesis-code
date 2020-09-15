@@ -1,4 +1,6 @@
 # Variables
+cutoff <- 2019
+
 v2_data <- "data/"
 v2_lookup <- paste0(v2_data, "lookup/")
 v2_dir_data <- paste0(v2_data, "2019-05-23-ascher-bee-data/")
