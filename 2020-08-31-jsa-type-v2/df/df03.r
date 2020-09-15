@@ -9,5 +9,5 @@ df <- read_escaped_data_v2(file)
 # copy from df1.6.r
 
 
-file <- paste0(v2_dir_data_raw, v2_basefile, "_6.csv")
+file <- paste0(v2_dir_data_raw, v2_basefile, "-describer-effort.csv")
 fwrite(df, file)

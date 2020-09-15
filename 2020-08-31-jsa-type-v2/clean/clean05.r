@@ -191,17 +191,6 @@ fwrite(df, file)
 
 
 
-# Combine by author
-df_d[, 
-    idxes := paste0(idx, collapse=', '), 
-    by = c('full.name.of.describer.n')
-]
-
-df_d[,
-    idxes_author.order := paste0(author.order, collapse=', '), 
-    by = c("full.name.of.describer.n")
-]
-
 # Order each row for each column and use row with most number of counts
 df_d$describer.gender.n <- factor(
     df_d$describer.gender.n, 
@@ -212,11 +201,9 @@ df_d$describer.gender.n <- factor(
 
 # Most common gender
 d1 <- df_d[, 
-    c("full.name.of.describer.n", "describer.gender.n", 
-      "idxes", "idxes_author.order")][,
+    c("full.name.of.describer.n", "describer.gender.n")][,
         list(count = .N), 
-        by = c("full.name.of.describer.n", "describer.gender.n",
-               "idxes", "idxes_author.order")][
+        by = c("full.name.of.describer.n", "describer.gender.n")][
             order(full.name.of.describer.n, -count)][
                 !duplicated(full.name.of.describer.n)]
 
@@ -295,7 +282,7 @@ columns <- unique(names(df_ds))
 for(c in 2:length(columns)) { # exclude first  column
     col <- columns[c] 
 
-    if (!col %in% c("idxes", "idxes_author.order", "alive")) {
+    if (!col %in% c("alive")) {
         print(paste0("**********", col))
         for (a in 1:length(authors)) {
             auth <- authors[a]
@@ -324,11 +311,7 @@ df_ds <- merge(
 )
 
 # Add info manually if missing still
-c_df_ds <- df_ds[]
-c_df_ds$idxes <- NULL
-c_df_ds$idxes_author.order <- NULL
-
-c_df_ds <-  c_df_ds[!complete.cases(c_df_ds), ]
+c_df_ds <-  df_ds[!complete.cases(df_ds), ]
 
 cfile <- paste0(v2_dir_data_raw_clean, "clean05-auth-biodata.csv")
 fwrite(c_df_ds, cfile)
@@ -353,7 +336,7 @@ for(c in 2:length(columns)) { # exclude first  column
 
             if(!is.na(new)) {
                 if(is.na(old) | new != old) {
-                    print(paste0(old, " replaces ", new))
+                    print(paste0(new, " replaces ", old))
                     df_ds[full.name.of.describer.n == auth][[col]] <- old
                 }
 
