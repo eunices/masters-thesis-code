@@ -50,8 +50,6 @@ df_map <- merge(
     all.x = T, all.y = F
 )
 
-df_map
-
 df_map[is.na(`A-3`) & !is.na(GID_0_owner), ]$`A-3` <-
     df_map[is.na(`A-3`) & !is.na(GID_0_owner), ]$`GID_0_owner`
 
@@ -80,6 +78,40 @@ df_map <- merge(
     all.x = TRUE, 
     all.y = FALSE
 )
+ 
+df_map <- merge(
+    df_map, 
+    lp_dl[, c("DL", "biogeo_ecor2017_owner", "continent_proximity_owner")],
+    by.x = "global.mapper",
+    by.y = "DL",
+    all.x = TRUE,
+    all.y = FALSE
+)
+
+df_map[is.na(continent) &
+       !is.na(continent_proximity_owner)]$continent <- df_map[
+        is.na(continent) &
+        !is.na(continent_proximity_owner)
+    ]$continent_proximity_owner
+
+df_map$continent_proximity_owner <- NULL
+
+df_map[
+    is.na(biogeo_ecor2017) & 
+    !is.na(biogeo_ecor2017_owner)
+]$biogeo_ecor2017 <- df_map[
+        is.na(biogeo_ecor2017) &
+        !is.na(biogeo_ecor2017_owner)
+    ]$biogeo_ecor2017_owner
+
+df_map$biogeo_ecor2017_owner <- NULL
+
+# Note: this process above is not done for WWF ecoregion (in the lp_dl file)
+# but only for Ecoregion2017 as it is going to be used for analyses eventually.
+
+# The centroid of each location was determined to nearest continent or 
+# biogeographic realm, and if there was no spatial join, a manual addition was 
+# done as seen in the comments column.
 
 df_map1 <- df_map[, 
     list(
@@ -100,24 +132,21 @@ df_map2 <- df_map[prop_area_biogeo_wwf >= threshold,
 
 df_map3 <- df_map[prop_area_biogeo_ecor2017 >= threshold, 
     list(
-        biogeo_ecor2017.mapper_n = paste0(
-            unique(sort(biogeo_ecor2017)), 
-            collapse = "; "
-        )
+        biogeo_ecor2017.mapper_n = 
+        paste0(unique(sort(biogeo_ecor2017)), collapse = "; ")
     ),
     by = "idx"
 ]
 
 df_map4 <- df_map[prop_area_Latitude_type2 >= threshold, 
     list(
-        latitude_type2.mapper_n = paste0(
-            unique(sort(Latitude_type)), 
-            collapse = "; "
-        )
+        latitude_type2.mapper_n = 
+        paste0(unique(sort(Latitude_type)), collapse = "; ")
     ),
     by = "idx"
 ]
 
+# Combine 
 df_map <- merge(
     df_map1, df_map2, by = "idx", all.x = TRUE, all.y = TRUE
 )

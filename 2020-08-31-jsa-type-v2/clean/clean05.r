@@ -1,10 +1,3 @@
-# TODO:
-# Add in scripts for dfs (Tues)
-# Test HPC (Thu)
-# Modify analysis scripts 
-# take into account location of describer at time point) (Wed or next week)
-
-
 # Purpose: clean author biodata
 
 source('2020-08-31-jsa-type-v2/init/init.r')
