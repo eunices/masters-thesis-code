@@ -38,30 +38,6 @@ df_map <- df_map[grepl("^[[:alpha:]]+$", global.mapper, perl = TRUE)]
 
 df_map <- unique(df_map)
 
-df_map <- merge(
-    df_map, lp_country[, c("DL", "A-3")],
-    by.x = "global.mapper", by.y = "DL",
-    all.x = T, all.y = F
-)
-
-df_map <- merge(
-    df_map, lp_dl[, c("DL", "GID_0_owner")],
-    by.x = "global.mapper", by.y = "DL",
-    all.x = T, all.y = F
-)
-
-df_map[is.na(`A-3`) & !is.na(GID_0_owner), ]$`A-3` <-
-    df_map[is.na(`A-3`) & !is.na(GID_0_owner), ]$`GID_0_owner`
-
-table(is.na(df_map$`A-3`)) #!CHECK: number of NA
-
-df_map <- df_map[!is.na(`A-3`)]
-
-df_map <- unique(df_map)
-
-# Tabulate by biogeographic realms (WWF and EcoRegions2017), continent,
-# tropics or not (type 1 & type 2)
-
 cols_lp_country <- c(
     "DL", 
     "continent",
@@ -130,16 +106,15 @@ df_map2 <- df_map[prop_area_biogeo_wwf >= threshold,
     by = "idx"
 ]
 
-df_map3 <- df_map[prop_area_biogeo_ecor2017 >= threshold, 
-    list(
+df_map3 <- df_map[prop_area_biogeo_ecor2017 >= threshold | 
+                  is.na(prop_area_biogeo_ecor2017), list(
         biogeo_ecor2017.mapper_n = 
-        paste0(unique(sort(biogeo_ecor2017)), collapse = "; ")
+            paste0(unique(sort(biogeo_ecor2017)), collapse = "; ")
     ),
     by = "idx"
 ]
 
-df_map4 <- df_map[prop_area_Latitude_type2 >= threshold, 
-    list(
+df_map4 <- df_map[prop_area_Latitude_type2 >= threshold, list(
         latitude_type2.mapper_n = 
         paste0(unique(sort(Latitude_type)), collapse = "; ")
     ),
