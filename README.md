@@ -10,6 +10,7 @@ General folder structure guidelines:
 - More complex, standalone analyses will be stored in its own folder named as so `<yyyy>-<mm>-<dd>-<topic>` and its own structure which should consist of at least a `data` folder.
 - Commits made by me (Eunice) will be prepended with `[EJYS] <commit message>`.
 - `tmp/` is a folder for read/write purposes of temporary datasets.
+- `reference/` is a folder with scripts not "runnable" but for reference only.
 
 Specific files:
 
