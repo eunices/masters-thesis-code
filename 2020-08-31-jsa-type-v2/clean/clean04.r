@@ -7,8 +7,8 @@ df <- read_escaped_data_v2(file)
 
 # Clean dates -------------------------------------------------------------
 
-# Manually
-# TODO: incorporate "date_edit", "date.of.type_edit"
+# Manually incorporate "date_edit", "date.of.type_edit"
+# TODO: 
 
 cfile <- paste0(v2_dir_data_raw_clean, "clean04-check-date-lag_edit.csv")
 

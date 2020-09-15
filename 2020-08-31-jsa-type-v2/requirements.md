@@ -103,8 +103,6 @@ type.repository = type.repository.n_short
 type.repository = type.repository.n_long 
 country.of.type.repository = country.of.type.repository.n_long
 
-TODO: author, full.name.of.describer, etc.
-
 ## variables cleaned but with old names
 
 SHOULD BE NONE!

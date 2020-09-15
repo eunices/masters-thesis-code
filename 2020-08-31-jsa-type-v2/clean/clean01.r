@@ -242,7 +242,7 @@ dim(
        !(corrected_valid_species %in% li_valid_species),
        c(..bcol, "valid.genus.species.subspecies")]
 ) #!CHECK: for synonym, valid species does not exist
-# TODO: make code to check names from other fields and incorporate the
+# TODO: make code to check names from other names and incorporate the
 # valid name?
 
 
@@ -269,12 +269,6 @@ fwrite(
 
 # Manual edits due to inconsistent lat/lon; out-of-range lat/lon
 
-# Out-of-range / weird characters
-# TODO: 
-
-# In the sea (EcoRegions / GADM)
-# TODO:
-
 ## Inconsistent
 df$lat_n <- as.numeric(df$lat)
 df$lon_n <- as.numeric(df$lon)
@@ -286,7 +280,6 @@ dim(
 # TODO: make file to incorporate changes (if insufficiently cleaned)
 
 ## Out of range
-
 dim(
     df[(abs(lat_n) > 90 | abs(lon_n) > 180),
        c(..bcol, "lat", "lon", "lat_n", "lon_n")]
