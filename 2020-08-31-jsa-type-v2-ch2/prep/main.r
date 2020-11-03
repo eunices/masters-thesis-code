@@ -7,8 +7,8 @@ print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 # Init
 #############
 # Prepare data from original dataset
-source('2019-06-19-jsa-type-ch2/init/init_a.r')
-source('2019-06-19-jsa-type-ch2/params.r')
+source('init/init_a.r')
+source('params.r')
 
 
 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")

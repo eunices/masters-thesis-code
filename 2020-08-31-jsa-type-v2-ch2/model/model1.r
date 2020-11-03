@@ -1,5 +1,5 @@
 # format data for stan
-source('2019-06-19-jsa-type-ch2/init/init_a.r')
+source('2020-08-31-jsa-type-ch2/init/init_a.r')
 print(paste0(Sys.time(), " --- format data  for stan"))
 
 ########################################

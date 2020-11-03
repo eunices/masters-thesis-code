@@ -4,15 +4,15 @@ print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 # If running script from elsewhere
 # setwd("C:/_dev/msc/thesis/")
-# source(paste0("2019-06-19-jsa-type-ch2/", "model.r"))
+# source(paste0("2020-08-31-jsa-type-ch2/", "model.r"))
 
 memory.limit(size=12000)
 # memory.limit(size=25000)
 
 # Init
 #############
-source('2019-06-19-jsa-type-ch2/init/init_a.r')
-source('2019-06-19-jsa-type-ch2/params.r')
+source('2020-08-31-jsa-type-ch2/init/init_a.r')
+source('2020-08-31-jsa-type-ch2/params.r')
 
 
 

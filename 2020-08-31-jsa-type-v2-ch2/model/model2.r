@@ -1,5 +1,5 @@
 # Running model
-source('2019-06-19-jsa-type-ch2/init/init_a.r')
+source('2020-08-31-jsa-type-ch2/init/init_a.r')
 print(paste0(Sys.time(), " --- running stan model"))
 
 #  Write to logfile
@@ -33,7 +33,7 @@ data <- read_rdump(files)
 
 # Fit model
 fit <- stan(
-    file="2019-06-19-jsa-type-ch2/model/zip_count.stan",
+    file="2020-08-31-jsa-type-ch2/model/zip_count.stan",
     data=data,
     chains=as.numeric(model_params$chains),
     warmup=round(as.numeric(model_params$iter)*0.3, 0),

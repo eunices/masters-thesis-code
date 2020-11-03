@@ -3,23 +3,35 @@
 library(forecast)
 library(ggplot2)
 
-source('2019-06-19-jsa-type-ch2/init/init_a.r')
+source('2020-08-31-jsa-type-ch2/init/init_a.r')
 
 chosen_models <- c("BGY-E0-C4-I8000-A0.8-T12",
                    "BGY-E1-C4-I300000-A0.999-T15")
-model_param_list <- lapply(chosen_models, function(x) parse_model_identifier(x))
-model_dir_list <- lapply(model_param_list[1], function(x) initialize_model_params(x))
+
+model_param_list <- lapply(
+    chosen_models, 
+    function(x) parse_model_identifier(x)
+)
+
+model_dir_list <- lapply(
+    model_param_list[1], 
+    function(x) initialize_model_params(x)
+)
 
 results <- list()
 theme <- theme_minimal()
 plots <- list()
-for (i in 1:length(chosen_models)) {
 
+for (i in 1:length(chosen_models)) {
     
     dir_model_folder <- model_dir_list[i]
 
     # initial model data
-    data_raw <- read.csv(paste0(dir_model_folder, "data.csv"), na.strings=c("")) # original data
+    data_raw <- read.csv(
+        paste0(dir_model_folder, "data.csv"), 
+        na.strings = c("")
+    ) # original data
+    
     data <- read_rdump(paste0(dir_model_folder, "count_info.data.R"))
 
     # load zero inflated fits
@@ -31,11 +43,11 @@ for (i in 1:length(chosen_models)) {
 
     # create data.frame of observed
     cumm <- lapply(seq(data$P), function(ii) { # each group
-        data.frame(index=1:data$end[ii],                    # index (offset "year")
+        data.frame(index=1:data$end[ii],                    # index/offset/year
                    value=data$counts[ii, ],                 # count
                    cml_value=cumsum(data$counts[ii, ]),     # cumulative
                    off=data$off[ii, ],                      # tax. effort
-                   group=ii)}) %>% rbind.fill               # group (e.g. "family")
+                   group=ii)}) %>% rbind.fill               # group "family"
     cumm$sim <- 0 # set sim to 0 to indicate that it is observed data
 
     # create data.frame of simulated (interpolated)
@@ -58,15 +70,25 @@ for (i in 1:length(chosen_models)) {
     # merge observed values
     Z <- data.table(Z)
     obs_Z <- Z[sim == 0, c("group", "year", "cml_value")]
-    Z2 <- merge(Z, obs_Z, by=c("group", "year"), all.x=T, all.y=T, suffixes=c("_sim", "_obs"))
+
+    Z2 <- merge(
+        Z, obs_Z, 
+        by = c("group", "year"), 
+        all.x = T, all.y = T, 
+        suffixes = c("_sim", "_obs")
+    )
+    
     Z2 <- Z2[sim!=0]
 
     # get accuracy
     result <- lapply(unique(Z2$group), function(grp) {
         lapply(unique(Z2$sim), function(s) {
             to_calc <- Z2[group==grp & sim==s]
-            data.frame(accuracy(to_calc$cml_value_sim, to_calc$cml_value_obs),
-                       group=grp, sim=s)
+            data.frame(
+                accuracy(to_calc$cml_value_sim, to_calc$cml_value_obs),
+                group = grp, 
+                sim = s
+            )
         })
     })
     
@@ -80,12 +102,19 @@ for (i in 1:length(results)) {
         rbindlist(lapply(grp, as.data.frame))
     })
 }
+
 formatted2 <- list()
-mapping <- unique(data.frame(groupname=as.character(data_raw$group),
-                             group=as.numeric(data_raw$group)))
+
+mapping <- unique(data.frame(
+    groupname = as.character(data_raw$group),
+    group = as.numeric(data_raw$group)
+))
+
 for (i in 1:length(results)) {
-    formatted2[[i]] <- merge(rbindlist(formatted[[i]]), mapping,
-                             by="group", all.x=T, all.y=F)
+    formatted2[[i]] <- merge(
+        rbindlist(formatted[[i]]), mapping,
+        by = "group", all.x = T, all.y = F
+    )
 }
 
 

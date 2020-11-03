@@ -5,8 +5,8 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 # Set up
-source('2019-06-19-jsa-type/init/var.R')
-source('2019-06-19-jsa-type/subset.R')
+source('2020-08-31-jsa-type/init/var.R')
+source('2020-08-31-jsa-type/subset.R')
 
 # Parameters
 dir_plot = "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\_figures\\_ch3\\_ch3-coauth\\"

@@ -2,12 +2,16 @@
 
 # Lookup files
 lookup_cty <- get_lp_statoid()
-lookup_cty_subset <- lookup_cty[prop_area_biogeo_wwf >= 0.6,] # subset for biogeo areas >=.6
+ # subset for biogeo areas >=.6
+lookup_cty_subset <- lookup_cty[prop_area_biogeo_wwf >= 0.6,]
 lookup_bm <- get_lp_biome()
 
 # Extra data lookup files 
-filepath_nearest_biome_for_missing <- paste0(dir_data, '/ch2/2019-10-14-nearest-loc.csv')
-# [this process took >3h so it was persisted instead]
+# note: this process took >3h so it was persisted instead
+filepath_nearest_biome_for_missing <- paste0(
+    dir_data, 
+    '/ch2/2019-10-14-nearest-loc.csv'
+)
 
 ####################################################################################################
 
