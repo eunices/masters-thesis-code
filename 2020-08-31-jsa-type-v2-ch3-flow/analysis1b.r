@@ -5,8 +5,8 @@
 
 
 # Set up
-source('2019-06-19-jsa-type-ch3-flow/analysis1/prep.R')
-source('2019-06-19-jsa-type-ch3-flow/analysis1/data_analysis1b.R')
+source('2020-08-31-jsa-type-ch3-flow/analysis1/prep.R')
+source('2020-08-31-jsa-type-ch3-flow/analysis1/data_analysis1b.R')
 
 # Libraries
 library(tidyr)

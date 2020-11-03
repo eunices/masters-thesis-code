@@ -4,8 +4,8 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 # Set up
-source('2019-06-19-jsa-type/init/var.R')
-source('2019-06-19-jsa-type/subset.R')
+source('2020-08-31-jsa-type/init/var.R')
+source('2020-08-31-jsa-type/subset.R')
 
 # Libraries
 library(data.table)
