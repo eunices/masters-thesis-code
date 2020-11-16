@@ -25,6 +25,7 @@ if (model_params$te <= 1) {
 
     names(pubs)[which(names(pubs) == "date")] <- "year"
     pubs$idx <- as.numeric(pubs$idx)
+    data$valid_species_id <- as.numeric(data$valid_species_id)
 
     df_pub <- merge(
         data[, c("valid_species_id", "group")], pubs, 
