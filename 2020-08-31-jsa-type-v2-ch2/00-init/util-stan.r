@@ -76,7 +76,7 @@ check_n_eff <- function(fit) {
 	fit_summary <- summary(fit, probs = c(0.5))$summary
 	N <- dim(fit_summary)[[1]]
 
-	iter <- dim(extract(fit)[[1]])[[1]]
+	iter <- dim(rstan::extract(fit)[[1]])[[1]]
 
 	no_warning <- TRUE
 	for (n in 1:N) {
@@ -153,7 +153,7 @@ check_all_diagnostics <- function(fit) {
 
 # Returns parameter arrays separated into divergent and non-divergent transitions
 partition_div <- function(fit) {
-	nom_params <- extract(fit, permuted=FALSE)
+	nom_params <- rstan::extract(fit, permuted=FALSE)
 	n_chains <- dim(nom_params)[2]
 	params <- as.data.frame(do.call(rbind, 
 	lapply(1:n_chains, function(n) nom_params[,n,])))
