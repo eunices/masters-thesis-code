@@ -13,6 +13,7 @@
 **/data/*
 **/model/*
 **/rsconnect/**
+/tmp/*
 
 # Do not ignore folders with gitkeep
 !.gitkeep 

@@ -112,8 +112,7 @@ with(
 # Modify data for validation
 
 count_mat <- count_mat[1:(dim(count_mat)[1]-model_params$va),]
-off_mat <- off_mat[1:(dim(count_mat)[1]-model_params$va),]
-
+off_mat <- off_mat[1:dim(count_mat)[1],]
 
 # Other stan variables
 

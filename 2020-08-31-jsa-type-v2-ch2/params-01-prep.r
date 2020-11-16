@@ -4,7 +4,26 @@
 #############
 
 # Model parameters
-model_folder_names <- c("BGY-E2-C4-I8000-A0.8-T12-F25-V10") # fast run
+model_folder_names <- c(
+
+    "BGY-E0-C4-I8000-A0.8-T12-F25-V10",
+    "BGY-E1-C4-I8000-A0.8-T12-F25-V10",
+    
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V10",
+    # "BNN-E2-C4-I8000-A0.8-T12-F25-V10",
+    "BMY-E2-C4-I8000-A0.8-T12-F25-V10",
+    "FAM-E2-C4-I8000-A0.8-T12-F25-V10",
+
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V5",
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V15",
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V20",
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V25",
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V30",
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V35",
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V40",
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V50"
+) # fast run
+
 
 # # Hyperparameters of models where chains could mix
 # model_folder_names <- 

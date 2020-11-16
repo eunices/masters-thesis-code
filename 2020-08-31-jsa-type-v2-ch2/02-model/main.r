@@ -47,6 +47,10 @@ for (i in 1:len_params) {
     warnings_log <- filepaths[3]
     model_identifier <- filepaths[4]
 
+    print("#######################################################")
+    print(paste0("Starting for >>>>>>>>>> ", model_identifier))
+    print("#######################################################")
+
     # Analysis scripts
     tryCatch(
         withCallingHandlers(analysis(), 

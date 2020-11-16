@@ -37,9 +37,9 @@ for (i in 1:len_params) {
     warnings_log <- filepaths[3]
     model_identifier <- filepaths[4]
 
-    print("#################")
+    print("#######################################################")
     print(paste0("Starting for >>>>>>>>>> ", model_identifier))
-    print("#################")
+    print("#######################################################")
 
     # Run data prep script
     source(paste0(dir_script_ed, '01-prep/prep1.r')) # prepare raw data
