@@ -4,4 +4,4 @@ source /etc/profile.d/rec_modules.sh
 module load miniconda
 source activate renv
 
-Rscript ch2-test/02-model/main.r
+Rscript 2020-08-31-jsa-type-v2-ch2/02-model/main.r

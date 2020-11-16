@@ -223,7 +223,8 @@ P <- ggplot() +
     geom_path(data=obs, aes(x=year, y=cml_value)) +
     facet_wrap(~group, labeller=as_labeller(labels)) +
     ylab("Number of species") + 
-    xlab("Year") + theme
+    xlab("Year") + theme +
+    ylim(0, 10000)
 
 ggsave(P, file = paste0(dir_model_folder, "output/cumulative_fit.pdf"), 
        width = 10, height = 6)
@@ -239,7 +240,7 @@ P <- ggplot() +
     facet_wrap(~group, labeller=as_labeller(labels)) +
     ylab("Number of species") + 
     xlab("Year") + 
-    theme
+    theme + ylim(0, 100)
 
 ggsave(P, file = paste0(dir_model_folder, "output/count_fit.pdf"),
        width = 10, height = 6)

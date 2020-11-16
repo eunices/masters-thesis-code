@@ -35,38 +35,43 @@ parse_model_identifier <- function(string) {
 
         if (i == 1) {
 
-            model_params$dataset <- substr(string[i], 1, 2)     # 
+            model_params$dataset <- substr(string[i], 1, 2)
             model_params$ll <- substr(string[i], 3, 3)          
             # "Y" for using lat lon / "N" for using country distribution
 
         } else {                                
 
             first_letter <- substr(string[i], 1, 1)
+			parameter <- as.numeric(substr(string[i], 2, nchar(string[i])))
 
             if (first_letter == "E" ) { # taxonomic effort
-                model_params$te <- 
-                  as.numeric(substr(string[i], 2, nchar(string[i])))
+                model_params$te <- parameter
+                  
             }
 
             if (first_letter == "C") { # chains
-                model_params$chains <- 
-                  as.numeric(substr(string[i], 2, nchar(string[i])))
+                model_params$chains <- parameter
             }
 
             if (first_letter == "I") { # iterations
-                model_params$iter <- 
-                  as.numeric(substr(string[i], 2, nchar(string[i])))
+                model_params$iter <- parameter
             } 
 
             if (first_letter == "A") { # adapt delta
-                model_params$ad <- 
-                  as.numeric(substr(string[i], 2, nchar(string[i])))
+                model_params$ad <- parameter
             } 
 
             if (first_letter == "T") { # tree depth
-                model_params$td <- 
-                  as.numeric(substr(string[i], 2, nchar(string[i])))
+                model_params$td <- parameter
             } 
+
+			if (first_letter == "F") {
+				model_params$fc <- parameter # forecast duration
+			}
+
+			if (first_letter == "V") {
+				model_params$va <- parameter # validation (1) or not (0)
+			}
 
         }
     }
@@ -93,7 +98,9 @@ initialize_model_params <- function(model_params, custom=NA) {
 		"C", as.character(model_params$chains), "-",
 		"I", as.character(model_params$iter), "-",
 		"A", as.character(model_params$ad), "-",
-		"T", as.character(model_params$td)
+		"T", as.character(model_params$td), "-",
+		"F", as.character(model_params$fc), "-",
+		"V", as.character(model_params$va)
 	)
   
 	# Define model folder
@@ -145,7 +152,7 @@ sample_model_posterior_parameters <- function(model) {
 	#' 
     #' @param model Model dumped from rstan
 
-    outs <- extract(model, permuted = TRUE) # posterior
+    outs <- rstan::extract(model, permuted = TRUE) # posterior
 
     # ACP
 
@@ -282,10 +289,16 @@ posterior_forecast <- function(data, ftime, model) {
 		all_toff <- data$off[ii, ][start:end]
 		len <- length(all_toff)
 
+
 		# Generate offset segment by sampling past ftime of offsets
-		# TODO: use naive method from
+
+		# # original code
+		# toff <- sample(all_toff[(len-ftime):len], ftime, replace = TRUE)
+
+		# naive method suggested by roman
 		# https://otexts.com/fpp2/simple-methods.html
-		toff <- sample(all_toff[(len-ftime):len], ftime, replace = TRUE)
+		toff <- rep(all_toff[len], ftime)
+
 
 		# By time point
 

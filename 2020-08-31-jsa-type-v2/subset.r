@@ -42,3 +42,34 @@ get_describer_network = function() {
     file <- paste0(dir_data_raw, basefile, "-describer-network.csv")
     read_escaped_data_v2(file)
 }
+
+# Lookup files
+
+get_lp_statoid = function() {
+    fread(
+        'data/lookup/2019-05-29-statoid-country-codes.csv', 
+        na = c(''), encoding = 'UTF-8'
+    )
+}
+
+get_lp_biome = function() {
+    fread(
+        'data/lookup/2019-10-14-biome-broad-cat.csv', 
+        na = c(''), encoding = 'UTF-8'
+    )
+}
+
+# Shapefiles
+
+
+get_shp_biogeo = function() {
+    filepath_input_biogeo = 
+        'data/geo_processed/teow/official/wwf_terr_ecos_dissolved.shp'
+    st_read(filepath_input_biogeo, quiet=T)
+}
+
+get_shp_biomes = function() {
+    filepath_input_biomes = 
+        'data/geo/0_manual/Ecoregions2017/Ecoregions2017.shp'
+    st_read(filepath_input_biomes, quiet=T)
+}

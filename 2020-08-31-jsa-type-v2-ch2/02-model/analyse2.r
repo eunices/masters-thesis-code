@@ -7,7 +7,7 @@ source('2020-08-31-jsa-type-v2-ch2/00-init/init-a.r')
 
 # Parameters
 set.seed(2020) # for reproducibility
-ftime <- as.numeric(25)
+ftime <- model_params$fc
 
 
 # Script

@@ -3,10 +3,10 @@
 library(forecast)
 library(ggplot2)
 
-source('2020-08-31-jsa-type-ch2/init/init_a.r')
+source('2020-08-31-jsa-type-v2-ch2/00-init/init-a.r')
 
-chosen_models <- c("BGY-E0-C4-I8000-A0.8-T12",
-                   "BGY-E1-C4-I300000-A0.999-T15")
+chosen_models <- c("BGY-E2-C4-I8000-A0.8-T12-F10",
+                   "BGY-E2-C4-I8000-A0.8-T12-F25")
 
 model_param_list <- lapply(
     chosen_models, 

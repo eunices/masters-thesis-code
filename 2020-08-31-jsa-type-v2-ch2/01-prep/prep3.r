@@ -77,6 +77,9 @@ if(model_params$te == 0){ # no taxonomic effort
 }
 
 
+########################################
+# OUTPUT
+########################################
 
 # Other stan variables
 
@@ -86,6 +89,39 @@ jgroup <- ncol(count_mat)
 # index where value is not 0 to use as a starting point
 starts <- apply(count_mat, 2, function(x) min(which(x != 0))) 
 
+data <- list(
+    N = nyear, P = jgroup, str = as.numeric(starts), 
+    end = rep(max(dim(count_mat)[1]), jgroup), 
+    counts =  t(count_mat), off = t(off_mat)
+)
+
+output_filepath <- paste0(dir_model_folder, "count_info_ref.data.R")
+
+with(
+    data, 
+    {stan_rdump(
+        list = c('N', 'P', 'str', 'end', 'counts', 'off'),
+        file = output_filepath
+    )} 
+)
+
+
+
+
+
+# Modify data for validation
+
+count_mat <- count_mat[1:(dim(count_mat)[1]-model_params$va),]
+off_mat <- off_mat[1:(dim(count_mat)[1]-model_params$va),]
+
+
+# Other stan variables
+
+nyear <- nrow(count_mat)
+jgroup <- ncol(count_mat)
+
+# index where value is not 0 to use as a starting point
+starts <- apply(count_mat, 2, function(x) min(which(x != 0))) 
 
 ########################################
 # OUTPUT
