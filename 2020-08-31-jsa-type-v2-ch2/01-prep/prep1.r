@@ -308,7 +308,7 @@ if (model_params$dataset == "FA") {
     df <- get_df()
     df <- df[tolower(status) == "valid species"]
 
-    join <- df[, c("idx", "full.name.of.describer", "date_n", "family")][
+    join <- df[, c("idx", "full.name.of.describer", "date", "family")][
         order(as.numeric(idx))]
 }
 
@@ -318,7 +318,7 @@ if (model_params$dataset == "GE") {
     df <- get_df()
     df <- df[tolower(type) == "valid species"]
 
-    join <- df[, c("idx", "full.name.of.describer", "date_n", "genus")][
+    join <- df[, c("idx", "full.name.of.describer", "date", "genus")][
         order(as.numeric(idx))]
     
     top10 <- c("andrena", "lasioglossum", "megachile", 
@@ -334,7 +334,7 @@ if(model_params$dataset == "HA") {
     df <- get_df()
     df <- df[tolower(status) == "valid species"]
 
-    join <- df[, c("idx", "full.name.of.describer", "date_n", "genus")][
+    join <- df[, c("idx", "full.name.of.describer", "date", "genus")][
         order(as.numeric(idx))]
 
     halictidae <- c("lasioglossum", "lipotriches", "sphecodes",
