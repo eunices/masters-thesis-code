@@ -2,19 +2,10 @@ print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("WELCOME TO ANALYSES SCRIPTS FOR BEE TYPE DATA (EDIE ET AL)")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-# If running script from elsewhere
-# setwd("C:/_dev/msc/thesis/")
-# source(paste0("2020-08-31-jsa-type-ch2/", "model.r"))
-
-memory.limit(size=12000)
-# memory.limit(size=25000)
-
 # Init
 #############
-source('2020-08-31-jsa-type-ch2/init/init_a.r')
-source('2020-08-31-jsa-type-ch2/params.r')
-
-
+source('2020-08-31-jsa-type-v2-ch2/00-init/init-a.r')
+source('2020-08-31-jsa-type-v2-ch2/params-02-model.r')
 
 
 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
@@ -29,17 +20,21 @@ model_param_list <- lapply(model_folder_names,
 
 analysis <- function(run=TRUE) {
     if(run) {
-        # source(paste0(dir_script_ed, 'model/model1.r')) # formatting data
-        # source(paste0(dir_script_ed, 'model/model2.r')) # model fitting
 
-        source(paste0(dir_script_ed, 'model/analyse1.r')) # posterior sampling
-        source(paste0(dir_script_ed, 'model/analyse2.r')) # forecast
-        source(paste0(dir_script_ed, 'model/analyse3.r')) # visualise
+        source(paste0(dir_script_ed, '02-model/model.r'))    # model fitting
+
+        source(paste0(dir_script_ed, '02-model/analyse1.r')) # posterior
+        source(paste0(dir_script_ed, '02-model/analyse2.r')) # forecast
+        source(paste0(dir_script_ed, '02-model/analyse3.r')) # visualise
+
     }
 }
 
 # Loop through list
-print(paste0(Sys.time(), " --- Start modelling loop for ", len_params, " parameters."))
+print(paste0(
+    Sys.time(), " --- Start modelling loop for ", len_params, " parameters."
+))
+
 for (i in 1:len_params) {
 
     model_params <- model_param_list[[i]]

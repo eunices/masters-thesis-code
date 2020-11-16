@@ -1,5 +1,5 @@
 # Running model
-source('2020-08-31-jsa-type-ch2/init/init_a.r')
+source('2020-08-31-jsa-type-v2-ch2/00-init/init-a.r')
 print(paste0(Sys.time(), " --- running stan model"))
 
 #  Write to logfile
@@ -33,21 +33,22 @@ data <- read_rdump(files)
 
 # Fit model
 fit <- stan(
-    file="2020-08-31-jsa-type-ch2/model/zip_count.stan",
-    data=data,
-    chains=as.numeric(model_params$chains),
-    warmup=round(as.numeric(model_params$iter)*0.3, 0),
-    # warmup=round(as.numeric(model_params$iter)*0.1, 0),
-    iter=as.numeric(model_params$iter),
-    init=0,
-    thin=5,
-    cores=4,
-    verbose=TRUE,
-    seed=301,
+    file = paste0(dir_script_ed, "02-model/zip_count.stan"),
+    data = data,
+    chains = as.numeric(model_params$chains),
+    warmup = round(as.numeric(model_params$iter)*0.3, 0),
+    # warmup = round(as.numeric(model_params$iter)*0.1, 0),
+    iter = as.numeric(model_params$iter),
+    init = 0,
+    thin = 5,
+    cores = 4,
+    verbose = TRUE,
+    seed = 2020,
     control = list(
         max_treedepth = as.numeric(model_params$td),
         adapt_delta = as.numeric(model_params$ad)
-    ))
+    )
+)
 
 save(fit, file = paste0(dir_model_folder, "fit.data"))
 rm(fit)

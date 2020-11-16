@@ -1,5 +1,5 @@
 # Setup
-source('2020-08-31-jsa-type-ch2/init/init_a.r')
+source('2020-08-31-jsa-type-v2-ch2/00-init/init-a.r')
 
 
 # Parameters
@@ -50,16 +50,22 @@ if (nrow(badchain) > 0) {
 
     interpret <- FALSE
     sink(paste0(dir_model_folder, "output/chain_sampling.txt"))
-    cat("Chains have not converged. Increase interations in sampling in stan() function 
-        call in code/model.r. Do not interpret model results as parameter estimates are 
-        currently highly unstable.")
+    cat(
+        "Chains have not converged. 
+        Increase interations in sampling in stan() function 
+        call in code/model.r. 
+        Do not interpret model results as parameter estimates are 
+        currently highly unstable."
+    )
     sink()
 
 } else {
 
     interpret <- TRUE
     sink(paste0(dir_model_folder, "output/chain_sampling.txt"))
-    cat("Chains have converged. Model results are robust to posterior sampling.")
+    cat(
+        "Chains have converged. Model results are robust to posterior sampling."
+    )
     sink()
 
 }
@@ -70,11 +76,11 @@ if (nrow(badchain) > 0) {
 # Cumulative series for observed data
 
 cumm <- lapply(seq(data$P), function(ii) { # each group
-    data.frame(index = 1:data$end[ii],                    # index (offset "year")
-               value = data$counts[ii, ],                 # count
-               cml_value = cumsum(data$counts[ii, ]),     # cumulative
-               off = data$off[ii, ],                      # tax. effort
-               group = ii)}) %>%                          # group (e.g. "family")
+    data.frame(index = 1:data$end[ii],                 # index (offset "year")
+               value = data$counts[ii, ],              # count
+               cml_value = cumsum(data$counts[ii, ]),  # cumulative
+               off = data$off[ii, ],                   # tax. effort
+               group = ii)}) %>%                       # group (e.g. "family")
     rbind.fill
            
 cumm$sim <- 0 # set sim to 0 to indicate that it is observed data
@@ -215,7 +221,7 @@ P <- ggplot() +
     geom_path(data=sims, aes(x=year, y=cml_value, group=sim), 
               col="skyblue2", alpha=0.1) +
     geom_path(data=obs, aes(x=year, y=cml_value)) +
-    facet_wrap(~group, scales="free_y", labeller=as_labeller(labels)) +
+    facet_wrap(~group, labeller=as_labeller(labels)) +
     ylab("Number of species") + 
     xlab("Year") + theme
 
@@ -230,7 +236,7 @@ P <- ggplot() +
     geom_path(data=sims, aes(x=year, y=value, group=sim),
               col="skyblue2", alpha=0.1) +
     geom_path(data=obs, aes(x=year, y=value)) +
-    facet_wrap(~group, scales="free_y", labeller=as_labeller(labels)) +
+    facet_wrap(~group, labeller=as_labeller(labels)) +
     ylab("Number of species") + 
     xlab("Year") + 
     theme
@@ -262,7 +268,7 @@ P <- ggplot() +
     geom_line(data=sims, aes(x=year, y=lam, group=sim), 
               col="skyblue2", alpha=0.1) +
     geom_line(data=mu_sim, aes(x=year, y=mu), col="royalblue") +
-    facet_wrap(~group, scales="free_y", labeller=as_labeller(labels)) +
+    facet_wrap(~group, labeller=as_labeller(labels)) +
     ylab("Number of species") +
     xlab("Year") +
     theme
@@ -305,12 +311,12 @@ fore.table <- split(forsim, forsim$group) %>% # by group
             oo[nrow(oo), ]$value <- cs
             oo[nrow(oo), ]
         }) %>% rbind.fill
-        fore.mu <- round(mean(vv$value), 0) +               # summarize mean expected
-            max(obs[obs$group == group, "cml_value"])       # add to currents counts
-        fore.lower <- round( quantile(vv$value, 0.1), 0) +  # summarize lower expected
-            max(obs[obs$group == group, "cml_value"])       # add to currents counts    
-        fore.upper <- round( quantile(vv$value, 0.9), 0) +  # summarize upper expected
-            max(obs[obs$group == group, "cml_value"])       # add to currents counts
+        fore.mu <- round(mean(vv$value), 0) +              # summarize mean exp
+            max(obs[obs$group == group, "cml_value"])      # add to current cts
+        fore.lower <- round( quantile(vv$value, 0.1), 0) + # summarize lower exp
+            max(obs[obs$group == group, "cml_value"])      # add to current cts    
+        fore.upper <- round( quantile(vv$value, 0.9), 0) + # summarize upper exp
+            max(obs[obs$group == group, "cml_value"])      # add to current cts
         data.frame(group=group, fore.mu, fore.lower, fore.upper)    
     }) %>%
 rbind.fill

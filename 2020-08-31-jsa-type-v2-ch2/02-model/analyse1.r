@@ -1,11 +1,11 @@
 # Run posterior simulation to check model fit
 
 # Set up
-source('2020-08-31-jsa-type-ch2/init/init_a.r')
+source('2020-08-31-jsa-type-v2-ch2/00-init/init-a.r')
 
 
 # Parameters
-set.seed(420) # for reproducibility
+set.seed(2020) # for reproducibility
 
 
 # Script
@@ -53,7 +53,7 @@ write.csv(
 
 
 # Posterior simulations
-allsim <- mclapply(1:1000, function(ii) {
+allsim <- mclapply(1:1000, mc.cores = 1, function(ii) {
     posterior_sim(data = data, model = zips)
 })
 

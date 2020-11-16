@@ -2,11 +2,11 @@
 
 
 # Set up
-source('2020-08-31-jsa-type-ch2/init/init_a.r')
+source('2020-08-31-jsa-type-v2-ch2/00-init/init-a.r')
 
 
 # Parameters
-set.seed(420) # for reproducibility
+set.seed(2020) # for reproducibility
 ftime <- as.numeric(25)
 
 
@@ -25,10 +25,11 @@ data <- read_rdump(files)
 
 # Load zero inflated fits
 load(paste0(dir_model_folder, "fit.data"))
-zips <- fit; rm(fit)
+zips <- fit
+rm(fit)
 
 # Simulate the forecast
-forecast <- mclapply(1:1000, mc.cores=1, function(ii) {
+forecast <- mclapply(1:1000, mc.cores = 1, function(ii) {
 	posterior_forecast(data = data, ftime = ftime, model = zips)	 
 })
 
