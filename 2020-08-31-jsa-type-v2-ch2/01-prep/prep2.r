@@ -101,7 +101,7 @@ if (model_params$te == 2) {
     n_des$min <- NULL
     n_des$max_corrected <- NULL
 
-    n_des <- n_des[, list(N_des = .N) , by = c("group", "year")]
+    n_des <- n_des[, list(N = .N) , by = c("group", "year")]
 
     n_des <- n_des[year <= cutoff_ch2]
 

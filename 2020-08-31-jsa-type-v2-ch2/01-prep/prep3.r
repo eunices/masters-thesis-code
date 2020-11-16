@@ -47,7 +47,7 @@ if(dim(count_mat)[2] <= 2){
 # Offset matrix
 
 # Reshape from long to wide
-off_df <- dcast(off, year ~ group, value.var = "N_des", fun.aggregate = sum)
+off_df <- dcast(off, year ~ group, value.var = "N", fun.aggregate = sum)
 
 off_df <- merge(
     data.frame(year = min(data$year):max(data$year)),
