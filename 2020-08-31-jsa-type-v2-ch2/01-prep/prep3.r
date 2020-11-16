@@ -73,7 +73,7 @@ if(dim(off_mat)[2] <= 2){
 # model_params$te == 1 # taxonomic effort, by publications
 
 if(model_params$te == 0){ # no taxonomic effort
-    off.matrix[] <- 0 # set offset to zero
+    off_mat[] <- 0 # set offset to zero
 }
 
 
