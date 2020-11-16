@@ -5,7 +5,7 @@
 
 
 source('2020-08-31-jsa-type-v2-ch2/00-init/init-p.r')
-print(paste0(Sys.time(), " --- make dataset for offset"))
+print(paste0(Sys.time(), " --- make dataset"))
 
 # Parameters
 
@@ -43,7 +43,9 @@ filepath_nearest_biome_for_missing <- paste0(
 
 # Read data
 if (model_params$ll == "Y") { # using lat/lon
-    df <- get_df(); dimdf <- dim(df) # using raw species dataset
+    df <- get_df()
+    df <- df[tolower(status) == "valid species"]
+    dimdf <- dim(df) # using raw species dataset
 } else if (model_params$ll == "N") { # using country distribution
     dat <- get_dis() # using country distribution dataset
 }
@@ -303,17 +305,20 @@ if (model_params$dataset == "GL") {
 
 # Group by family
 if (model_params$dataset == "FA") {
-    df <- get_df1(write=F)
-    join <- df[, c("idx", "full.name.of.describer", "date.n", "family")][
+    df <- get_df()
+    df <- df[tolower(status) == "valid species"]
+
+    join <- df[, c("idx", "full.name.of.describer", "date_n", "family")][
         order(as.numeric(idx))]
 }
 
 # Group by genus
 if (model_params$dataset == "GE") {
 
-    df <- get_df1(write=F)
+    df <- get_df()
+    df <- df[tolower(type) == "valid species"]
 
-    join <- df[, c("idx", "full.name.of.describer", "date.n", "genus")][
+    join <- df[, c("idx", "full.name.of.describer", "date_n", "genus")][
         order(as.numeric(idx))]
     
     top10 <- c("andrena", "lasioglossum", "megachile", 
@@ -326,9 +331,10 @@ if (model_params$dataset == "GE") {
 # Only Halictidae, group by genus
 if(model_params$dataset == "HA") {
 
-    df <- get_df1(write=F)
+    df <- get_df()
+    df <- df[tolower(status) == "valid species"]
 
-    join <- df[, c("idx", "full.name.of.describer", "date.n", "genus")][
+    join <- df[, c("idx", "full.name.of.describer", "date_n", "genus")][
         order(as.numeric(idx))]
 
     halictidae <- c("lasioglossum", "lipotriches", "sphecodes",
