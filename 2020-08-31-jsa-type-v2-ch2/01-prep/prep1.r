@@ -12,6 +12,7 @@ print(paste0(Sys.time(), " --- make dataset"))
 # Columns associated with the different dataset
 
 cols_std <- c("idx", "full.name.of.describer", "date")
+cols_dis <- c("genus", "species", "author", "date")
 
 cols_ll  <- c("idx", "lat_n", "lon_n", "type.country_n.A3", 
               "type.locality.verbatim", "type.locality.updated",
@@ -48,6 +49,7 @@ if (model_params$ll == "Y") { # using lat/lon
     dimdf <- dim(df) # using raw species dataset
 } else if (model_params$ll == "N") { # using country distribution
     dat <- get_dis() # using country distribution dataset
+    dimdf <- dim(df)
 }
 
 # Read shapefiles 
@@ -277,29 +279,6 @@ if (model_params$dataset == "GL") {
 
         join <- join[, ..cols_ll_final]
 
-    } else if (model_params$ll == "N") { # not using lat lon
-
-        if (model_params$dataset == "LT") {
-
-            # Using "dat"
-            cols <- c(cols_std, "Latitude_type2")
-            join <- unique(dat[, ..cols]) # remove duplicates
-
-        } else if (
-            (model_params$dataset == "BG") | 
-            (model_params$dataset == "BN")
-        ) {
-
-            # Using "dat"
-            cols <- c(cols_std, "biogeo_wwf")
-            
-            # remove duplicates
-            join <- unique(dat[, ..cols]) 
-            
-            # remove Antarctica
-            if (model_params$dataset == "BN") join <- join[biogeo_wwf != "AN",] 
-
-        }
     }
 }
 
