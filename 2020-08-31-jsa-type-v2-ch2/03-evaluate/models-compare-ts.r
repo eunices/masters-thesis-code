@@ -4,8 +4,8 @@
 source('2020-08-31-jsa-type-v2-ch2/00-init/init-e.r')
 source('2020-08-31-jsa-type-v2-ch2/00-init/util-model.r')
 
-chosen_model <- c("BGY-E2-C4-I8000-A0.8-T12-F25-V25")
-model_params <- parse_model_identifier(chosen_model)
+model <- c("BGY-E2-C4-I8000-A0.8-T12-F25-V25")
+model_params <- parse_model_identifier(model)
 
 # use 1 model
 
@@ -13,4 +13,6 @@ model_params <- parse_model_identifier(chosen_model)
 
 # predict using naive method
 
-# plot all of these on a chart
+# plot LOOAIC and MAPE on a chart
+
+

@@ -6,6 +6,8 @@
 # Model parameters
 model_folder_names <- c(
   
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V0"
+
     # "BGY-E0-C4-I8000-A0.8-T12-F25-V0",
     # "BGY-E1-C4-I8000-A0.8-T12-F25-V0",
     # "BGY-E2-C4-I8000-A0.8-T12-F25-V0",
@@ -22,7 +24,7 @@ model_folder_names <- c(
     # "BGY-E2-C4-I8000-A0.8-T12-F25-V25",
     # "BGY-E2-C4-I8000-A0.8-T12-F25-V30",
     # "BGY-E2-C4-I8000-A0.8-T12-F25-V35",
-    "BGY-E2-C4-I8000-A0.8-T12-F25-V40"
+    # "BGY-E2-C4-I8000-A0.8-T12-F25-V40",
     # "BGY-E2-C4-I8000-A0.8-T12-F25-V50"
 ) # fast run
 

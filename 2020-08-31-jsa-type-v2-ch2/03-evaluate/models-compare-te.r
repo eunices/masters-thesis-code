@@ -2,18 +2,40 @@
 
 source('2020-08-31-jsa-type-v2-ch2/00-init/init-e.r')
 
-
 chosen_models <- c(
     "BGY-E0-C4-I8000-A0.8-T12-F25-V0",
     "BGY-E1-C4-I8000-A0.8-T12-F25-V0",
-    "BGY-E2-C4-I8000-A0.8-T12-F25-V0",
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V0"
 )
 
-model_param_list <- lapply(
-    chosen_models, 
-    function(x) parse_model_identifier(x)
-)
 
+get_loo <- function(model) {
+
+    model_params <- parse_model_identifier(model)
+    model_dirs <- initialize_model_params(model_params)
+    model_dir <- model_dirs[1]
+
+    # load zero inflated fits
+    load(paste0(model_dir, "fit.data"))       # as "fit"
+
+    m_log_lik <- extract_log_lik(
+        fit, 
+        parameter_name = "log_lik", 
+        merge_chains = FALSE
+    )
+
+    m_r_eff <- relative_eff(exp(m_log_lik), cores = 2)
+
+    m_loo <- loo(m_log_lik, r_eff = m_r_eff, cores = 2)
+    m_loo
+}
+
+
+model3 <- chosen_models[3]
+model3_loo <- get_loo(model3)
+
+model2 <- chosen_models[2]
+model2_loo <- get_loo(model2)
 
 # get predictions for each
 
@@ -23,6 +45,19 @@ model_param_list <- lapply(
 
 # plot LOOAIC for each model
 
+
+
+
+# Resources
+
+# TODO: http://mc-stan.org/loo/articles/loo2-with-rstan.html
+# Simple example of LOOAIC
+# TODO: https://datascienceplus.com/k-fold-cross-validation-in-stan/
+# Alternative to LOOAIC
+# TODO: https://discourse.mc-stan.org/t/calculating-log-like-for-waic-loo-with-user-defined-functions/2696/3
+# How to calculate LOOAIC for custom functions
+# TODO: https://fabiandablander.com/r/Law-of-Practice.html
+# What's the purpose of LOOAIC
 
 
 

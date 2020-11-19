@@ -8,10 +8,11 @@ chosen_models <- c(
     "FAM-E2-C4-I8000-A0.8-T12-F25-V0"
 )
 
-model_param_list <- lapply(
-    chosen_models, 
-    function(x) parse_model_identifier(x)
-)
+
+model <- chosen_models[1]
+model_params <- parse_model_identifier(model)
+model_dirs <- parse_model_identifier(model)
+
 
 # get predictions for each
 
