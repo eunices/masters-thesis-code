@@ -1,4 +1,4 @@
-# Run posterior simulation to check model fit
+# Save parameters
 
 # Set up
 source('2020-08-31-jsa-type-v2-ch2/00-init/init-a.r')
@@ -10,7 +10,7 @@ set.seed(2020) # for reproducibility
 
 # Script
 
-print(paste0(Sys.time(), " --- Posterior simulation for model fit"))
+print(paste0(Sys.time(), " --- Save parameters"))
 
 # Load data
 files <- dir(
@@ -25,7 +25,6 @@ data <- read_rdump(files)
 load(paste0(dir_model_folder, "fit.data"))
 
 zips <- fit; rm(fit)
-
 
 # Diagnostic plots
 
@@ -51,18 +50,5 @@ write.csv(
     fileEncoding = 'UTF-8'
 )
 
-
-# Posterior simulations
-allsim <- mclapply(1:1000, mc.cores = 1, function(ii) {
-    posterior_sim(data = data, model = zips)
-})
-
-
-# Save posterior simulations
-save(allsim, file = paste0(dir_model_folder, "post.data"))
-
-
-# Clear memory
-rm(allsim, zips, data)
 
 

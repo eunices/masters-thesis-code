@@ -3,7 +3,7 @@
 
 source('2020-08-31-jsa-type-v2-ch2/00-init/init-a.r')
 
-chosen_model <- "BGY-E0-C4-I8000-A0.8-T12-F25-V10"
+chosen_model <- "BGY-E0-C4-I8000-A0.8-T12-F25-V00"
 
 model_params <- parse_model_identifier(chosen_model)
 dir_model_folder <- initialize_model_params(model_params)[1]

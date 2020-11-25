@@ -8,43 +8,90 @@ chosen_models <- c(
     "BGY-E2-C4-I8000-A0.8-T12-F25-V0"
 )
 
+model1 <- chosen_models[1]
+model1_loo <- get_loo(model1)
 
-get_loo <- function(model) {
-
-    model_params <- parse_model_identifier(model)
-    model_dirs <- initialize_model_params(model_params)
-    model_dir <- model_dirs[1]
-
-    # load zero inflated fits
-    load(paste0(model_dir, "fit.data"))       # as "fit"
-
-    m_log_lik <- extract_log_lik(
-        fit, 
-        parameter_name = "log_lik", 
-        merge_chains = FALSE
-    )
-
-    m_r_eff <- relative_eff(exp(m_log_lik), cores = 2)
-
-    m_loo <- loo(m_log_lik, r_eff = m_r_eff, cores = 2)
-    m_loo
-}
-
-
-model3 <- chosen_models[3]
-model3_loo <- get_loo(model3)
+print(model1_loo)
 
 model2 <- chosen_models[2]
 model2_loo <- get_loo(model2)
 
-# get predictions for each
+print(model2_loo)
+
+model3 <- chosen_models[3]
+model3_loo <- get_loo(model3)
+
+print(model3_loo)
+
+compare <- loo_compare(model1_loo, model2_loo, model3_loo)
+
+print(compare)
 
 
-# calculate LOOAIC
+
+# TODO: modularize the forecasting code below
+
+model <- model1
+model_params <- parse_model_identifier(model)
+model_dirs <- initialize_model_params(model_params)
+model_dir <- model_dirs[1]
 
 
-# plot LOOAIC for each model
+# read original data
+data_raw <- read.csv(paste0(model_dir, "data.csv"), na.strings = c(""))
 
+# read modelled data
+data <- read_rdump(paste0(model_dir, "count_info.data.R"))
+
+# load zero inflated fits
+load(paste0(model_dir, "fit.data"))       # as "fit"
+
+# load posterior simulation
+load(paste0(model_dir, "post.data"))      # as "allsim"
+
+# create data.frame of observed
+cumm <- lapply(seq(data$P), function(ii) { # each group
+    data.frame(
+        index = 1:data$end[ii],                    # index/offset/year
+        value = data$counts[ii, ],                 # count
+        cml_value = cumsum(data$counts[ii, ]),     # cumulative
+        off = data$off[ii, ],                      # tax. effort
+        group = ii                                 # group "family"
+    )}) %>% rbind.fill               
+
+cumm$sim <- 0 # set sim to 0 to indicate that it is observed data
+
+# create data.frame of simulated (interpolated)
+cummsim <- lapply(seq(length(allsim)), function(jj) { # each sim
+    lapply(seq(data$P), function(ii) { # each group
+        data.frame(
+            index = 1:data$end[ii],
+            value = allsim[[jj]][[ii]],
+            cml_value = cumsum(allsim[[jj]][[ii]]),
+            off = data$off[ii, ],
+            group = ii,
+            sim = jj
+        )}) %>% rbind.fill
+    }) %>% rbind.fill
+
+# combine the observed and simmed series
+Z <- rbind(cumm, cummsim)
+
+# add original year back
+Z$year <- Z$index + min(data_raw$year) - 1
+
+# merge observed values
+Z <- data.table(Z)
+obs_Z <- Z[sim == 0, c("group", "year", "cml_value")]
+
+Z2 <- merge(
+    Z, obs_Z, 
+    by = c("group", "year"), 
+    all.x = T, all.y = T, 
+    suffixes = c("_sim", "_obs")
+)
+
+Z2 <- Z2[sim!=0]
 
 
 
@@ -58,7 +105,8 @@ model2_loo <- get_loo(model2)
 # How to calculate LOOAIC for custom functions
 # TODO: https://fabiandablander.com/r/Law-of-Practice.html
 # What's the purpose of LOOAIC
-
+# TODO: https://groups.google.com/g/stan-users/c/ESxlrXmaQkM?pli=1
+# How to fit an AR1 poisson hierachical model
 
 
 

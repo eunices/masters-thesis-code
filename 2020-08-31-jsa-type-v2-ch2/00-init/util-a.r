@@ -1,152 +1,7 @@
-read_escaped_data_v2 = function(filepath, escape=T) {
-
-    df <- fread(
-        filepath, 
-        integer64 = 'character', 
-        na.strings = c(''), 
-        encoding = 'UTF-8'
-    )
-    
-    if(escape) {
-        df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
-    }
-
-    if("idx" %in% names(df)) {
-        df$idx <- as.integer(df$idx)
-    }
-
-    df
-}
-
-
-parse_model_identifier <- function(string) {
-
-    #' Parses model identifier into a list of parameters
-
-    #' Parses a specific model identifier into a list of parameter.
-    #'
-    #' @param string The string that is to be decomposed into a list of
-    #' parameters.
-
-    model_params <- list()
-    string <- strsplit(string, "-")[[1]]
-
-    for (i in 1:length(string)){
-
-        if (i == 1) {
-
-            model_params$dataset <- substr(string[i], 1, 2)
-            model_params$ll <- substr(string[i], 3, 3)          
-            # "Y" for using lat lon / "N" for using country distribution
-
-        } else {                                
-
-            first_letter <- substr(string[i], 1, 1)
-			parameter <- as.numeric(substr(string[i], 2, nchar(string[i])))
-
-            if (first_letter == "E" ) { # taxonomic effort
-                model_params$te <- parameter
-                  
-            }
-
-            if (first_letter == "C") { # chains
-                model_params$chains <- parameter
-            }
-
-            if (first_letter == "I") { # iterations
-                model_params$iter <- parameter
-            } 
-
-            if (first_letter == "A") { # adapt delta
-                model_params$ad <- parameter
-            } 
-
-            if (first_letter == "T") { # tree depth
-                model_params$td <- parameter
-            } 
-
-			if (first_letter == "F") {
-				model_params$fc <- parameter # forecast duration
-			}
-
-			if (first_letter == "V") {
-				model_params$va <- parameter # validation (1) or not (0)
-			}
-
-        }
-    }
-
-    model_params
-}
-
-# Test
-# string <- "BMY-C4-I5000-A0.99-T15"
-# parse_model_identifier(string)
-
-
-initialize_model_params <- function(model_params, custom=NA) {
-
-    #' Parses list of model params and initializes necessary folders
-    #'
-    #' Parses list of model params into a model identifier and
-    #' initializes necessary folders. Returns the model folder directory.
-    #' @model_params list The list that contains a list of model parameters.
-
-	model_identifier <- paste0(
-		model_params$dataset, model_params$ll, "-",
-		"E", as.character(model_params$te), "-",
-		"C", as.character(model_params$chains), "-",
-		"I", as.character(model_params$iter), "-",
-		"A", as.character(model_params$ad), "-",
-		"T", as.character(model_params$td), "-",
-		"F", as.character(model_params$fc), "-",
-		"V", as.character(model_params$va)
-	)
-  
-	# Define model folder
-	folder <- dir_analysis_edie_model
-
-	dir_model_folder <- paste0(folder, "/", 
-							   model_identifier, "/")
-							   
-	if(!is.na(custom)) dir_model_folder <- custom
-
-	# Create folders
-	dir.create(dir_model_folder)
-
-	dir.create(file.path(dir_model_folder, 'output'))
-
-	# Create log files
-	filepath_log <- paste0(dir_model_folder, "/model.log")
-	if (!file.exists(filepath_log)) file.create(filepath_log)
-
-	warnings_log <- paste0(dir_model_folder, "/warnings.log")
-	if (!file.exists(warnings_log)) file.create(warnings_log)
-
-	c(dir_model_folder, 
-	  filepath_log,
-	  warnings_log,
-	  model_identifier)
-
-} 
-
-
-write_to_log <- function(w, warn_log_fp) {
-
-    #' Writes warning to warning logfile
-
-    #' Writes warning to logfile in specified path.
-	#' 
-    #' @param w Warning output from a try-catch block.
-    #' @param warn_log_fp Warning log filepath. Should be a .log file. 
-
-    write(conditionMessage(w), file = warn_log_fp, append = TRUE)
-}
-
 
 sample_model_posterior_parameters <- function(model) {
 
-    #' Samples from model's posterior
+    #' A single sample of model parameters from model's posterior
     #'
     #' Returns a list of sampled model parameters
 	#' 
@@ -190,7 +45,7 @@ sample_model_posterior_parameters <- function(model) {
 
 posterior_sim <- function(data, model) {
 
-	#' Sample from posterior parameters for checking model fit
+	#' A sample from posterior parameters for checking model fit
 	#' 
 	#' Return sampled counts for each year by group
 	#' 
@@ -221,9 +76,9 @@ posterior_sim <- function(data, model) {
 		# Initialize parameters
 		lambda <- c()
 		theta <- c()
-		oo <- c()
+		oo <- c() 
 
-		# Set first time point
+		# Set first time point (t = 1)
 		lambda[1] <- phi[ii]
 		theta[1] <- 0
 		oo[1] <- initial[ii]
@@ -259,7 +114,8 @@ posterior_sim <- function(data, model) {
 
 posterior_forecast <- function(data, ftime, model) {
 
-	#' Make predictions for time series
+	#' A sample from posterior parameters for
+	#' predictions of time series
 	#' 
 	#' Given a model, make predictions based on a predefined timestep
 	#' 
@@ -276,28 +132,27 @@ posterior_forecast <- function(data, ftime, model) {
 	p <- data$P 
 
 	# Initial number of species for each group
-	initial <- sapply(seq(p), function(pp) data$counts[ pp, data$str[pp]])
+	initial <- sapply(seq(p), function(pp) data$counts[pp, data$str[pp]])
 
 	# By group
 	out <- list()
 	for(ii in seq(p)) {
 		
+		# Offset segment starts at first year
 		start <- data$str[ii]
 		end <- data$end[ii]
-
-		# Offset starts at first naming year
 		all_toff <- data$off[ii, ][start:end]
-		len <- length(all_toff)
 
 
 		# Generate offset segment by sampling past ftime of offsets
+		len <- length(all_toff)
 
 		# # original code
-		# toff <- sample(all_toff[(len-ftime):len], ftime, replace = TRUE)
+		toff <- sample(all_toff[(len-ftime):len], ftime, replace = TRUE)
 
-		# naive method suggested by roman
-		# https://otexts.com/fpp2/simple-methods.html
-		toff <- rep(all_toff[len], ftime)
+		# # naive method suggested by roman
+		# # https://otexts.com/fpp2/simple-methods.html
+		# toff <- rep(all_toff[len], ftime)
 
 
 		# By time point
@@ -306,14 +161,14 @@ posterior_forecast <- function(data, ftime, model) {
 		lambda <- c()
 		theta <- c()
 		oo <- data$counts[ii, end] # final year's count
-		co <- c() # empty expected count vec
+		co <- c()                  # empty expected count vec
 		
-		# Set first time point
+		# Set first time point (t = 1)
 		lambda[1] <- oo
 		theta[1] <- 0
 		co[1] <- oo[1]
 
-		# set subsequent time points
+		# Set subsequent time points
 		for(jj in 2:ftime) {
 
 			lambda[jj] <- exp(coef0[ii] + coef1[ii] * jj) +
