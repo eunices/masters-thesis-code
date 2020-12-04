@@ -70,7 +70,7 @@ parse_model_identifier <- function(string) {
 			}
 
 			if (first_letter == "V") {
-				model_params$va <- parameter # validation (1) or not (0)
+				model_params$va <- parameter # number of year to be left out
 			}
 
         }
@@ -100,7 +100,8 @@ initialize_model_params <- function(model_params, custom=NA) {
 		"A", as.character(model_params$ad), "-",
 		"T", as.character(model_params$td), "-",
 		"F", as.character(model_params$fc), "-",
-		"V", as.character(model_params$va)
+        "V", as.character(model_params$va)
+        
 	)
   
 	# Define model folder

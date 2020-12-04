@@ -23,9 +23,9 @@ count_df <- dcast(counts, year ~ group, value.var="N")
 
 # Merge to template
 count_df <- merge(
-    data.frame(year=min(data$year):max(data$year)), 
+    data.frame(year = min(data$year):max(data$year)), 
     count_df, 
-    by="year", all.x=T, all.y=F
+    by = "year", all.x = T, all.y = F
 )
 
 # Append 0 for NAs in data frame
@@ -111,7 +111,7 @@ with(
 
 # Modify data for validation
 
-count_mat <- count_mat[1:(dim(count_mat)[1]-model_params$va),]
+count_mat <- count_mat[1:(dim(count_mat)[1] - model_params$va),]
 off_mat <- off_mat[1:dim(count_mat)[1],]
 
 # Other stan variables

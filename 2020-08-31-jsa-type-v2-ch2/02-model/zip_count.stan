@@ -152,7 +152,7 @@ transformed parameters {
 
 model {
 
-	// Zero inflation
+	// ACP
 	for(p in 1:P) {
 		alpha[p] ~ beta(1, 3);
 		beta_unc[p] ~ beta(1, 3);

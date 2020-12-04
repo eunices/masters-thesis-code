@@ -32,7 +32,7 @@ rm(fit)
 
 
 
-print(paste0(Sys.time(), " --- making posterior simulation"))
+print(paste0(Sys.time(), " --- Making posterior simulation"))
 
 # Posterior simulations
 allsim <- mclapply(1:1000, mc.cores = 1, function(ii) {
@@ -47,7 +47,7 @@ rm(allsim)
 
 
 
-print(paste0(Sys.time(), " --- making posterior forecasts"))
+print(paste0(Sys.time(), " --- Making posterior forecasts"))
 
 # Simulate the forecast
 forecast <- mclapply(1:1000, mc.cores = 1, function(ii) {
