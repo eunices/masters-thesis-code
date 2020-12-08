@@ -55,7 +55,92 @@ assess_latlon <- function(df, filepath_log ) {
 }
 
 
-join_spatially = function(join_ll, shp_grp) {
+create_latitude_lines <- function(lat, lat_splits) {
+    # For latitude
+    
+    lines <- list()
+    counter <- 0
+    for (i in names(lat)) {
+        counter = counter + 1
+        line_splits = lat_splits[[i]]
+
+        if (is.null(line_splits)) {
+            lines[[i]] = lat[[i]]
+        } else {
+            
+            min <- lat[[counter]]
+            max <- lat[[(counter+1)]]
+            segment <- (max - min) / line_splits
+
+            for (n in 0:(line_splits-1)) {
+                name <- paste0(i, n+1)
+                lines[[name]] <- min + (segment * n)
+            }
+        }
+    }
+
+    reference_names <- c("trop", names(lines))
+    list(lines = lines, names = reference_names)
+}
+
+
+assign_latitude <- function(join_ll, ref) {
+    # For latitude
+
+    join_ll$latitude <- ""
+    join_ll$lat_n <- as.numeric(join_ll$lat_n)
+    counter <- 0
+    for (i in names(ref$lines)) {
+        counter <- counter + 1
+
+        for (j in c("positive", "negative")) {
+            ref_line_lower <- ifelse(counter == 1, 0, ref$lines[[(counter)]])
+            ref_line_upper <- ifelse(
+                counter == length(ref$lines), 90, ref$lines[[(counter + 1)]]
+            )
+
+            if (j == "negative") {
+                store1 <- ref_line_lower
+                store2 <- ref_line_upper
+                ref_line_lower <- -store2
+                ref_line_upper <- -store1
+                rm(store1, store2)
+            }
+
+            if (j == "positive") {
+                join_ll[
+                    lat_n >= 0 &
+                    lat_n >= ref_line_lower & lat_n < ref_line_upper
+                ]$latitude <- paste0("N_", ref$names[counter])
+            } else {
+                join_ll[
+                    lat_n < 0 &
+                    lat_n >= ref_line_lower & lat_n < ref_line_upper
+                ]$latitude <- paste0("S_", ref$names[counter])
+            }
+
+        }
+
+    }
+
+    # Finish up for the last line
+    join_ll[
+        lat_n >= 0 & latitude == "" & lat_n > lines$N_pol
+    ]$latitude <- "N_pol"
+
+    join_ll[
+        lat_n < 0 & latitude == "" & lat_n > lines$S_pol
+    ]$latitude <- "S_pol"
+
+    # join_ll[, 
+    #     list(min=min(lat_n), max=max(lat_n), .N), by="latitude"
+    # ][order(latitude)]
+
+    join_ll
+}
+
+
+join_spatially <- function(join_ll, shp_grp) {
     print("----------------- Join spatially")
 
     # Create sf object from lat/lon
@@ -96,14 +181,14 @@ join_spatially = function(join_ll, shp_grp) {
 }
 
 
-lookup_for_no_ll_biogeo = function(join_cty) {
+lookup_for_no_ll_biogeo <- function(join_cty) {
     # Only for biogeo, not biome
 
     print("----------------- Lookup join based on country")
 
     # Create "biogeo_wwf" with country or country, state only
     join_cty <- merge(
-        join_cty, lookup_cty_subset[, c("A-3", "biogeo_wwf")], 
+        join_cty, lookup_cty_subset_biogeo[, c("A-3", "biogeo_wwf")], 
         by.x = "type.country_n.A3", by.y = "A-3", 
         all.x = T, all.y = F
     )
@@ -115,7 +200,23 @@ lookup_for_no_ll_biogeo = function(join_cty) {
 }
 
 
-persist_nearest_shp = function(join, shp_grp, filepath_nearest_loc) {
+lookup_for_no_ll_lt <- function(join_cty) {
+    # For latitude
+
+    join_cty <- merge(
+        join_cty, lookup_cty_subset_ll[, c("A-3", "centroid_lat")], 
+        by.x = "type.country_n.A3", by.y = "A-3", 
+        all.x = T, all.y = F
+    )
+
+    # Remove those that are NA
+    join_cty <- join_cty[!is.na(centroid_lat),]
+
+    join_cty
+
+}
+
+persist_nearest_shp <- function(join, shp_grp, filepath_nearest_loc) {
 
     print("----------------- Persist nearest shp")
 
@@ -161,7 +262,7 @@ persist_nearest_shp = function(join, shp_grp, filepath_nearest_loc) {
 }
 
 
-join_nearest_biome = function(join, filepath_nearest_loc) {
+join_nearest_biome <- function(join, filepath_nearest_loc) {
 
     print("----------------- Join nearest biome")
 
@@ -197,7 +298,7 @@ join_nearest_biome = function(join, filepath_nearest_loc) {
 }
 
 
-write_ending_log = function(join, filepath_log) {
+write_ending_log <- function(join, filepath_log) {
 
     print("----------------- Write to log")
     
@@ -216,7 +317,7 @@ write_ending_log = function(join, filepath_log) {
 }
 
 
-format_data = function(join, dir_model_folder) {
+format_data <- function(join, dir_model_folder) {
 
     print("----------------- Write data.csv")
     

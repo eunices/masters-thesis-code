@@ -11,17 +11,25 @@ cols_ll  <- c(
     "full.name.of.describer", "date"
 )
 
-# Thresholds for latitude
+# Min. thresholds for latitude
+lat <- list( 
+    subtrop = 23.436740, 
+    temp = 35.000000, 
+    pol = 66.563250
+)
 
-ltrop <- 23.436740; lsubtrop <- 35.000000
-ltemp <- 35.000000; lpol <- 66.563250
-
-
+lat_splits <- list(
+    temp = 3
+)
 
 # Lookup files
 
 lookup_cty <- get_lp_statoid()
-lookup_cty_subset <- lookup_cty[prop_area_biogeo_wwf >= 0.6,] # subset
+lookup_cty$area_km2 <- as.numeric(lookup_cty$area_km2)
+lookup_cty_subset_ll <- lookup_cty[
+    area_km2 < quantile(area_km2, .95, na.rm = T),
+] # subset
+lookup_cty_subset_biogeo <- lookup_cty[prop_area_biogeo_wwf >= 0.6,] # subset
 
 lookup_bm <- get_lp_biome()
 
