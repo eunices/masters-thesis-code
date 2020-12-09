@@ -8,9 +8,11 @@ boxes <- list(
     matrix(c(-180, -56.04217, 180, -45.52108), nrow=2),
     matrix(c(-180, -45.52108, 180, -35 ), nrow=2),
     matrix(c(-180, -35, 180, -23.43674), nrow=2),
-    matrix(c(-180, -23.43674, 180, 0), nrow=2),
+    matrix(c(-180, -23.43674, 180, -11.71837), nrow=2),
+    matrix(c(-180, -11.71837, 180, 0), nrow=2),
 
-    matrix(c(-180, 0, 180, 23.43674), nrow=2),
+    matrix(c(-180, 0, 180, 11.71837), nrow=2),
+    matrix(c(-180, 11.71837, 180, 23.43674), nrow=2),
     matrix(c(-180, 23.43674, 180, 35), nrow=2),
     matrix(c(-180, 35, 180, 45.52108), nrow=2),
     matrix(c(-180, 45.52108, 180, 56.04217), nrow=2),
@@ -27,7 +29,7 @@ boxes <- lapply(boxes, function(x) {
 boxes <- raster::bind(boxes)
 
 
-names <- c("Tropics", "Subtropics", "Temperate 1", "Temperate 2", "Temperate 3", "Polar")
+names <- c("Tropics 1", "Tropics 2", "Subtropics", "Temperate 1", "Temperate 2", "Temperate 3", "Polar")
 unique <- c(
     paste0("S ", rev(names)),
     paste0("N ", names)
