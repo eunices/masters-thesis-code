@@ -45,3 +45,13 @@ boxes <- SpatialPolygonsDataFrame(
 
 file <- "2020-12-09-latitude-boxes.gpkg"
 writeOGR(boxes, layer = 'poly', dsn = file, driver="GPKG")
+
+
+
+df <- fread("C:/_dev/gis.csv")
+df[, sum := sum(area), by = "GID_0"][
+    , prop := area/sum, by = c("GID_0", "name")][, sum := NULL]
+df <- df[order(GID_0, name, prop)]
+df <- df[!duplicated(df[,c("GID_0")]),]
+
+write.csv(df, "test.csv")

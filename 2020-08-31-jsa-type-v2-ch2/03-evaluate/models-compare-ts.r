@@ -57,10 +57,6 @@ posterior_forecast(data, 5, fit)
 # Predict for 5 (and repeat for 10, 15, 20, 25)
 posterior_sim(data_ref, fit)
 
-
-
-
-
 # Using posterior_forecast, predict using naive method
 forecast <- mclapply(1:1000, mc.cores = 1, function(ii) {
     posterior_forecast(data, vtime, fit)
