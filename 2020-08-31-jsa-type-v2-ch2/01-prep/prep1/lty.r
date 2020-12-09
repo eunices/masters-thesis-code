@@ -6,15 +6,18 @@ df <- get_df()
 # Assess data quality for lat and lon
 li_df <- assess_latlon(df, filepath_log) 
 
-# Assign latitude line based on lat/lon
-ref_lines <- create_latitude_lines(lat, lat_splits)
-join_shp <- assign_latitude(li_df$join_ll, ref_lines)
-
 # Lookup based on country for those rows with no lat/lon
+# to assign latitude column
 join_cty <- lookup_for_no_ll_lt(li_df$join_cty)
 
 # Combine files
-join <- rbind(join_shp, join_cty, fill = T)
+join <- rbind(li_df$join_ll, join_cty, fill = T)
+
+# Create latitude reference lines
+ref_lines <- create_latitude_lines(lat, lat_splits)
+
+# Create latitude column
+join <- assign_latitude(join, ref_lines)
 
 # Subset relevant columns
 cols_ll_final <- c(cols_std,  "latitude")

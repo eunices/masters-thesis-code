@@ -125,11 +125,11 @@ assign_latitude <- function(join_ll, ref) {
 
     # Finish up for the last line
     join_ll[
-        lat_n >= 0 & latitude == "" & lat_n > lines$N_pol
+        lat_n >= 0 & latitude == "" & lat_n > ref$lines$pol
     ]$latitude <- "N_pol"
 
     join_ll[
-        lat_n < 0 & latitude == "" & lat_n > lines$S_pol
+        lat_n < 0 & latitude == "" & lat_n > -ref$lines$temp3
     ]$latitude <- "S_pol"
 
     # join_ll[, 
@@ -204,7 +204,9 @@ lookup_for_no_ll_lt <- function(join_cty) {
     # For latitude
 
     join_cty <- merge(
-        join_cty, lookup_cty_subset_ll[, c("A-3", "centroid_lat")], 
+        join_cty, lookup_cty_subset_ll[, 
+            c("A-3", "centroid_lat", "centroid_lon")
+        ], 
         by.x = "type.country_n.A3", by.y = "A-3", 
         all.x = T, all.y = F
     )
@@ -212,9 +214,18 @@ lookup_for_no_ll_lt <- function(join_cty) {
     # Remove those that are NA
     join_cty <- join_cty[!is.na(centroid_lat),]
 
+    # Rename column from centroid_lat to lat_n
+    join_cty$lat_n <- join_cty$centroid_lat
+    join_cty$centroid_lat <- NULL
+
+    # Rename column from centroid_lon to lon_n
+    join_cty$lon_n <- join_cty$centroid_lon
+    join_cty$centroid_lon <- NULL
+
     join_cty
 
 }
+
 
 persist_nearest_shp <- function(join, shp_grp, filepath_nearest_loc) {
 
@@ -303,14 +314,13 @@ write_ending_log <- function(join, filepath_log) {
     print("----------------- Write to log")
     
     # Write to log file
-    n_removed = dimdf[1] - length(unique(join$idx))
-    n_removed_percentage = n_removed/dimdf[1]*100
+    n_remaining = length(unique(join$idx))
     conn <- file(filepath_log, "a")
 
     write(
-        paste0("Number of species not assigned to group: ", n_removed, " of ",
-            dimdf[1], " (", round(n_removed_percentage,2), "%)\n"), 
-        conn, sep="\n", append=T)
+        paste0("Number of remaining rows: ", n_remaining), 
+        conn, sep="\n", append=T
+    )
 
     close(conn)
 

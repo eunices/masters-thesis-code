@@ -44,7 +44,6 @@ Data files:
       - `1_separate/`
     - Geo files that are "edited" `geo_processed/`
       - `gadm/gadm36_0_utf8_continents.shp` and associated files
-      - `latitude/latitude_boxes.shp` and associated files
       - `teow/official/wwf_terr_ecos_dissolved.shp`
   - Updated in `Dropbox/msc-thesis/`
     - Data `data/` that are frequently updated
