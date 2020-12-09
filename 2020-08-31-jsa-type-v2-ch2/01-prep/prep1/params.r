@@ -13,12 +13,14 @@ cols_ll  <- c(
 
 # Min. thresholds for latitude
 lat <- list( 
+    trop = 0,
     subtrop = 23.436740, 
     temp = 35.000000, 
     pol = 66.563250
 )
 
 lat_splits <- list(
+    trop = 2,
     temp = 3
 )
 

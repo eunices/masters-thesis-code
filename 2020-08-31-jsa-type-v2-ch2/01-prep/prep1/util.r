@@ -79,7 +79,7 @@ create_latitude_lines <- function(lat, lat_splits) {
         }
     }
 
-    reference_names <- c("trop", names(lines))
+    reference_names <- c(names(lines))
     list(lines = lines, names = reference_names)
 }
 
@@ -94,7 +94,7 @@ assign_latitude <- function(join_ll, ref) {
         counter <- counter + 1
 
         for (j in c("positive", "negative")) {
-            ref_line_lower <- ifelse(counter == 1, 0, ref$lines[[(counter)]])
+            ref_line_lower <- ref$lines[[(counter)]]
             ref_line_upper <- ifelse(
                 counter == length(ref$lines), 90, ref$lines[[(counter + 1)]]
             )
@@ -131,10 +131,6 @@ assign_latitude <- function(join_ll, ref) {
     join_ll[
         lat_n < 0 & latitude == "" & lat_n > -ref$lines$temp3
     ]$latitude <- "S_pol"
-
-    # join_ll[, 
-    #     list(min=min(lat_n), max=max(lat_n), .N), by="latitude"
-    # ][order(latitude)]
 
     join_ll
 }

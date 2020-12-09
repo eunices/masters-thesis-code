@@ -55,33 +55,7 @@ posterior_forecast(data, 5, fit)
 
 
 # Predict for 5 (and repeat for 10, 15, 20, 25)
-model <- fit
-vtime <- 5
-
-# Using posterior_forecast, predict using data
-# TODO: 
-start <- dim(data$counts)[2] + 1
-end <- start + vtime - 1
-
-data_validation <- list(
-    counts = data_ref$counts[, 1:end], 
-    off = data_ref$off[, 1:end],
-    vtime = vtime
-)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+posterior_sim(data_ref, fit)
 
 
 

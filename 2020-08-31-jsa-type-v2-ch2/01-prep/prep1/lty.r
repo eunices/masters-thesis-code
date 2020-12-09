@@ -18,6 +18,9 @@ ref_lines <- create_latitude_lines(lat, lat_splits)
 
 # Create latitude column
 join <- assign_latitude(join, ref_lines)
+join[, 
+    list(min=min(lat_n), max=max(lat_n), .N), by="latitude"
+][order(min)]
 
 # Subset relevant columns
 cols_ll_final <- c(cols_std,  "latitude")
