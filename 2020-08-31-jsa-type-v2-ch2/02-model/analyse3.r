@@ -1,5 +1,5 @@
 # Setup
-source('2020-08-31-jsa-type-v2-ch2/00-init/init-a.r')
+source('2020-08-31-jsa-type-v2-ch2/02-model/init.r')
 
 
 # Parameters

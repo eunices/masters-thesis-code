@@ -28,7 +28,7 @@ lookup_cty <- get_lp_statoid()
 lookup_cty$area_km2 <- as.numeric(lookup_cty$area_km2)
 lookup_cty_subset_ll <- lookup_cty[
     area_km2 < quantile(area_km2, .95, na.rm = T),
-] # subset
+] # exclude the largest countries TODO: may modify to look at % of country 
 lookup_cty_subset_biogeo <- lookup_cty[prop_area_biogeo_wwf >= 0.6,] # subset
 
 lookup_bm <- get_lp_biome()

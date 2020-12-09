@@ -1,4 +1,4 @@
-source('2020-08-31-jsa-type-v2-ch2/00-init/init-a.r')
+source('2020-08-31-jsa-type-v2-ch2/01-prep/init.r')
 print(paste0(Sys.time(), " --- format data for stan"))
 
 

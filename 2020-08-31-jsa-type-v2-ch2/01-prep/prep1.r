@@ -1,4 +1,4 @@
-source('2020-08-31-jsa-type-v2-ch2/00-init/init-p.r')
+source('2020-08-31-jsa-type-v2-ch2/01-prep/init.r')
 print(paste0(Sys.time(), " --- make dataset"))
 
 if (model_params$dataset == "BG") {        # biogeographic realm

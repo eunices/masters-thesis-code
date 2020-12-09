@@ -1,7 +1,7 @@
 # This script creates diagnostics for models that have already been run through model.r.
 # adapted from https://betanalpha.github.io/assets/case_studies/rstan_workflow.html
 
-source('2020-08-31-jsa-type-v2-ch2/00-init/init-a.r')
+source('2020-08-31-jsa-type-v2-ch2/02-model/init.r')
 
 chosen_model <- "BGY-E0-C4-I8000-A0.8-T12-F25-V00"
 

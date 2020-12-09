@@ -1,7 +1,7 @@
 # Summarize offsets (publication and number of PTEs) per year
 # for each biogeographic realm/ group
 
-source('2020-08-31-jsa-type-v2-ch2/00-init/init-p.r')
+source('2020-08-31-jsa-type-v2-ch2/01-prep/init.r')
 print(paste0(Sys.time(), " --- make dataset for offset"))
 
 
