@@ -197,14 +197,16 @@ posterior_forecast <- function(data, ftime, model) {
 
 # analysis3.r
 
-log_chain_sampling <- function(fit, fp_log_chain_sampling) {
+log_chain_sampling <- function(fit, dir_model_folder) {
 	
+	# Filter for chains that did not mix
 	badchain <- data.table(summary(fit)$summary)[Rhat > 1.1 | Rhat < 0.9]
+	output <- paste0(dir_model_folder, "output/chain_sampling.txt")
 
 	# Write warning output
 	if (nrow(badchain) > 0) {
 
-		sink(fp_log_chain_sampling)
+		sink(output)
 		cat(
 			"Chains not converged. 
 			Increase iterations in sampling in stan() function 
@@ -216,7 +218,7 @@ log_chain_sampling <- function(fit, fp_log_chain_sampling) {
 
 	} else {
 
-		sink(fp_log_chain_sampling)
+		sink(output)
 		cat(
 			"Chains have converged. Model results robust to posterior sampling."
 		)
@@ -227,7 +229,9 @@ log_chain_sampling <- function(fit, fp_log_chain_sampling) {
 }
 
 
-convert_allsim_to_df <- function(data, allsim) {
+convert_data_to_df <- function(data) {
+
+	print("----------- Convert data to df (cumulative sum from counts)")	
 	# Cumulative series for observed data
 	cumm <- lapply(seq(data$P), function(ii) { # each group
 
@@ -242,9 +246,16 @@ convert_allsim_to_df <- function(data, allsim) {
 	}) %>% rbind.fill
 
 	cumm$sim <- 0 # set sim to 0 to indicate that it is observed data
+	cumm
+}
+
+
+convert_allsim_to_df <- function(allsim, data) {
+
+	print("----------- Convert allsim to df (cumulative sum from counts)")
 
 	# Cumulative series for simmed data
-	cummsim <- lapply(seq(length(allsim)), function(jj) { # each sim
+	cumsim <- lapply(seq(length(allsim)), function(jj) { # each sim
 
 		lapply(seq(data$P), function(ii) { # each group
 
@@ -260,11 +271,14 @@ convert_allsim_to_df <- function(data, allsim) {
 		}) %>% rbind.fill
 	}) %>% rbind.fill
 
-	# Combine the observed and simmed series
-	Z <- rbind(cumm, cummsim)
+	cumsim
+}
 
-	# Add original year back
-	Z$year <- Z$index + min(data_raw$year) - 1
+
+create_Z <- function(cum, cumsim, data_raw) {
+
+	Z <- rbind(cum, cumsim) # combine obs/ sim
+	Z$year <- Z$index + min(data_raw$year) - 1 # add original year
 
 	Z
 }
@@ -272,9 +286,12 @@ convert_allsim_to_df <- function(data, allsim) {
 
 summarize_simulations_observed <- function(data, allsim) {
 
-	Z <- convert_allsim_to_df(data, allsim)
+	cum <- convert_data_to_df(data)
+	cumsim <- convert_allsim_to_df(allsim, data)
+	Z <- create_Z(cum, cumsim, data_raw)
 
 	# Cumulative count (last year): Simulated/sampled data from posterior
+	print("----------- Summarize 80 CI for simulations")
 	sum_y <- data.table(Z)[
 		sim != 0 & index == max(index), 
 		list(
@@ -286,6 +303,7 @@ summarize_simulations_observed <- function(data, allsim) {
 	]
 
 	# Cumulative count (last year): Observed data
+	print("----------- Get maximum count for observed data")
 	obs_count <- data.table(Z)[
 		sim == 0 & index == max(index),  # sim == 0 is observed data
 		list(count = cml_value),
@@ -298,7 +316,9 @@ summarize_simulations_observed <- function(data, allsim) {
 
 
 extract_delta <- function(fit) {
-	
+
+	print("----------- Extract & summarize coefficients from delta")
+
 	# outs$delta[, ,2] is the coefficient that estimates the long-term trend in
 	# description rate, it's in log units, i.e. need to exponentiate it
 
@@ -365,10 +385,13 @@ combine_results <- function(sum_y, obs_count, cf2, mapping) {
 
 
 prepare_plot1_2_data <- function(Z) {
+
+	print("----------- Prepare plot 1/2 data - observed data")
 	
 	# Observed data
 	obs <- data.table(Z)[sim == 0] # subset to observed series
 
+	print("----------- Prepare plot 1/2 data - simulations")
 	# Simulated data (sample 200 time series from each group) for plotting
 	sims <- Z %>% filter(sim != 0) %>% # subset a sample of simmed series
 		split( . , .$group) %>%   # group by group
@@ -447,6 +470,8 @@ save_plot2 <- function(sims, obs, labels, dir_model_folder) {
 
 
 prepare_plot3_data <- function(data, data_raw, group_cf1, group_cf2) {
+
+	print("----------- Prepare plot 3 data - omega")
 	
 	# Prepare data
 
@@ -487,7 +512,7 @@ prepare_plot3_data <- function(data, data_raw, group_cf1, group_cf2) {
 			ids <- sample(unique(oo$sim), 200)
 			oo[oo$sim %in% ids, ]
 
-		}) %>% rbind.fill
+	}) %>% rbind.fill
 
 	# Mean line per group
 	om_mean <- data.table(sims)[,
@@ -528,9 +553,11 @@ save_plot3 <- function(obs, sims, om_mean, labels, dir_model_folder) {
 
 
 convert_forecast_to_df <- function(data, data_raw, forecast) {
+
+	print("----------- Convert forecast to df (cumulative sum from count)")
 	
-	myears <- ncol(data$counts)          # number of years used in modelling
-	fyears <- length(forecast[[1]][[1]]) # number of forecast years
+	myears <- ncol(data$counts)             # number of years used in modelling
+	fyears <- length(forecast[[1]][[1]])    # number of forecast years
 	min_year <- min(data_raw$year) # earliest year used in modelling
 	index <- ((myears + 1):(myears + fyears)) + min_year - 1 # forecast years
 
@@ -550,6 +577,8 @@ convert_forecast_to_df <- function(data, data_raw, forecast) {
 		}) %>% rbind.fill
 	}) %>% rbind.fill
 
+	forsim
+
 }
 
 
@@ -558,32 +587,37 @@ summarize_forecasts <- function(data, data_raw, forecast, obs) {
 	# forecast coerced to data.frame from list of list and sum counts
 	forsim <- convert_forecast_to_df(data, data_raw, forecast)
 
+	print("----------- Summarize forecast results")
 	# For each group and each sim, find the mean and CI of cumsums
-	forecast_results <- split(forsim, forsim$group) %>% # each group
-		lapply(., function(gg) { 
 
-			group <- unique(gg$group) # identify group
+	last_observed_count <- data.table(obs)[
+		, list(cml_value = max(cml_value)), by = "group"
+	] 
 
-			# Get the highest cumulative count 
-			# and the highest year (which should be the same for all)
-			vv <- data.table(gg)[,
-				list(value = max(value), index = max(index)), 
-				by = c("group", "sim")
-			]
-			# note: this code was modified from original 
-			# but should capture the same meaning
+	fore_results <- forsim[,
+		list(
+			value = max(value), # highest value
+			index = max(index)  # for the last year
+			), 
+		by = c("group", "sim")
+	][,
+		list(
+			fore_mu = round(mean(value), 0),
+			fore_lower = round(quantile(value, 0.1), 0) ,
+			fore_upper = round(quantile(value, 0.9), 0)
+		),
+		by = "group"
+	]
 
-			final_cml_count <- max(obs[obs$group == group, "cml_value"]) 
+	# Note: in original code but commented out
+	# Add to observed count from last year
+	# fore_results <- merge(fore_results, last_observed_count, by = "group")
+	# fore_results$fore_mu <- fore_results$fore_mu + fore_results$cml_value
+	# fore_results$fore_lower <- fore_results$fore_lower + fore_results$cml_value
+	# fore_results$fore_upper <- fore_results$fore_upper + fore_results$cml_value
+	# fore_results$cml_value <- NULL
 
-			fore_mu <- round(mean(vv$value), 0) + final_cml_count
-			fore_lower <- round(quantile(vv$value, 0.1), 0) + final_cml_count   
-			fore_upper <- round(quantile(vv$value, 0.9), 0) + final_cml_count
-
-			data.frame(group = group, fore_mu, fore_lower, fore_upper)    
-
-		}) %>% rbind.fill
-
-	forecast_results
+	fore_results
 
 }
 
