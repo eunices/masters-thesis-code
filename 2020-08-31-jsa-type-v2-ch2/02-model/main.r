@@ -18,7 +18,7 @@ model_param_list <- lapply(model_folder_names,
     function(x) parse_model_identifier(x)
 )
 
-analysis <- function(run=TRUE) {
+analysis <- function(run = TRUE) {
     if(run) {
 
         # source(paste0(dir_script_ed, '02-model/model.r'))    # model fitting
