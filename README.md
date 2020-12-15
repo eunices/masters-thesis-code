@@ -48,7 +48,7 @@ Data files:
   - Updated in `Dropbox/msc-thesis/`
     - Data `data/` that are frequently updated
       - `lookup/` files
-      - `2019-05-23-ascher-bee-data/` files
+      - `2019-05-23-ascher-bee-data/<version>` files
         - `clean/` files as manual cleaning is involved
         - `final/` files as this is the final "cleaned" dataset
         - `2019-05-23-Apoidea world consensus file Sorted by name 2019 collectors_2.0-denormalised_edit4.csv` as there is manual cleaning involved
@@ -125,4 +125,4 @@ https://journals.plos.org/plosbiology/article?id=10.1371journal.pbio.2004956
 
 
 
-Last updated 23 Oct 2019
+Last updated 15 December 2019

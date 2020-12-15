@@ -67,7 +67,7 @@ pcol <- c("title", "journal")
 
 ppcol <- c("date", "paper.authors", "paper.editors", 
            "title", "journal", "volume", "issue",
-           "page.numbers.publication", "paper.type")
+           "page.numbers", "paper.type")
 
 dcol <- c("idx", "author", "full.name.of.describer", 
           "describer.gender", "dob.describer",

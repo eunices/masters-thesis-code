@@ -486,7 +486,7 @@ fwrite(
         tolower(status) == "synonym" & 
        !(corrected_valid_species %in% li_valid_species), 
        c("idx", "file", "genus", "species", "date", "author.date", "status",
-        "valid.genus.species.subspecies", "valid_genus", "valid_species",
-        "check_binomial")],
+         "valid.genus.species.subspecies", "valid_genus", "valid_species",
+         "check_binomial")],
     paste0(v2_dir_data_raw_check, "25-valid-species-not-in-li.csv")
 )
