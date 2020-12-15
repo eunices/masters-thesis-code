@@ -3,11 +3,16 @@
 # Groups of names that need to be cleaned
 
 source("2019-06-19-jsa-type/subset.r")
-df1 = get_df1(write=F)  # cleaned 
-df = get_raw_data()     # raw
+df1 <- get_df1(write = F)  # cleaned 
+df <- get_raw_data()       # raw
 
 # rename column names
-names(df) <- gsub("\\.\\.", "\\.", gsub(" ", ".", gsub("[[:punct:]]", "", tolower(names(df)))))
+names(df) <- gsub("\\.\\.", "\\.", 
+    gsub(" ", ".", 
+        gsub("[[:punct:]]", "", tolower(names(df)))
+        )
+    )
+
 names(df) <- iconv(names(df), from = 'UTF-8', to = 'ASCII//TRANSLIT')
 if (any(grepl("full.name.a.e", names(df)))) {
     names(df)[which(grepl("full.name.a.e", names(df)))] <- 'full.name' # renaming this long name

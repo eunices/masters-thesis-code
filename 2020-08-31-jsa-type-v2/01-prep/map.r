@@ -1,11 +1,11 @@
 # Initialize
-source('2020-08-31-jsa-type-v2/init/init.r')
+source('2020-08-31-jsa-type-v2/00-init/main.r')
 
 
 # To use old functions from v1
-# source(paste0(v2_dir_script, "/init/util.r"))
+# source(paste0(v2_dir_script, "/00-init/util.r"))
 # source(paste0(v2_dir_script, "subset.r"))
-# source(paste0(v2_dir_script, "/clean/functions.r"))
+# source(paste0(v2_dir_script, "/03-clean/functions.r"))
 
 
 # Have a table old v new variables
@@ -21,10 +21,7 @@ variables_v2 = names(read_escaped_data_v2(
 
 
 # Fuzzy match the old v new variables after transformation
-variables_v2_matches = lapply(variables_v2,
-	function(word) closestWordMatch(word, variables_v1)
-)
-
+variables_v2_matches = lapply(variables_v2, closestWordMatch, variables_v1)
 variable_v2_matches = cbind(new = variables_v2, old = variables_v2_matches)
 
 
@@ -42,30 +39,30 @@ cfile <- paste0(v2_dir_data_raw_clean, "map-names_edit.csv")
 if(file.exists(cfile)) {
 	matched_names <- fread(cfile)
 
-
-	# Remove those columns that did not exist in old dataset
+	# Do not match columns that did not exist in old dataset
+	# These are new columns that will remain in the dataset
 	matched_names = matched_names[old != ""]
 
-
-	# Replace the name in dataset
-
+	# Replace the new name (from the updated dataset) with the old name
 	for (i in 1:dim(matched_names)[1]) {
 		old_name = matched_names[i,]$old
 		new_name = matched_names[i,]$new
 		if (new_name != old_name) {
-			names(df)[which(names(df)==old_name)] = new_name
+			print(
+				paste0("OLD: ", old_name, " replaced NEW: ", new_name, "  @", i)
+			)
+			names(df)[which(names(df) == new_name)] <- old_name
 		}
 	}
 
 }
 
 # Output data
-write.csv(
+fwrite(
 	df,
 	paste0(v2_dir_data_raw, v2_basefile, "_2.csv"),
 	na = '', 
 	row.names = F, 
-	fileEncoding = "UTF-8"
 )
 
 

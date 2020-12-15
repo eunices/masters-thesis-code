@@ -1,7 +1,7 @@
 # Purpose: filter species / taxonomic ranks / species status / 
 # format dates / clean lat & lon & locality related info
 
-source('2020-08-31-jsa-type-v2/init/init.r')
+source('2020-08-31-jsa-type-v2/00-init/main.r')
 
 # Read 
 file <- paste0(v2_dir_data_raw, v2_basefile, "_2.csv")

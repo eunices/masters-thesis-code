@@ -1,4 +1,4 @@
-source('2020-08-31-jsa-type-v2/init/init.r')
+source('2020-08-31-jsa-type-v2/00-init/main.r')
 
 filename <- paste0(v2_basefile, ".csv")
 
@@ -13,4 +13,5 @@ df[] <- lapply(df, gsub, pattern='[\r\n]', replacement=' ')
 names(df) <- format_names(names(df))
 
 output <- paste0(v2_dir_data_raw, v2_basefile, "_1.csv")
+df <- df[, 1:110]
 fwrite(df, output, na = "")

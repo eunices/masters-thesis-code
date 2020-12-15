@@ -1,6 +1,6 @@
 # Purpose: calculate author metrics
 
-source('2020-08-31-jsa-type-v2/init/init.r')
+source('2020-08-31-jsa-type-v2/00-init/main.r')
 
 # Read describers data
 file <- paste0(v2_dir_data_raw, v2_basefile, "-describer_1.csv")
