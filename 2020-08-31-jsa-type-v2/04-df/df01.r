@@ -1,16 +1,19 @@
 # Purpose: calculate author metrics
 
 source('2020-08-31-jsa-type-v2/00-init/main.r')
+print(paste0(Sys.time(), " ----- df01.r"))
 
-# Read describers data
+# Read describers data ---------------------------------------------------------
 file <- paste0(v2_dir_data_raw, v2_basefile, "-describer_1.csv")
 df_des <- read_escaped_data_v2(file)
 
-# Read data
+# Read data --------------------------------------------------------------------
 file <- paste0(v2_dir_data_raw, v2_basefile, "_7.csv")
 df <- read_escaped_data_v2(file)
 
-# Separate df by author for metrics
+# Calculate author metrics -----------------------------------------------------
+
+# Separate df by author for metrics 
 cols <- c("file", "idx", "duplicated", "genus", "species",
           "author", "status", "full.name.of.describer", "date")
 df_m <- df[duplicated == FALSE, ..cols]
@@ -116,9 +119,8 @@ df_des$prop_species_syn <- round(
     df_des$syn_spp_N / df_des$spp_N, 2
 )
 
-
 # Note: last part of df1.4 omitted as publication != authored by describer
 
-
+# Write data -------------------------------------------------------------------
 file <- paste0(v2_dir_data_raw, v2_basefile, "-describer_2.csv")
 fwrite(df_des, file)

@@ -1,6 +1,10 @@
 # Purpose: clean author biodata
 
 source('2020-08-31-jsa-type-v2/00-init/main.r')
+print(paste0(Sys.time(), " ----- clean05.r"))
+
+
+# Read data --------------------------------------------------------------------
 
 file <- paste0(v2_dir_data_raw, v2_basefile, "_5.csv")
 df <- read_escaped_data_v2(file)
@@ -8,10 +12,8 @@ df <- read_escaped_data_v2(file)
 
 # Clean author biodata ---------------------------------------------------------
 
-# Split the author fields in main dataset for individual authors
-
+# Split df into authors with their info (df_d)
 file <- paste0(v2_dir_data_raw_tmp, "clean05-describer.csv")
-
 if(file.exists(file)) {
 
     df_d <- read_escaped_data_v2(file)
@@ -24,34 +26,27 @@ if(file.exists(file)) {
 
 }
 
+# Using df_d to:
 
 # Clean dob
-
 df_d$dob.describer.n <- gsub("[^0-9]", "", df_d$dob.describer.n)
 df_d$dob.describer.n <- as.numeric(df_d$dob.describer.n)
-df_d[dob.describer.n>3000]$dob.describer.n <- NA
-
+df_d[dob.describer.n > 3000]$dob.describer.n <- NA
 
 # Clean dod
-
 df_d$dod.describer.n <- gsub("[^0-9]", "", df_d$dod.describer.n)
 df_d$dod.describer.n <- as.numeric(df_d$dod.describer.n)
-df_d[dob.describer.n>3000]$dob.describer.n <- NA
-
+df_d[dob.describer.n > 3000]$dob.describer.n <- NA
 
 # Clean gender
-
 df_d[!describer.gender.n %in% c("M", "F", "U")]$describer.gender.n <- ""
 
-
 # Remove digits from institution
-
 df_d$institution.of.describer.n <- gsub("[[:digit:]]", "", 
-    df_d$institution.of.describer.n)
-
+    df_d$institution.of.describer.n
+)
 
 # Clean origin.country.describer
-
 df_d$origin.country.describer.n <- gsub("\\[|\\]", "",
     df_d$origin.country.describer.n
 )
@@ -81,20 +76,18 @@ df_d[!is.na(origin.country.describer.n) &
 
 df_d[is.na(`A-3`)]$origin.country.describer.n <- NA
 
-table(df_d$origin.country.describer.n) #!CHECK:
-
-
 # Clean residence.country.describer
-df_d$residence.country.describer.n <- gsub("\\[|\\]", "",
+df_d$residence.country.describer.n <- gsub(
+    "\\[|\\]", "",
     df_d$residence.country.describer.n
 )
 
-df_d$residence.country.describer.n <- gsub("ESP", "EP", gsub("Latvia", "LG",
+df_d$residence.country.describer.n <- gsub(
+    "ESP", "EP", gsub("Latvia", "LG",
     gsub(";.*", "", 
         gsub(":.*", "", 
             df_d$residence.country.describer.n
 ))))
-
 
 df_d <- merge(
     df_d, lp_country[, c("DL", "A-3")],
@@ -117,29 +110,34 @@ df_d[!is.na(residence.country.describer.n) &
 
 df_d[is.na(`A-3`)]$residence.country.describer.n <- NA
 
-table(df_d$residence.country.describer.n) #!CHECK:
-
+# CHECK
+table(df_d$residence.country.describer.n)
+table(is.na(df_d$residence.country.describer.n))
 
 # Add residence country back into data from df_d 
-
-df_dres <- df_d[, 
-    c("idx", "author.order",
-      "full.name.of.describer.n", 
-      "residence.country.describer.n")
-][order(idx)]
+cols <- c(
+    "idx", "author.order",
+    "full.name.of.describer.n", 
+    "residence.country.describer.n"
+)
+df_dres <- df_d[, ..cols][order(idx)]
 
 df_dres[author.order=="S"]$author.order <- 2
+
 df_dres[, len := .N, by="idx"]
+
 df_dres[author.order=="L"]$author.order <- df_dres[author.order=="L"]$len
 
 df_dres[!is.na(residence.country.describer.n)]$residence.country.describer.n <-
     paste0(df_dres[
         !is.na(residence.country.describer.n)
     ]$residence.country.describer.n, ":")
+
 df_dres[is.na(residence.country.describer.n)]$residence.country.describer.n <-
     " "
 
 df_dres <- df_dres[order(idx, as.integer(author.order))]
+
 df_dres <- df_dres[, list(
     full.name.of.describer = 
         paste0(full.name.of.describer.n, collapse = "; "),
@@ -149,10 +147,8 @@ df_dres <- df_dres[, list(
     by = "idx"]
 
 df <- merge(
-    df, 
-    df_dres, 
-    by = "idx",
-    all.x = T, all.y = F,
+    df, df_dres, 
+    by = "idx", all.x = T, all.y = F,
     suffixes = c("", "_n")
 )
 
@@ -176,13 +172,16 @@ df$residence.country.describer_n <- NULL
 df$full.name.of.describer_n <- NULL
 
 
-
+# Write data -------------------------------------------------------------------
 
 file <- paste0(v2_dir_data_raw, v2_basefile, "_6.csv")
 fwrite(df, file)
+# note: _6 has "cleaned" but "inconsistent" author information!
 
 
+################################################################################
 
+# Create describer table -------------------------------------------------------
 
 # Order each row for each column and use row with most number of counts
 df_d$describer.gender.n <- factor(
@@ -263,7 +262,6 @@ df_ds <-  merge(df_ds, d5, all.x=T, all.y=F, by="full.name.of.describer.n")
 df_ds <-  merge(df_ds, d6, all.x=T, all.y=F, by="full.name.of.describer.n")
 df_ds <- data.table(df_ds)[order(full.name.of.describer.n)]
 
-
 # Add info from v1 data (lp-auth-bio.csv)
 file <- paste0(v2_dir_data_raw_clean, "lp-auth-bio-v1.csv")
 lp_auth_b <- read_escaped_data_v2(file)
@@ -296,41 +294,43 @@ for(c in 2:length(columns)) { # exclude first  column
 
 }
 
-
 df_ds <- merge(
     df_ds, lp_auth_b[, c("full.name.of.describer.n_v2", "alive")],
     by.x = "full.name.of.describer.n", by.y = "full.name.of.describer.n_v2",
     all.x = TRUE, all.y = FALSE
 )
 
-# Add info manually if missing still
-c_df_ds <-  df_ds[!complete.cases(df_ds), ]
 
-cfile <- paste0(v2_dir_data_raw_clean, "clean05-auth-biodata.csv")
-fwrite(c_df_ds, cfile)
-
+# Incorporate manual information
 cfile <- paste0(v2_dir_data_raw_clean, "clean05-auth-biodata_edit.csv")
-df_ds_edit <- read_escaped_data_v2(cfile)
 
+if(file.exists(cfile)) {
 
-authors <- unique(c_df_ds$full.name.of.describer.n)
-columns <- unique(names(df_ds))
+    df_ds_edit <- read_escaped_data_v2(cfile)
 
-for(c in 2:length(columns)) { # exclude first  column
-    col <- columns[c] 
+    authors <- unique(c_df_ds$full.name.of.describer.n)
+    columns <- unique(names(df_ds))
 
-    if (!col %in% c("idxes", "idxes_author.order", "alive")) {
-        print(paste0("**********", col))
-        for (a in 1:length(authors)) {
-            auth <- authors[a]
-            
-            old <- df_ds[full.name.of.describer.n == auth][[col]]
-            new <- df_ds_edit[full.name.of.describer.n == auth][[col]]
+    for(c in 2:length(columns)) { # each column, excluding 1st
+        
+        col <- columns[c]
 
-            if(!is.na(new)) {
-                if(is.na(old) | new != old) {
-                    print(paste0(new, " replaces ", old))
-                    df_ds[full.name.of.describer.n == auth][[col]] <- old
+        if (!col %in% c("idxes", "idxes_author.order", "alive")) {
+            print(paste0("********** COLUMN: ", col))
+
+            for (a in 1:length(authors)) { # each author
+                
+                auth <- authors[a]
+                old <- df_ds[full.name.of.describer.n == auth][[col]]
+                new <- df_ds_edit[full.name.of.describer.n == auth][[col]]
+
+                # replace new value with old
+                if(!is.na(new)) { # if new is not blank
+                    if(is.na(old) | new != old) { # if new and old not same
+                        # print(paste0(new, " replaces ", old))
+                        df_ds[full.name.of.describer.n == auth][[col]] <- old
+                    }
+
                 }
 
             }
@@ -341,8 +341,18 @@ for(c in 2:length(columns)) { # exclude first  column
 
 }
 
+
+# Add info manually if missing still
+c_df_ds <-  df_ds[!complete.cases(df_ds), ]
+
+cfile <- paste0(v2_dir_data_raw_clean, "clean05-auth-biodata.csv")
+fwrite(c_df_ds, cfile)
+
+
 names(df_ds) <- gsub("\\.n$", "", names(df_ds))
 
+
+# Write describer data ---------------------------------------------------------
 file <- paste0(v2_dir_data_raw, v2_basefile, "-describer_1.csv")
 fwrite(df_ds, file)
 

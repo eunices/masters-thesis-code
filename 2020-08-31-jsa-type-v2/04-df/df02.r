@@ -1,6 +1,10 @@
 # Purpose: create author networks data.frame
 
 source('2020-08-31-jsa-type-v2/00-init/main.r')
+print(paste0(Sys.time(), " ----- df02.r"))
+
+
+# Read data --------------------------------------------------------------------
 
 file <- paste0(v2_dir_data_raw, v2_basefile, "_7.csv")
 df <- read_escaped_data_v2(file)
@@ -9,6 +13,9 @@ df <- df[status %in% c("Synonym", "Valid species") &
          duplicated == FALSE &
          date <= cutoff, 
          c("idx", "date", "status", "full.name.of.describer")]
+
+
+# Create network data ----------------------------------------------------------
 
 # Subset datasets
 ps1 <- df[!grepl(";", full.name.of.describer),]  # only 1 describer
@@ -41,6 +48,8 @@ names(ps1) <- "p1"
 ps1 <- ps1[, .N, by=c("p1")]; ps1$p2 <- NA
 ps <- rbind(ps1, ps2)
 
+
+# Write data -------------------------------------------------------------------
 
 file <- paste0(v2_dir_data_raw, v2_basefile, "-describer-network.csv")
 fwrite(ps, file)

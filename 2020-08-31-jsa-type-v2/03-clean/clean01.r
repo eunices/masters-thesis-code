@@ -2,9 +2,9 @@
 # format dates / clean lat & lon & locality related info
 
 source('2020-08-31-jsa-type-v2/00-init/main.r')
+print(paste0(Sys.time(), " ----- clean01.r"))
 
-
-# Read 
+# Read data --------------------------------------------------------------------
 file <- paste0(v2_dir_data_raw, v2_basefile, "_2.csv")
 
 df <- read_escaped_data_v2(file)[order(idx)]
@@ -138,15 +138,18 @@ df[grepl("\\?", tolower(genus))]$genus <- gsub(
 df$date_old <- df$date
 df$date <- gsub("\\)", "", df$date) # note: date field had extra bracket
 df$date <- as.integer(gsub("\\[[^\\]]*\\]", "", df$date, perl = TRUE))
+df[date < 1700]$date <- NA # set old dates as NA
 
 # CHECK: missing description year
 table(is.na(df$date)) 
+
 
 # Collection dates
 
 # Year
 df$date.of.type.yyyy <- as.integer(sub('.*(\\d{4}).*', '\\1', df$date.of.type))
 df[grepl("neotype", tolower(df$date.of.type))]$date.of.type.yyyy <- NA
+df[date.of.type.yyyy < 1500]$date.of.type.yyyy <- NA # set old dates as NA
 
 # CHECK: missing type year
 table(is.na(df$date.of.type.yyyy))
@@ -244,6 +247,12 @@ fwrite(
 df$lat_n <- as.numeric(df$lat)
 df$lon_n <- as.numeric(df$lon)
 
+# TODO: (script) incorporate manual cleaning clean01-cty-mistmatch.csv
+# cfile <- paste0(v2_dir_data_raw_clean, "clean01-cty-mistmatch_edit.csv")
+# if(file.exists(cfile)) {
+#     df_auth <- read_escaped_data_v2(file)
+# }
+
 # CHECK: odd characters
 dim(
     df[(is.na(lat_n) & df$lat != "") | (is.na(lon_n) & df$lon != ""), 
@@ -340,13 +349,15 @@ dim(
 )
 # ACTION: to get the nearest land body in the ch2 script
 
+
 # CHECK: assigned different country
 dim(
     df[!(is.na(lat_n) | is.na(lon_n)) &
        sj.type.country_DL != type.country_n,
        c(..bcol, "lat_n", "lon_n", "type.country_n", "sj.type.country_DL")]  
 ) 
-# TODO: make file to incorporate changes (if insufficiently cleaned)
+
+# TODO: (script) write file for manual cleaning: clean01-cty-mistmatch.csv
 
 # CHECK: No type country but with lat/lon
 dim(
@@ -358,14 +369,20 @@ dim(
 # ACTION: to assign the country based on the lat/lon
 
 # Assign country based on those without lat/lon
-df[!(is.na(lat_n) | is.na(lon_n)) & 
+df[
+    !(is.na(lat_n) | is.na(lon_n)) & 
     (type.country_n == "" | is.na(type.country_n)) &
     !(sj.type.country_DL == "" | is.na(sj.type.country_DL))
-    ]$type.country_n <- 
-    df[!(is.na(lat_n) | is.na(lon_n)) &
-    (type.country_n == "" | is.na(type.country_n)) &
-    !(sj.type.country_DL == "" | is.na(sj.type.country_DL))
+]$type.country_n <- 
+    df[
+        !(is.na(lat_n) | is.na(lon_n)) &
+        (type.country_n == "" | is.na(type.country_n)) &
+        !(sj.type.country_DL == "" | is.na(sj.type.country_DL))
     ]$sj.type.country_DL
+
+
+
+# Write data -------------------------------------------------------------------
 
 file <- paste0(v2_dir_data_raw, v2_basefile, "_3.csv")
 fwrite(df, file)

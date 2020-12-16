@@ -1,6 +1,10 @@
 # Purpose: calculate taxonomic effort over time
 
 source('2020-08-31-jsa-type-v2/00-init/main.r')
+print(paste0(Sys.time(), " ----- df03.r"))
+
+
+# Read data --------------------------------------------------------------------
 
 file <- paste0(v2_dir_data_raw, v2_basefile, "_7.csv")
 df <- read_escaped_data_v2(file)
@@ -8,6 +12,8 @@ df <- read_escaped_data_v2(file)
 file <- paste0(v2_dir_data_raw, v2_basefile, "-describer_2.csv")
 df_des <- read_escaped_data_v2(file)
 
+
+# Calculate taxonomic effort ---------------------------------------------------
 
 ##########################################
 # Part 1: all valid species
@@ -200,6 +206,9 @@ taxonomic_effort[is.na(taxonomic_effort)] <- 0
 taxonomic_effort <- data.table(taxonomic_effort)
 
 rm(df)
+
+
+# Write data -------------------------------------------------------------------
 
 file <- paste0(v2_dir_data_raw, v2_basefile, "-describer-effort.csv")
 fwrite(taxonomic_effort, file)

@@ -1,6 +1,9 @@
 # Purpose: clean author names
 
 source('2020-08-31-jsa-type-v2/00-init/main.r')
+print(paste0(Sys.time(), " ----- clean02.r"))
+
+# Read file --------------------------------------------------------------------
 
 file <- paste0(v2_dir_data_raw, v2_basefile, "_3.csv")
 df <- read_escaped_data_v2(file)
@@ -8,11 +11,13 @@ df <- read_escaped_data_v2(file)
 df$author <- trimws(df$author)
 
 
-# Manual edits
+# Incorporate manual edits -----------------------------------------------------
 
-# Clean commas placed where they are not suppose to be
+
+# Incorporate changes by replacing author rows comma delimiting authors with ";"
+
+# Create this file (no outputs)
 cfile <- paste0(v2_dir_data_raw_clean, "clean02-comma_edit.csv")
-
 if(file.exists(cfile)) {
     clean_commas <- read_escaped_data_v2(cfile)
 
@@ -27,10 +32,10 @@ if(file.exists(cfile)) {
 }
 
 
+# Incorporate manual changes of full name of describer
 
-# Clean manual
+# Create this file (no outputs)
 cfile <- paste0(v2_dir_data_raw_clean, "clean02-manual_edit.csv")
-
 if(file.exists(cfile)) {
 
     clean_manual <- read_escaped_data_v2(cfile)
@@ -43,74 +48,87 @@ if(file.exists(cfile)) {
 }
 
 
+# Standardize full author names ------------------------------------------------
 
-# Incorporating edits from output later
 
-cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-auth_edit.csv")
+# Incorporate full name edits
 # 3 columns: full.name.of.describer,
 # full.name.of.describer_edit, idxes
-
+cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-auth_edit.csv")
 if(file.exists(cfile)) {
 
     df_auth <- read_escaped_data_v2(cfile)
 
+    # exclude these
     df_auth <- df_auth[!grepl("\\[CHECK", full.name.of.describer_edit)]
 
-    for (i in 1:dim(df_auth)[1]) {
+    for (i in 1:dim(df_auth)[1]) { # for each author
 
-        # Filter for relevant idxes with authors
-        check_idx <- df$idx %in% unlist(strsplit(df_auth$idxes[i], split = ", "))
+        # filter for relevant idxes with authors
+        auth_idxes <- strsplit(df_auth$idxes[i], split = ", ")
+        modify_idxes <- df$idx %in% unlist(auth_idxes)
 
-        # Replace each author
+        # replace each full name with the correct name
         original_name <- ifelse(
             grepl("\\[", df_auth$full.name.of.describer[i]),
-            gsub("\\]", "\\\\]",gsub("\\[", "\\\\[",
-                df_auth$full.name.of.describer[i]
-            )),
+            
+            gsub("\\]", "\\\\]",
+                gsub("\\[", "\\\\[", df_auth$full.name.of.describer[i])
+            ),
+            
             df_auth$full.name.of.describer[i]
         )
 
+        # modified name        
         modified_name <- df_auth$full.name.of.describer_edit[i]
 
         df[check_idx]$full.name.of.describer <- gsub(
             original_name, 
             modified_name,
-            df[check_idx]$full.name.of.describer 
+            df[modify_idxes]$full.name.of.describer 
         )
 
     }
 
 }
 
-# Standardize full author names ------------------------------------------------
-
 df_auth <- df[, c("idx", "full.name.of.describer")]
+
 df_auth <- separate_rows(df_auth, full.name.of.describer, sep = "; ")
+
 df_auth <- df_auth[, 
     list(idxes = paste0(idx, collapse = ", ")), by = "full.name.of.describer"
 ][order(full.name.of.describer)]
 
-cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-auth.csv")
+cfile <- paste0(v2_dir_data_raw_clean, "clean01-check-auth.csv")
 fwrite(df_auth, cfile)
 
 # Create author lookup file called "lp-surname.csv" from this
+
 
 # Full name consistent with author ---------------------------------------------
 
 file <- paste0(v2_dir_data_raw_clean, "lp-surname.csv")
 lp_surname <- read_escaped_data_v2(file)
 
+# TODO: (script) incorporate changes from df_auth into df
+# author_edit and full.name.of.describer_edit
+cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-short-auth_edit.csv")
+if(file.exists(cfile)) {
+    df_auth <- read_escaped_data_v2(file)
+}
+
 df_auth <- df[, c("idx", "full.name.of.describer")]
+
 df_auth <- df_auth[order(idx)]
 
-df_auth <- data.table(
-    separate_rows(df_auth, full.name.of.describer, sep = "; ")
-)
+df_auth <- separate_rows(df_auth, full.name.of.describer, sep = "; ")
+
+df_auth <- data.table(df_auth)
 
 df_auth[, order := seq_len(.N), by=c("idx")]
 
 cols <- c("full.name.of.describer", "last.name", "last.name.no.initials")
-
 df_auth <- merge(
     df_auth,
     lp_surname[, ..cols], 
@@ -125,10 +143,12 @@ df_auth[, len := .N, by="idx"]
 df_auth$last_auth <- ""
 df_auth[len == order & len != 1,]$last_auth <- "L"
 
-df[idx %in% unique(df_auth[len==4]$idx), ..bcol] #!CHECK:
-df[idx %in% unique(df_auth[len==3]$idx), ..bcol] #!CHECK:
-df[idx %in% unique(df_auth[len==2]$idx), ..bcol] #!CHECK:
+# CHECK: varying author lengths
+df[idx %in% unique(df_auth[len == 4]$idx), ..bcol]
+df[idx %in% unique(df_auth[len == 3]$idx), ..bcol]
+df[idx %in% unique(df_auth[len == 2]$idx), ..bcol]
 
+# Combine the surname of authors based on different lengths
 
 df_author1 <- df_auth[len == 1, c("idx", "last.name", "last.name.no.initials")]
 
@@ -167,11 +187,8 @@ names(df_author) <- c("idx", "author_check", "author_check_no_ini")
 
 cols <- unique(c("idx", "author", "full.name.of.describer", bcol, pcol))
 df_auth <- merge(
-    df[, ..cols],
-    df_author,
-    all.x = T,
-    all.y = F,
-    by = "idx"
+    df[, ..cols], df_author,
+    all.x = T, all.y = F, by = "idx"
 )
 
 df_auth$check1 <- df_auth$author == df_auth$author_check
@@ -182,14 +199,7 @@ cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-short-auth.csv")
 fwrite(df_auth[check == FALSE], cfile)
 
 
-# TODO: incorporate changes from df_auth into df
-# author_edit and full.name.of.describer_edit
-
-cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-short-auth_edit.csv")
-if(file.exists(cfile)) {
-    df_auth <- read_escaped_data_v2(file)
-}
-
+# Write data -------------------------------------------------------------------
 
 file <- paste0(v2_dir_data_raw, v2_basefile, "_4.csv")
 fwrite(df, file)

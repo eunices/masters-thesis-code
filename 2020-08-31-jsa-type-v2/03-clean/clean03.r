@@ -1,7 +1,9 @@
 # Purpose: clean global mapper distribution
 
 source('2020-08-31-jsa-type-v2/00-init/main.r')
+print(paste0(Sys.time(), " ----- clean03.r"))
 
+# Read data --------------------------------------------------------------------
 file <- paste0(v2_dir_data_raw, v2_basefile, "_4.csv")
 df <- read_escaped_data_v2(file)
 
@@ -47,21 +49,16 @@ cols_lp_country <- c(
 )
 
 df_map <- merge(
-    df_map, 
-    lp_country[, ..cols_lp_country],
-    by.x = "global.mapper", 
-    by.y = "DL",
-    all.x = TRUE, 
-    all.y = FALSE
+    df_map, lp_country[, ..cols_lp_country],
+    by.x = "global.mapper", by.y = "DL",
+    all.x = TRUE, all.y = FALSE
 )
  
 df_map <- merge(
     df_map, 
     lp_dl[, c("DL", "biogeo_ecor2017_owner", "continent_proximity_owner")],
-    by.x = "global.mapper",
-    by.y = "DL",
-    all.x = TRUE,
-    all.y = FALSE
+    by.x = "global.mapper", by.y = "DL",
+    all.x = TRUE, all.y = FALSE
 )
 
 df_map[is.na(continent) &
@@ -122,28 +119,18 @@ df_map4 <- df_map[prop_area_Latitude_type2 >= threshold, list(
 ]
 
 # Combine 
-df_map <- merge(
-    df_map1, df_map2, by = "idx", all.x = TRUE, all.y = TRUE
-)
+df_map <- merge(df_map1, df_map2, by = "idx", all.x = TRUE, all.y = TRUE)
 
-df_map <- merge(
-    df_map, df_map3, by = "idx", all.x = TRUE, all.y = TRUE
-)
+df_map <- merge(df_map, df_map3, by = "idx", all.x = TRUE, all.y = TRUE)
 
-df_map <- merge(
-    df_map, df_map4, by = "idx", all.x = TRUE, all.y = TRUE
-)
+df_map <- merge(df_map, df_map4, by = "idx", all.x = TRUE, all.y = TRUE)
 
+# CHECK: multiple continents
 df_map[grepl("; ", continents.mapper_n)]
 
-df <- merge(
-    df, 
-    df_map,
-    by = "idx", 
-    all.x = TRUE,
-    all.y = F
-)
+df <- merge(df, df_map, by = "idx", all.x = TRUE, all.y = FALSE)
 
 
+# Write file -------------------------------------------------------------------
 file <- paste0(v2_dir_data_raw, v2_basefile, "_5.csv")
 fwrite(df, file)
