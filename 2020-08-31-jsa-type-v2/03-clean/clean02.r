@@ -100,7 +100,7 @@ df_auth <- df_auth[,
     list(idxes = paste0(idx, collapse = ", ")), by = "full.name.of.describer"
 ][order(full.name.of.describer)]
 
-cfile <- paste0(v2_dir_data_raw_clean, "clean01-check-auth.csv")
+cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-auth.csv")
 fwrite(df_auth, cfile)
 
 # Create author lookup file called "lp-surname.csv" from this

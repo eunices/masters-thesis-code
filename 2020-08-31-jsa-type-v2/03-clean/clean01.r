@@ -246,12 +246,43 @@ fwrite(
 
 df$lat_n <- as.numeric(df$lat)
 df$lon_n <- as.numeric(df$lon)
+df$type.country_n <- gsub("\\:", "", df$type.country)
 
-# TODO: (script) incorporate manual cleaning clean01-cty-mistmatch.csv
-# cfile <- paste0(v2_dir_data_raw_clean, "clean01-cty-mistmatch_edit.csv")
-# if(file.exists(cfile)) {
-#     df_auth <- read_escaped_data_v2(file)
-# }
+# Incorporate mismatched countries
+cfile <- paste0(v2_dir_data_raw_clean, "clean01-country-mismatch_edit.csv")
+if(file.exists(cfile)) {
+
+    clean_manual <- read_escaped_data_v2(cfile)
+    clean_manual$lat_n_edit <- as.numeric(clean_manual$lat_n_edit)
+    clean_manual$lon_n_edit <- as.numeric(clean_manual$lon_n_edit)
+
+    cols <- names(clean_manual)[grepl("_edit", names(clean_manual))]  
+
+    for (col in cols) {
+
+        cols_subset <- c("idx", col)
+        df_new <- clean_manual[!is.na(get(col)), ..cols_subset]
+
+        col_original <- gsub("_edit", "", col)
+
+        if(col_original == "type.country_n") {
+            df[
+                match(df_new$idx, idx), 
+                type.country_n := df_new$type.country_n_edit
+            ] 
+        } else if (col_original == "lat_n") {
+            df[
+                match(df_new$idx, idx), 
+                lat_n := df_new$lat_n_edit
+            ] 
+        } else if (col_original == "lon_n") {
+            df[
+                match(df_new$idx, idx), 
+                lon_n := df_new$lon_n_edit
+            ] 
+        }
+    }  
+}
 
 # CHECK: odd characters
 dim(
@@ -268,9 +299,8 @@ dim(
 # CHECK: no lat/lon
 dim(df[is.na(lat_n) | is.na(lon_n)]) 
 
-
-# Convert all lat/lon which are in the sea OR do not match type country 
-# to NA / manual georef
+# Check lat/lon which are in the sea (using GADM and ecoregions) and 
+# country mismatches; cleaning only for country mismatches
 
 # Create spatial layer with lat/lon
 df_geo <- df[!(is.na(lat_n) | is.na(lon_n) )]
@@ -284,9 +314,7 @@ v_df <- st_join(v_df, v_ecoregions, join = st_intersects)
 v_df <- st_join(v_df, v_continent, join = st_intersects)
 
 # Create comparable type country
-df_geo <- df[, c("idx", "lat_n", "lon_n", "type.country")]
-
-df_geo$type.country_n <- gsub("\\:", "", df_geo$type.country)
+df_geo <- df[, c("idx", "lat_n", "lon_n", "type.country_n")]
 
 df_geo <- merge(
     df_geo, lp_country[, c("DL", "A-3")],
@@ -303,9 +331,9 @@ df_geo <- merge(
 df_geo[!is.na(type.country_n) & !is.na(GID_0_owner), ]$`A-3` <-
     df_geo[!is.na(type.country_n) & !is.na(GID_0_owner), ]$`GID_0_owner`
 
-df_geo <- df_geo[, c("idx", "A-3", "type.country_n")][!duplicated(idx)]
+df_geo <- df_geo[, c("idx", "A-3")][!duplicated(idx)]
 
-names(df_geo) <- c("idx", "type.country_n.A3", "type.country_n")
+names(df_geo) <- c("idx", "type.country_n.A3")
 
 # Convert spatial layer to table
 df_join <- data.table(v_df)[, c("idx", "GID_0", "REALM")]
@@ -357,7 +385,16 @@ dim(
        c(..bcol, "lat_n", "lon_n", "type.country_n", "sj.type.country_DL")]  
 ) 
 
-# TODO: (script) write file for manual cleaning: clean01-cty-mistmatch.csv
+cfile <- paste0(v2_dir_data_raw_clean, "clean01-country-mismatch.csv")
+fwrite(
+    df[!(is.na(lat_n) | is.na(lon_n)) &
+        sj.type.country_DL != type.country_n,
+        c(
+            ..bcol, "lat_n", "lon_n", "type.locality.verbatim",
+            "type.locality.updated", "type.country_n", "sj.type.country_DL"
+        )],
+    cfile
+)
 
 # CHECK: No type country but with lat/lon
 dim(
