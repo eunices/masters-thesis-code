@@ -10,15 +10,19 @@
 
 Manual cleaning stuff:
 
-1. Clean country and lat/lon mismatch (clean01.r)
-2. Create lookup file for authors and surname `lp-surname.csv` (clean02.r)
-3. Clean full name author inconsistency (clean02.r)
-4. Clean full name author and author mismatch (clean02.r)
-5. Clean journal names (clean04.r)
-6. Clean journal associated info (clean04.r)
-7. Clean publication duplicates (clean04.r)
-8. Clean biodata of authors (clean05.r)
+DONE 16/12 1. Clean country and lat/lon mismatch (clean01.r)
+DONE 17/12 2. Create lookup file for authors and surname `lp-surname.csv` (clean02.r)
+DONE 17/12 3. Clean full name author inconsistency (clean02.r)
+DONE 17/12 4. Clean full name author and author mismatch (clean02.r)
+TODO 18/12 5. Clean journal names (clean04.r)
+TODO 21/12 6. Clean journal associated info (clean04.r)
+TODO 22/12 7. Clean publication duplicates (clean04.r)
+TODO 23/12 8. Clean biodata of authors (clean05.r)
 
 - Use the pipeline `main.r` to call the entire pipeline to create cleaned data used in analyses later (called with functions in `subset.r`).
+
+1. Chapter 2: come up list of models to run
+2. Chapter 1: for different biogeographic regions
+3. Chapter 3: update results
 
 Last updated 15 December 2020

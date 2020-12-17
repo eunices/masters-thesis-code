@@ -250,39 +250,7 @@ df$type.country_n <- gsub("\\:", "", df$type.country)
 
 # Incorporate mismatched countries
 cfile <- paste0(v2_dir_data_raw_clean, "clean01-country-mismatch_edit.csv")
-if(file.exists(cfile)) {
-
-    clean_manual <- read_escaped_data_v2(cfile)
-    clean_manual$lat_n_edit <- as.numeric(clean_manual$lat_n_edit)
-    clean_manual$lon_n_edit <- as.numeric(clean_manual$lon_n_edit)
-
-    cols <- names(clean_manual)[grepl("_edit", names(clean_manual))]  
-
-    for (col in cols) {
-
-        cols_subset <- c("idx", col)
-        df_new <- clean_manual[!is.na(get(col)), ..cols_subset]
-
-        col_original <- gsub("_edit", "", col)
-
-        if(col_original == "type.country_n") {
-            df[
-                match(df_new$idx, idx), 
-                type.country_n := df_new$type.country_n_edit
-            ] 
-        } else if (col_original == "lat_n") {
-            df[
-                match(df_new$idx, idx), 
-                lat_n := df_new$lat_n_edit
-            ] 
-        } else if (col_original == "lon_n") {
-            df[
-                match(df_new$idx, idx), 
-                lon_n := df_new$lon_n_edit
-            ] 
-        }
-    }  
-}
+if(file.exists(cfile)) df <- update_data_with_edits(cfile, df)
 
 # CHECK: odd characters
 dim(
@@ -392,7 +360,7 @@ fwrite(
         c(
             ..bcol, "lat_n", "lon_n", "type.locality.verbatim",
             "type.locality.updated", "type.country_n", "sj.type.country_DL"
-        )],
+        )][order(type.country_n, sj.type.country_DL)],
     cfile
 )
 

@@ -50,7 +50,6 @@ if(file.exists(cfile)) {
 
 # Standardize full author names ------------------------------------------------
 
-
 # Incorporate full name edits
 # 3 columns: full.name.of.describer,
 # full.name.of.describer_edit, idxes
@@ -60,13 +59,19 @@ if(file.exists(cfile)) {
     df_auth <- read_escaped_data_v2(cfile)
 
     # exclude these
-    df_auth <- df_auth[!grepl("\\[CHECK", full.name.of.describer_edit)]
+    df_auth <- df_auth[
+        !(
+            grepl("\\[CHECK", full.name.of.describer_edit) | 
+            is.na(full.name.of.describer_edit)
+         )
+    ]
 
     for (i in 1:dim(df_auth)[1]) { # for each author
 
         # filter for relevant idxes with authors
-        auth_idxes <- strsplit(df_auth$idxes[i], split = ", ")
-        modify_idxes <- df$idx %in% unlist(auth_idxes)
+        auth_idxes <- unlist(lapply(
+            strsplit(df_auth$idxes[i], split = ", "), as.integer
+        ))
 
         # replace each full name with the correct name
         original_name <- ifelse(
@@ -82,10 +87,10 @@ if(file.exists(cfile)) {
         # modified name        
         modified_name <- df_auth$full.name.of.describer_edit[i]
 
-        df[check_idx]$full.name.of.describer <- gsub(
-            original_name, 
-            modified_name,
-            df[modify_idxes]$full.name.of.describer 
+        check <- df$idx %in% auth_idxes
+        df[check]$full.name.of.describer <- gsub(
+            original_name, modified_name,
+            df[check]$full.name.of.describer 
         )
 
     }
@@ -97,8 +102,9 @@ df_auth <- df[, c("idx", "full.name.of.describer")]
 df_auth <- separate_rows(df_auth, full.name.of.describer, sep = "; ")
 
 df_auth <- df_auth[, 
-    list(idxes = paste0(idx, collapse = ", ")), by = "full.name.of.describer"
-][order(full.name.of.describer)]
+    list(idxes = paste0(idx, collapse = ", "), .N), 
+    by = "full.name.of.describer"
+][order(full.name.of.describer, -N)]
 
 cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-auth.csv")
 fwrite(df_auth, cfile)
@@ -114,9 +120,7 @@ lp_surname <- read_escaped_data_v2(file)
 # TODO: (script) incorporate changes from df_auth into df
 # author_edit and full.name.of.describer_edit
 cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-short-auth_edit.csv")
-if(file.exists(cfile)) {
-    df_auth <- read_escaped_data_v2(file)
-}
+if(file.exists(cfile)) df <- update_data_with_edits(cfile, df)
 
 df_auth <- df[, c("idx", "full.name.of.describer")]
 
@@ -196,7 +200,7 @@ df_auth$check2 <- df_auth$author == df_auth$author_check_no_ini
 df_auth$check <- df_auth$check1 | df_auth$check2
 
 cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-short-auth.csv")
-fwrite(df_auth[check == FALSE], cfile)
+fwrite(df_auth[check == FALSE][order(author)], cfile)
 
 
 # Write data -------------------------------------------------------------------

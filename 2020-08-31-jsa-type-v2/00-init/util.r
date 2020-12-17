@@ -46,6 +46,15 @@ read_escaped_data_v2 = function(filepath, escape=T) {
         df$idx <- as.integer(df$idx)
     }
 
+    numerics <- c("lat_n", "lon_n")
+    numerics_edit <- paste0(numerics, "_edit")
+    numerics <- c(numerics, numerics_edit)
+    numerics <- numerics[numerics %in% names(df)]
+    
+    if(length(numerics) > 0) {
+        df[, c(numerics) := lapply(.SD, as.numeric), .SDcols = numerics]
+    }
+
     df
 }
 
@@ -220,4 +229,24 @@ run_describer_split_loop_v2 <- function(
 }
 
 
+update_data_with_edits <- function(cfile, df) {
 
+    clean_manual <- read_escaped_data_v2(cfile)
+
+    cols <- names(clean_manual)[grepl("_edit", names(clean_manual))]  
+
+    for (col in cols) {
+
+        cols_subset <- c("idx", col)
+        df_new <- clean_manual[!is.na(get(col)), ..cols_subset]
+
+        col_original <- gsub("_edit", "", col)
+
+        replacement <- df_new[, get(col)]
+
+        df[match(df_new$idx, idx),  col_original] <- replacement
+
+    }  
+
+    df
+}
