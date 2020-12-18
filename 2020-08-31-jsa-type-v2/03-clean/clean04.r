@@ -39,31 +39,7 @@ fwrite(df_j, cfile)
 # Clean journal associated info ------------------------------------------------
 
 cfile <- paste0(v2_dir_data_raw_clean, "clean04-journal-info_edit.csv")
-
-if(file.exists(cfile)) {
-    
-    df_j_edit <- read_escaped_data_v2(cfile)
-    
-    df_j_edit <- df_j_edit[country.of.publication_edit != ""]
-    
-    df_j_edit <- separate_rows(df_j_edit, idxes, sep = ", ")
-    
-    df[idx %in% df_j_edit$idxes]$country.of.publication <- 
-        df_j_edit[
-            match(df[idx %in% df_j_edit$idxes]$idx, idxes)
-        ]$country.of.publication_edit
-    
-    df[idx %in% df_j_edit$idxes]$city.of.publication <- 
-        df_j_edit[
-            match(df[idx %in% df_j_edit$idxes]$idx, idxes)
-        ]$city.of.publication_edit
-
-    df[idx %in% df_j_edit$idxes]$paper.type <- 
-        df_j_edit[
-            match(df[idx %in% df_j_edit$idxes]$idx, idxes)
-        ]$paper.type_edit
-
-}
+if(file.exists(cfile)) df <- update_data_with_edits(cfile, df, "idxes")
 
 df_j <- df[, c("idx", ..jcol)]
 
@@ -71,8 +47,11 @@ df_j <- df_j[, list(idxes = paste0(idx, collapse = ", ")), by = jcol]
 
 df_j <- df_j[order(journal)]
 
+
 cfile <- paste0(v2_dir_data_raw_clean, "clean04-journal-info.csv")
-fwrite(df_j, cfile)
+fwrite(df_j[journal %in% df_j[duplicated(journal)]$journal], cfile) 
+# note: check only duplicated journals,
+# assuming that the prior check was cleaned properly
 
 
 # Clean publications -----------------------------------------------------------

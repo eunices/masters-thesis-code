@@ -229,16 +229,25 @@ run_describer_split_loop_v2 <- function(
 }
 
 
-update_data_with_edits <- function(cfile, df) {
+update_data_with_edits <- function(cfile, df, sep = NA) {
 
     clean_manual <- read_escaped_data_v2(cfile)
+
+    if (!is.na(sep)) {
+        clean_manual <- separate_rows(clean_manual, sep, sep = ", ")
+        if ("idxes" %in% names(clean_manual)) {
+            names(clean_manual)[which(names(clean_manual) == "idxes")] <- "idx"
+        }
+    }
 
     cols <- names(clean_manual)[grepl("_edit", names(clean_manual))]  
 
     for (col in cols) {
 
         cols_subset <- c("idx", col)
-        df_new <- clean_manual[!is.na(get(col)), ..cols_subset]
+        df_new <- clean_manual[
+            !(is.na(get(col)) | get(col) == ""), ..cols_subset
+        ]
 
         col_original <- gsub("_edit", "", col)
 
