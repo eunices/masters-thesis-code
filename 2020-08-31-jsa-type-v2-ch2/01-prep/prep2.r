@@ -22,13 +22,13 @@ if (model_params$te <= 1) {
     pub <- get_pub()
     pub <- separate_rows(pub, idxes, sep = ", ")
 
-    names(pubs)[which(names(pubs) == "date")] <- "year"
-    pubs$idx <- as.numeric(pubs$idx)
+    names(pub)[which(names(pub) == "date")] <- "year"
+    pub$idx <- as.numeric(pub$idx)
 
     data$valid_species_id <- as.numeric(data$valid_species_id)
 
     df_pub <- merge(
-        data[, c("valid_species_id", "group")], pubs, 
+        data[, c("valid_species_id", "group")], pub, 
         by.x = "valid_species_id", by.y = "idx", 
         all.x = T, all.y = F
     )
