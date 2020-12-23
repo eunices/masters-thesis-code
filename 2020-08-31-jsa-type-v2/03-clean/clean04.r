@@ -14,15 +14,18 @@ df <- read_escaped_data_v2(file)
 cfile <- paste0(v2_dir_data_raw_clean, "clean04-journal_edit.csv")
 
 if(file.exists(cfile)) {
+
+    df <- update_data_with_edits(cfile, df, "idxes")
     
     df_j_edit <- read_escaped_data_v2(cfile)
-    
+
     df_j_edit <- df_j_edit[!(journal_edit == "" & is.na(journal_edit))]
-    
+
     df_j_edit <- separate_rows(df_j_edit, idxes, sep = ", ")
-    
-    df[idx %in% df_j_edit$idxes]$journal <- 
-        df_j_edit[match(df[idx %in% df_j_edit$idxes]$idx, idxes)]$journal_edit
+
+    df_j_edit <- rename_names(df_j_edit, "idxes", "idx")
+
+    df <- replace_edits(df_j_edit, df)
 
 }
 
@@ -61,58 +64,34 @@ if(file.exists(cfile)) {
     
     df_pubs_edit <- read_escaped_data_v2(cfile)
 
-    df_pubs_edit <- separate_rows(df_j_edit, idxes, sep = ", ")
-
     df_pubs_edit[,  
-        names(df_pubs_edit) := lapply(.SD, function(x) gsub("'", "", x))
+        names(df_pubs_edit) := lapply(.SD, function(x) gsub("^'", "", x))
     ] 
-    
-    # Add that data back into df
-    df[idx %in% df_j_edit$idxes]$paper.authors <- 
-        df_j_edit[
-            match(df[idx %in% df_j_edit$idxes]$idx, idxes)
-        ]$paper.authors
-    
-    df[idx %in% df_j_edit$idxes]$paper.editors <- 
-        df_j_edit[
-            match(df[idx %in% df_j_edit$idxes]$idx, idxes)
-        ]$paper.editors
 
-    df[idx %in% df_j_edit$idxes]$title <- 
-        df_j_edit[
-            match(df[idx %in% df_j_edit$idxes]$idx, idxes)
-        ]$title
+    df_pubs_edit <- separate_rows(df_pubs_edit, idxes, sep = ", ")
 
-    df[idx %in% df_j_edit$idxes]$journal <- 
-        df_j_edit[
-            match(df[idx %in% df_j_edit$idxes]$idx, idxes)
-        ]$journal
+    df_pubs_edit <- rename_names(df_pubs_edit, "idxes", "idx")
 
-    df[idx %in% df_j_edit$idxes]$volume <- 
-        df_j_edit[
-            match(df[idx %in% df_j_edit$idxes]$idx, idxes)
-        ]$volume
-
-    df[idx %in% df_j_edit$idxes]$issue <- 
-        df_j_edit[
-            match(df[idx %in% df_j_edit$idxes]$idx, idxes)
-        ]$issue
-
-    df[idx %in% df_j_edit$idxes]$page.numbers.publication <- 
-        df_j_edit[
-            match(df[idx %in% df_j_edit$idxes]$idx, idxes)
-        ]$page.numbers.publication
-
-    df[idx %in% df_j_edit$idxes]$page.numbers.publication <- 
-        df_j_edit[
-            match(df[idx %in% df_j_edit$idxes]$idx, idxes)
-        ]$paper.type
+    df <- replace_edits(df_pubs_edit, df)
 
 }
 
-df_pub <- df[, c("idx", ..ppcol)]
+df$paper.authors_n <- ifelse(
+    is.na(df$paper.editors) | df$paper.editors == "NA",
+    df$paper.authors,
+    gsub("In\\[i\\] ", "", df$paper.editors)
+)
 
-df_pub <- df[, list(idxes = paste0(idx, collapse = ", ")), by = ppcol]
+cols <- ppcol[!ppcol %in% c("paper.authors", "paper.editors")]
+
+cols <- c(
+    cols[1:2], "paper.authors_n", 
+    cols[3:length(cols)]
+)
+
+df_pub <- df[, c("idx", ..cols)]
+
+df_pub <- df[, list(idxes = paste0(idx, collapse = ", ")), by = cols]
 
 df_pub[,  names(df_pub) := lapply(.SD, function(x) paste0("'", x))] 
 
@@ -121,6 +100,9 @@ df_pub <- df_pub[order(journal, title, volume, issue)]
 cfile <- paste0(v2_dir_data_raw_clean, "clean04-pubs.csv")
 fwrite(df_pub, cfile)
 
+df$paper.type_n <- ifelse(
+    df$paper.type == "J", "J", "B"
+)
 
 # Write data -------------------------------------------------------------------
 

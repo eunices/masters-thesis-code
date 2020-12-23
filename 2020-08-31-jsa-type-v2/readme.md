@@ -32,6 +32,10 @@ DONE 21/12 6. Clean journal associated info (clean04.r)
 
 TODO 22/12 7. Clean publication duplicates (clean04.r)
 
+* leave page numbers out of counting unique publications (referring to specific pages of section in which description is found)
+* clean "author" field to original publication (instead of author in publication); if "paper.editors" exists, use it in place of "paper.authors" as it is one publication (remove "In[i]") (created  `paper.authors_n_edit` to reflect this)
+* treat book sections, books and encylopedia as books (created `paper.type_n` to reflect this)
+
 TODO 23/12 8. Clean biodata of authors (clean05.r)
 
 - Use the pipeline `main.r` to call the entire pipeline to create cleaned data used in analyses later (called with functions in `subset.r`).

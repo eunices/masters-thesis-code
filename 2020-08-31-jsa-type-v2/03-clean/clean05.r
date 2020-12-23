@@ -9,21 +9,16 @@ print(paste0(Sys.time(), " ----- clean05.r"))
 file <- paste0(v2_dir_data_raw, v2_basefile, "_5.csv")
 df <- read_escaped_data_v2(file)
 
-
 # Clean author biodata ---------------------------------------------------------
 
 # Split df into authors with their info (df_d)
-file <- paste0(v2_dir_data_raw_tmp, "clean05-describer.csv")
+tfile <- paste0(v2_dir_data_raw_tmp, "clean05-describer.csv")
 if(file.exists(file)) {
-
-    df_d <- read_escaped_data_v2(file)
-
+    df_d <- read_escaped_data_v2(tfile)
 } else {
-
     df_d <- df[, ..dcol]
     df_d <- run_describer_split_loop_v2(df_d, strsplit_cty=" ")
-    fwrite(df_d, file)
-
+    fwrite(df_d, tfile)
 }
 
 # Using df_d to:
@@ -190,6 +185,9 @@ df_d$describer.gender.n <- factor(
     ordered = TRUE
 )
 
+ggplot(df[date>2000]) + 
+    geom_bar(aes(x=date), stat="count")
+
 
 # Most common gender
 d1 <- df_d[, 
@@ -265,7 +263,6 @@ df_ds <- data.table(df_ds)[order(full.name.of.describer.n)]
 # Add info from v1 data (lp-auth-bio.csv)
 file <- paste0(v2_dir_data_raw_clean, "lp-auth-bio-v1.csv")
 lp_auth_b <- read_escaped_data_v2(file)
-names(lp_auth_b)
 
 authors <- unique(df_ds$full.name.of.describer.n)
 columns <- unique(names(df_ds))
@@ -294,62 +291,35 @@ for(c in 2:length(columns)) { # exclude first  column
 
 }
 
+df_ds[grepl("Michener", full.name.of.describer.n)]
+
 df_ds <- merge(
     df_ds, lp_auth_b[, c("full.name.of.describer.n_v2", "alive")],
     by.x = "full.name.of.describer.n", by.y = "full.name.of.describer.n_v2",
     all.x = TRUE, all.y = FALSE
 )
-
+# note: alive as of 2019!
 
 # Incorporate manual information
 cfile <- paste0(v2_dir_data_raw_clean, "clean05-auth-biodata_edit.csv")
-
 if(file.exists(cfile)) {
-
     df_ds_edit <- read_escaped_data_v2(cfile)
+    names(df_ds_edit) <- gsub("\\.n$", "", names(df_ds_edit))
 
-    authors <- unique(c_df_ds$full.name.of.describer.n)
-    columns <- unique(names(df_ds))
+    df_ds_edit <- separate_rows(df_ds_edit, idxes, sep = ", ")
 
-    for(c in 2:length(columns)) { # each column, excluding 1st
-        
-        col <- columns[c]
+    df_ds_edit <- rename_names(df_ds_edit, "idxes", "idx")
 
-        if (!col %in% c("idxes", "idxes_author.order", "alive")) {
-            print(paste0("********** COLUMN: ", col))
-
-            for (a in 1:length(authors)) { # each author
-                
-                auth <- authors[a]
-                old <- df_ds[full.name.of.describer.n == auth][[col]]
-                new <- df_ds_edit[full.name.of.describer.n == auth][[col]]
-
-                # replace new value with old
-                if(!is.na(new)) { # if new is not blank
-                    if(is.na(old) | new != old) { # if new and old not same
-                        # print(paste0(new, " replaces ", old))
-                        df_ds[full.name.of.describer.n == auth][[col]] <- old
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-
+    df <- replace_edits(df_ds_edit, df)
 }
-
 
 # Add info manually if missing still
 c_df_ds <-  df_ds[!complete.cases(df_ds), ]
 
+names(c_df_ds) <- gsub("\\.n$", "", names(c_df_ds))
+
 cfile <- paste0(v2_dir_data_raw_clean, "clean05-auth-biodata.csv")
 fwrite(c_df_ds, cfile)
-
-
-names(df_ds) <- gsub("\\.n$", "", names(df_ds))
 
 
 # Write describer data ---------------------------------------------------------

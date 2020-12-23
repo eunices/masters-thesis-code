@@ -35,8 +35,8 @@ if (model_params$te <= 1) {
 
     df_pub <- unique(
         df_pub[, c(
-            "group", "year", "paper.authors", "journal", "title",
-            "volume", "issue", "page.numbers.publication"
+            "group", "year", "paper.authors_n", "journal", "title",
+            "volume", "issue", "paper.type_n"
         )]
     )
 

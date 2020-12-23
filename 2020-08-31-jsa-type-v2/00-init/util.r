@@ -212,15 +212,15 @@ run_describer_split_loop_v2 <- function(
                 dod.describer.n = NA, 
                 origin.country.describer.n = NA,
                 residence.country.describer.n = NA,
-                institution.of.describer.n=NA,
-                author.order=NA
+                institution.of.describer.n = NA,
+                author.order = NA
             )
 
             describers <- rbind(describers, to_merge)
 
         }
 
-        percent <- round(i/n_rows*100, 2)
+        percent <- round(i/n_rows*100, 5)
         if(percent %% 10 == 0) print(paste0(percent , "% completed"))
 
     }
@@ -228,26 +228,15 @@ run_describer_split_loop_v2 <- function(
     describers
 }
 
-
-update_data_with_edits <- function(cfile, df, sep = NA) {
-
-    clean_manual <- read_escaped_data_v2(cfile)
-
-    if (!is.na(sep)) {
-        clean_manual <- separate_rows(clean_manual, sep, sep = ", ")
-        if ("idxes" %in% names(clean_manual)) {
-            names(clean_manual)[which(names(clean_manual) == "idxes")] <- "idx"
-        }
-    }
+replace_edits <- function(clean_manual, df) {
 
     cols <- names(clean_manual)[grepl("_edit", names(clean_manual))]  
 
     for (col in cols) {
 
         cols_subset <- c("idx", col)
-        df_new <- clean_manual[
-            !(is.na(get(col)) | get(col) == ""), ..cols_subset
-        ]
+        df_new <- 
+            clean_manual[!(is.na(get(col)) | get(col) == ""), ..cols_subset]
 
         col_original <- gsub("_edit", "", col)
 
@@ -255,7 +244,43 @@ update_data_with_edits <- function(cfile, df, sep = NA) {
 
         df[match(df_new$idx, idx),  col_original] <- replacement
 
-    }  
+        # Check
+        # cbind(
+        #     df[match(df_new$idx, idx),  col_original, with = F],
+        #     df_new[, get(col)]
+        # )
+
+    }
 
     df
+
 }
+
+rename_names <- function(df, old_name, new_name) {
+    if (old_name %in% names(df)) {
+        names(df)[which(names(df) == old_name)] <- new_name
+    }
+    df
+}
+
+update_data_with_edits <- function(cfile, df, sep = NA) {
+    
+    clean_manual <- read_escaped_data_v2(cfile)
+
+    if (!is.na(sep)) {
+        clean_manual <- separate_rows(clean_manual, sep, sep = ", ")
+    }
+
+    clean_manual <- rename_names(df, "idxes", "idx")
+
+    df <- replace_edits(clean_manual, df)
+
+    df
+
+}
+
+    
+
+
+
+

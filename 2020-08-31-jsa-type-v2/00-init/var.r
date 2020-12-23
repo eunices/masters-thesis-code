@@ -95,11 +95,13 @@ v2_data_geo_p <- "data/geo_processed/"
 
 # Read geospatial layers
 if(!exists("v_ecoregions")) {
+  print("Reading v_ecoregions")
   f_v_ecoregions <- paste0(v2_data_geo_m, "Ecoregions2017/Ecoregions2017.shp")
   v_ecoregions <- st_read(f_v_ecoregions, quiet = TRUE)
 }
 
 if(!exists("v_continent")) {
+  print("Reading v_continent")
   f_v_continent <- paste0(v2_data_geo_p, "gadm/gadm36_0_utf8_continents.shp")
   v_continent <- st_read(f_v_continent, quiet = TRUE)
 }

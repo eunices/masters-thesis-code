@@ -2,12 +2,13 @@
 
 ## Steps to run on HPC for Chapter 2
 
+1. Prepare files by running 01-prep/main.r with model parameters (in `params-02-model.r`) and cut-off date (in `00-init/init.r`).
 
-1. Prepare files by running 01-prep/main.r with parameter necessary.
+2. Run `01-prep/main.r` to generate data required for running models.
 
-2. Copy folder `2020-08-31-jsa-type-v2-ch2/` using winSCP
+3. Copy folder `2020-08-31-jsa-type-v2-ch2/` using winSCP
 
-3. Use following code
+4. Use following code
 ```
     ssh e0045029@atlas6-c01.nus.edu.sg
     cd ~

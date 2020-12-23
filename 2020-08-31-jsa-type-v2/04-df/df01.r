@@ -124,3 +124,4 @@ df_des$prop_species_syn <- round(
 # Write data -------------------------------------------------------------------
 file <- paste0(v2_dir_data_raw, v2_basefile, "-describer_2.csv")
 fwrite(df_des, file)
+# TODO: remove those that have 0 species described
