@@ -21,11 +21,11 @@ model_param_list <- lapply(model_folder_names,
 analysis <- function(run = TRUE) {
     if(run) {
 
-        # source(paste0(dir_script_ed, '02-model/model.r'))    # model fitting
+        source(paste0(dir_script_ed, '02-model/model.r'))    # model fitting
 
-        # source(paste0(dir_script_ed, '02-model/analyse1.r')) # posterior
-        # source(paste0(dir_script_ed, '02-model/analyse2.r')) # forecast
-        # source(paste0(dir_script_ed, '02-model/analyse3.r')) # visualise
+        source(paste0(dir_script_ed, '02-model/analyse1.r')) # posterior
+        source(paste0(dir_script_ed, '02-model/analyse2.r')) # forecast
+        source(paste0(dir_script_ed, '02-model/analyse3.r')) # visualise
 
     }
 }

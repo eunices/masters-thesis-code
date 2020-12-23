@@ -2,17 +2,19 @@ source('2020-08-31-jsa-type-v2/00-init/main.r')
 
 
 get_df <- function() {
-    file <- paste0(v2_dir_data_raw, v2_basefile, "_7.csv")
+    file <- paste0(v2_dir_data_raw, v2_basefile, "_8.csv")
     read_escaped_data_v2(file)
 }
 
 get_pub <- function() {
-    file <- paste0(v2_dir_data_raw, v2_basefile, "_7.csv")
+    file <- paste0(v2_dir_data_raw, v2_basefile, "_8.csv")
     df <- read_escaped_data_v2(file)
-    df <- df[duplicated == FALSE &
-             status %in% c("Valid species", "Synonym"), 
-             list(idxes = paste0(idx, collapse = ", ")),
-             by = ppcol]
+    df <- df[
+        duplicated == FALSE &
+        status %in% c("Valid species", "Synonym"), 
+        list(idxes = paste0(idx, collapse = ", ")),
+        by = ppcol_n
+    ]
 }
 
 

@@ -19,12 +19,12 @@ data <- read_escaped_data_v2(input_filepath)
 if (model_params$te <= 1) {
 
     # Get publications
-    df <- get_df()
-    cols <- c(ppcol, "idx")
-    pubs <- unique(df[, ..cols])
+    pub <- get_pub()
+    pub <- separate_rows(pub, idxes, sep = ", ")
 
     names(pubs)[which(names(pubs) == "date")] <- "year"
     pubs$idx <- as.numeric(pubs$idx)
+
     data$valid_species_id <- as.numeric(data$valid_species_id)
 
     df_pub <- merge(
@@ -33,12 +33,8 @@ if (model_params$te <= 1) {
         all.x = T, all.y = F
     )
 
-    df_pub <- unique(
-        df_pub[, c(
-            "group", "year", "paper.authors_n", "journal", "title",
-            "volume", "issue", "paper.type_n"
-        )]
-    )
+    ppcol_n_rm_date <- ppcol_n[!ppcol_n %in% "date"]
+    df_pub <- unique(df_pub[, c("group", "year", ..ppcol_n_rm_date)])
 
     n_pub <- df_pub[, list(N=.N), by=c("group", "year")]
 

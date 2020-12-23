@@ -24,9 +24,11 @@ write(paste0("Model started at: ", start), conn, sep="\n", append=T)
 close(conn)
 
 # Initial data
-files <- dir(dir_model_folder, 
-             pattern = 'count_info.data.R',
-             full.names = TRUE)
+files <- dir(
+    dir_model_folder, 
+    pattern = 'count_info.data.R',
+    full.names = TRUE
+)
              
 data <- read_rdump(files)
 

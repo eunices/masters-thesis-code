@@ -6,7 +6,7 @@ print(paste0(Sys.time(), " ----- clean05.r"))
 
 # Read data --------------------------------------------------------------------
 
-file <- paste0(v2_dir_data_raw, v2_basefile, "_5.csv")
+file <- paste0(v2_dir_data_raw, v2_basefile, "_6.csv")
 df <- read_escaped_data_v2(file)
 
 # Clean author biodata ---------------------------------------------------------
@@ -169,7 +169,7 @@ df$full.name.of.describer_n <- NULL
 
 # Write data -------------------------------------------------------------------
 
-file <- paste0(v2_dir_data_raw, v2_basefile, "_6.csv")
+file <- paste0(v2_dir_data_raw, v2_basefile, "_7.csv")
 fwrite(df, file)
 # note: _6 has "cleaned" but "inconsistent" author information!
 

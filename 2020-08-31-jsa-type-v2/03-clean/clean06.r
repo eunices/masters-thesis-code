@@ -6,7 +6,7 @@ print(paste0(Sys.time(), " ----- clean06.r"))
 
 # Read data --------------------------------------------------------------------
 
-file <- paste0(v2_dir_data_raw, v2_basefile, "_6.csv")
+file <- paste0(v2_dir_data_raw, v2_basefile, "_7.csv")
 df <- read_escaped_data_v2(file)
 
 
@@ -60,7 +60,7 @@ df <- df[order(idx)]
 
 # Write data -------------------------------------------------------------------
 
-file <- paste0(v2_dir_data_raw, v2_basefile, "_7.csv")
+file <- paste0(v2_dir_data_raw, v2_basefile, "_8.csv")
 fwrite(df, file)
 
 
