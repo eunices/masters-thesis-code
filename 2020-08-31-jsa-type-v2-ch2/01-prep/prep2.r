@@ -39,7 +39,7 @@ if (model_params$te <= 1) {
     n_pub <- df_pub[, list(N=.N), by=c("group", "year")]
 
     n_pub_template <- expand.grid(
-        year = min(n_pub$year):max(n_pub$year),
+        year = min(as.numeric(n_pub$year)):max(as.numeric(n_pub$year)),
         group = unique(n_pub$group)
     )
 
