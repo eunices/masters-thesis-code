@@ -79,6 +79,12 @@ dcol <- c("idx", "author", "full.name.of.describer",
           "residence.country.describer", "institution.of.describer")
 
 
+# Factors
+
+species_status <- c(
+    "Valid species", "Synonym", "Valid subspecies", "Nominate subspecies",
+    "Morphospecies"
+)
 
 # Read lookup files
 f_lp_country <- paste0(v2_lookup, "2019-05-29-statoid-country-codes.csv")

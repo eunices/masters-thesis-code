@@ -109,6 +109,8 @@ df$paper.type_n <- ifelse(
 # note: this can only be done after the date (clean04.r) and
 # author names (clean02.r) are completed
 
+df$status <- factor(df$status, species_status)
+
 # Tag duplicated species based on unique combination
 df$duplicated <- duplicated(
     df[, c("genus", "species", "author", "date", "status")]
@@ -125,7 +127,7 @@ dups <- unique(
 dups <- 
     df[
         status %in% c("Synonym", "Valid species") &
-        duplicated == FALSE &
+        duplicated == FALSE & # excludes those already flagged as T
         paste0(genus, " ", species) %in% paste0(dups$genus, " ", dups$species)
     ]
 
@@ -140,24 +142,28 @@ dups <-
               status = paste0(sort(unique(status)), collapse = "; "),
               date = paste0(sort(unique(date)), collapse = "; "),
               author = paste0(sort(unique(author)), collapse = "; "),
+              n_date = length(unique(date)),
+              n_author = length(unique(author)),
               file = paste0(sort(unique(file)), collapse = "; ")),
          by = c("genus", "species")][n >= 2]
 
 cfile <- paste0(v2_dir_data_raw_check, "33-34-species-dups.csv")
 fwrite(dups, cfile)
-# note: no action taken except for valid species and for valid + synonym species
+# note: no action taken except  for "Valid species; Synonym"
 
+# Duplicates with **valid species and synonym" 
+# and no semi-colon in author/date (i.e. 1 author or 1 year),
+# use the first as valid as they are likely to be typos
 
-# Subset duplicates w/ **only valid species**
-# and **valid species and synonym" for the name,
-# use the first
 dups_valid <- separate_rows(
-    dups[status %in% c("Valid species", "Valid species; Synonym"), c("idxes")],
-    "idxes",
-    sep = ", "
+    dups[
+        (n_date == 1 | n_author == 1) &
+        status %in% c("Valid species; Synonym"), 
+        c("idxes")],
+    idxes, sep = ", "
 )
 
-cols <- c(bcol, pcol)
+cols <- c("idx", "genus", "species", "status")
 dups_valid <- df[idx %in% dups_valid$idxes, ..cols][
     order(genus, species, status)
 ]

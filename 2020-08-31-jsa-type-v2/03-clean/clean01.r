@@ -21,12 +21,7 @@ df[status == "Valid Species"]$status <- "Valid species"
 # CHECK
 table(df$status)
 
-statuses <- c(
-    "Valid species", "Synonym", "Valid subspecies", "Nominate subspecies",
-    "Morphospecies"
-)
-
-df$status <- factor(df$status, statuses)
+df$status <- factor(df$status, species_status)
 
 # CHECK
 table(is.na(df$status))
