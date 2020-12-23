@@ -594,6 +594,8 @@ summarize_forecasts <- function(data, data_raw, forecast, obs) {
 		, list(cml_value = max(cml_value)), by = "group"
 	] 
 
+	forsim <- data.table(forsim)
+
 	fore_results <- forsim[,
 		list(
 			value = max(value), # highest value

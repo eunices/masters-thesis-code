@@ -128,7 +128,19 @@ df_des$prop_species_syn <- round(
 
 # Note: last part of df1.4 omitted as publication != authored by describer
 
+# Remove those with 0 species dscribed
+
+print(paste0(
+        "These authors with 0 species described: ", 
+        paste0(df_des[spp_N == 0]$full.name.of.describer, collapse = ", ")
+))
+
+df_des <- df_des[spp_N != 0]
+
 # Write data -------------------------------------------------------------------
 file <- paste0(v2_dir_data_raw, v2_basefile, "-describer_2.csv")
 fwrite(df_des, file)
-# TODO: remove those that have 0 species described
+
+
+# df[idx %in% c(28735, 34671), c("duplicated", ..bcol)]
+# df[genus == "Bombus" & species == "perezi", c("duplicated", ..bcol)]

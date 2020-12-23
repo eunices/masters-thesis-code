@@ -1,7 +1,7 @@
 source('2020-08-31-jsa-type-v2-ch2/01-prep/prep1/util.r')
 
-df <- get_df()
-df <- df[tolower(status) == "valid species"]
+# Read data
+df <- get_species_raw_data()
 
 join <- df[, c("idx", "full.name.of.describer", "date", "family")][
     order(as.numeric(idx))

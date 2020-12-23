@@ -1,5 +1,4 @@
-df <- get_df()
-df <- df[tolower(type.status) == "valid species"]
+df <- get_species_raw_data()
 
 join <- df[, c("idx", "full.name.of.describer", "date", "genus")][
     order(as.numeric(idx))]

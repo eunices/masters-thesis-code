@@ -83,7 +83,7 @@ dups <-
 
 cfile <- paste0(v2_dir_data_raw_check, "33-34-species-dups.csv")
 fwrite(dups, cfile)
-# note: no action taken except for valid species
+# note: no action taken except for valid species and for valid + synonym species
 
 
 # Subset duplicates w/ **only valid species**

@@ -1,4 +1,12 @@
+source(paste0(dir_script, "subset.r"))
 source('2020-08-31-jsa-type-v2-ch2/01-prep/prep1/params.r')
+
+get_species_raw_data <- function() {
+    df <- get_df()
+    df <- df[tolower(status) == "valid species"]
+    df <- df[duplicated == FALSE]
+    df
+}
 
 
 assess_latlon <- function(df, filepath_log ) {

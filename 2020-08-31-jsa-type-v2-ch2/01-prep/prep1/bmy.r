@@ -1,7 +1,7 @@
 source('2020-08-31-jsa-type-v2-ch2/01-prep/prep1/util.r')
 
 # Read data
-df <- get_df()
+df <- get_species_raw_data()
 
 # Assess data quality for lat and lon
 li_df <- assess_latlon(df, filepath_log) 
