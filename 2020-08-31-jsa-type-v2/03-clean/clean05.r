@@ -185,10 +185,6 @@ df_d$describer.gender.n <- factor(
     ordered = TRUE
 )
 
-ggplot(df[date>2000]) + 
-    geom_bar(aes(x=date), stat="count")
-
-
 # Most common gender
 d1 <- df_d[, 
     c("full.name.of.describer.n", "describer.gender.n")][,
