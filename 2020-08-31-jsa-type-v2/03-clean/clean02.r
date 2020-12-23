@@ -122,8 +122,6 @@ lp_surname <- read_escaped_data_v2(file)
 cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-short-auth_edit.csv")
 if(file.exists(cfile)) df <- update_data_with_edits(cfile, df)
 
-d <- data.table(cbind(df$author, df2$author))
-
 df_auth <- df[, c("idx", "full.name.of.describer")]
 
 df_auth <- df_auth[order(idx)]
