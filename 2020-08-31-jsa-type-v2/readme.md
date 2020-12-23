@@ -30,13 +30,15 @@ DONE 21/12 6. Clean journal associated info (clean04.r)
 * use most updated location
 * consistency of journal country and city
 
-TODO 22/12 7. Clean publication duplicates (clean04.r)
+DONE 22/12 7. Clean publication duplicates (clean04.r)
 
 * leave page numbers out of counting unique publications (referring to specific pages of section in which description is found)
 * clean "author" field to original publication (instead of author in publication); if "paper.editors" exists, use it in place of "paper.authors" as it is one publication (remove "In[i]") (created  `paper.authors_n_edit` to reflect this)
 * treat book sections, books and encylopedia as books (created `paper.type_n` to reflect this)
 
-TODO 23/12 8. Clean biodata of authors (clean05.r)
+DONE 23/12 8. Clean biodata of authors (clean05.r)
+
+* most important fields to add are current location of residence and whether alive as of 2019
 
 - Use the pipeline `main.r` to call the entire pipeline to create cleaned data used in analyses later (called with functions in `subset.r`).
 
@@ -44,4 +46,4 @@ TODO 23/12 8. Clean biodata of authors (clean05.r)
 2. Chapter 1: for different biogeographic regions
 3. Chapter 3: update results
 
-Last updated 15 December 2020
+Last updated 23 December 2020

@@ -1,6 +1,6 @@
 # Initialize
 source('2020-08-31-jsa-type-v2/00-init/main.r')
-
+print(paste0(Sys.time(), " ----- map.r"))
 
 # To use old functions from v1
 # source(paste0(v2_dir_script, "/00-init/util.r"))

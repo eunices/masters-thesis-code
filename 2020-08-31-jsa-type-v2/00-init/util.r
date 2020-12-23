@@ -220,7 +220,7 @@ run_describer_split_loop_v2 <- function(
 
         }
 
-        percent <- round(i/n_rows*100, 5)
+        percent <- round(i/n_rows*100, 3)
         if(percent %% 10 == 0) print(paste0(percent , "% completed"))
 
     }

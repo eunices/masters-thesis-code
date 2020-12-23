@@ -1,4 +1,5 @@
 source('2020-08-31-jsa-type-v2/00-init/main.r')
+print(paste0(Sys.time(), " ----- format.r"))
 
 filename <- paste0(v2_basefile, ".csv")
 
