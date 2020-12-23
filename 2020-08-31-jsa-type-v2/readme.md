@@ -38,6 +38,7 @@ DONE 22/12 7. Clean publication duplicates (clean04.r)
 
 DONE 23/12 8. Clean biodata of authors (clean05.r)
 
+* update `lp-auth-bio-v1.csv` with new names
 * most important fields to add are current location of residence and whether alive as of 2019
 
 - Use the pipeline `main.r` to call the entire pipeline to create cleaned data used in analyses later (called with functions in `subset.r`).

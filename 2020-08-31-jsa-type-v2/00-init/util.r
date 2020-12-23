@@ -220,7 +220,7 @@ run_describer_split_loop_v2 <- function(
 
         }
 
-        percent <- round(i/n_rows*100, 3)
+        percent <- round(i/n_rows*100, 2)
         if(percent %% 10 == 0) print(paste0(percent , "% completed"))
 
     }
@@ -228,13 +228,13 @@ run_describer_split_loop_v2 <- function(
     describers
 }
 
-replace_edits <- function(clean_manual, df) {
+replace_edits <- function(clean_manual, df, identifier = "idx") {
 
     cols <- names(clean_manual)[grepl("_edit", names(clean_manual))]  
 
     for (col in cols) {
 
-        cols_subset <- c("idx", col)
+        cols_subset <- c(identifier, col)
         df_new <- 
             clean_manual[!(is.na(get(col)) | get(col) == ""), ..cols_subset]
 
@@ -242,7 +242,8 @@ replace_edits <- function(clean_manual, df) {
 
         replacement <- df_new[, get(col)]
 
-        df[match(df_new$idx, idx),  col_original] <- replacement
+        df[match(df_new[, get(identifier)], get(identifier)), col_original] <-
+            replacement
 
         # Check
         # cbind(

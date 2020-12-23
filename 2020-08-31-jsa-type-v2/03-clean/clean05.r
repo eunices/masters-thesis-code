@@ -263,11 +263,11 @@ lp_auth_b <- read_escaped_data_v2(file)
 authors <- unique(df_ds$full.name.of.describer.n)
 columns <- unique(names(df_ds))
 
-for(c in 2:length(columns)) { # exclude first  column
+for(c in 2:length(columns)) { # exclude first column
     col <- columns[c] 
+    print(paste0("**********", col))
 
     if (!col %in% c("alive")) {
-        print(paste0("**********", col))
         for (a in 1:length(authors)) {
             auth <- authors[a]
             
@@ -287,7 +287,6 @@ for(c in 2:length(columns)) { # exclude first  column
 
 }
 
-df_ds[grepl("Michener", full.name.of.describer.n)]
 
 df_ds <- merge(
     df_ds, lp_auth_b[, c("full.name.of.describer.n_v2", "alive")],
@@ -296,23 +295,21 @@ df_ds <- merge(
 )
 # note: alive as of 2019!
 
+names(df_ds) <- gsub("\\.n$", "", names(df_ds))
+
 # Incorporate manual information
 cfile <- paste0(v2_dir_data_raw_clean, "clean05-auth-biodata_edit.csv")
 if(file.exists(cfile)) {
     df_ds_edit <- read_escaped_data_v2(cfile)
-    names(df_ds_edit) <- gsub("\\.n$", "", names(df_ds_edit))
-
-    df_ds_edit <- separate_rows(df_ds_edit, idxes, sep = ", ")
-
-    df_ds_edit <- rename_names(df_ds_edit, "idxes", "idx")
-
-    df <- replace_edits(df_ds_edit, df)
+    
+    df_ds <- replace_edits(
+        df_ds_edit, df_ds, 
+        identifier = "full.name.of.describer"
+    )
 }
 
 # Add info manually if missing still
 c_df_ds <-  df_ds[!complete.cases(df_ds), ]
-
-names(c_df_ds) <- gsub("\\.n$", "", names(c_df_ds))
 
 cfile <- paste0(v2_dir_data_raw_clean, "clean05-auth-biodata.csv")
 fwrite(c_df_ds, cfile)

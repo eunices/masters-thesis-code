@@ -16,14 +16,21 @@ df <- read_escaped_data_v2(file)
 # Separate df by author for metrics 
 cols <- c("file", "idx", "duplicated", "genus", "species",
           "author", "status", "full.name.of.describer", "date")
+
 df_m <- df[duplicated == FALSE, ..cols]
+
 df_m <- data.table(separate_rows(df_m, full.name.of.describer, sep = "; "))
+
 df_m[, order := seq_len(.N), by=idx]
+
 df_m <- df_m[order(idx, order)]
+
 df_m[, len := .N, by="idx"]
 
 df_m$order_c <- as.character(df_m$order)
+
 df_m[len == order & len == 2,]$order_c <- "S"
+
 df_m[len == order & len > 2,]$order_c <- "L"
 
 
