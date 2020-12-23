@@ -6,6 +6,10 @@ get_df <- function() {
     read_escaped_data_v2(file)
 }
 
+df <- get_df()
+df2 <- df[grepl("Linnaeus", author)]
+df2[, ..bcol]
+
 get_pub <- function() {
     file <- paste0(v2_dir_data_raw, v2_basefile, "_8.csv")
     df <- read_escaped_data_v2(file)

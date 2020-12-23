@@ -272,7 +272,7 @@ update_data_with_edits <- function(cfile, df, sep = NA) {
         clean_manual <- separate_rows(clean_manual, sep, sep = ", ")
     }
 
-    clean_manual <- rename_names(df, "idxes", "idx")
+    clean_manual <- rename_names(clean_manual, "idxes", "idx")
 
     df <- replace_edits(clean_manual, df)
 

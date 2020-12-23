@@ -117,10 +117,12 @@ fwrite(df_auth, cfile)
 file <- paste0(v2_dir_data_raw_clean, "lp-surname.csv")
 lp_surname <- read_escaped_data_v2(file)
 
-# TODO: (script) incorporate changes from df_auth into df
+# Incorporate changes from df_auth into df
 # author_edit and full.name.of.describer_edit
 cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-short-auth_edit.csv")
-if(file.exists(cfile)) df <- update_data_with_edits(cfile, df)
+if(file.exists(cfile)) df2 <- update_data_with_edits(cfile, df)
+
+d <- data.table(cbind(df$author, df2$author))
 
 df_auth <- df[, c("idx", "full.name.of.describer")]
 
