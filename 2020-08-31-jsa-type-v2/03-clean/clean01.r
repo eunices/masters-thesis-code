@@ -47,77 +47,6 @@ df <- df[family != "Uncertain"]
 
 df <- df[!grepl("\\?", family)]
 
-# Tag duplicated species based on unique combination
-df$duplicated <- duplicated(
-    df[, c("genus", "species", "author", "date", "status")]
-)
-
-# Check for non-obvious duplicates
-
-# Get unique combinations of duplicated genus and species
-dups <- unique(
-    df[duplicated(paste0(genus, " ", species)), c("genus", "species")]
-)
-
-# Subset for dups which are synonyms or valid species
-dups <- 
-    df[
-        status %in% c("Synonym", "Valid species") &
-        duplicated == FALSE &
-        paste0(genus, " ", species) %in% paste0(dups$genus, " ", dups$species)
-    ]
-
-# Extract date
-dups$date <- gsub("\\[[^\\]]*\\]", "", dups$date, perl = TRUE)
-
-# CHECK
-dups <- 
-    dups[,
-         list(n = .N, 
-              idxes = paste0(idx, collapse = ", "),
-              status = paste0(sort(unique(status)), collapse = "; "),
-              date = paste0(sort(unique(date)), collapse = "; "),
-              author = paste0(sort(unique(author)), collapse = "; "),
-              file = paste0(sort(unique(file)), collapse = "; ")),
-         by = c("genus", "species")]
-
-cfile <- paste0(v2_dir_data_raw_check, "33-34-species-dups.csv")
-fwrite(dups, cfile)
-# note: no action taken except for valid species and for valid + synonym species
-
-
-# Subset duplicates w/ **only valid species**
-# and **valid species and synonym" for the name,
-# use the first
-dups_valid <- separate_rows(
-    dups[status %in% c("Valid species", "Valid species; Synonym"), c("idxes")],
-    "idxes",
-    sep = ", "
-)
-
-cols <- c(bcol, pcol)
-dups_valid <- df[idx %in% dups_valid$idxes, ..cols][
-    order(genus, species, status)
-]
-
-dups_valid$duplicated <- duplicated(
-    dups_valid[, c("genus", "species")] 
-) # take first duplicated, with valid species taking precedence
-
-df <- merge(
-    df, dups_valid[, c("idx", "duplicated")],
-    all.x = TRUE, all.y = FALSE,
-    by.x = "idx", by.y = "idx",
-    suffixes = c("", "_n")
-)
-
-df[!is.na(duplicated_n)]$duplicated <- df[!is.na(duplicated_n)]$duplicated_n
-df$duplicated_n <- NULL
-
-# CHECK
-table(df$duplicated)
-
-
 # Taxonomic ranks --------------------------------------------------------------
 
 # CHECK: tribe with None and Uncertain
@@ -220,27 +149,6 @@ df[status=="Synonym", ]$corrected_valid_species <-
         df[status=="Synonym", ]$valid_genus, " ",
         df[status=="Synonym", ]$valid_species
     )
-
-# Duplicated subspecies --------------------------------------------------------
-
-# Get unique list of duplicated subspecies
-dups <- unique(df[
-    grepl("subspecies", status) &
-    duplicated(valid.genus.species.subspecies)
-]$valid.genus.species.subspecies)
-
-# CHECK
-cfile <- paste0(v2_dir_data_raw_check, "35-36-subspecies-dups.csv")
-fwrite(
-    df[grepl("subspecies", status) & valid.genus.species.subspecies %in% dups][
-    , c(
-        "file", ..bcol, ..pcol, "valid_subspecies",
-        "valid.genus.species.subspecies", "duplicated"
-        )
-    ][order(genus, species, valid_subspecies),],
-    
-    cfile    
-)
 
 # Species type locality --------------------------------------------------------
 
