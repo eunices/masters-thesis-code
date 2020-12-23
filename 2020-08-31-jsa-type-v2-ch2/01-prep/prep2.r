@@ -36,7 +36,11 @@ if (model_params$te <= 1) {
     ppcol_n_rm_date <- ppcol_n[!ppcol_n %in% "date"]
     df_pub <- unique(df_pub[, c("group", "year", ..ppcol_n_rm_date)])
 
-    n_pub <- df_pub[, list(N=.N), by=c("group", "year")]
+    n_pub <- df_pub[
+        !is.na(year) | year != "NA", 
+        list(N=.N), 
+        by=c("group", "year")
+    ]
 
     n_pub_template <- expand.grid(
         year = min(as.numeric(n_pub$year)):max(as.numeric(n_pub$year)),
