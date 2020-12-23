@@ -13,7 +13,7 @@ df <- read_escaped_data_v2(file)
 
 # Split df into authors with their info (df_d)
 tfile <- paste0(v2_dir_data_raw_tmp, "clean05-describer.csv")
-if(file.exists(file)) {
+if(file.exists(tfile)) {
     df_d <- read_escaped_data_v2(tfile)
 } else {
     df_d <- df[, ..dcol]
