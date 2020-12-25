@@ -43,8 +43,8 @@ DONE 23/12 8. Clean biodata of authors (clean05.r)
 
 - Use the pipeline `main.r` to call the entire pipeline to create cleaned data used in analyses later (called with functions in `subset.r`).
 
-1. Chapter 2: come up list of models to run
-2. Chapter 1: for different biogeographic regions
-3. Chapter 3: update results
+TODO 24/12 1. Chapter 2: come up list of models to run
+TODO 29/12 2. Chapter 1: for different biogeographic regions
+TODO 30/12 3. Chapter 3: update results
 
 Last updated 23 December 2020
