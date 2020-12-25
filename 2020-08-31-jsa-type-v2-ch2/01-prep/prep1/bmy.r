@@ -20,9 +20,9 @@ join <- join_shp[, ..cols_eco]
 # Join based on nearest
 if(!file.exists(filepath_nearest_loc_biome)) {
     persist_nearest_shp(join, shp_grp, filepath_nearest_loc_biome)
-} else {
-    join <- join_nearest_biome(join, filepath_nearest_loc_biome)
 }
+
+join <- join_nearest_biome(join, filepath_nearest_loc_biome)
 
 # Subset relevant columns again
 cols_ll_final <- c(cols_std,  "BIOME_CAT")
