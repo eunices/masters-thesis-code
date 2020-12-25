@@ -15,6 +15,7 @@
     cd /hpctmp2/e0045029
     qsub -q openmp -o 2020-08-31-jsa-type-v2-ch2/output-1.txt 2020-08-31-jsa-type-v2-ch2/main.sh
 ```
+*usually use serial for short runs
 
 ## Roman's comment on validation: 
 
