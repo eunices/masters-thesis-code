@@ -45,8 +45,9 @@ DONE 23/12 8. Clean biodata of authors (clean05.r)
 
 TODO 24/12 1. Chapter 2: come up list of models to run
 TODO: right now cross validation are all not reliable. read paper and tutorial & Edie et al.
+TODO: justify why change in the particular change in mu_2 prior helped chains to converge; see [here](https://mc-stan.org/docs/2_25/stan-users-guide/multivariate-hierarchical-priors-section.html)
 
 TODO JAN 2. Chapter 1: code for different biogeo regions / update thesis text
 TODO JAN 3. Chapter 3: update results
 
-Last updated 23 December 2020
+Last updated 26 December 2020
