@@ -44,7 +44,9 @@ DONE 23/12 8. Clean biodata of authors (clean05.r)
 - Use the pipeline `main.r` to call the entire pipeline to create cleaned data used in analyses later (called with functions in `subset.r`).
 
 TODO 24/12 1. Chapter 2: come up list of models to run
-TODO 29/12 2. Chapter 1: code for different biogeo regions / update thesis text
-TODO 30/12 3. Chapter 3: update results
+TODO: right now cross validation are all not reliable. read paper and tutorial
+
+TODO JAN 2. Chapter 1: code for different biogeo regions / update thesis text
+TODO JAN 3. Chapter 3: update results
 
 Last updated 23 December 2020
