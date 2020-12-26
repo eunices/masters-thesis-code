@@ -13,8 +13,6 @@ print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 print("@@@@@@@@@ SCRIPTS ")
 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
-print(paste0(Sys.time(), " --- prepare data"))
-
 # Create list of model params
 len_params <- length(model_folder_names)
 

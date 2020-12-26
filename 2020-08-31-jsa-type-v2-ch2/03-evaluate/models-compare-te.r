@@ -1,12 +1,27 @@
 # Compare LOOAIC between different TE 
+# https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html
+# https://link.springer.com/article/10.1007/s11222-016-9696-4
 
 source('2020-08-31-jsa-type-v2-ch2/03-evaluate/init.r')
 
 chosen_models <- c(
     "BGY-E0-C4-I8000-A0.8-T12-F25-V0",
-    "BGY-E1-C4-I8000-A0.8-T12-F25-V0",
+    "BGY-E1-C4-I20000-A0.9-T12-F25-V0",
     "BGY-E2-C4-I8000-A0.8-T12-F25-V0"
 )
+
+# using WAIC -------------------------------------------------------------------
+
+model_params <- parse_model_identifier(model1)
+model_dirs <- initialize_model_params(model_params)
+model_dir <- model_dirs[1]
+
+# load zero inflated fits
+load(paste0(model_dir, "fit.data"))       # as "fit"
+log_lik1  <- extract_log_lik(fit)
+(waic1 <- waic(log_lik1))
+
+# using LOO --------------------------------------------------------------------
 
 model1 <- chosen_models[1]
 model1_loo <- get_loo(model1)
@@ -26,6 +41,16 @@ print(model3_loo)
 compare <- loo_compare(model1_loo, model2_loo, model3_loo)
 
 print(compare)
+
+
+
+
+
+
+
+
+
+
 
 
 

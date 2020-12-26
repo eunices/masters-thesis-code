@@ -21,6 +21,7 @@ if (model_params$te <= 1) {
     # Get publications
     pub <- get_pub()
     pub <- separate_rows(pub, idxes, sep = ", ")
+    names(pub)[which(names(pub) == "idxes")] <- "idx"
 
     names(pub)[which(names(pub) == "date")] <- "year"
     pub$idx <- as.numeric(pub$idx)
