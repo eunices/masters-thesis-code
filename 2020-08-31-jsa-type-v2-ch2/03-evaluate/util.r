@@ -35,3 +35,14 @@ list_to_df <- function(x, i) {
     x$sim <- i
     x
 }
+
+
+get_sampling_info <- function(chosen_model) {
+    model_params <- parse_model_identifier(chosen_model)
+    dir_model_folder <- initialize_model_params(model_params)[1]
+
+    file <- paste0(dir_model_folder, "output/chain_sampling.txt")
+    chain_sampling <- readLines(file)
+    chain_sampling[1]
+
+}
