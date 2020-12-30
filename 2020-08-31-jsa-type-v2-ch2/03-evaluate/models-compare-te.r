@@ -10,17 +10,6 @@ chosen_models <- c(
     "BGY-E2-C4-I8000-A0.8-T12-F25-V0"
 )
 
-# using WAIC -------------------------------------------------------------------
-
-model_params <- parse_model_identifier(model1)
-model_dirs <- initialize_model_params(model_params)
-model_dir <- model_dirs[1]
-
-# load zero inflated fits
-load(paste0(model_dir, "fit.data"))       # as "fit"
-log_lik1  <- extract_log_lik(fit)
-(waic1 <- waic(log_lik1))
-
 # using LOO --------------------------------------------------------------------
 
 model1 <- chosen_models[1]
@@ -43,11 +32,16 @@ compare <- loo_compare(model1_loo, model2_loo, model3_loo)
 print(compare)
 
 
+# using WAIC -------------------------------------------------------------------
 
+model_params <- parse_model_identifier(model1)
+model_dirs <- initialize_model_params(model_params)
+model_dir <- model_dirs[1]
 
-
-
-
+# load zero inflated fits
+load(paste0(model_dir, "fit.data"))       # as "fit"
+log_lik1  <- extract_log_lik(fit)
+(waic1 <- waic(log_lik1))
 
 
 

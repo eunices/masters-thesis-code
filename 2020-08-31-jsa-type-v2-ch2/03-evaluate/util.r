@@ -9,11 +9,15 @@ get_loo <- function(model) {
     # load zero inflated fits
     load(paste0(model_dir, "fit.data"))       # as "fit"
 
-    m_log_lik <- extract_log_lik(
-        fit, 
-        parameter_name = "log_lik", 
-        merge_chains = FALSE
-    )
+    # m_log_lik <- extract_log_lik(
+    #     fit, 
+    #     parameter_name = "log_lik", 
+    #     merge_chains = FALSE
+    # )
+
+    # manual/ alternative code to `extract_log_lik`
+    m_log_lik <- as.array(fit, pars = "log_lik")
+    m_log_lik <- m_log_lik[,,apply(m_log_lik, 3, sd) != 0]
 
     m_r_eff <- relative_eff(exp(m_log_lik), cores = 2)
 
