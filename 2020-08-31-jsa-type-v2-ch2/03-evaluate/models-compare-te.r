@@ -42,6 +42,7 @@ compare <- loo_compare(model1_loo, model2_loo, model3_loo)
 
 print(compare)
 
+# https://mc-stan.org/loo/reference/loo-glossary.html
 
 
 

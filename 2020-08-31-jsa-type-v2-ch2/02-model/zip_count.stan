@@ -174,7 +174,22 @@ model {
 		delta[p] ~ multi_normal(mu, Sigma);
 	}
 
-	target += sum(log_lik);
+	for(p in 1:P) {
+		target += count_series_lp(
+			
+			counts[p][str[p]:end[p]],
+			off[p][str[p]:end[p]], 
+
+			phi[p],
+			delta[p], 
+			alpha[p], 
+			beta[p], 
+			
+			gamma[p], 
+			eta[p]
+
+		);
+	}
 
 }
 
