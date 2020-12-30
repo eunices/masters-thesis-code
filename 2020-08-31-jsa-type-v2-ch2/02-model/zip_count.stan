@@ -1,6 +1,6 @@
 functions { 
 
-	real count_series_lp(
+	vector count_series_lp(
 
 		// data for spp. 
 		int[] y, 
@@ -17,16 +17,16 @@ functions {
 		
 	) {   
 
-
 		int Y;
 
+		real value;
 		real lp;
+		vector[size(y)] loglik;
 
 		vector[size(y)] lambda;
 		vector[size(y)] omega;
 
 		vector[size(y)] theta;
-
 
 		Y = size(y);
 
@@ -55,28 +55,32 @@ functions {
 		}
 
 		// log prob
-		lp = 0;
 		for(i in 1:Y) {
 			if(y[i] == 0) {
 
-				lp = lp + 
+				loglik[i] = 
 					log_sum_exp(
 						bernoulli_lpmf( 1 | theta[i] ),
 						
 						bernoulli_lpmf( 0 | theta[i] ) + 
 						poisson_lpmf( y[i] | (off[i] + 1) * lambda[i] )
 					);
+				
 
 			} else {
 
-				lp = lp + 
+				loglik[i] = 
 					 bernoulli_lpmf( 0 | theta[i] ) +
 					 poisson_lpmf( y[i] | (off[i] + 1) * lambda[i] );
 				
 			}
+
+			// lp += value;
+			
+
 		}
 
-		return lp;
+		return loglik;
 	}
 
 }
@@ -121,7 +125,8 @@ transformed parameters {
 
 	real<lower=0,upper=1> beta[P];
 	cov_matrix[2] Sigma;
-	vector[P] log_lik;
+	matrix[P, N] log_lik;
+	row_vector[N] log_lik_row;
 
 	for(p in 1:P) {
 		beta[p] = (1 - alpha[p]) * beta_unc[p];
@@ -131,20 +136,31 @@ transformed parameters {
 
 	// Update log prob
 	for(p in 1:P) {
-		log_lik[p] = count_series_lp(
-			
-			counts[p][str[p]:end[p]],
-			off[p][str[p]:end[p]], 
 
-			phi[p],
-			delta[p], 
-			alpha[p], 
-			beta[p], 
-			
-			gamma[p], 
-			eta[p]
+		log_lik_row = to_row_vector(
+			append_row(
 
+				// pad log_lik_row with 0
+				rep_vector(0, (N - size(counts[p][str[p]:end[p]]))),
+				count_series_lp(
+				
+				counts[p][str[p]:end[p]],
+				off[p][str[p]:end[p]], 
+
+				phi[p],
+				delta[p], 
+				alpha[p], 
+				beta[p], 
+				
+				gamma[p], 
+				eta[p]
+
+				)
+			)
 		);
+
+		log_lik[p] = log_lik_row;
+
 	}
 
 }
@@ -179,21 +195,5 @@ model {
 }
 
 generated quantities {
-	for(p in 1:P) {
-		log_lik[p] = count_series_lp(
-			
-			counts[p][str[p]:end[p]],
-			off[p][str[p]:end[p]], 
-
-			phi[p],
-			delta[p], 
-			alpha[p], 
-			beta[p], 
-			
-			gamma[p], 
-			eta[p]
-
-		);
-	}
 
 }

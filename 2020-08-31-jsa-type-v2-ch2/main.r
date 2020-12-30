@@ -11,4 +11,3 @@ source('2020-08-31-jsa-type-v2-ch2/01-prep/main.r')
 
 # 5. Run model.
 source('2020-08-31-jsa-type-v2-ch2/02-model/main.r')
-
