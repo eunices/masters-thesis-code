@@ -36,3 +36,7 @@ https://discourse.mc-stan.org/t/a-quick-note-what-i-infer-from-p-loo-and-pareto-
 > For structural time series, Google "stan structural time series bsts" and you should find > some links to forum and blog posts explaining the basics of a bayesian structural time > series model. The bats back in R fits them, but only for continuous response data if I > recall correctly.
 
 The key will be figuring out ho to combine them. I couldnt figure it out in 2016, but maybe someone else has. The hard part is figuring out what the Poisson part of the model looks to as the past.
+
+# Other stan tutorials
+
+[Basic stan models](http://avehtari.github.io/BDA_R_demos/demos_rstan/rstan_demo.html)
