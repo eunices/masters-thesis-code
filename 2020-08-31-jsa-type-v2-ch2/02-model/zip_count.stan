@@ -126,7 +126,6 @@ transformed parameters {
 	real<lower=0,upper=1> beta[P];
 	cov_matrix[2] Sigma;
 	matrix[P, N] log_lik;
-	row_vector[N] log_lik_row;
 
 	for(p in 1:P) {
 		beta[p] = (1 - alpha[p]) * beta_unc[p];
@@ -137,7 +136,7 @@ transformed parameters {
 	// Update log prob
 	for(p in 1:P) {
 
-		log_lik_row = to_row_vector(
+		log_lik[p] =  to_row_vector(
 			append_row(
 
 				// pad log_lik_row with 0
@@ -158,8 +157,6 @@ transformed parameters {
 				)
 			)
 		);
-
-		log_lik[p] = log_lik_row;
 
 	}
 
