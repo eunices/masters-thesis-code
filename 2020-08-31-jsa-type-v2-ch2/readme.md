@@ -40,3 +40,4 @@ https://discourse.mc-stan.org/t/a-quick-note-what-i-infer-from-p-loo-and-pareto-
 # Other stan tutorials
 
 [Basic stan models](http://avehtari.github.io/BDA_R_demos/demos_rstan/rstan_demo.html)
+[Intro to stan & regression](https://jrnold.github.io/bayesian_notes/introduction-to-stan-and-linear-regression.html)
