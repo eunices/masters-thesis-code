@@ -7,15 +7,7 @@ source('2020-08-31-jsa-type-v2-ch2/03-evaluate/init.r')
 
 # Inititalize parameters
 model <- c("BGY-E2-C4-I8000-A0.8-T12-F25-V30")
-model_params <- parse_model_identifier(model)
-filepaths <- initialize_model_params(model_params)
-
-dir_model_folder <- filepaths[1]
-filepath_log <- filepaths[2]
-warnings_log <- filepaths[3]
-model_identifier <- filepaths[4]
-
-
+dir_model_folder <- paste0(dir_analysis_edie_model, model, "/")
 
 # Original data
 data_raw <- read.csv(paste0(dir_model_folder, "data.csv"), na.strings=c("")) 

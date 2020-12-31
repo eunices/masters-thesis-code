@@ -1,10 +1,7 @@
 get_loo <- function(model) {
 
     # model refers to the model identifier
-
-    model_params <- parse_model_identifier(model)
-    model_dirs <- initialize_model_params(model_params)
-    model_dir <- model_dirs[1]
+    model_dir <- paste0(dir_analysis_edie_model, model, "/")
 
     # load zero inflated fits
     load(paste0(model_dir, "fit.data"))       # as "fit"

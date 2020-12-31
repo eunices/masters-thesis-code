@@ -107,8 +107,10 @@ initialize_model_params <- function(model_params, custom=NA) {
 	# Define model folder
 	folder <- dir_analysis_edie_model
 
-	dir_model_folder <- paste0(folder, "/", 
-							   model_identifier, "/")
+	dir_model_folder <- paste0(
+        folder, "/", 
+        model_identifier, "/"
+    )
 							   
 	if(!is.na(custom)) dir_model_folder <- custom
 

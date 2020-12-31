@@ -6,8 +6,7 @@ source('2020-08-31-jsa-type-v2-ch2/02-model/init.r')
 ##### Parse model info
 
 chosen_model <- "BGY-E0-C4-I8000-A0.8-T12-F25-V0"
-model_params <- parse_model_identifier(chosen_model)
-dir_model_folder <- initialize_model_params(model_params)[1]
+dir_model_folder <- paste0(dir_analysis_edie_model, chosen_model, "/")
 
 ##### Load data
 
