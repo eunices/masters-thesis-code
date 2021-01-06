@@ -14,9 +14,7 @@ print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
 # Create list of model params
 len_params <- length(model_folder_names)
-model_param_list <- lapply(model_folder_names, 
-    function(x) parse_model_identifier(x)
-)
+
 
 analysis <- function(run = TRUE) {
     if(run) {
@@ -37,15 +35,15 @@ print(paste0(
 
 for (i in 1:len_params) {
 
-    model_params <- model_param_list[[i]]
 
     # Initialize identifier
-    filepaths <- initialize_model_params(model_params)
+    model_identifier <- model_folder_names[i]
 
-    dir_model_folder <- filepaths[1]
-    filepath_log <- filepaths[2]
-    warnings_log <- filepaths[3]
-    model_identifier <- filepaths[4]
+    model_params <- parse_model_identifier(model_identifier)
+
+    dir_model_folder <- paste0(dir_analysis_edie_model, model_identifier)
+    filepath_log <- paste0(dir_model_folder,  "/model.log")
+    warnings_log <- paste0(dir_model_folder, "/warnings.log")
 
     print("#######################################################")
     print(paste0("Starting for >>>>>>>>>> ", model_identifier))
