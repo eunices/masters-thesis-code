@@ -1,13 +1,13 @@
 
 
-source('2020-08-31-jsa-type-v2-ch2/02-model/init.r')
+source('2020-08-31-jsa-type-v2-ch2/03-evaluate/init.r')
 
 models <- list.dirs(dir_analysis_edie_model, recursive = FALSE, full.names = FALSE)
-models <- models[!grepl("_", models)]
+models <- models[!grepl("_|template", models)]
 
 summary <- data.frame(cbind(
     models,
-    convergence = unlist(lapply(chosen_models, get_sampling_info))
+    convergence = unlist(lapply(models, get_sampling_info))
 ))
 
 file <- paste0(dir_analysis_edie_model, "model-summaries.csv")
