@@ -41,7 +41,7 @@ for (i in 1:len_params) {
 
     model_params <- parse_model_identifier(model_identifier)
 
-    dir_model_folder <- paste0(dir_analysis_edie_model, model_identifier)
+    dir_model_folder <- paste0(dir_analysis_edie_model, model_identifier, "/")
     filepath_log <- paste0(dir_model_folder,  "/model.log")
     warnings_log <- paste0(dir_model_folder, "/warnings.log")
 
@@ -51,10 +51,12 @@ for (i in 1:len_params) {
 
     # Analysis scripts
     tryCatch(
-        withCallingHandlers(analysis(), 
-                            warning = function(w) {
-                                write_to_log(w, warnings_log)
-                            }),
+        withCallingHandlers(
+            analysis(), 
+            warning = function(w) {
+                write_to_log(w, warnings_log)
+            }
+        ),
         error = function(e) {print(paste0("ERROR: ", conditionMessage(e)))}
     ) # Solution from: https://stackoverflow.com/questions/37836392/ 
 }

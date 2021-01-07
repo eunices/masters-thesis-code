@@ -1,4 +1,6 @@
 # Compare LOOAIC between different TE 
+
+# Resources: 
 # https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html
 # https://link.springer.com/article/10.1007/s11222-016-9696-4
 
@@ -14,21 +16,17 @@ chosen_models <- c(
 
 model1 <- chosen_models[1]
 model1_loo <- get_loo(model1)
-
 print(model1_loo)
 
 model2 <- chosen_models[2]
 model2_loo <- get_loo(model2)
-
 print(model2_loo)
 
 model3 <- chosen_models[3]
 model3_loo <- get_loo(model3)
-
 print(model3_loo)
 
 compare <- loo_compare(model1_loo, model2_loo, model3_loo)
-
 print(compare)
 
 

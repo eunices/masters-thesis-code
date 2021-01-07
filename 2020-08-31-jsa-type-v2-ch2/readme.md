@@ -50,8 +50,13 @@ https://discourse.mc-stan.org/t/a-quick-note-what-i-infer-from-p-loo-and-pareto-
 
 ## Typical problems faced
 - The largest R-hat is XXX (more than 1), indicating chains have not mixed.
+Try: running for more iterations
+
 - Bulk Effective Samples Size (ESS) is too low
+Try: running for more iterations
+
 - There were XX divergent transitions after warmup
+Try: increasing adapt delta
 
 [Diagnostics](https://cran.r-project.org/web/packages/bayesplot/vignettes/visual-mcmc-diagnostics.html)
 
