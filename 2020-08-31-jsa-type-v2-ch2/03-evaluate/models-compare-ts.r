@@ -5,7 +5,7 @@ source('2020-08-31-jsa-type-v2-ch2/03-evaluate/init.r')
 
 
 # Inititalize parameters
-model <- c("BGY-E1-C4-I8000-A0.8-T12-F50-V50")
+model <- c("BGY-E1-C4-I20000-A0.99-T12-F50-V50")
 
 dir_model_folder <- paste0(dir_analysis_edie_model, model, "/")
 model_params <- parse_model_identifier(model)
