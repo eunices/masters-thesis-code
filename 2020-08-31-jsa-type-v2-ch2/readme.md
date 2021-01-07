@@ -16,6 +16,7 @@
     qsub -q openmp -o 2020-08-31-jsa-type-v2-ch2/output-1.txt 2020-08-31-jsa-type-v2-ch2/main.sh
 ```
 *usually use serial for short runs
+*can comment out newly-added packages not needed (if not need to install again)
 
 ## Roman's comment on validation: 
 
@@ -43,3 +44,17 @@ https://discourse.mc-stan.org/t/a-quick-note-what-i-infer-from-p-loo-and-pareto-
 [Intro to stan & regression](https://jrnold.github.io/bayesian_notes/introduction-to-stan-and-linear-regression.html)
 [Hierarchical models](https://vasishth.github.io/bayescogsci/book/hierarchical-models-with-stan.html)
 [Divergent iterations](https://dev.to/martinmodrak/taming-divergences-in-stan-models-5762)
+
+
+# Stan diagnostics
+
+## Typical problems faced
+- The largest R-hat is XXX (more than 1), indicating chains have not mixed.
+- Bulk Effective Samples Size (ESS) is too low
+- There were XX divergent transitions after warmup
+
+[Diagnostics](https://cran.r-project.org/web/packages/bayesplot/vignettes/visual-mcmc-diagnostics.html)
+
+
+# Tasks done in 2021
+DONE 07/01/2021 Check that new model code is the same as the old Sedie code
