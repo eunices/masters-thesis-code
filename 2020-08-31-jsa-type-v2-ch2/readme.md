@@ -42,3 +42,4 @@ https://discourse.mc-stan.org/t/a-quick-note-what-i-infer-from-p-loo-and-pareto-
 [Basic stan models](http://avehtari.github.io/BDA_R_demos/demos_rstan/rstan_demo.html)
 [Intro to stan & regression](https://jrnold.github.io/bayesian_notes/introduction-to-stan-and-linear-regression.html)
 [Hierarchical models](https://vasishth.github.io/bayescogsci/book/hierarchical-models-with-stan.html)
+[Divergent iterations](https://dev.to/martinmodrak/taming-divergences-in-stan-models-5762)

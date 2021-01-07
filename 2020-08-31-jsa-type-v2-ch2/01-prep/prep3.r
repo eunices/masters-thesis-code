@@ -4,14 +4,12 @@ print(paste0(Sys.time(), " --- format data for stan"))
 
 # Read dataframes
 
-# unique species (year + author) assigned to biogeographic regions
+# Unique species (year + author) assigned to groups
 input_filepath <- paste0(dir_model_folder, "data.csv")
 data <- fread(input_filepath, na = c(''), encoding = "UTF-8")
-
-# summarised number of publications for each year
+# Summarised number of offset (e.g. publication or author) for each year
 input_filepath <- paste0(dir_model_folder, "offset.csv")
 off <- fread(input_filepath, na = c(''), encoding = "UTF-8")
-
 
 # Count matrix
 
@@ -43,7 +41,6 @@ if(dim(count_mat)[2] <= 2){
 }
 
 
-
 # Offset matrix
 
 # Reshape from long to wide
@@ -69,13 +66,12 @@ if(dim(off_mat)[2] <= 2){
     off_mat <- off_mat[, -1]
 }
 
-# model_params$te == 0 # no taxonomic effort
-# model_params$te == 1 # taxonomic effort, by publications
-
-if(model_params$te == 0){ # no taxonomic effort
+if(model_params$te == 0){
     off_mat[] <- 0 # set offset to zero
 }
 
+# note: model_params$te == 0 # no taxonomic effort
+#       model_params$te == 1 # taxonomic effort, by publications
 
 ########################################
 # OUTPUT
@@ -106,16 +102,11 @@ with(
 )
 
 
-
-
-
 # Modify data for validation
-
 count_mat <- count_mat[1:(dim(count_mat)[1] - model_params$va),]
 off_mat <- off_mat[1:dim(count_mat)[1],]
 
 # Other stan variables
-
 nyear <- nrow(count_mat)
 jgroup <- ncol(count_mat)
 
@@ -141,6 +132,4 @@ with(
         file = output_filepath
     )} 
 )
-
-
 

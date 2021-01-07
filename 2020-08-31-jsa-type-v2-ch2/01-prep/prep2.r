@@ -4,18 +4,13 @@
 source('2020-08-31-jsa-type-v2-ch2/01-prep/init.r')
 print(paste0(Sys.time(), " --- make dataset for offset"))
 
-
-
 # Read data
 input_filepath <- paste0(dir_model_folder, "data.csv")
 data <- read_escaped_data_v2(input_filepath)
 
-
-
 # Count offset
 
 # By publication
-
 if (model_params$te <= 1) {
 
     # Get publications
@@ -69,7 +64,6 @@ if (model_params$te <= 1) {
 }
 
 # By number of PTEs
-
 if (model_params$te == 2) {
     
     # Based on species, get full names of authors
@@ -109,7 +103,6 @@ if (model_params$te == 2) {
     fwrite(n_des, paste0(dir_model_folder, "offset.csv"), na = "")
 
 }
-
 
 # ggplot(n_des) + 
 #     geom_line(aes(x=years, y=N_des)) +

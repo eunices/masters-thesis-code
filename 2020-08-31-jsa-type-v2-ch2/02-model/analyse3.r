@@ -55,36 +55,33 @@ results <- combine_results(sum_y, obs_count, cf2, mapping)
 
 
 ####### Save plots
-
-# Set up facet labels for **all** plots
+# Facet labels for **all** plots
 labels <- as.character(mapping$groupname)
 names(labels) <- mapping$group
 
-# Prepare data for plot 1, 2
+# Plot 1/2 data
 li_df_plot1_2 <- prepare_plot1_2_data(Z) # Z as df
-
 obs <- li_df_plot1_2$obs   # Observations with count/ cumulative, df
 sims <- li_df_plot1_2$sims # Simulations with count/ cumulative, df
 
-# Plot 1 - cumulative_fit.pdf / cumulative counts
+# Plot 1 - cumulative_fit.pdf (cumulative counts)
 save_plot1(sims, obs, labels, dir_model_folder)
 
-# Plot 2 - count_fit.pdf / counts
+# Plot 2 - count_fit.pdf (counts)
 save_plot2(sims, obs, labels, dir_model_folder)
 
-# Prepare data for plot 3
+# Plot 3 data
 li_df_plot3 <- prepare_plot3_data(data, data_raw, group_cf1, group_cf2)
-
 sims <- li_df_plot3$sims         # Simulations for omega, df
-om_mean <- li_df_plot3$om_mean   # Mean based on omega, dt
+om_mean <- li_df_plot3$om_mean   # Mean of omega, dt
 
 # Plot 3 - regression.pdf / counts with regression line
 save_plot3(obs, sims, om_mean, labels, dir_model_folder)
 # note: obs is output from prepare_plot1_2_data
+# note: regression "om_mean" plotted is exp(delta[1] + delta[2] * time)
 
 
 ####### Create results table - part 2 (add on forecasts)
-
 # Summarize forecast results
 forecast_results <- summarize_forecasts(data, data_raw, forecast, obs)
 
