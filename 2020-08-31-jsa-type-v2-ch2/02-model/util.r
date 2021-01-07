@@ -422,7 +422,7 @@ save_plot1 <- function(sims, obs, labels, dir_model_folder) {
 	# Plot #1 
 	#-------------------
 	output = paste0(dir_model_folder, "output/cumulative_fit.pdf")
-	print(paste0("Plotting cumulative_fit.pdf >>>>> ", output))
+	print(paste0("Plotting cumulative_fit.pdf"))
 
 
 	# Plot cumulative counts
@@ -448,7 +448,7 @@ save_plot2 <- function(sims, obs, labels, dir_model_folder) {
 	# Plot #2
 	#-------------------
 	output = paste0(dir_model_folder, "output/count_fit.pdf")
-	print(paste0("Plotting count_fit.pdf >>>>> ", output))
+	print(paste0("Plotting count_fit.pdf"))
 
 	# Using the same data as Plot #1
 	# Plot per year counts
@@ -532,7 +532,7 @@ save_plot3 <- function(obs, sims, om_mean, labels, dir_model_folder) {
 	#-------------------
 
 	output = paste0(dir_model_folder, "output/regression.pdf")
-	print(paste0("Plotting regression.pdf >>>>> ", output))
+	print(paste0("Plotting regression.pdf "))
 
 	# Plot long-term trends
 	P <- ggplot() +
