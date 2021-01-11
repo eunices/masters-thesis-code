@@ -42,7 +42,7 @@ posterior_forecast(data, 5, fit)
 
 
 # Predict for 5 (and repeat for 10, 15, 20, 25)
-n_samples <- 100
+n_samples <- 1000
 
 dfs <- lapply(seq(5, model_params$va, 5), function(ptime) {
 
@@ -111,7 +111,7 @@ dfs <- rbindlist(dfs)
 dfs$diff <- abs(dfs$model - dfs$obs)
 dfs$perc <- dfs$diff / dfs$obs
 
-prop <- 1.2 # proportion of MAPE
+prop <- 1 # proportion of MAPE
 
 summary <- dfs[, list(MAPE = mean(perc)), by = c("ptime", "type")]
 summary$MAPE1pt5 <- summary$MAPE * prop
@@ -142,12 +142,12 @@ p1 <- ggplot(summary, aes(x = ptime, y = summary$MAPEplt, fill = type)) +
 p1
 
 # Boxplot
-p2 <- ggplot(summary, aes(x = as.character(ptime), y = MAPE, fill = type)) +
-    geom_boxplot() + theme +
-    ylab("MAPE (%)\n") + xlab("\nPrediction duration") +
-    scale_fill_manual(
-        values = c('#999999','#E69F00'),
-        name = "Type"
-    )
+# p2 <- ggplot(summary, aes(x = as.character(ptime), y = MAPE, fill = type)) +
+#     geom_boxplot() + theme +
+#     ylab("MAPE (%)\n") + xlab("\nPrediction duration") +
+#     scale_fill_manual(
+#         values = c('#999999','#E69F00'),
+#         name = "Type"
+#     )
 
-p2
+# p2
