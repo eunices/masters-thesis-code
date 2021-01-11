@@ -9,7 +9,11 @@ print(paste0(Sys.time(), " --- Visualising results"))
 ####### Load data
 
 # Original data
-data_raw <- read.csv(paste0(dir_model_folder, "data.csv"), na.strings=c("")) 
+data_raw <- read.csv(
+    paste0(dir_model_folder, "data.csv"), 
+    na.strings=c(""),
+    stringsAsFactor = TRUE
+) 
 
 # R data
 data <- read_rdump(paste0(dir_model_folder, "count_info.data.R")) 

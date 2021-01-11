@@ -37,13 +37,25 @@ list_to_df <- function(x, i) {
     x
 }
 
+get_model_dir <- function(chosen_model) {
+    paste0(dir_analysis_edie_model, chosen_model, "/")
+}
 
 get_sampling_info <- function(chosen_model) {
-    model_params <- parse_model_identifier(chosen_model)
-    dir_model_folder <- initialize_model_params(model_params)[1]
-
-    file <- paste0(dir_model_folder, "output/chain_sampling.txt")
+    dir_model <- get_model_dir(chosen_model)
+    file <- paste0(dir_model, "output/chain_sampling.txt")
     chain_sampling <- readLines(file)
     chain_sampling[1]
-
 }
+
+get_duration_info <- function(chosen_model) {
+    dir_model <- get_model_dir(chosen_model)
+    file <- paste0(dir_model, "model.log")
+    chain_sampling <- readLines(file)
+    str <- "Model time elapsed: "
+    duration <- chain_sampling[grepl(str, chain_sampling)]
+    duration <- duration[length(duration)]
+    gsub(str, "", duration)
+}
+
+

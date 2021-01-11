@@ -1,4 +1,12 @@
-read_escaped_data_v2 = function(filepath, escape=T) {
+get_species_raw_data <- function() {
+    df <- get_df()
+    df <- df[tolower(status) == "valid species"]
+    df <- df[duplicated == FALSE]
+    df
+}
+
+
+read_escaped_data_v2 <- function(filepath, escape=T) {
 
     df <- fread(
         filepath, 

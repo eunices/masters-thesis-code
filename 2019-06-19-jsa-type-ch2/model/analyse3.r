@@ -215,7 +215,7 @@ P <- ggplot() +
     geom_path(data=sims, aes(x=year, y=cml_value, group=sim), 
               col="skyblue2", alpha=0.1) +
     geom_path(data=obs, aes(x=year, y=cml_value)) +
-    facet_wrap(~group, scales="free_y", labeller=as_labeller(labels)) +
+    facet_wrap(~group, scales="fixed", labeller=as_labeller(labels)) +
     ylab("Number of species") + 
     xlab("Year") + theme
 

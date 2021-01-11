@@ -421,7 +421,8 @@ save_plot1 <- function(sims, obs, labels, dir_model_folder) {
 	#-------------------
 	# Plot #1 
 	#-------------------
-	output = paste0(dir_model_folder, "output/cumulative_fit.pdf")
+	output1 = paste0(dir_model_folder, "output/cumulative_fit.pdf")
+	output2 = paste0(dir_model_folder, "output/cumulative_fit.png")
 	print(paste0("Plotting cumulative_fit.pdf"))
 
 
@@ -433,11 +434,13 @@ save_plot1 <- function(sims, obs, labels, dir_model_folder) {
 			col = "skyblue2", alpha = 0.1
 		) +
 		geom_path(data = obs, aes(x = year, y = cml_value)) +
-		facet_wrap(~group, labeller = as_labeller(labels), scales = "free_y") +
-		ylab("Number of species") + 
-		xlab("Year") + theme 
+		facet_wrap(~group, labeller = as_labeller(labels), scales = "fixed") +
+		ylab("Number of species\n") + 
+		xlab("Year") + theme +
+		scale_y_continuous(limits = c(0, 6000))
 
-	ggsave(P, file = output, width = 10, height = 6)
+	ggsave(P, file = output1, width = 10, height = 6)
+	ggsave(P, file = output2, width = 10, height = 6)
 
 }
 
@@ -548,7 +551,6 @@ save_plot3 <- function(obs, sims, om_mean, labels, dir_model_folder) {
 		theme
 
 	ggsave(P, file = output, width = 10, height = 6)
-
 }
 
 

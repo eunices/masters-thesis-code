@@ -5,9 +5,20 @@
 #############
 
 # Model parameters
-model_folder_names <- c("BGY-E1-C4-I20000-A0.9-T12-F25-V0") # sanity check
 
-# model_folder_names <- c(
+# model_folder_names <- c("BGY-E1-C4-I20000-A0.9-T12-F25-V0") # sanity check
+
+model_folder_names <- c( # best models
+    "BGY-E0-C4-I8000-A0.8-T12-F25-V0",
+    "BGY-E1-C4-I20000-A0.9-T12-F25-V0",
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V0",
+
+    "FAM-E0-C4-I8000-A0.8-T12-F25-V0",
+    "FAM-E1-C4-I100000-A0.9-T12-F25-V0-GOOD",
+    "FAM-E2-C4-I8000-A0.8-T12-F25-V0"
+)
+
+# model_folder_names <- c( # models to run
 #     "BGY-E0-C4-I8000-A0.8-T12-F50-V50",
 #     "BGY-E1-C4-I8000-A0.8-T12-F50-V50",
 #     "BGY-E2-C4-I8000-A0.8-T12-F50-V50",
