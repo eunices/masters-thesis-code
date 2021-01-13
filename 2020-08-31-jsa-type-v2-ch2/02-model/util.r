@@ -22,8 +22,15 @@ sample_model_posterior_parameters <- function(model) {
     bet <- apply(outs$beta, 2, function(x) sample(x, 1))
 
     # Regression portion for intercept
-    coef0 <- apply(outs$delta[, , 1], 2, function(x) sample(x, 1))
-    coef1 <- apply(outs$delta[, ,2], 2, function(x) sample(x, 1))
+	if("delta" %in% names(outs)) {
+		coef0 <- apply(outs$delta[, , 1], 2, function(x) sample(x, 1))
+    	coef1 <- apply(outs$delta[, ,2], 2, function(x) sample(x, 1))
+	} else { # alternate name used in original Sedie code
+		coef0 <- apply(outs$coef[, , 1], 2, function(x) sample(x, 1))
+    	coef1 <- apply(outs$coef[, ,2], 2, function(x) sample(x, 1))
+	}
+
+
 
     # Markov
     gam <- apply(outs$gamma, 2, function(x) sample(x, 1))
@@ -329,7 +336,8 @@ extract_delta <- function(fit) {
 	# [posterior sample [1:N samples], 
 	# group number[1:N groups], coefficient[1:2]]
 
-	coef <- rstan::extract(fit, par = "delta")[[1]]
+	name <- ifelse("delta" %in% names(fit), "delta", "coef")
+	coef <- rstan::extract(fit, par = name)[[1]]
 
 	group_cf1 <- apply(coef, 1, function(i) i[, 1]) # intercept
 	group_cf2 <- apply(coef, 1, function(i) i[, 2]) # coef * year

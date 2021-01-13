@@ -1,5 +1,5 @@
 source(paste0(dir_script, "subset.r"))
-source('2020-08-31-jsa-type-v2-ch2/01-prep/prep1/params.r')
+source(paste0(dir_script_ed, '01-prep/prep1/params.r'))
 
 
 assess_latlon <- function(df, filepath_log ) {

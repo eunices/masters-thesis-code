@@ -32,20 +32,6 @@ model_folder_names <- c("BGY-E1-C4-I20000-A0.9-T12-F25-V0") # sanity check
 # )
 
 
-# # Hyperparameters of models where chains could mix
-# model_folder_names <- 
-#   c("BGN-E1-C4-I300000-A0.999-T15",
-#     "BGY-E0-C4-I8000-A0.8-T12",
-#     "BGY-E1-C4-I300000-A0.999-T15",
-#     "FAM-E0-C4-I20000-A0.99-T12")
-
-# # Hyperparameters of models that were "almost there"
-# model_folder_names <- 
-#   c("BGN-E1-C4-I8000-A0.9-T12",
-#     "BMY-E0-C4-I8000-A0.95-T12",
-#     "BNN-E0-C4-I8000-A0.95-T12",
-#     "BNN-E1-C4-I8000-A0.95-T12")
-
 ################################################################################
 ################################################################################
 # model_params        <dataset><ll>-E<te>-C<chains>-I<iter>-A<ad>-T<td>

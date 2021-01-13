@@ -1,4 +1,4 @@
-source('2020-08-31-jsa-type-v2-ch2/01-prep/prep1/util.r')
+source(paste0(dir_script_ed, '/01-prep/prep1/util.r'))
 
 df <- get_species_raw_data()
 
