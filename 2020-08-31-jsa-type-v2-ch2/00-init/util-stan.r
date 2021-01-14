@@ -7,13 +7,15 @@ check_div <- function(fit) {
 
 	print("#### CHECKING DIVERGENCES: ")
 
-	sampler_params <- get_sampler_params(fit, inc_warmup=FALSE)
+	sampler_params <- get_sampler_params(fit, inc_warmup = FALSE)
 	divergent <- do.call(rbind, sampler_params)[,'divergent__']
 	n <- sum(divergent)
 	N <- length(divergent)
 
-	print(sprintf('%s of %s iterations ended with a divergence (%s%%)',
-			      n, N, round(100 * n / N, 2)))
+	print(sprintf(
+		'%s of %s iterations ended with a divergence (%s%%)',
+		n, N, round(100 * n / N, 2)
+	))
 
 	if (n > 0)
 		print('Try running with larger adapt_delta to remove the divergences')
@@ -21,17 +23,19 @@ check_div <- function(fit) {
 
 
 # Check transitions that ended prematurely due to maximum tree depth limit
-check_treedepth <- function(fit, max_depth = 10) {
+check_treedepth <- function(fit, max_depth = 12) {
 
 	print("#### CHECKING TREE DEPTH: ")
 
-	sampler_params <- get_sampler_params(fit, inc_warmup=FALSE)
+	sampler_params <- get_sampler_params(fit, inc_warmup = FALSE)
 	treedepths <- do.call(rbind, sampler_params)[,'treedepth__']
 	n <- length(treedepths[sapply(treedepths, function(x) x == max_depth)])
 	N <- length(treedepths)
 
-	print(sprintf('%s of %s iterations saturated the maximum tree depth of %s (%s%%)',
-				n, N, max_depth, round(100 * n / N, 2)))
+	print(sprintf(
+		'%s of %s iterations saturated the maximum tree depth of %s (%s%%)',
+		n, N, max_depth, round(100 * n / N, 2)
+	))
 				
 	if (n > 0)
 		print('Run again with max_depth set to a larger value to avoid saturation')
@@ -43,7 +47,7 @@ check_energy <- function(fit) {
 
 	print("#### CHECKING E-BFMI: ")
 
-	sampler_params <- get_sampler_params(fit, inc_warmup=FALSE)
+	sampler_params <- get_sampler_params(fit, inc_warmup = FALSE)
 	no_warning <- TRUE
 	for (n in 1:length(sampler_params)) {
 
@@ -79,23 +83,25 @@ check_n_eff <- function(fit) {
 	iter <- dim(rstan::extract(fit)[[1]])[[1]]
 
 	no_warning <- TRUE
-	for (n in 1:N) {
+	for (n in 1:N) { # each param
 
-		ratio <- fit_summary[, 5][n] / iter
+		ratio <- fit_summary[, 5][n] / iter # param n_eff / iterations
 
 		if (ratio < 0.001 & !is.na(ratio)) {
 			
-			print(sprintf('n_eff / iter for parameter %s is %s!',
-						rownames(fit_summary)[n], ratio))
+			print(sprintf(
+				'n_eff / iter for parameter %s is %s!',
+				rownames(fit_summary)[n], ratio
+			))
+
 			no_warning <- FALSE
 
 		}
 		
-		if (is.na(ratio)) {
+		# if (is.na(ratio)) {
+		# 	print(sprintf('Note: Parameter %s is NA', rownames(fit_summary)[n]))
+		# }
 
-			print(sprintf('Note: Parameter %s is NA', rownames(fit_summary)[n]))
-
-		}
 	}
 
 	if (no_warning)
@@ -104,6 +110,7 @@ check_n_eff <- function(fit) {
 		print('  n_eff / iter below 0.001 indicates that the effective sample size has likely been overestimated')
 
 }
+
 
 # Checks the potential scale reduction factors
 check_rhat <- function(fit) {
@@ -118,7 +125,7 @@ check_rhat <- function(fit) {
 
 		rhat <- fit_summary[, 6][n]
 
-		if ((rhat > 1.1 || is.infinite(rhat)) & !is.na(rhat)) {
+		if ((rhat > 1.05 || is.infinite(rhat)) & !is.na(rhat)) {
 
 			print(sprintf('Rhat for parameter %s is %s!',
 						rownames(fit_summary)[n], rhat))
@@ -127,11 +134,11 @@ check_rhat <- function(fit) {
 
 		}
 
-		if (is.nan(rhat)) {
-
-			print(sprintf('Note: Parameter %s is NA', rownames(fit_summary)[n]))
-
-		}
+		# if (is.nan(rhat)) {
+		# 	print(sprintf(
+		# 		'Note: Parameter %s is NA', rownames(fit_summary)[n]
+		# 	))
+		# }
 
 	}
 
@@ -142,11 +149,11 @@ check_rhat <- function(fit) {
 }
 
 
-check_all_diagnostics <- function(fit) {
+check_all_diagnostics <- function(fit, tree_depth = 12) {
 	check_n_eff(fit)
 	check_rhat(fit)
 	check_div(fit)
-	check_treedepth(fit)
+	check_treedepth(fit, tree_depth)
 	check_energy(fit)
 }
 
@@ -167,3 +174,4 @@ partition_div <- function(fit) {
 
 	return(list(div_params, nondiv_params))
 }
+

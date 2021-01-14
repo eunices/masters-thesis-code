@@ -12,6 +12,7 @@ suppressWarnings(library(sf))
 suppressWarnings(library(shinystan))
 suppressWarnings(library(tidyr))
 suppressWarnings(library(plyr))
+suppressWarnings(library(bayesplot))
 
 
 

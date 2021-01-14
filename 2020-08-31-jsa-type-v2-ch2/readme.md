@@ -1,5 +1,11 @@
 # Notes
 
+TODO: 
+- intro: one para
+DONE 14/01/2021 - methods: diagnostics 
+- results/discussion: diagnose halictidae probs / re run model & add text for discussion
+- discussion: hurdle model and bsts
+
 ## Steps to run on HPC for Chapter 2
 
 1. Prepare files by running 01-prep/main.r with model parameters (in `params-02-model.r`) and cut-off date (in `00-init/init.r`).

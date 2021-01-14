@@ -1,42 +1,88 @@
-# This script creates diagnostics for models that have already been run through model.r.
-# adapted from https://betanalpha.github.io/assets/case_studies/rstan_workflow.html
+# This script creates diagnostics for models that have already been run through 
+# model.r.
 
-source('2020-08-31-jsa-type-v2-ch2/02-model/init.r')
+# Resources:
 
-##### Parse model info
+# https://betanalpha.github.io/assets/case_studies/rstan_workflow.html
+# Summary: diagnostic code
 
-chosen_model <- "BGY-E0-C4-I8000-A0.8-T12-F25-V0"
-dir_model_folder <- paste0(dir_analysis_edie_model, chosen_model, "/")
+# E-BMFI:
+# https://betanalpha.github.io/assets/case_studies/pystan_workflow.html
 
-##### Load data
-
-# Original data
-data_raw <- read.csv(paste0(dir_model_folder, "data.csv"), na.strings=c("")) 
-
-# R data
-data <- read_rdump(paste0(dir_model_folder, "count_info.data.R")) # as "data"
-
-# Model
-load(paste0(dir_model_folder, "fit.data"))                        # as "fit"
-
-
-##### Diagnostics
-
-check_all_diagnostics(fit)
-
-# launch_shinystan(fit)
+# Strategies for divergences: 
+# https://dev.to/martinmodrak/taming-divergences-in-stan-models-5762
+# Summary: change priors
 
 # TODO: Check divergent transitions 
 # https://mc-stan.org/users/documentation/case-studies/divergences_and_bias.html
-# https://betanalpha.github.io/assets/case_studies/rstan_workflow.html
+# Summary: 
 
-# TODO: Reparametrize to improve models
+# TODO: Reparametrize to improve models for divergences
 # https://mc-stan.org/docs/2_18/stan-users-guide/reparameterization-section.html
 # https://betanalpha.github.io/assets/case_studies/divergences_and_bias.html
 
 
+source('2020-08-31-jsa-type-v2-ch2/02-model/init.r')
 
-##### Summaries
+#### Get models
+
+models <- list.dirs(dir_analysis_edie_model, recursive = F, full.names = F)
+models <- models[!grepl("_|template|sanity-check", models)]
+
+##### Diagnostics
+
+# HIGH LEVEL DIAGNOSTICS -------------------------------------------------------
+
+# models <- "HAL-E0-C4-I20000-A0.999-T12-F25-V0" # e.g. bad model
+
+# can either run for ALL models in `models` or just choose 1 model to run
+for (i in 1:length(models)) {
+    chosen_model <- models[i]
+
+    dir_model_folder <- paste0(dir_analysis_edie_model, chosen_model, "/")
+    model_params <- parse_model_identifier(chosen_model)
+    
+    print(paste0("Checking for ", i , " -- ", chosen_model))
+
+    ##### Load data
+
+    # Original data
+    data_raw <- read.csv(paste0(dir_model_folder, "data.csv"), na.strings=c("")) 
+
+    # R data
+    data <- read_rdump(paste0(dir_model_folder, "count_info.data.R")) # as "data"
+
+    # Model
+    load(paste0(dir_model_folder, "fit.data"))                        # as "fit"
+
+
+    ##### Diagnostics
+
+    check_all_diagnostics(fit)
+    print("-------------------------------------------------------------------")
+    print("-------------------------------------------------------------------")
+    print("-------------------------------------------------------------------")
+}
+
+
+# SPECIFIC DIAGNOSTICS FOR DIVERGENT ITERATIONS --------------------------------
+
+# Using shinystan
+# launch_shinystan(fit)
+
+# Using rstan
+params <- names(fit)
+params <- params[!grepl("log_lik|lp", params)]
+
+length(params); n <- 1
+pairs(fit, pars=params[n:(n+9)]); n <- n+10
+pairs(fit, pars=params[n:(n+9)]); n <- n+10
+pairs(fit, pars=params[n:(n+9)]); n <- n+10
+pairs(fit, pars=params[n:(n+9)]); n <- n+10
+
+
+
+##### Forecasting 
 obs <- convert_data_to_df(data)
 last_observed_count <- data.table(obs)[
     , list(cml_value = max(cml_value)), by = "group"
