@@ -1,10 +1,18 @@
 # Notes
 
-TODO: 
-- intro: one para
+
+# Tasks done in 2021
+
+DONE 07/01/2021 Check that new model code is the same as the old Sedie code
 DONE 14/01/2021 - methods: diagnostics 
-- results/discussion: diagnose halictidae probs / re run model & add text for discussion
-- discussion: hurdle model and bsts
+TODO Results/discussion: diagnose halictidae probs / re run model & add text for discussion
+TODO Intro: one para
+TODO Discussion: hurdle model and bsts
+
+# If there is time
+
+- Should learn how to simulate data to test if model is a good fit as [here](https://dev.to/martinmodrak/taming-divergences-in-stan-models-5762)
+- Read posterior predictive checks as [here](https://mc-stan.org/docs/2_25/stan-users-guide/simulating-from-the-posterior-predictive-distribution.html)
 
 ## Steps to run on HPC for Chapter 2
 
@@ -44,28 +52,26 @@ https://discourse.mc-stan.org/t/a-quick-note-what-i-infer-from-p-loo-and-pareto-
 
 > The key will be figuring out how to combine them. I couldnt figure it out in 2016, but maybe someone else has. The hard part is figuring out what the Poisson part of the model looks to as the past.
 
+See: https://mc-stan.org/docs/2_20/stan-users-guide/zero-inflated-section.html
+
 # Other stan tutorials
 
 [Basic stan models](http://avehtari.github.io/BDA_R_demos/demos_rstan/rstan_demo.html)
 [Intro to stan & regression](https://jrnold.github.io/bayesian_notes/introduction-to-stan-and-linear-regression.html)
 [Hierarchical models](https://vasishth.github.io/bayescogsci/book/hierarchical-models-with-stan.html)
-[Divergent iterations](https://dev.to/martinmodrak/taming-divergences-in-stan-models-5762)
-
 
 # Stan diagnostics
 
 ## Typical problems faced
-- The largest R-hat is XXX (more than 1), indicating chains have not mixed.
-Try: running for more iterations
+
+- The largest R-hat is XXX (more than 1), indicating chains have not mixed
+* Try: running for more iterations
 
 - Bulk Effective Samples Size (ESS) is too low
-Try: running for more iterations
+* Try: running for more iterations
 
 - There were XX divergent transitions after warmup
-Try: increasing adapt delta
+* Try: increasing adapt delta
 
 [Diagnostics](https://cran.r-project.org/web/packages/bayesplot/vignettes/visual-mcmc-diagnostics.html)
 
-
-# Tasks done in 2021
-DONE 07/01/2021 Check that new model code is the same as the old Sedie code

@@ -10,3 +10,11 @@ theme <- theme_minimal()
 
 options(scipen = 999)
 
+# Colors
+c_light <- c("#DCBCBC")
+c_light_highlight <- c("#C79999")
+c_mid <- c("#B97C7C")
+c_mid_highlight <- c("#A25050")
+c_dark <- c("#8F2727")
+c_dark_highlight <- c("#7C0000")
+

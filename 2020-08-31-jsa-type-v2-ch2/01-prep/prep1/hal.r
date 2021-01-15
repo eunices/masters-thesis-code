@@ -6,9 +6,20 @@ join <- df[, c("idx", "full.name.of.describer", "date", "genus")][
     order(as.numeric(idx))
 ]
 
-halictidae <- c("lasioglossum", "lipotriches", "sphecodes",
-                "patellapis", "halictus", "dufourea", "augochloropsis",
-                "nomia", "augochlora", "neocorynura")
+# Check
+sum <- dim(df[family == "Halictidae"])[1]
+summary <- df[family == "Halictidae", list(
+    N = .N,
+    perc = .N/sum
+    ),
+    by = "genus"][order(-N)][1:10]
+sum(summary$perc)
+
+
+halictidae <- c(
+    "lasioglossum", "lipotriches", "sphecodes", "patellapis", "halictus",
+    "dufourea", "augochloropsis", "nomia", "augochlora", "neocorynura"
+)
 
 join <- join[tolower(genus) %in% halictidae]
 

@@ -5,9 +5,11 @@ df <- get_species_raw_data()
 join <- df[, c("idx", "full.name.of.describer", "date", "genus")][
     order(as.numeric(idx))]
 
-top10 <- c("andrena", "lasioglossum", "megachile", 
-            "bombus", "hylaeus", "nomada", "coelioxys",
-            "anthophora", "colletes", "perdita")
+top10 <- c(
+    "andrena", "lasioglossum", "megachile", 
+    "bombus", "hylaeus", "nomada", "coelioxys",
+    "anthophora", "colletes", "perdita"
+)
 
 join <- join[tolower(genus) %in% top10]
 

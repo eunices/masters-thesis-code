@@ -139,7 +139,7 @@ model {
 	sigma_phi ~ cauchy(0, 1);
 	phi ~ lognormal(mu_phi, sigma_phi);
 
-	// Temporal autocorrelation for t>1
+	# For t>1
 	// Coefficient delta
 	mu[1] ~ normal(0, 5);
 	mu[2] ~ normal(0, 1); 
@@ -151,7 +151,7 @@ model {
 		delta[p] ~ multi_normal(mu, Sigma);
 	}
 
-	// Alpha and beta lags
+	// Temporal autocorrelation for alpha and beta lags
 	for(p in 1:P) {
 		alpha[p] ~ beta(1, 3);
 		beta_unc[p] ~ beta(1, 3);
