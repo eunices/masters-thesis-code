@@ -40,7 +40,9 @@ models <- list.dirs(dir_analysis_edie_model, recursive = F, full.names = F)
 models <- models[!grepl("_|template|sanity-check", models)]
 
 # OR predefine here
-models <- "HAL-E0-C4-I20000-A0.999-T12-F25-V0" # e.g. bad model
+# models <- "HAL-E0-C4-I20000-A0.999-T12-F25-V0" # e.g. bad model
+models <- "BGY-E1-C4-I20000-A0.9-T12-F25-V0"
+models <- "BGY-E2-C4-I8000-A0.8-T12-F25-V0"
 
 ##### Diagnostics
 
@@ -59,6 +61,9 @@ for (i in 1:length(models)) {
 
     # Original data
     data_raw <- read.csv(paste0(dir_model_folder, "data.csv"), na.strings=c("")) 
+
+    # Original data
+    offset <- read.csv(paste0(dir_model_folder, "offset.csv"), na.strings=c("")) 
 
     # R data
     data <- read_rdump(paste0(dir_model_folder, "count_info.data.R")) # as "data"
@@ -130,10 +135,6 @@ pairs(fit, pars=params_n[n:(n+increase-1)]); n <- ifelse(n+increase>=l, l, n+inc
 # Allows forecasting for custom timeframes, 
 # even though data is trained only till 2019 
 
-# Load forecast predictions
-load(paste0(dir_model_folder, "forecast.data")) # as "forecast"
-# Forecast data is was done up to a certain duration only! 
-
 # Convert data to df
 obs <- convert_data_to_df(data)
 
@@ -142,28 +143,57 @@ last_observed_count <- data.table(obs)[
     , list(cml_value = max(cml_value)), by = "group"
 ] 
 
+# Prediction years
+start_year <- 2020
+n_years <- 5
+max_year <- max(data_raw$year)
+diff <- start_year - max_year
+ftime <- ifelse(diff == 1, n_years, n_years + diff - 1)
+
+
+# CREATE NEW FORECASTS
+# Posterior forecasting
+forecast <- mclapply(1:1000, mc.cores = 1, function(ii) {
+	posterior_forecast(
+        data = data, ftime = ftime, model = fit, offset = "constant"
+    )	 
+}) # represent COUNTS not cumulative!
+
+# OR LOAD FORECAST PREDICTIONS
+load(paste0(dir_model_folder, "forecast.data")) # as "forecast"
+# Forecast data is was done up to a certain duration only, and
+# represent COUNTS not cumulative!
+
+
 # Convert forecast to df 
-forsim <- convert_forecast_to_df(data, data_raw, forecast)
+# This differs from "forecast" in "forecast.data" as is CUMULATIVE not count.
+forsim <- convert_forecast_to_df(data, data_raw, forecast) 
 forsim <- data.table(forsim)
 
-# subset for the years required
-current_year <- 2020
-n_years <- 5
-years <- (current_year+1):(current_year + n_years) # not including current
 
-results_forecast <- forsim[index %in% years, 
+# Subset for the years required
+years <- (start_year):(start_year + n_years - 1) # not including current
+forecast_subset <- forsim[index %in% years, ][order(group, sim, index)] 
+
+head(forecast_subset,100)
+
+# Subset only the latest year
+forecast_last_year <- forecast_subset[, 
     list(
         value = max(value), # highest value
         index = max(index)  # for the last year
     ), 
-    by = c("group", "sim")][,
-            list(
-                fore_mu = round(mean(value), 0),
-                fore_lower = round(quantile(value, 0.1), 0) ,
-                fore_upper = round(quantile(value, 0.9), 0)
-            ),
-            by = "group"
-    ]
+    by = c("group", "sim")]
+
+# Summarize results
+summary_forecast <- forecast_subset[,
+    list(
+        fore_mu = round(mean(value), 0),
+        fore_lower = round(quantile(value, 0.1), 0) ,
+        fore_upper = round(quantile(value, 0.9), 0)
+    ),
+    by = "group"
+]
 
 filename <- paste0(
     "output/output_custom-prediction-", 
@@ -174,4 +204,4 @@ filename <- paste0(
 
 output <- paste0(dir_model_folder, filename)
 
-write.csv(results_forecast, file = output, row.names = FALSE)
+write.csv(summary_forecast, file = output, row.names = FALSE)

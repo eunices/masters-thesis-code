@@ -131,7 +131,7 @@ posterior_sim <- function(data, model) {
 }
 
 
-posterior_forecast <- function(data, ftime, model) {
+posterior_forecast <- function(data, ftime, model, offset = "random") {
 
 	#' A sample from posterior parameters for
 	#' predictions of time series
@@ -142,6 +142,11 @@ posterior_forecast <- function(data, ftime, model) {
 	#' i.e. count_info.data.R
 	#' @param ftime Number of years to predict 
 	#' @param model rStan model i.e. fit.data
+	#' @param offset Offset type, either "random", "decrease" or "constant"
+	
+	#' "random" represents the last previous years
+	#' "decrease" represents a 3% decrease per year
+	#' "constant" represents the same as previous years
 
 	# Sample from model posterior
 	mp <- sample_model_posterior_parameters(model)
@@ -158,9 +163,19 @@ posterior_forecast <- function(data, ftime, model) {
 		end <- data$end[g]
 		all_toff <- data$off[g, ][start:end]
 
-		# Generate offset segment by sampling past ftime of offsets
+		# Generate offset segment 
 		len <- length(all_toff)
-		toff <- sample(all_toff[(len-ftime):len], ftime, replace = TRUE)
+		if (offset == "random") {
+			# by sampling past ftime of offsets
+			toff <- sample(all_toff[(len-ftime):len], ftime, replace = TRUE)
+		} else if (offset == "constant") {
+			toff <- rep(all_toff[len], ftime)
+		} else if (offset == "decreasing") {
+			toff <- c(all_toff[len])
+			for(i in 1:ftime) {
+				toff <- c(toff, round(toff[i]*0.03, 0))
+			}
+		}
 
 		# Initialize parameters
 		# & set first time point

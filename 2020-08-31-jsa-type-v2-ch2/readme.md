@@ -4,8 +4,8 @@
 # Tasks done in 2021
 
 DONE 07/01/2021 Check that new model code is the same as the old Sedie code
-DONE 14/01/2021 - methods: diagnostics 
-TODO Results/discussion: diagnose halictidae probs / re run model & add text for discussion
+DONE 14/01/2021 Methods: diagnostics 
+DONE 15/01/2021 /discussion: diagnose halictidae probs / re run model & add text for discussion
 TODO Intro: one para
 TODO Discussion: hurdle model and bsts
 
