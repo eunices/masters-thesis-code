@@ -1,8 +1,7 @@
 print(paste0(Sys.time(), " --- Paragraph on taxonomic effort"))
 
 # Count number of statuses
-df_years <- rbind(df[, c("idx", "status", "date.n")], df2)
-status <- table(df_years$status)
+status <- table(df_rec$status)
 sum(status)
 round(prop.table(status)*100, 1)
 

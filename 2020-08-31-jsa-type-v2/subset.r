@@ -31,18 +31,20 @@ get_dis <- function() {
 }
 
 get_raw_data = function() {
-    file <- paste0(dir_data_raw, basefile, ".csv")
+    file <- paste0(v2_dir_data_raw, v2_basefile, ".csv")
     read_escaped_data_v2(file)
 }
 
 
 get_n_active_describers_by_year = function() {
-    file <- paste0(dir_data_raw, basefile, "-describer-effort.csv")
-    read_escaped_data_v2(file)
+    file <- paste0(v2_dir_data_raw, v2_basefile, "-describer-effort.csv")
+    df <- read_escaped_data_v2(file)
+    df[] <- lapply(df, as.numeric)
+    df
 }
 
 get_describer_network = function() {
-    file <- paste0(dir_data_raw, basefile, "-describer-network.csv")
+    file <- paste0(v2_dir_data_raw, v2_basefile, "-describer-network.csv")
     read_escaped_data_v2(file)
 }
 
@@ -62,6 +64,14 @@ get_lp_biome = function() {
     )
 }
 
+get_lp_pop = function() {
+    folder = "data/2020-05-05-population-growth/"
+    filepath = paste0(folder, "WorldPopulationAnnual12000years_interpolated_HYDEandUNto2015.csv")
+    lp_pop = fread(filepath)
+    names(lp_pop) <- c("year", "pop")
+    lp_pop
+}
+
 # Shapefiles
 
 
@@ -76,3 +86,4 @@ get_shp_biomes = function() {
         'data/geo/0_manual/Ecoregions2017/Ecoregions2017.shp'
     st_read(filepath_input_biomes, quiet=T)
 }
+

@@ -1,5 +1,5 @@
 # Set up
-source('2020-08-31-jsa-type-ch1/init.r')
+source('2020-08-31-jsa-type-v2-ch1/init.r')
 
 # Libraries
 library(zoo)
@@ -11,11 +11,6 @@ library(tseries)
 library(Kendall)
 
 library(segmented)
-
-# Parameters
-theme <- theme_minimal(base_size=7)
-year_end <- 2018
-dir_plot <- "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\_figures\\_ch1\\"
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Fig. 1
