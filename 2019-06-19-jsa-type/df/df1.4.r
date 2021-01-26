@@ -195,7 +195,7 @@ describers_final <- merge(describers_final, describers.res.cty.first,
 
 # Other metrics: count pub/author metrics
 
-# Read ata
+# Read data
 pub <- read_escaped_data(paste0(dir_data_raw, basefile, " pub_1.0-clean.csv"))
 df1 <- read_escaped_data(paste0(dir_data_raw, basefile, " filtered_4.3-clean-coll.csv"))
 df2 <- read_escaped_data(paste0(dir_data_raw, basefile, " oth_4.3-clean-coll.csv"))
@@ -257,7 +257,7 @@ describers_final <- merge(describers_final, authors_ss2,
 
 # Clean last name
 # Read last name data
-ln <- read_escaped_data("lookup/2019-09-16-last-name.csv"))
+ln <- read_escaped_data("lookup/2019-09-16-last-name.csv")
 ln <- ln[, c("full.name.of.describer.n", "last.name", "last.name.no.initials")]
 
 describers_final <- merge(describers_final, ln, by="full.name.of.describer.n", all.x=T, all.y=F)

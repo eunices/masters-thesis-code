@@ -6,10 +6,6 @@
 # Set up
 source('2020-08-31-jsa-type/subset.r')
 
-# Parameters
-theme <- theme_minimal()
-
-
 # TODO: 
 # Where are most of the describers? 
 # How many species in author lifetime? How many species per year?

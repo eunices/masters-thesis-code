@@ -4,12 +4,18 @@
 dir_script <- '2020-08-31-jsa-type-v2/'
 source(paste0(dir_script, "subset.r"))
 
+################################################################################
+
 # Parameters
 year_end <- 2019
 theme <- theme_minimal(base_size=7)
-dir_plot <- "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\_figures\\_ch1\\"
 
-####################################################################################################
+dir_output <- "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\"
+dir_plot <- paste0(dir_output, "_figures\\_ch1\\")
+dir_data_ch1 <- paste0(dir_output, "_data\\_ch1\\")
+
+################################################################################
+
 # Datasets
 
 # Lookup datasets
@@ -21,7 +27,7 @@ df <- get_df()
 df <- df[date <= year_end]
 df$date.decade <- paste0(substr(df$date, 1, 3), "0s")
 
-df_all <- df[status %in% c("Valid species", "Synonym")] # all 
+df_all <- df # all 
 df_rec <- df[status %in% c("Valid species", "Synonym")] # all valid species/syn
 df <- df[status %in% "Valid species"] # all valid species
 
@@ -97,10 +103,12 @@ taxonomic_effort_long <- data.table(
 
 print(paste0("Read df_describers / df_describers_year "))
 df_describers <- get_des()
+df_describers[, 11:48] <- lapply(df_describers[,11:48], as.numeric)
+df_describers$dod.describer <- as.integer(df_describers$dod.describer)
+df_describers$dob.describer <- as.integer(df_describers$dob.describer)
 
 df_describers_template <- data.frame(
-    date.n=integer(), 
-    full.name.of.describer=character()
+    date=integer(), full.name.of.describer=character()
 )
 
 for (i in 1:dim(df_describers)[1]) {
@@ -143,3 +151,5 @@ df_describers_year$date.decade <- paste0(
 )
 
 df_describers_year <- df_describers_year[date <= year_end]
+
+

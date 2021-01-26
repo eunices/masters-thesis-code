@@ -18,15 +18,16 @@ df_des <- read_escaped_data_v2(file)
 ##########################################
 # Part 1: all valid species
 des <- df_des[!is.na(max_corrected), 
-              c("full.name.of.describer", 
-                "min", "max_corrected", "ns_species_per_year_active")
-    ]
+    c(
+        "full.name.of.describer", "min", "max_corrected", 
+        "ns_species_per_year_active"
+    )
+]
 
 # Expand dataset by min and max years
 seq <- mapply(
     function(a, b) seq(a, b), 
-    a = des$min, 
-    b = des$max_corrected
+    a = des$min, b = des$max_corrected
 )
 
 des$years <- seq
@@ -51,23 +52,22 @@ taxonomic_effort1 <- merge(
     by = "years", all.x = TRUE, all.y = FALSE
 )
 
-
-
-
 ##########################################
 # Part 2: Exclude authors with no first author publications at all
 to_exclude <- df_des[spp_N_1st_auth_s == 0]$full.name.of.describer
 
-des <- df_des[!(full.name.of.describer %in% to_exclude) & 
-              !is.na(max_corrected), 
-              c("full.name.of.describer", "min", "max_corrected", 
-              "ns_species_per_year_active")]
+des <- df_des[
+    !(full.name.of.describer %in% to_exclude) & !is.na(max_corrected), 
+    c(
+        "full.name.of.describer", "min", "max_corrected", 
+        "ns_species_per_year_active"
+    )
+]
 
 # Expand dataset by min and max years
 seq <- mapply(
     function(a, b) seq(a, b),
-    a = des$min, 
-    b = des$max_corrected
+    a = des$min, b = des$max_corrected
 )
 
 des$years <- seq
@@ -90,12 +90,15 @@ taxonomic_effort2 <-
 # Part 3: by number of species described
 N_species_thres <- 10
 
-
 # Exclude authors that have no first author publications
-des <- df_des[!(full.name.of.describer %in% to_exclude) & 
-              as.integer(spp_N) <= N_species_thres, 
-              c("full.name.of.describer", "min", "max_corrected",
-                "ns_species_per_year_active", "spp_N")]
+des <- df_des[
+    !(full.name.of.describer %in% to_exclude) & 
+    as.integer(spp_N) <= N_species_thres, 
+    c(
+        "full.name.of.describer", "min", "max_corrected",
+        "ns_species_per_year_active", "spp_N"
+    )
+]
 
 # Reshape data by number of species described
 des <- data.table(dcast(
@@ -127,8 +130,7 @@ des$`10` <- des$`9` + des$`10`
 # Expand data by min/max for each author
 seq <- mapply(
     function(a, b) seq(a, b), 
-    a = des$min, 
-    b = des$max_corrected
+    a = des$min, b = des$max_corrected
 )
 
 des$years <- seq
@@ -151,55 +153,46 @@ taxonomic_effort3 <-
     ), 
     by = years][order(as.numeric(years))]
 
-
-
 # Combine part 1, 2, 3
 taxonomic_effort <- merge(
-    taxonomic_effort1, 
-    taxonomic_effort2, 
-    by = "years", 
-    all.x = TRUE, all.y = FALSE
+    taxonomic_effort1, taxonomic_effort2, 
+    by = "years", all.x = TRUE, all.y = FALSE
 )
 
 taxonomic_effort <- merge(
-    taxonomic_effort,
-    taxonomic_effort3,
-    by = "years", 
-    all.x = TRUE, all.y = FALSE
+    taxonomic_effort, taxonomic_effort3,
+    by = "years", all.x = TRUE, all.y = FALSE
 )
 
 
 ############################
 # Count species
 
-# N species
+# N species per year
 described_species_by_year <- 
     df[status == "Valid species" & 
        duplicated == FALSE, 
        list(N_species_described = length(unique(idx))), 
        by = "date"][, c("date", "N_species_described")]
 
+# Combine data
 taxonomic_effort <- merge(
     taxonomic_effort, described_species_by_year,
     by.x = "years", by.y = "date", 
     all.x = TRUE, all.y = FALSE
 )
 
-
-# N synonyms
+#  N synonyms per year
 described_syn_by_year <- 
     df[status == "Synonyms" & 
        duplicated == FALSE, 
        list(N_synonyms = length(unique(idx))), 
             by = "date"][, c("date", "N_synonyms")]
 
-
-
 # Combine data
 taxonomic_effort <- merge(
     taxonomic_effort, described_syn_by_year,
-    by.x = "years", by.y = "date", 
-    all.x = T, all.y = F
+    by.x = "years", by.y = "date", all.x = T, all.y = F
 )
 
 taxonomic_effort[is.na(taxonomic_effort)] <- 0

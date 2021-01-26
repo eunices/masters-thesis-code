@@ -42,8 +42,10 @@ read_escaped_data_v2 = function(filepath, escape=T) {
         df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
     }
 
-    if("idx" %in% names(df)) {
-        df$idx <- as.integer(df$idx)
+    integers <- c("idx", "date", "dod.describer", "dob.describer")
+    integers <- integers[integers %in% names(df)]
+    if(length(integers) > 0) {
+        df[, c(integers) := lapply(.SD, as.integer), .SDcols = integers]
     }
 
     numerics <- c("lat_n", "lon_n")
@@ -279,6 +281,21 @@ update_data_with_edits <- function(cfile, df, sep = NA) {
     df
 
 }
+
+
+ybreaks = function(lims, breaks) {
+  min = round(lims[1]/breaks, 0)
+  seq(min*breaks, lims[2], breaks)
+}
+
+ybreaks.1 = function(lims) {ybreaks(lims, 0.1)}
+ybreaks1 = function(lims) {ybreaks(lims, 1)}
+ybreaks2 = function(lims) {ybreaks(lims, 2)}
+ybreaks5 = function(lims) {ybreaks(lims, 5)}
+ybreaks10 = function(lims) {ybreaks(lims, 10)}
+ybreaks20 = function(lims) {ybreaks(lims, 20)}
+ybreaks50 = function(lims) {ybreaks(lims, 50)}
+ybreaks100 = function(lims) {ybreaks(lims, 100)}
 
     
 

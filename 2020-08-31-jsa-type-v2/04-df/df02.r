@@ -9,10 +9,11 @@ print(paste0(Sys.time(), " ----- df02.r"))
 file <- paste0(v2_dir_data_raw, v2_basefile, "_7.csv")
 df <- read_escaped_data_v2(file)
 
-df <- df[status %in% c("Synonym", "Valid species") &
-         duplicated == FALSE &
-         date <= cutoff, 
-         c("idx", "date", "status", "full.name.of.describer")]
+df <- df[
+    status %in% c("Synonym", "Valid species") & 
+    duplicated == FALSE & date <= cutoff, 
+    c("idx", "date", "status", "full.name.of.describer")
+]
 
 
 # Create network data ----------------------------------------------------------

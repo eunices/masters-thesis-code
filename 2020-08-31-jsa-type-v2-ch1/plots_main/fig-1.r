@@ -1,35 +1,46 @@
- print(paste0(Sys.time(), " --- Fig. 1, S2"))
+print(paste0(Sys.time(), " --- Fig. 1, S2"))
+
+################################################################################
 
 # Datasets
 
 # Species
-species_per_year <- df[,.(.N), by=.(date.n)][order(date.n)]
-template_year <- data.frame(date.n=min(species_per_year$date.n):max(species_per_year$date.n))
-species_per_year <- merge(template_year, species_per_year, by="date.n", all.x=T, all.y=F)
+species_per_year <- df[,.(.N), by=.(date)][order(date)]
+template_year <- data.frame(date=min(species_per_year$date):max(species_per_year$date))
+species_per_year <- merge(template_year, species_per_year, by="date", all.x=T, all.y=F)
 species_per_year[is.na(species_per_year$N),]$N <- 0
 species_per_year$N_cumsum <- cumsum(species_per_year$N)
 species_per_year$N_roll <- rollmean(species_per_year$N, 10, fill = list(NA, NULL, NA))
 
 
 # Publications
-publications_per_year <- df_publications[,.(.N), by=.(date.n)][order(date.n)]
-rng <- range(publications_per_year$date.n)
-publications_per_year <- 
-    data.table(merge(data.frame(date.n=seq(rng[1], rng[2], 1)), publications_per_year, 
-               by='date.n', all.x=T, all.y=F))
+publications_per_year <- df_publications[,.(.N), by=.(date)][order(date)]
+rng <- range(publications_per_year$date)
+
+publications_per_year <- data.table(merge(
+        data.frame(date=seq(rng[1], rng[2], 1)), publications_per_year, 
+        by='date', all.x=T, all.y=F
+))
+
 publications_per_year[is.na(N)]$N <- 0
-publications_per_year$N_roll <- rollmean(publications_per_year$N, 10, fill = list(NA, NULL, NA))
+
+publications_per_year$N_roll <- rollmean(
+    publications_per_year$N, 10, fill = list(NA, NULL, NA)
+)
 
 # World War I 1914-1919; World War II 1939-1945 
-pts <- data.frame(date.n=as.integer(c(1914, 1919, 
-                                      1939, 1945)))
+pts <- data.frame(date=as.integer(c(1914, 1919, 1939, 1945)))
 
+
+################################################################################
+
+# Unsaved plots
 
 # Species
 
 # Per year
 
-p0 <- ggplot(species_per_year, aes(x=date.n, y=N)) + 
+p0 <- ggplot(species_per_year, aes(x=date, y=N)) + 
     xlab("") + ylab("Number of species") + 
     theme +
     ggtitle("Number of species described by year") +
@@ -54,15 +65,16 @@ p2 <- ggplot(species_per_decade, aes(x=date.decade, y=N)) +
 # These are not saved.
 
 
+################################################################################
 
+# Saved figures
 
-# These are plotted.
 
 # Publications
 
 # Per year
 
-p3 <- ggplot(publications_per_year, aes(x=date.n, y=N)) + 
+p3 <- ggplot(publications_per_year, aes(x=date, y=N)) + 
     xlab("") + ylab("Number of publications\n") + 
     theme +
     # ggtitle("Number of publications by year") +
@@ -108,79 +120,81 @@ ggsave(paste0(dir_plot, 'fig-1b.png'), p8, units="cm", width=16, height=4, dpi=3
 ggsave(paste0(dir_plot, 'fig-1c.png'), p15, units="cm", width=16, height=4, dpi=300)
 
 
-
-
+################################################################################
 
 # Trend analysis
 
-
 # Resources:
 # http://r-statistics.co/Time-Series-Analysis-With-R.html
-
 
 # publications_per_year$N
 # taxonomic_effort$N_real_describers
 # taxonomic_effort$N_weighted_real_describers
 
-
-
+# Create time series data
 
 ts_data_pub <- ts(publications_per_year$N_roll, frequency = 1, start = c(1758))
-ts_data_des <- ts(taxonomic_effort$N_real_describers_roll, frequency = 1, start = c(1758))
-ts_data_des_real <- ts(taxonomic_effort$N_weighted_real_describers_roll, frequency = 1, start = c(1758))
+
+ts_data_des <- ts(
+    taxonomic_effort$N_real_describers_roll, frequency = 1, start = c(1758)
+)
+ts_data_des_real <- ts(
+    taxonomic_effort$N_weighted_real_describers_roll, 
+    frequency = 1, start = c(1758)
+)
+
+# # Time series decomposition
+# ts_data <- ts_data_pub[!is.na(ts_data_pub)]
+
+# # Autocorrelation
+# acf(ts_data)
+# pacf(ts_data)
+
+# # Decomopose
+# ts_decomposed <- decompose(ts_data, type="multiplicative") 
+
+# # Detrend
+# tr_model <- lm(ts_data ~ c(1:length(ts_data)))
+# plot(resid(tr_model), type="l")  
+
+# # De-seasonalize
+# ts_stl <- stl(ts_data, "periodic")  # decompose the TS
+# ts_sa <- seasadj(ts_stl)            # de-seasonalize
 
 
+# # Stationary test
+# adf.test(ts_data)    # p>.05 means not stationery
+# kpss.test(ts_data)   # p>.05 means not stationery
 
-# Time series decomposition
-ts_data <- ts_data_pub
+# # Differencing
+# nsdiffs(ts_data)  # number for seasonal differencing needed
+# ndiffs(ts_data)   # number for differencing
 
-
-
-
-# Autocorrelation
-acf(ts_data)
-pacf(ts_data)
-
-# Decomopose
-ts_decomposed <- decompose(ts_data, type="multiplicative") 
-
-# Detrend
-tr_model <- lm(ts_data ~ c(1:length(ts_data)))
-plot(resid(tr_model), type="l")  
-
-# De-seasonalize
-ts_stl <- stl(ts_data, "periodic")  # decompose the TS
-ts_sa <- seasadj(ts_stl)            # de-seasonalize
+# ts_data_diff <- diff(ts_data, differences= 1)
 
 
+# # Decomposition with stl
+# stl(ts_data)
 
-
-# Stationary test
-adf.test(ts_data)    # p>.05 means not stationery
-kpss.test(ts_data)   # p>.05 means not stationery
-
-# Differencing
-nsdiffs(ts_data)  # number for seasonal differencing needed
-ndiffs(ts_data)   # number for differencing
-
-ts_data_diff <- diff(ts_data, differences= 1)
-
-
-
-# Decomposition with stl
-stl(ts_data)
-
-
-
-
+################################################################################
 
 # Test for trend
 res <- MannKendall(ts_data_pub)
-summary(res)
-res <- MannKendall(ts_data_des)
-summary(res)
-res <- MannKendall(ts_data_des_real)
-summary(res)
+print("--------------------------")
+print("Trend test: publications")
+print(summary(res))
 
-res <- MannKendall(ts_data_diff)
-summary(res)
+res <- MannKendall(ts_data_des)
+print("--------------------------")
+print("Trend test: real describers")
+print(summary(res))
+
+res <- MannKendall(ts_data_des_real)
+print("--------------------------")
+print("Trend test: describers with productivities")
+print(summary(res))
+
+# res <- MannKendall(ts_data_diff)
+# print("--------------------------")
+# print("Trend test: diff of publications")
+# print(summary(res))
