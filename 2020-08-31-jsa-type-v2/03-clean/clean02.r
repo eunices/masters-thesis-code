@@ -99,7 +99,9 @@ if(file.exists(cfile)) {
 
 df_auth <- df[, c("idx", "full.name.of.describer")]
 
-df_auth <- separate_rows(df_auth, full.name.of.describer, sep = "; ")
+df_auth <- data.table(
+    separate_rows(df_auth, full.name.of.describer, sep = "; ")
+)
 
 df_auth <- df_auth[, 
     list(idxes = paste0(idx, collapse = ", "), .N), 
