@@ -263,12 +263,40 @@ cfile <- paste0(v2_dir_data_raw_clean, "clean02-repo-country_edit.csv")
 if(file.exists(cfile)) {
     df_edit <- read_escaped_data_v2(cfile)
 
+    # Move edits and change name
+    # This is a different format from other cleaning scripts!
+
+    df_edit[
+        !is.na(country.of.type.repository.n_short_edit)
+    ]$country.of.type.repository.n_short <- df_edit[
+        !is.na(country.of.type.repository.n_short_edit)
+    ]$country.of.type.repository.n_short_edit
+
+    df_edit[
+        !is.na(type.repository.n_edit)
+    ]$type.repository.n <- df_edit[
+        !is.na(type.repository.n_edit)
+    ]$type.repository.n_edit
+
+    df_edit$country.of.type.repository.n_short_edit <- NULL
+    df_edit$type.repository.n_edit <- NULL
+
+    names(df_edit)[
+        which(names(df_edit) == "country.of.type.repository.n_short")
+    ] <- "country.of.type.repository.n_short_edit"
+
+    names(df_edit)[
+        which(names(df_edit) == "type.repository.n")
+    ] <- "type.repository.n_edit"
+
+
     df_edit <- data.table(separate_rows(df_edit, "idxes", sep = ", "))
     names(df_edit)[which(names(df_edit) == "idxes")] <- "idx"
 
-    df <- replace_edits(df_edit, df) 
-    # using type.repository and country.of.type.repository.n_short
+    df <- replace_edits(df_edit, df)
+    # using type.repository.n and country.of.type.repository.n_short
 }
+
 
 
 # Clean up the long name
@@ -290,8 +318,12 @@ setcolorder(df, c(names(df)[2:length(names(df))], names(df)[1]))
 
 # df$type.repository
 
+# Check
+# df[idx==26776]$type.repository.n 
+
+
 
 # Write data -------------------------------------------------------------------
 
 file <- paste0(v2_dir_data_raw, v2_basefile, "_4.csv")
-fwrite(df, file)
+fwrite(df[order(idx)], file)
