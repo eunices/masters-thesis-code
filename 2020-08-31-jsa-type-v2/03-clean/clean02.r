@@ -239,20 +239,21 @@ df <- merge(df, df_cty.repo, by="idx", all.x=T, all.y=F)
 
 
 # Clean type.repository and country.of.type.repository
+df$type.repository.n <- df$type.repository
 
 df_repo <- df[, 
-    c("idx", "type.repository", "country.of.type.repository.n_short")
+    c("idx", "type.repository.n", "country.of.type.repository.n_short")
 ]
 
-df_repo$type.repository <- gsub("\\[.*?\\]", "", df_repo$type.repository) 
-df_repo <- data.table(separate_rows(df_repo, "type.repository", sep = ";"))
+df_repo$type.repository.n <- gsub("\\[.*?\\]", "", df_repo$type.repository.n) 
+df_repo <- data.table(separate_rows(df_repo, "type.repository.n", sep = ";"))
 df_repo <- df_repo[!duplicated(idx)]
 
 df_repo <- df_repo[,
     list(idxes = paste0(idx, collapse = ", ")),
-    by = c("type.repository", "country.of.type.repository.n_short")
-][order(country.of.type.repository.n_short, type.repository)][, 
-    c("idxes", "country.of.type.repository.n_short", "type.repository")
+    by = c("type.repository.n", "country.of.type.repository.n_short")
+][order(country.of.type.repository.n_short, type.repository.n)][, 
+    c("idxes", "country.of.type.repository.n_short", "type.repository.n")
 ]
 
 cfile <- paste0(v2_dir_data_raw_clean, "clean02-repo-country.csv")
@@ -264,9 +265,9 @@ if(file.exists(cfile)) {
 
     df_edit <- data.table(separate_rows(df_edit, "idxes", sep = ", "))
     names(df_edit)[which(names(df_edit) == "idxes")] <- "idx"
+
     df <- replace_edits(df_edit, df) 
-    # using type.repository (not type.repository.n)
-    # using country.of.type.repository.n_short
+    # using type.repository and country.of.type.repository.n_short
 }
 
 

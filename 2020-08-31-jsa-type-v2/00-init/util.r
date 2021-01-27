@@ -266,12 +266,14 @@ rename_names <- function(df, old_name, new_name) {
     df
 }
 
-update_data_with_edits <- function(cfile, df, sep = NA) {
+update_data_with_edits <- function(cfile, df, sep_by = NA) {
     
     clean_manual <- read_escaped_data_v2(cfile)
 
-    if (!is.na(sep)) {
-        clean_manual <- separate_rows(clean_manual, sep, sep = ", ")
+    if (!is.na(sep_by)) {
+        clean_manual <- data.table(
+            separate_rows(clean_manual, sep_by, sep = ", ")
+        )
     }
 
     clean_manual <- rename_names(clean_manual, "idxes", "idx")

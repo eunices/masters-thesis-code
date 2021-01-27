@@ -153,7 +153,8 @@ df_sp_per_pub <- df[
     by = c(ppcol_n)
 ]
 
-df_sp_per_pub <- separate_rows(df_sp_per_pub, "idxes", sep = ", ")
+df_sp_per_pub <- data.table(separate_rows(df_sp_per_pub, "idxes", sep = ", "))
+df_sp_per_pub$idxes <- as.integer(df_sp_per_pub$idxes)
 
 df_sp_per_pub <- merge(
     df_sp_per_pub, df[, c("idx", "full.name.of.describer")],

@@ -14,25 +14,15 @@ df <- read_escaped_data_v2(file)
 cfile <- paste0(v2_dir_data_raw_clean, "clean04-journal_edit.csv")
 
 if(file.exists(cfile)) {
-
-    df <- update_data_with_edits(cfile, df, "idxes")
-    
     df_j_edit <- read_escaped_data_v2(cfile)
-
     df_j_edit <- df_j_edit[!(journal_edit == "" & is.na(journal_edit))]
-
-    df_j_edit <- separate_rows(df_j_edit, idxes, sep = ", ")
-
+    df_j_edit <- data.table(separate_rows(df_j_edit, idxes, sep = ", "))
     df_j_edit <- rename_names(df_j_edit, "idxes", "idx")
-
     df <- replace_edits(df_j_edit, df)
-
 }
 
 df_j <- df[, c("idx", "journal")]
-
 df_j <- df_j[, list(idxes = paste0(idx, collapse = ", ")), by = "journal"]
-
 df_j <- df_j[order(journal)]
 
 cfile <- paste0(v2_dir_data_raw_clean, "clean04-journal.csv")
@@ -45,11 +35,8 @@ cfile <- paste0(v2_dir_data_raw_clean, "clean04-journal-info_edit.csv")
 if(file.exists(cfile)) df <- update_data_with_edits(cfile, df, "idxes")
 
 df_j <- df[, c("idx", ..jcol)]
-
 df_j <- df_j[, list(idxes = paste0(idx, collapse = ", ")), by = jcol]
-
 df_j <- df_j[order(journal)]
-
 
 cfile <- paste0(v2_dir_data_raw_clean, "clean04-journal-info.csv")
 fwrite(df_j[journal %in% df_j[duplicated(journal)]$journal], cfile) 
@@ -68,7 +55,7 @@ if(file.exists(cfile)) {
         names(df_pubs_edit) := lapply(.SD, function(x) gsub("^'", "", x))
     ] 
 
-    df_pubs_edit <- separate_rows(df_pubs_edit, idxes, sep = ", ")
+    df_pubs_edit <- data.table(separate_rows(df_pubs_edit, idxes, sep = ", "))
 
     df_pubs_edit <- rename_names(df_pubs_edit, "idxes", "idx")
 
@@ -155,13 +142,13 @@ fwrite(dups, cfile)
 # and no semi-colon in author/date (i.e. 1 author or 1 year),
 # use the first as valid as they are likely to be typos
 
-dups_valid <- separate_rows(
+dups_valid <- data.table(separate_rows(
     dups[
         (n_date == 1 | n_author == 1) &
         status %in% c("Valid species; Synonym"), 
         c("idxes")],
     idxes, sep = ", "
-)
+))
 
 cols <- c("idx", "genus", "species", "status")
 dups_valid <- df[idx %in% dups_valid$idxes, ..cols][

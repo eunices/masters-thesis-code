@@ -19,11 +19,11 @@ df <- df[, ..cols]
 # Create distribution dataset --------------------------------------------------
 
 # By country
-df_dist <- separate_rows(df, global.mapper_n, sep = "; ")
-df_dist <- separate_rows(df_dist, continents.mapper_n, sep = "; ")
-df_dist <- separate_rows(df_dist, biogeo_wwf.mapper_n, sep = "; ")
-df_dist <- separate_rows(df_dist, biogeo_ecor2017.mapper_n, sep = "; ")
-df_dist <- separate_rows(df_dist, latitude_type2.mapper_n, sep = "; ")
+df_dist <- data.table(separate_rows(df, global.mapper_n, sep = "; "))
+df_dist <- data.table(separate_rows(df_dist, continents.mapper_n, sep = "; "))
+df_dist <- data.table(separate_rows(df_dist, biogeo_wwf.mapper_n, sep = "; "))
+df_dist <- data.table(separate_rows(df_dist, biogeo_ecor2017.mapper_n, sep = "; "))
+df_dist <- data.table(separate_rows(df_dist, latitude_type2.mapper_n, sep = "; "))
 
 cols <- bcol[bcol != 'idx']
 df_dist <- df_dist[, list(

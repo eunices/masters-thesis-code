@@ -265,7 +265,7 @@ columns <- unique(names(df_ds))
 
 for(c in 2:length(columns)) { # exclude first column
     col <- columns[c] 
-    print(paste0("**********", col))
+    # print(paste0("**********", col))
 
     if (!col %in% c("alive")) {
         for (a in 1:length(authors)) {
@@ -276,7 +276,7 @@ for(c in 2:length(columns)) { # exclude first column
 
             if(is.na(new)) {
                 if(!is.na(old)) {
-                    print(paste0(old, " replaces ", new))
+                    # print(paste0(old, " replaces ", new))
                     df_ds[full.name.of.describer.n == auth,][[col]] <- old
                 }
             }

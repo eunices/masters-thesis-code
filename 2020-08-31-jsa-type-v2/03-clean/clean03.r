@@ -23,7 +23,7 @@ df_map$global.mapper <- gsub(
     perl = TRUE
 )
 
-df_map <- separate_rows(df_map, global.mapper, sep = " ")
+df_map <- data.table(separate_rows(df_map, global.mapper, sep = " "))
 
 df_map <- df_map[!is.na(global.mapper), ]
 
