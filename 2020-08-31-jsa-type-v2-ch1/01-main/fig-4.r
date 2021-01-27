@@ -36,7 +36,7 @@ p5 <- ggplot(species_and_pub_per_year, aes(x=date, y=species_per_publication)) +
     scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
     scale_y_continuous(breaks=ybreaks20, minor_breaks=ybreaks5)
 
-bp_year = 1910; y=4.1
+bp_year = 1909; y=4.1
 # y = taxonomic_effort[which(years==bp_year)]$species_per_real_taxonomist
 p13 <- ggplot(data=taxonomic_effort, aes(x=years, y=species_per_real_taxonomist)) +
     xlab("Year") + ylab("Number of species/ PTE") + 
@@ -102,20 +102,20 @@ ts_data <- ts_data_species_per_tax
 # kpss.test(ts_data)
 # nsdiffs(ts_data)
 
-idx_1910 <- which(species_and_pub_per_year$date == 1910)
+idx_1909 <- which(species_and_pub_per_year$date == 1909)
 
 res <- MannKendall(ts_data_sp_per_pub)
 print("--------------------------")
 print("Trend test: mean species per publication")
 summary(res)
 
-res <- MannKendall(ts_data_species_per_tax[1:idx_1910])
+res <- MannKendall(ts_data_species_per_tax[1:idx_1909])
 print("--------------------------")
 print("Trend test: mean species per describer before breakpoint")
 summary(res)
 
 res <- MannKendall(
-    ts_data_species_per_tax[idx_1910:length(ts_data_species_per_tax)]
+    ts_data_species_per_tax[idx_1909:length(ts_data_species_per_tax)]
 )
 print("--------------------------")
 print("Trend test: mean species per describer after breakpoint")
@@ -129,7 +129,7 @@ summary(res)
 
 plot(taxonomic_effort$years, taxonomic_effort$species_per_real_taxonomist_roll)
 mod <- lm(species_per_real_taxonomist~years, data = taxonomic_effort)
-seg <- segmented(mod, seg.Z = ~ years, psi = list(years=1910))
+seg <- segmented(mod, seg.Z = ~ years, psi = list(years=1909))
 summary(seg)
 seg$psi
 

@@ -106,7 +106,10 @@ ggsave(paste0(dir_plot, 'fig-2b.png'), plot_tax_des_decade, units="cm", width=21
 median_N_spp_per_pub_decade[date.decade != "1750s"]$median_N_spp
 N_spp_per_des_decade[date.decade != "1750s"]$median_N_spp
 
-res <- MannKendall(median_N_spp_per_pub_decade[date.decade != "1750s"]$median_N_spp)
+res <- MannKendall(
+    median_N_spp_per_pub_decade[date.decade != "1750s"]$median_N_spp
+)
+
 print("--------------------------")
 print("Trend test: mean species per publication")
 summary(res)

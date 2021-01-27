@@ -6,11 +6,22 @@ print(paste0(Sys.time(), " --- Fig. 1, S2"))
 
 # Species
 species_per_year <- df[,.(.N), by=.(date)][order(date)]
-template_year <- data.frame(date=min(species_per_year$date):max(species_per_year$date))
-species_per_year <- merge(template_year, species_per_year, by="date", all.x=T, all.y=F)
+
+template_year <- data.frame(
+    date=min(species_per_year$date):max(species_per_year$date)
+)
+
+species_per_year <- merge(
+    template_year, species_per_year, 
+    by="date", all.x=T, all.y=F
+)
+
 species_per_year[is.na(species_per_year$N),]$N <- 0
 species_per_year$N_cumsum <- cumsum(species_per_year$N)
-species_per_year$N_roll <- rollmean(species_per_year$N, 10, fill = list(NA, NULL, NA))
+
+species_per_year$N_roll <- rollmean(
+    species_per_year$N, 10, fill = list(NA, NULL, NA)
+)
 
 
 # Publications
