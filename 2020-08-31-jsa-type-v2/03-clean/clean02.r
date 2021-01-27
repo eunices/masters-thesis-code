@@ -277,12 +277,12 @@ df$country.of.type.repository.n_long <- NULL
 
 df <- merge(
     df, lp_country[ , c("Country", "DL")],
-    by.x = "country.of.type.repository", by.y = "DL",
+    by.x = "country.of.type.repository.n_short", by.y = "DL",
     all.x=T, all.y=F
 )
 
 names(df)[which(names(df) == "Country")] <- "country.of.type.repository.n_long"
-
+setcolorder(df, c(names(df)[2:length(names(df))], names(df)[1]))
 
 # df$country.of.type.repository
 # df$country.of.type.repository.n_long
