@@ -20,9 +20,15 @@ source("2020-08-31-jsa-type-v2-ch1/01-main/fig-2.r")
 source("2020-08-31-jsa-type-v2-ch1/01-main/fig-3.r")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - Fig. 4  Prop species describing <=N species
+# Section - Fig. 4  Breakpoint analysis
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 source("2020-08-31-jsa-type-v2-ch1/01-main/fig-4.r")
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - Fig. 5  Prop species describing <=N species
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+source("2020-08-31-jsa-type-v2-ch1/01-main/fig-5.r")
 
 
 #########################################################################################

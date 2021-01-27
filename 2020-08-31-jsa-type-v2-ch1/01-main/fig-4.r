@@ -130,8 +130,8 @@ summary(res)
 plot(taxonomic_effort$years, taxonomic_effort$species_per_real_taxonomist_roll)
 mod <- lm(species_per_real_taxonomist~years, data = taxonomic_effort)
 seg <- segmented(mod, seg.Z = ~ years, psi = list(years=1909))
-summary(seg)
-seg$psi
+print(summary(seg))
+print(seg$psi)
 
 # https://otexts.com/fpp2/moving-averages.html
 # https://otexts.com/fpp2/stationarity.html

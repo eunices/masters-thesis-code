@@ -51,10 +51,10 @@ for (i in 1:10) {
     results_tau <- c(results_tau, round(as.numeric(res$tau), 2))
 }
 
-paste0(results_tau, collapse = ", ") 
-paste0(results_p, collapse = ", ") 
-which(results_p > 0.05)
-sum(results_p <= 0.05)
+print(paste0(results_tau, collapse = ", "))
+print(paste0(results_p, collapse = ", "))
+print(which(results_p > 0.05))
+print(sum(results_p <= 0.05))
 
 formatstr <- function(string) {
     string <- gsub("N_real_describers.", "", string)
