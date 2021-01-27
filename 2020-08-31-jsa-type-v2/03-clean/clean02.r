@@ -1,4 +1,4 @@
-# Purpose: clean author names
+# Purpose: clean author names / type repository
 
 source('2020-08-31-jsa-type-v2/00-init/main.r')
 print(paste0(Sys.time(), " ----- clean02.r"))
@@ -201,6 +201,91 @@ df_auth$check <- df_auth$check1 | df_auth$check2
 
 cfile <- paste0(v2_dir_data_raw_clean, "clean02-check-short-auth.csv")
 fwrite(df_auth[check == FALSE][order(author)], cfile)
+
+
+# Clean type repository --------------------------------------------------------
+
+# Clean country.of.type.repository
+
+df_cty.repo <- df[, c("idx", "country.of.type.repository")]
+
+df_cty.repo <- separate_rows(
+    df_cty.repo, "country.of.type.repository", sep = ":|or"
+)
+
+df_cty.repo <- data.table(df_cty.repo)[country.of.type.repository != ""]
+df_cty.repo <- df_cty.repo[!duplicated(idx)]
+
+df_cty.repo <- merge(
+    df_cty.repo, lp_country[ , c("Country", "DL")],
+    by.x = "country.of.type.repository", by.y = "DL",
+    all.x=T, all.y=F
+)
+
+df_cty.repo <- df_cty.repo[,
+    c("idx", "country.of.type.repository", "Country")
+]
+
+names(df_cty.repo) <- c(
+    "idx",  "country.of.type.repository.n_short",
+    "country.of.type.repository.n_long"
+)
+
+df_cty.repo <- df_cty.repo[!is.na(country.of.type.repository.n_long)]
+
+df <- merge(df, df_cty.repo, by="idx", all.x=T, all.y=F)
+
+
+# Clean type.repository and country.of.type.repository
+
+df_repo <- df[, 
+    c("idx", "type.repository", "country.of.type.repository.n_short")
+]
+
+df_repo$type.repository <- gsub("\\[.*?\\]", "", df_repo$type.repository) 
+df_repo <- data.table(separate_rows(df_repo, "type.repository", sep = ";"))
+df_repo <- df_repo[!duplicated(idx)]
+
+df_repo <- df_repo[,
+    list(idxes = paste0(idx, collapse = ", ")),
+    by = c("type.repository", "country.of.type.repository.n_short")
+][order(country.of.type.repository.n_short, type.repository)][, 
+    c("idxes", "country.of.type.repository.n_short", "type.repository")
+]
+
+cfile <- paste0(v2_dir_data_raw_clean, "clean02-repo-country.csv")
+fwrite(df_repo, cfile)
+
+cfile <- paste0(v2_dir_data_raw_clean, "clean02-repo-country_edit.csv")
+if(file.exists(cfile)) {
+    df_edit <- read_escaped_data_v2(cfile)
+
+    df_edit <- data.table(separate_rows(df_edit, "idxes", sep = ", "))
+    names(df_edit)[which(names(df_edit) == "idxes")] <- "idx"
+    df <- replace_edits(df_edit, df) 
+    # using type.repository (not type.repository.n)
+    # using country.of.type.repository.n_short
+}
+
+
+# Clean up the long name
+
+df$country.of.type.repository.n_long <- NULL
+
+df <- merge(
+    df, lp_country[ , c("Country", "DL")],
+    by.x = "country.of.type.repository", by.y = "DL",
+    all.x=T, all.y=F
+)
+
+names(df)[which(names(df) == "Country")] <- "country.of.type.repository.n_long"
+
+
+# df$country.of.type.repository
+# df$country.of.type.repository.n_long
+# df$country.of.type.repository.n_short
+
+# df$type.repository
 
 
 # Write data -------------------------------------------------------------------

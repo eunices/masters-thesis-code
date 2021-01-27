@@ -1,4 +1,4 @@
-# Purpose: clean author biodata
+# Purpose: clean author biodata 
 
 source('2020-08-31-jsa-type-v2/00-init/main.r')
 print(paste0(Sys.time(), " ----- clean05.r"))
@@ -313,7 +313,6 @@ c_df_ds <-  df_ds[!complete.cases(df_ds), ]
 
 cfile <- paste0(v2_dir_data_raw_clean, "clean05-auth-biodata.csv")
 fwrite(c_df_ds, cfile)
-
 
 # Write describer data ---------------------------------------------------------
 file <- paste0(v2_dir_data_raw, v2_basefile, "-describer_1.csv")
