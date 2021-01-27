@@ -22,7 +22,7 @@ summary(df_describers$ns_spp_N)
 
 write.csv(
     tax_most_spp[1:10], 
-    paste0(dir_data_ch1, '2019-10-03-tax-1-most-spp.csv'), row.names=F
+    paste0(dir_table_ch1, '2019-10-03-tax-1-most-spp.csv'), row.names=F
 )
 
 # Who had the most number of publications
@@ -37,7 +37,7 @@ tax_most_pub <- tax_most_pub[, c("full.name.of.describer", "n_pubs")]
 
 write.csv(
     tax_most_pub[1:10], 
-    paste0(dir_data_ch1, '2019-10-03-tax-2-highest-pub.csv'), row.names=F
+    paste0(dir_table_ch1, '2019-10-03-tax-2-highest-pub.csv'), row.names=F
 )
 
 # Who had the most synonyms
@@ -59,6 +59,6 @@ df_describers[full.name.of.describer=="Francis Walker"]
 
 write.csv(
     tax_highest_prop_syn[1:10], 
-    paste0(dir_data_ch1, '2019-10-03-tax-3-highest-syn.csv'), row.names=F
+    paste0(dir_table_ch1, '2019-10-03-tax-3-highest-syn.csv'), row.names=F
 )
 

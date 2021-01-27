@@ -4,15 +4,9 @@
 dir_script <- '2020-08-31-jsa-type-v2/'
 source(paste0(dir_script, "subset.r"))
 
-################################################################################
+source('2020-08-31-jsa-type-v2-ch1/libraries.r')
+source('2020-08-31-jsa-type-v2-ch1/params.r')
 
-# Parameters
-year_end <- 2019
-theme <- theme_minimal(base_size=7)
-
-dir_output <- "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\"
-dir_plot <- paste0(dir_output, "_figures\\_ch1\\")
-dir_data_ch1 <- paste0(dir_output, "_data\\_ch1\\")
 
 ################################################################################
 

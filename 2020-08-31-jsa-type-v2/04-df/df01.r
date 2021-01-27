@@ -93,8 +93,10 @@ df_des <- merge(
 
 # Change NA to 0
 columns <- unlist(lapply(df_des, class))
-numeric_cols <- columns[columns=='integer']
-for (col in names(numeric_cols)) df_des[is.na(get(col)), (col) := 0]
+integer_cols <- columns[columns=='integer']
+exclude_columns <- c("dob.describer", "dod.describer", "max")
+integer_cols <- integer_cols[!names(integer_cols) %in% exclude_columns]
+for (col in names(integer_cols)) df_des[is.na(get(col)), (col) := 0]
 
 
 # Making max corrected
@@ -162,6 +164,10 @@ df_sp_per_pub <- unique(data.table(separate_rows(
     df_sp_per_pub, "full.name.of.describer", sep = "; "
 )))
 
+df_sp_per_pub$idxes <- NULL
+
+df_sp_per_pub <- unique(df_sp_per_pub)
+
 author_ss <- df_sp_per_pub[, 
     list(
         spp_per_pub_mean=mean(N),
@@ -227,6 +233,7 @@ authors_ss2 <- merge(
 authors_ss2[is.na(authors_ss2)] <- 0
 
 # Merge info back
+
 
 df_des <- merge(
     df_des, author_ss, 
