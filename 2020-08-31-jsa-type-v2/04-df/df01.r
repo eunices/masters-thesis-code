@@ -131,7 +131,7 @@ df_des$prop_species_as_1st_author_s <- round(
 
 # Proportion of synonyms
 df_des$prop_species_syn <- round(
-    df_des$syn_spp_N / df_des$spp_N, 2
+    df_des$syn_spp_N / (df_des$ns_spp_N + df_des$syn_spp_N), 2
 )
 
 # Note: last part of df1.4 omitted as publication != authored by describer, 

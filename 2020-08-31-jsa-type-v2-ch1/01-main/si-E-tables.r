@@ -43,10 +43,11 @@ write.csv(
 # Who had the most synonyms
 
 check <- df_describers$spp_N >= 10
+df_describers$spp_N_species <- df_describers$ns_spp_N + df_describers$syn_spp_N
 
 cols <- c(
     "full.name.of.describer", "prop_species_syn", 
-    "spp_N", "syn_spp_N", "min", "max",
+    "spp_N_species", "syn_spp_N", "min", "max",
     "dob.describer", "dod.describer"
 )
 
