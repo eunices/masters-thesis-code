@@ -32,17 +32,15 @@ format_names = function(vec) {
 read_escaped_data_v2 = function(filepath, escape=T) {
 
     df <- fread(
-        filepath, 
-        integer64 = 'character', 
-        na.strings = c(''), 
-        encoding = 'UTF-8'
+        filepath, integer64 = 'character', 
+        na.strings = c(''), encoding = 'UTF-8'
     )
     
     if(escape) {
         df[, names(df) := lapply(.SD, function(x) gsub('\\"\\"', '\\"', x))] 
     }
 
-    integers <- c("idx", "date", "dod.describer", "dob.describer")
+    integers <- c("idx")
     integers <- integers[integers %in% names(df)]
     if(length(integers) > 0) {
         df[, c(integers) := lapply(.SD, as.integer), .SDcols = integers]

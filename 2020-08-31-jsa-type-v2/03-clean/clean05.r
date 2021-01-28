@@ -287,8 +287,6 @@ for(c in 2:length(columns)) { # exclude first column
 
 }
 
-df_ds[full.name.of.describer == "Francisco La Roche"]
-
 df_ds <- merge(
     df_ds, lp_auth_b[, c("full.name.of.describer.n_v2", "alive")],
     by.x = "full.name.of.describer.n", by.y = "full.name.of.describer.n_v2",
@@ -318,4 +316,6 @@ fwrite(c_df_ds, cfile)
 # Write describer data ---------------------------------------------------------
 file <- paste0(v2_dir_data_raw, v2_basefile, "-describer_1.csv")
 fwrite(df_ds, file)
+
+
 

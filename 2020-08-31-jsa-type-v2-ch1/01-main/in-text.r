@@ -16,3 +16,4 @@ dim(df_describers[spp_N_1st_auth_s>=1])
 
 # Date of birth
 dim(df_describers[spp_N_1st_auth_s>=1 & !is.na(dob.describer)])
+

@@ -84,13 +84,17 @@ des3 <- dcast(
     check_young + check_few.spp.pub + 
     check_few.pub.near.death + check_few.spp ~ date.century, 
 
-    value.var="N", fun=sum
+    value.var="N"
 )
 
-des4 <- merge(des1, des3, by=c(
+des3[is.na(des3)] <- 0
+
+des4 <- merge(
+    des1, des3, by=c(
         "check_young", "check_few.spp.pub", 
         "check_few.pub.near.death", "check_few.spp"
-))
+    )
+)
 
 fwrite(
     des4, paste0(dir_table_ch1, '2019-10-02-taxonomist-one-large-mono.csv'),

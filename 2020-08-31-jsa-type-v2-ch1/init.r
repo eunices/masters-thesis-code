@@ -18,6 +18,7 @@ lp_pop <- get_lp_pop()
 # Other datasets
 print(paste0("Read valid species"))
 df <- get_df()
+df$date <- as.integer(df$date)
 df <- df[date <= year_end]
 df$date.decade <- paste0(substr(df$date, 1, 3), "0s")
 
@@ -27,10 +28,11 @@ df <- df[status %in% "Valid species"] # all valid species
 
 print(paste0("Read df_publications  / df_publications_N"))
 df_publications <- get_pub()
+df_publications$date <- as.integer(df_publications$date)
 df_publications <- df_publications[date <= year_end]
 df_publications$date.decade <- paste0(substr(df_publications$date, 1, 3), "0s")
 
-df_publications_N <- data.table(df_publications %>% separate_rows(idxes, sep=", "))
+df_publications_N <- data.table(separate_rows(df_publications, idxes, sep=", "))
 df_publications_N$idxes <- as.numeric(df_publications_N$idxes)
 
 lp_status <- df_all[, c("idx", "status")]
@@ -39,17 +41,16 @@ df_publications_N$type <-
     paste0("n_", gsub(" ", "_", tolower(df_publications_N$type)))
 
 df_publications_N <- df_publications_N[, list(N_species=.N), 
-    by=c(
-        "date",  "journal", "title", 
-        "volume", "issue", "type"
-)]
+    by=c("date",  "journal", "title", "volume", "issue", "type")]
 
 df_publications_N <- dcast(
-    df_publications_N, 
-    date + journal + title + volume + issue ~ type, 
-    value.var="N_species", 
-    fun.aggregate = sum
+    data = df_publications_N, 
+    formula = date + journal + title + volume + issue ~ type, 
+    value.var = "N_species"
 )
+
+df_publications_N[is.na(n_synonym)]$n_synonym <- 0
+df_publications_N[is.na(n_valid_species)]$n_valid_species <- 0
 
 df_publications_N$n_species <- 
     df_publications_N$n_valid_species + df_publications_N$n_synonym

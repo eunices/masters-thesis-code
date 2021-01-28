@@ -192,7 +192,11 @@ df_sp_per_pub2 <- merge(
 ) # filter only those with dod
 
 # remove those authors without dates
+df_sp_per_pub2$dod.describer <- as.integer(df_sp_per_pub2$dod.describer)
+df_sp_per_pub2$date <- as.integer(df_sp_per_pub2$date)
+
 df_sp_per_pub2 <- df_sp_per_pub2[!is.na(date)] 
+
 
 df_sp_per_pub2$published_years_before_death <- 
     df_sp_per_pub2$dod.describer - df_sp_per_pub2$date
