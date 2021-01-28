@@ -235,7 +235,6 @@ authors_ss2[is.na(authors_ss2)] <- 0
 
 # Merge info back
 
-
 df_des <- merge(
     df_des, author_ss, 
     all.x = T, all.y = F,
@@ -247,6 +246,30 @@ df_des <- merge(
     all.x = T, all.y = F,
     by = "full.name.of.describer"
 )
+
+# First describer 
+
+df_des$residence.country.describer.first <- unlist(lapply(
+    df_des$residence.country.describer, function(x) {
+        strsplit(x, "; ")[[1]][[1]]
+    }
+))
+
+df_des <- merge(
+    df_des, lp_country[, c("DL", "Country")],
+    by.x = "residence.country.describer.first", by.y = "DL",
+    all.x = T, all.y = F
+)
+
+names(df_des)[which(names(df_des) == "Country")] <- 
+    "residence.country.describer.first_long"
+
+df_des[
+    is.na(residence.country.describer.first_long)
+]$residence.country.describer.first_long <- "[unknown]"
+
+df_des[, .N, by="residence.country.describer.first"]
+df_des[, .N, by="residence.country.describer.first_long"]
 
 # Remove those with 0 species dscribed
 

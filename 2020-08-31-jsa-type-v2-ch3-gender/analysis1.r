@@ -5,7 +5,7 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 # Set up
-source('2020-08-31-jsa-type/subset.r')
+source('2020-08-31-jsa-type-v2/subset.r')
 
 # Libraries
 library(dplyr)

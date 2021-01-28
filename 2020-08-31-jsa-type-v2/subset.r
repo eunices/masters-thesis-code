@@ -22,7 +22,7 @@ get_pub <- function() {
 get_des <- function() {
     file <- paste0(v2_dir_data_raw, v2_basefile, "-describer_2.csv")
     df <- read_escaped_data_v2(file)
-    df[,11:37] <- lapply(df[,11:37], as.numeric)
+    df[, 12:49] <- lapply(df[,12:49], as.numeric)
     df
 }
 

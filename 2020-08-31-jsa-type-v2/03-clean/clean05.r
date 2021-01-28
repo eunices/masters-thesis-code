@@ -287,6 +287,7 @@ for(c in 2:length(columns)) { # exclude first column
 
 }
 
+df_ds[full.name.of.describer == "Francisco La Roche"]
 
 df_ds <- merge(
     df_ds, lp_auth_b[, c("full.name.of.describer.n_v2", "alive")],

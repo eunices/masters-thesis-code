@@ -26,20 +26,20 @@ v2_dir_data_raw_tmp <- paste0(v2_dir_data_raw, "tmp/")
 
 
 # Script folder
-v2_dir_script <- paste0(v2_dir_ref, '/')
-v2_dir_shiny <- paste0(v2_dir_ref, '-shiny/')
-v2_dir_ch1 <- paste0(v2_dir_ref, '-ch1/')
-v2_dir_ch2 <- paste0(v2_dir_ref, '-ch2/')
-v2_dir_ch3a <- paste0(v2_dir_ref, '-ch3-coauth/')
-v2_dir_ch3b <- paste0(v2_dir_ref, '-ch3-flow/')
-v2_dir_ch3c <- paste0(v2_dir_ref, '-ch3-gender/')
+v2_dir_ref_str <- gsub("/", "", v2_dir_ref)
+v2_dir_shiny <- paste0(v2_dir_ref_str, '-shiny/')
+v2_dir_ch1 <- paste0(v2_dir_ref_str, '-ch1/')
+v2_dir_ch2 <- paste0(v2_dir_ref_str, '-ch2/')
+v2_dir_ch3a <- paste0(v2_dir_ref_str, '-ch3-coauth/')
+v2_dir_ch3b <- paste0(v2_dir_ref_str, '-ch3-flow/')
+v2_dir_ch3c <- paste0(v2_dir_ref_str, '-ch3-gender/')
 
 
 
 # Other 
 source('keys.R')
-source(paste0(v2_dir_script, '00-init/util.r'))
-source(paste0(v2_dir_script, '00-init/libraries.r'))
+source(paste0(v2_dir_ref, '00-init/util.r'))
+source(paste0(v2_dir_ref, '00-init/libraries.r'))
 
 # Initialize google api for geocoding
 register_google(key = geocode_api)
@@ -50,7 +50,9 @@ data_dirs <- c(
     v2_dir_data_ch2, v2_dir_data_ch3_coauth, v2_dir_data_ch3_flow, 
     v2_dir_data_ch3_gender,
     v2_dir_data_raw, v2_dir_data_raw_raw, v2_dir_data_raw_clean,
-    v2_dir_data_raw_check, v2_dir_data_raw_tmp
+    v2_dir_data_raw_check, v2_dir_data_raw_tmp, 
+    
+    v2_dir_shiny
 )
 
 lapply(data_dirs, function(folder) {
