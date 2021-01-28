@@ -74,6 +74,20 @@ get_lp_pop = function() {
     lp_pop
 }
 
+get_lp_col = function() {
+    folder = "data/2019-10-30-colonial-history/"
+    filepath = paste0(folder, "coldata110_edit.csv")
+    lp_col = fread(filepath)
+    lp_col
+}
+
+get_lp_adj_countries = function() {
+    folder = "data/lookup/"
+    filepath = paste0(folder, '2019-11-01-country-adjacent_edit.csv')
+    lp_adj_countries = fread(filepath,  encoding="UTF-8") 
+    lp_adj_countries
+}
+
 # Shapefiles
 
 
