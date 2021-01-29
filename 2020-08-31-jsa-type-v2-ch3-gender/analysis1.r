@@ -48,7 +48,7 @@ ts_prop_f <- dat[, list(
 ), by = "date.n"]
 
 ts_prop_f$prop <- ts_prop_f$nF/ ( ts_prop_f$nF + ts_prop_f$nM )
-ggplot(ts_prop_f, aes(x=date.n, y=prop)) + geom_line() + theme
+# ggplot(ts_prop_f, aes(x=date.n, y=prop)) + geom_line() + theme
 
 # By taxonomist
 ts_prop_f_tax <- auth_years[, list(
@@ -57,7 +57,7 @@ ts_prop_f_tax <- auth_years[, list(
 ), by = "years"]
 
 ts_prop_f_tax$prop <- ts_prop_f_tax$nF/ ( ts_prop_f_tax$nF + ts_prop_f_tax$nM )
-ggplot(ts_prop_f_tax, aes(x=years, y=prop)) + geom_line() + theme
+# ggplot(ts_prop_f_tax, aes(x=years, y=prop)) + geom_line() + theme
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
