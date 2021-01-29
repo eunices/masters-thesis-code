@@ -33,8 +33,8 @@ table(auth[describer.gender!="U"]$describer.gender)
 prop.table(table(auth[describer.gender!="U"]$describer.gender))
 
 # Earliest date
-min_female <- min(dat[describer.gender=="F" ]$date)
-dat[describer.gender=="F" & date== min_female]
+min_yr_female <- min(dat[describer.gender=="F" ]$date.n)
+dat[describer.gender=="F" & date.n== min_yr_female]
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
