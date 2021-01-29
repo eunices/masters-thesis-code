@@ -7,6 +7,8 @@
 # Set up
 source('2020-08-31-jsa-type-v2/subset.r')
 source('2020-08-31-jsa-type-v2-ch3-gender/analysis1/libraries.r') 
+source('2020-08-31-jsa-type-v2-ch3-gender/analysis1/params.r') 
+
 
 # Scripts
 
@@ -14,43 +16,68 @@ source('2020-08-31-jsa-type-v2-ch3-gender/analysis1/libraries.r')
 # source('2020-08-31-jsa-type-v2-ch3-gender/analysis1/data-un.r') 
 
 # read local/ bee data
-source('2020-08-31-jsa-type-v2-ch3-gender/analysis1/model.r') 
-
-dir_data_subf1 = paste0(dir_data_ch3_gender, "time-series-spp/")
-dir_data_subf2 = paste0(dir_data_ch3_gender, "time-series-tax/")
-
-if(!dir.exists(dir_data_ch3_gender)) dir.create(dir_data_ch3_gender)
-if(!dir.exists(dir_data_subf1)) dir.create(dir_data_subf1)
-if(!dir.exists(dir_data_subf2)) dir.create(dir_data_subf2)
+source('2020-08-31-jsa-type-v2-ch3-gender/analysis1/data-model.r') 
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - gender rep - in text fig
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- gender rep - in text fig"))
 
 # % of M, F, U
 names(auth_full)
-table(auth_full$describer.gender.n)
-prop.table(table(auth_full$describer.gender.n))
-dim(auth[describer.gender.n!="U"])
-table(auth[describer.gender.n!="U"]$describer.gender.n)
-prop.table(table(auth[describer.gender.n!="U"]$describer.gender.n))
+table(auth_full$describer.gender)
+prop.table(table(auth_full$describer.gender))
+
+dim(auth[describer.gender!="U"])
+table(auth[describer.gender!="U"]$describer.gender)
+prop.table(table(auth[describer.gender!="U"]$describer.gender))
 
 # Earliest date
-min_female <- min(dat[describer.gender.n=="F" ]$date.n)
-dat[describer.gender.n=="F" & date.n== min_female]
+min_female <- min(dat[describer.gender=="F" ]$date)
+dat[describer.gender=="F" & date== min_female]
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - gender rep time series - visualisation 
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# By n species described
+ts_prop_f <- dat[, list(
+    nF = sum(describer.gender == "F"),
+    nM = sum(describer.gender == "M")
+), by = "date"]
+
+ts_prop_f$prop <- ts_prop_f$nF/ ( ts_prop_f$nF + ts_prop_f$nM )
+ggplot(ts_prop_f, aes(x=date, y=prop)) + geom_line()
+
+# By taxonomist
+ts_prop_f_tax <- auth_years[, list(
+    nF = sum(describer.gender == "F"),
+    nM = sum(describer.gender == "M")
+), by = "years"]
+
+ts_prop_f_tax$prop <- ts_prop_f_tax$nF/ ( ts_prop_f_tax$nF + ts_prop_f_tax$nM )
+ggplot(ts_prop_f_tax, aes(x=years, y=prop)) + geom_line()
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - gender rep - run model for taxonomists
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- gender rep - run model for taxonomists"))
+
+
+
+
+
+
+
+
+
+
 
 
 # Run model
 result <- run_specific_scenario(country="All", position="All", dir_data_subf2, "tax")
-min_year <- min(generate_prop_t(country="All")$date.n)
+min_year <- min(generate_prop_t(country="All")$date)
 result_summary_tax <- result$summary
 
 result_summary_countries_tax <- lapply(countries[1:6], function(country) {
@@ -76,8 +103,8 @@ write.csv(outputs, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- gender rep - in text fig on country"))
 
-prop_tax <- auth[, .N, c("Country", "describer.gender.n")][order(-N)]
-prop_tax <- dcast(prop_tax, Country ~ describer.gender.n, value.var="N")
+prop_tax <- auth[, .N, c("Country", "describer.gender")][order(-N)]
+prop_tax <- dcast(prop_tax, Country ~ describer.gender, value.var="N")
 prop_tax <- prop_tax[!is.na(Country)]; prop_tax[is.na(prop_tax)] <- 0
 prop_tax$N <- prop_tax$F + prop_tax$M; prop_tax$prop_F <- prop_tax$F / prop_tax$N
 prop_tax <- prop_tax[order(-prop_F)]
@@ -90,7 +117,7 @@ len = dim(prop_tax[F+M+U>5])[1]
 prop_tax[F+M+U>5][(len-10):len]
 
 write.csv(
-    prop_tax, paste0(dir_data_ch3_gender, "2019-11-15-prop-taxonomist.csv"), 
+    prop_tax, paste0(v2_dir_data_ch3_gender, "2019-11-15-prop-taxonomist.csv"), 
     row.names=F, fileEncoding='UTF-8'
 )
 
@@ -106,7 +133,7 @@ write.csv(
 # prop_t_countries$prop_F <- prop_t_countries$F / prop_t_countries$N
 # prop_t_countries <- prop_t_countries[order(-prop_F)]
 
-# write.csv(prop_t_countries, paste0(dir_data_ch3_gender, "2019-11-15-prop-taxonomist-spp.csv"), 
+# write.csv(prop_t_countries, paste0(v2_dir_data_ch3_gender, "2019-11-15-prop-taxonomist-spp.csv"), 
 #           row.names=F, fileEncoding='UTF-8')
 
 
@@ -127,9 +154,9 @@ print(paste0(Sys.time(), " --- gender rep - run model for species"))
 
 result_summary_all_prop <- generate_prop_t(country="All")
 
-spp_sum <- dat[, .N, by=c("describer.gender.n")]
-spp_sum[describer.gender.n=="U"]$N/sum(spp_sum$N)*100
-spp_sum <- spp_sum[describer.gender.n != "U"]; sum(spp_sum$N)
+spp_sum <- dat[, .N, by=c("describer.gender")]
+spp_sum[describer.gender=="U"]$N/sum(spp_sum$N)*100
+spp_sum <- spp_sum[describer.gender != "U"]; sum(spp_sum$N)
 prop.table(spp_sum[,2])*100
 
 result_summary_all <- lapply(

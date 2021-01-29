@@ -12,11 +12,7 @@ print(paste0(Sys.time(), " --- load data"))
 
 source('2020-08-31-jsa-type-v2/subset.r')
 source('2020-08-31-jsa-type-v2-ch3-gender/analysis1/fun.r')
-
-
-# Read/initialize all data/variables
-CURRENT_YEAR <- 2019
-theme <- theme_minimal()
+source('2020-08-31-jsa-type-v2-ch3-gender/analysis1/params.r')
 
 # Plausible UN data
 un_path <- "data/2019-11-11-un-indicators/"
