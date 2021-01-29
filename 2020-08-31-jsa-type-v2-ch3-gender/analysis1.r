@@ -48,7 +48,7 @@ ts_prop_f <- dat[, list(
 ), by = "date"]
 
 ts_prop_f$prop <- ts_prop_f$nF/ ( ts_prop_f$nF + ts_prop_f$nM )
-ggplot(ts_prop_f, aes(x=date, y=prop)) + geom_line()
+ggplot(ts_prop_f, aes(x=date, y=prop)) + geom_line() + theme
 
 # By taxonomist
 ts_prop_f_tax <- auth_years[, list(
@@ -57,45 +57,50 @@ ts_prop_f_tax <- auth_years[, list(
 ), by = "years"]
 
 ts_prop_f_tax$prop <- ts_prop_f_tax$nF/ ( ts_prop_f_tax$nF + ts_prop_f_tax$nM )
-ggplot(ts_prop_f_tax, aes(x=years, y=prop)) + geom_line()
+ggplot(ts_prop_f_tax, aes(x=years, y=prop)) + geom_line() + theme
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - gender rep - run model for taxonomists
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-
-
-
-
-
-
-
-
-
-
-
 # Run model
-result <- run_specific_scenario(country="All", position="All", dir_data_subf2, "tax")
+result <- run_specific_scenario(
+    country="All", position="All", dir_data_subf2, "tax"
+)
+
 min_year <- min(generate_prop_t(country="All")$date)
 result_summary_tax <- result$summary
 
 result_summary_countries_tax <- lapply(countries[1:6], function(country) {
-    run_specific_scenario(country=country, position="All", dir_data_subf2, "tax")$summary
+
+    run_specific_scenario(
+        country=country, position="All", dir_data_subf2, "tax"
+    )$summary
+
 })
 
 outputs <- rbindlist(c(list(result_summary_tax), result_summary_countries_tax))
 write.csv(outputs, paste0(dir_data_subf2, "_outputs.csv"), row.names=F)
 
+
+
+
+# # Testing
+#
+# # Test generating prop tables
 # generate_prop_t_tax("Germany")
 # generate_prop_t_tax("United States of America")
-
+#
 # # Test plotting
-# source('2020-08-31-jsa-type-v2-ch3-gender/analysis1/model.r') # read local/ bee data
+# source('2020-08-31-jsa-type-v2-ch3-gender/analysis1/model.r')
 # prop_t <- generate_prop_t_tax(country="Brazil")
 # output <- main(country = "Brazil", position = "All", prop_t)
-# save_graph(dir_data_subf2, country="Brazil", position="All", prop_t, 
-#            output$summary$r, output$summary$c, output$summary$years.to.parity, "tax")
+#
+# save_graph(
+#     dir_data_subf2, country="Brazil", position="All", prop_t, 
+#     output$summary$r, output$summary$c, output$summary$years.to.parity, "tax"
+# )
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -105,8 +110,12 @@ print(paste0(Sys.time(), " --- gender rep - in text fig on country"))
 
 prop_tax <- auth[, .N, c("Country", "describer.gender")][order(-N)]
 prop_tax <- dcast(prop_tax, Country ~ describer.gender, value.var="N")
-prop_tax <- prop_tax[!is.na(Country)]; prop_tax[is.na(prop_tax)] <- 0
-prop_tax$N <- prop_tax$F + prop_tax$M; prop_tax$prop_F <- prop_tax$F / prop_tax$N
+
+prop_tax <- prop_tax[!is.na(Country)]
+prop_tax[is.na(prop_tax)] <- 0
+
+prop_tax$N <- prop_tax$F + prop_tax$M
+prop_tax$prop_F <- prop_tax$F / prop_tax$N
 prop_tax <- prop_tax[order(-prop_F)]
 
 median(prop_tax[prop_F>0]$F)
@@ -121,10 +130,14 @@ write.csv(
     row.names=F, fileEncoding='UTF-8'
 )
 
-# Proportion of papers (! NOT USED)
+# # Proportion of papers (! NOT USED)
 # prop_t_countries <- rbindlist(lapply(countries, function(country) {
 #     prop <- generate_prop_t(country=country, position="All")
-#     if (!is.null(prop)) data.frame(Country=country, M=sum(prop$nMales), F=sum(prop$nFemales))
+
+#     if (!is.null(prop)) {
+#         data.frame(Country=country, M=sum(prop$nMales), F=sum(prop$nFemales))
+#     }
+
 # }))
 
 # prop_t_countries <- prop_t_countries[!is.na(Country)]
@@ -133,8 +146,11 @@ write.csv(
 # prop_t_countries$prop_F <- prop_t_countries$F / prop_t_countries$N
 # prop_t_countries <- prop_t_countries[order(-prop_F)]
 
-# write.csv(prop_t_countries, paste0(v2_dir_data_ch3_gender, "2019-11-15-prop-taxonomist-spp.csv"), 
-#           row.names=F, fileEncoding='UTF-8')
+# write.csv(
+#     prop_t_countries, 
+#     paste0(v2_dir_data_ch3_gender, "2019-11-15-prop-taxonomist-spp.csv"), 
+#     row.names=F, fileEncoding='UTF-8'
+# )
 
 
 
@@ -172,10 +188,15 @@ result_summary_all <- lapply(
 # By Country
 #################
 
-# countries <- c("United States of America", "Germany", "Brazil", "France", "United Kingdom", "Japan")
+# countries <- c(
+#     "United States of America", "Germany", "Brazil",
+#     "France", "United Kingdom", "Japan"
+# )
 
 result_summary_countries <- lapply(countries[1:6], function(country) {
-    run_specific_scenario(country=country, position="All", dir_data_subf1)$summary
+    run_specific_scenario(
+        country=country, position="All", dir_data_subf1
+    )$summary
 })
 # usa, germany, brazil, france, united kingdom, japan [top 6 countries]
 # as case studies; they have more than 30 taxonomists across the years
@@ -200,7 +221,12 @@ print(paste0(Sys.time(), " --- gender rep - if UN factors affect gender proporti
 # Modelling taxonomists
 prop_tax_mdf <- merge(prop_tax, df_r, by="Country", all.x=T, all.y=F)
 prop_tax_mdf <- prop_tax_mdf[N!=0]   
-prop_tax_mdf$F_yn <- factor(ifelse(prop_tax_mdf$F > 0, "Y", "N"), levels=c("N", "Y"))
+
+prop_tax_mdf$F_yn <- factor(
+    ifelse(prop_tax_mdf$F > 0, "Y", "N"), 
+    levels=c("N", "Y")
+)
+
 names(prop_tax_mdf)
 
 prop_tax_mdf[is.na(country)]

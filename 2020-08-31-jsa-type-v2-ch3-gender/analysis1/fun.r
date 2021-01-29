@@ -15,25 +15,28 @@ generate_prop_t <- function(country="All", position="All") {
 
     # Filtering for position: "first"
     if (position == "First") {
-        dat <- dat[idxes_author.order %in% c("1")]
+        dat <- dat[auth.i %in% c("1")]
     } else if (position == "Last") {
-        dat <- dat[idxes_author.order %in% c("L")]
+        dat <- dat[auth.i %in% c("L")]
     } else if (position == "First_s") {
-        dat <- dat[idxes_author.order %in% c("1", "S")]
+        dat <- dat[auth.i %in% c("1", "S")]
     } else if (position == "Last_s") {
-        dat <- dat[idxes_author.order %in% c("S", "L")]
+        dat <- dat[auth.i %in% c("S", "L")]
     }
 
     # count N by gender
-    prop <- dat[, .N, by=c("date.n", "describer.gender.n")]
-    prop <- dcast(prop, date.n ~ describer.gender.n, value.var="N")
+    prop <- dat[, .N, by=c("date.n", "describer.gender")]
+    prop <- dcast(prop, date.n ~ describer.gender, value.var="N")
+
     if(!"F" %in% names(prop)) prop$F <- 0
     if(!"M" %in% names(prop)) prop$M <- 0
-    prop$date.n <- as.numeric(prop$date.n)
 
     # ensure no blank years
-    prop <- merge(prop, data.frame(date.n=min(prop$date.n):max(prop$date.n)),
-                  all.x=T, all.y=T, by="date.n")
+    prop <- merge(
+        prop, data.frame(date.n=min(prop$date.n):max(prop$date.n)),
+        all.x=T, all.y=T, by="date.n"
+    )
+
     prop[is.na(prop$F)]$F <- 0
     prop[is.na(prop$M)]$M <- 0
     prop[is.na(prop$U)]$U <- 0
@@ -47,7 +50,6 @@ generate_prop_t <- function(country="All", position="All") {
         first_year_female <- min(prop[F>0]$date, na.rm=T)
         prop <- prop[date.n>=first_year_female]
         prop$date <- prop$date.n - first_year_female
-        # prop$date  <- prop$date.n - min(prop$date.n) # no need for at least 1 female
 
         # rename data
         names(prop)[which(names(prop) == 'F')] <- "nFemales"
@@ -81,11 +83,11 @@ generate_prop_t_tax <- function(country="All") {
     
     # Get male female taxonomist ratio
     prop <- auth_years[,
-        list(N = length(full.name.of.describer.n)), 
-        by=c("years", "describer.gender.n")
+        list(N = length(full.name.of.describer)), 
+        by=c("years", "describer.gender")
     ]
     
-    prop <- dcast(prop, years ~ describer.gender.n, value.var="N")
+    prop <- dcast(prop, years ~ describer.gender, value.var="N")
 
     prop <- data.table(merge(
         data.frame(years=min(prop$years):max(prop$years)),
@@ -386,20 +388,31 @@ run_specific_scenario <- function(
 ) {
 
     print("#################################")
-    print(paste0("Running for '", country, "' at position '", position, "' (", type, ")."))
+    print(paste0(
+        "Running for '", country, 
+        "' at position '", position, "' (", type, ")."
+    ))
 
     tryCatch ({
-        if (type=="pub") {        # for publication
+
+        if (type=="pub") { # for publication (species description)
             prop_t  <- generate_prop_t(country=country, position=position)
         } else if (type=="tax") { # for taxonomists
             prop_t <- generate_prop_t_tax(country=country)
         }
+
         if (!is.null(prop_t)) {
             output <- main(country = country, position = position, prop_t)
-            save_graph(dir_output, country=country, position=position, prop_t, 
-                       output$summary$r, output$summary$c, output$summary$years.to.parity, type)
+
+            save_graph(
+                dir_output, country=country, position=position, prop_t, 
+                output$summary$r, output$summary$c, 
+                output$summary$years.to.parity, type
+            )
+
             output
         }
+        
     }, error = function(e) {print(e)})
 }
 

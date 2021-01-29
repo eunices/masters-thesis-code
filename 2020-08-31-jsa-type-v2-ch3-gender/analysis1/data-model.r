@@ -35,9 +35,26 @@ dat <- df[!is.na(full.name.of.describer),
 ]
 
 dat$idx <- as.integer(dat$idx)
-dat$date <- as.integer(dat$date)
+dat$date.n <- as.integer(dat$date)
+dat$date <- NULL
+
 dat <- data.table(separate_rows(dat, full.name.of.describer, sep="; "))
 dat[, auth.i:=seq_len(.N), by=c("idx")]
+dat[, N:=.N, by=c("idx")]
+
+dat$auth.i.n <- as.character(dat$auth.i)
+
+dat[auth.i == N]$auth.i.n <- "L"
+dat[auth.i == N & auth.i == 2]$auth.i.n <- "S"
+
+table(dat$auth.i)
+table(dat$auth.i.n)
+
+dat$auth.i <- NULL
+dat$auth.i <- dat$auth.i.n
+dat$auth.i.n <- NULL
+
+head(dat, 5)
 
 # Author info
 auth_full <- get_des()

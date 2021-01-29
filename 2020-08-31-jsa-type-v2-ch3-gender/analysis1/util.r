@@ -13,12 +13,11 @@ pfunc.deriv <- function(p, r) r*p*(0.5-p)
 find.ll <-function(data, par) {
 
     sample <- dbinom(
-        x=nFemales, size=n, 
-        prob=pfunc(t=date, r=par[1], c=par[2]), log=TRUE
+        x=data$nFemales, size=data$n, 
+        prob=pfunc(t=data$date, r=par[1], c=par[2]), log=TRUE
     )
 
-    suppressWarnings(with(
-        data, -1 * sum(sample)))
+    -1 * sum(sample)
 }
 
 # Internal function to perform 1D optimisation and find 
