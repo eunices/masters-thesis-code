@@ -25,9 +25,11 @@ indicators <- list(`24106` = "schl_f", # GDI: Mean years of schooling (females a
                    `137906`= "gdip_a"  # GDI
 )
 query_indicator <- do.call(paste, c(as.list(names(indicators)), sep = ","))
+
+url <- "http://ec2-54-174-131-205.compute-1.amazonaws.com/API/HDRO_API.php/"
+base <- "indicator_id="
 path <- paste0(
-    "http://ec2-54-174-131-205.compute-1.amazonaws.com/API/HDRO_API.php/indicator_id=",
-    query_indicator, "/year=1990,2017/structure=cyi")
+    url, base, query_indicator, "/year=1990,2017/structure=cyi")
 
 request <- GET(url = path)
 request$status_code

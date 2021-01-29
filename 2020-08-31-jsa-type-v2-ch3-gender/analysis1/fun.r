@@ -1,5 +1,5 @@
 
-source('2020-08-31-jsa-type-ch3-gender/analysis1/util.r') # util functions
+source('2020-08-31-jsa-type-v2-ch3-gender/analysis1/util.r') # util functions
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - functions
