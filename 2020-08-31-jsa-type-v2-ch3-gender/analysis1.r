@@ -45,10 +45,10 @@ dat[describer.gender=="F" & date== min_female]
 ts_prop_f <- dat[, list(
     nF = sum(describer.gender == "F"),
     nM = sum(describer.gender == "M")
-), by = "date"]
+), by = "date.n"]
 
 ts_prop_f$prop <- ts_prop_f$nF/ ( ts_prop_f$nF + ts_prop_f$nM )
-ggplot(ts_prop_f, aes(x=date, y=prop)) + geom_line() + theme
+ggplot(ts_prop_f, aes(x=date.n, y=prop)) + geom_line() + theme
 
 # By taxonomist
 ts_prop_f_tax <- auth_years[, list(
