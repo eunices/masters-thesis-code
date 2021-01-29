@@ -6,20 +6,15 @@
 
 # Set up
 source('2020-08-31-jsa-type-v2/subset.r')
-
-# Libraries
-library(dplyr)
-library(RSQLite)
-
-library(tidyverse)
-library(httr)
-library(jsonlite)
+source('2020-08-31-jsa-type-ch3-gender/analysis1/libraries.r') 
 
 # Scripts
-source('2020-08-31-jsa-type-ch3-gender/analysis1/util.r') # util functions
-# source('2020-08-31-jsa-type-ch3-gender/analysis1/data-un.r') 
+
 # get data from UN's API and save locally
-source('2020-08-31-jsa-type-ch3-gender/analysis1/model.r') # read local/ bee data
+# source('2020-08-31-jsa-type-ch3-gender/analysis1/data-un.r') 
+
+# read local/ bee data
+source('2020-08-31-jsa-type-ch3-gender/analysis1/model.r') 
 
 dir_data_subf1 = paste0(dir_data_ch3_gender, "time-series-spp/")
 dir_data_subf2 = paste0(dir_data_ch3_gender, "time-series-tax/")
@@ -94,8 +89,10 @@ prop_tax[F+M+U>5][1:10]
 len = dim(prop_tax[F+M+U>5])[1]
 prop_tax[F+M+U>5][(len-10):len]
 
-write.csv(prop_tax, paste0(dir_data_ch3_gender, "2019-11-15-prop-taxonomist.csv"), 
-          row.names=F, fileEncoding='UTF-8')
+write.csv(
+    prop_tax, paste0(dir_data_ch3_gender, "2019-11-15-prop-taxonomist.csv"), 
+    row.names=F, fileEncoding='UTF-8'
+)
 
 # Proportion of papers (! NOT USED)
 # prop_t_countries <- rbindlist(lapply(countries, function(country) {
@@ -135,8 +132,13 @@ spp_sum[describer.gender.n=="U"]$N/sum(spp_sum$N)*100
 spp_sum <- spp_sum[describer.gender.n != "U"]; sum(spp_sum$N)
 prop.table(spp_sum[,2])*100
 
-result_summary_all <- lapply(c("All", "First", "Last", "First_s", "Last_s"), function(pos) {
-    run_specific_scenario(country="All", position=pos, dir_data_subf1)$summary
+result_summary_all <- lapply(
+    c("All", "First", "Last", "First_s", "Last_s"), function(pos) {
+
+        run_specific_scenario(
+            country="All", position=pos, dir_data_subf1
+        )$summary
+
 })
 
 #################
