@@ -97,7 +97,6 @@ dat <- merge(
 # 2:   Abdulaziz S. Alqarni 17222 2012      1                M Saudi Arabia
 # 3:   Abdulaziz S. Alqarni 19165 2012      1                M Saudi Arabia
 
-
 # For taxonomist
 seq <- mapply(function(a, b) {
     seq(a, b)

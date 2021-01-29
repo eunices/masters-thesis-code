@@ -118,10 +118,20 @@ prop_tax$N <- prop_tax$F + prop_tax$M
 prop_tax$prop_F <- prop_tax$F / prop_tax$N
 prop_tax <- prop_tax[order(-prop_F)]
 
-median(prop_tax[prop_F>0]$F)
-median(prop_tax[prop_F>0]$M)
+head(prop_tax, 3)
 
-prop_tax[F+M+U>5][1:10]
+prop_tax[U >= 1 & (F == 0 & M == 0)]
+
+# Exclude those countries with only unknown gender
+prop_tax <- prop_tax[!(U >= 1 & (F == 0 & M == 0))]
+
+dim(prop_tax)[1]              # N countries
+length(prop_tax[prop_F>0]$F)  # N countries w females
+median(prop_tax[prop_F>0]$F)  # Median F taxonomists in countries w females
+median(prop_tax[prop_F>0]$M)  # Median M taxonomists in countries w females
+
+prop_tax[F+M+U>5][1:10] # 
+
 len = dim(prop_tax[F+M+U>5])[1]
 prop_tax[F+M+U>5][(len-10):len]
 
