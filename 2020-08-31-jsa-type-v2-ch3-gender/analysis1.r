@@ -69,7 +69,7 @@ result <- run_specific_scenario(
     country="All", position="All", dir_data_subf2, "tax"
 )
 
-min_year <- min(generate_prop_t(country="All")$date)
+prop_table <- generate_prop_t(country="All")
 result_summary_tax <- result$summary
 
 result_summary_countries_tax <- lapply(countries[1:6], function(country) {

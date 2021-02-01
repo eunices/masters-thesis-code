@@ -8,5 +8,5 @@ if(!dir.exists(dir_data_subf2)) dir.create(dir_data_subf2)
 
 # Read/initialize all data/variables
 
-CURRENT_YEAR <- 2020
+CURRENT_YEAR <- 2019
 theme <- theme_minimal()

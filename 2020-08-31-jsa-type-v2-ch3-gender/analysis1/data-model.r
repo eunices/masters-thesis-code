@@ -37,6 +37,7 @@ dat <- df[!is.na(full.name.of.describer),
 dat$idx <- as.integer(dat$idx)
 dat$date.n <- as.integer(dat$date)
 dat$date <- NULL
+dat <- dat[date.n <= CURRENT_YEAR]
 
 dat <- data.table(separate_rows(dat, full.name.of.describer, sep="; "))
 dat[, auth.i:=seq_len(.N), by=c("idx")]
