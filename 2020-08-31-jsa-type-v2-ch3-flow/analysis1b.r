@@ -55,11 +55,17 @@ df <- merge(
 df <- unique(df)
 
 # Remove where ori and des are same
-df <- df[ori!=des]
+df <- df[ori != des]
+
+
+length(table(df$ori)) # number of origin countries
+length(table(df$des)) # number of describer countries
+
+table(df$ori)
+table(df$des)
 
 sapply(df[, 5:10], unique)
 sapply(df[, 5:10], table)
-table(df$ori)
 
 
 # Derived values
