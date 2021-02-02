@@ -3,10 +3,9 @@
 # Chapter 3, the section on Determinants of taxonomic resources flow: data analysis (GLM)
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-
 # Set up
-source('2020-08-31-jsa-type-v2-ch3-flow/analysis1/prep.R')
-source('2020-08-31-jsa-type-v2-ch3-flow/analysis1/data_analysis1b.R')
+source('2020-08-31-jsa-type-v2-ch3-flow/analysis1/prep.r')
+source('2020-08-31-jsa-type-v2-ch3-flow/analysis1/data_analysis1b.r')
 
 # Libraries
 library(tidyr)
@@ -41,7 +40,7 @@ auth <- unique(auth[
 
 # Read bee data
 df <- fread(
-    paste0(v2_dir_data_ch3_flow, "2019-11-01-flow-GLM.csv"), encoding="UTF-8"
+    paste0(dir_tables, "2019-11-01-flow-GLM.csv"), encoding="UTF-8"
 )
 
 df <- df[class_check != 'Unclassed']
@@ -159,7 +158,7 @@ glm_results[, (dim(glm_results)[2])] <-
 
 write.csv(
     glm_results, 
-    paste0(v2_dir_data_ch3_flow, "2020-06-24-flow-GLM-summary.csv"), 
+    paste0(dir_tables, "2020-06-24-flow-GLM-summary.csv"), 
     fileEncoding="UTF-8", row.names=T
 )
 

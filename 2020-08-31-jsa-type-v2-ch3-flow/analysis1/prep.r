@@ -14,8 +14,15 @@ source('2020-08-31-jsa-type-v2/subset.r')
 library(networkD3)
 library(ggplot2)
 
+# Parameters
+theme = theme_classic()
+
+dir_base = "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\"
+dir_plot = paste0(dir_base, "_figures\\_ch3\\_ch3-flow\\")
+dir_tables = paste0(dir_base, "_tables\\_ch3\\_ch3-flow\\")
+
 # Read lookup
-lu <- get_lp_statoid()
+lookup.cty <- lu <- get_lp_statoid()
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - resource flow
@@ -73,12 +80,9 @@ t$Geom <- paste0(
 
 t$no_flow <- t$ori == t$des
 
-
-write.csv(
-    t,
-    paste0(v2_dir_data_ch3_flow, "2019-09-22-flow-map-type-loc-des-country.csv"), 
-    na='', row.names=F, fileEncoding="UTF-8"
-)
+# For map plotting
+cfile <- paste0(v2_dir_data_ch3_flow, "2019-09-22-flow-map-type-loc-des-country.csv")
+write.csv(t, cfile, na='', row.names=F, fileEncoding="UTF-8")
 
 v2_shiny_dir_subfolder2 <- paste0(v2_dir_shiny, "eda1.1_shiny/data/")
 dir.create(v2_shiny_dir_subfolder2, recursive=T)
