@@ -40,7 +40,7 @@ auth <- unique(auth[
 
 # Read bee data
 df <- fread(
-    paste0(dir_tables, "2019-11-01-flow-GLM.csv"), encoding="UTF-8"
+    paste0(v2_dir_data_ch3_flow, "2019-11-01-flow-GLM.csv"), encoding="UTF-8"
 )
 
 df <- df[class_check != 'Unclassed']
@@ -139,6 +139,8 @@ a1 <- glm(
         class_check + continent_ori + continent_des, 
     data=df, family=binomial
 )
+
+dim(df)
 
 # in v1 i was using logit (assumes flow has equal classes)
 # see https://fukamilab.github.io/BIO202/04-B-binary-data.html
