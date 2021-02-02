@@ -4,7 +4,27 @@ source('2020-08-31-jsa-type-v2-ch2/00-init/init.r')
 
 # Parameters
 theme <- theme_minimal()
-dir_plot <- "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\_figures\\_ch2\\"
+dir_base <- "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\"
+dir_plot <- paste0(dir_base, "_figures\\_ch2\\")
+dir_map <- paste0(dir_base, "_maps\\_ch2\\2019-09-26-type-loc-map\\")
+
+# Write data for map
+df <- get_df()
+
+df <- df[
+    duplicated == FALSE &
+    status %in% c("Valid species") &
+    date <= cutoff_ch2
+]
+
+# CHECK
+table(df$duplicated)
+table(df$status)
+
+df <- df[, c("idx", "species", "genus", "status", "author", "date", "lat", "lon")]
+
+cfile <- paste0(dir_map, "Bee type localities-v3.csv")
+fwrite(df, cfile)
 
 # Number of species
 df <- get_species_raw_data()
