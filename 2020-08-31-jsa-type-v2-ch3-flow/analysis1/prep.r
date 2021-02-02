@@ -20,6 +20,7 @@ theme = theme_classic()
 dir_base = "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\"
 dir_plot = paste0(dir_base, "_figures\\_ch3\\_ch3-flow\\")
 dir_tables = paste0(dir_base, "_tables\\_ch3\\_ch3-flow\\")
+dir_maps = paste0(dir_base, "_maps\\_ch3\\_ch3-flow\\2021-02-01-flow-map-v3\\")
 
 # Read lookup
 lookup.cty <- lu <- get_lp_statoid()
@@ -81,7 +82,7 @@ t$Geom <- paste0(
 t$no_flow <- t$ori == t$des
 
 # For map plotting
-cfile <- paste0(v2_dir_data_ch3_flow, "2019-09-22-flow-map-type-loc-des-country.csv")
+cfile <- paste0(dir_maps, "2019-09-22-flow-map-type-loc-des-country.csv")
 write.csv(t, cfile, na='', row.names=F, fileEncoding="UTF-8")
 
 v2_shiny_dir_subfolder2 <- paste0(v2_dir_shiny, "eda1.1_shiny/data/")
