@@ -1,7 +1,7 @@
 
 # Information about code:
 # This code corresponds to exploratory data analyses for my MSc thesis.
-# They are pertaining to EDA for the authors 
+# They are pertaining to EDA for the describers 
 # (relevant for Chapter 3, the section on Determinants of taxonomic resources flow).
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

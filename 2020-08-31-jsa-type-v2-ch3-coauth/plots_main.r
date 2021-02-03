@@ -35,7 +35,7 @@ df[grepl("; ", full.name.of.describer)]$coauth <- "Coauthor"
 
 df_full <- df
 
-# Count number of authors
+# Count number of describers
 df <- df %>% separate_rows(full.name.of.describer, sep="; ")
 df <- data.table(unique(df))
 df <- df[, list(.N), by=c('idx', 'date.decade', 'date')]
@@ -48,9 +48,9 @@ df_coauth <- df[N >= 2] # for coauth analysis
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - Number of co-authoring authors
+# Section - Number of co-authoring describers
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- Number of co-authoring authors"))
+print(paste0(Sys.time(), " --- Number of co-authoring describers"))
 dim(df)
 table(df$N)
 prop.table(table(df$N)) * 100
@@ -118,9 +118,9 @@ plot_bp <- ggplot(df_bp) +
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - Proportion of authors across years
+# Section - Proportion of describers across years
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- Proportion of authors across years"))
+print(paste0(Sys.time(), " --- Proportion of describers across years"))
 
 calc_median <- function(x){
   return(c(y = -0.1, label = length(x)))
@@ -130,13 +130,13 @@ calc_median <- function(x){
 plot_auth_decade1 <- ggplot(data = df, aes(x=date.decade, fill=N)) +
         geom_bar(position = "fill") +
         xlab("\nDecade") + 
-        ylab("Proportion of species with \nN number of authors\n") +
+        ylab("Proportion of species with \nN number of describers\n") +
         theme + scale_fill_grey()
 
 plot_auth_decade2 <- ggplot(data=df, aes(x=date.decade, fill=N)) +
         geom_bar(stat = 'count') +
         xlab("\nDecade") +
-        ylab("Number of species with \nN number of authors\n") +
+        ylab("Number of species with \nN number of describers\n") +
         theme + scale_fill_grey()
 
 gr <- grid.arrange(plot_auth_decade1, plot_auth_decade2)

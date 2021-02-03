@@ -13,7 +13,7 @@ print(paste0(Sys.time(), " --- Where do describers come from?"))
 des = get_des() # get dataset
 dim(des)
 
-# number of authors with multiple countries
+# number of describers with multiple countries
 des_multiple = data.table(separate_rows(
     des[, c("full.name.of.describer", "residence.country.describer")], 
     residence.country.describer, sep="; "
