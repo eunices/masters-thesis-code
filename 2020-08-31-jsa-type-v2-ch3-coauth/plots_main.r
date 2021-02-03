@@ -14,7 +14,7 @@ library(gridExtra)
 # Parameters
 dir_base <- "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\"
 dir_plot <- paste0(dir_base, "_figures\\_ch3\\_ch3-coauth\\")
-theme <- theme_minimal()
+theme <- theme_minimal() + theme(text = element_text(size=12))
 date_cutoff <- 2019
 
 # Read/wrangle data
@@ -141,9 +141,8 @@ plot_auth_decade2 <- ggplot(data=df, aes(x=date.decade, fill=N)) +
 
 gr <- grid.arrange(plot_auth_decade1, plot_auth_decade2)
 
-ggsave(
-    paste0(dir_plot, 'fig-1.png'), gr, units="cm", width=30, height=15, dpi=300
-)
+cfile <- paste0(dir_plot, 'fig-1.png')
+ggsave(cfile, gr, units="cm", width=30, height=15, dpi=300)
 
 dim(df_full[date.decade=="1820s"])
 df_full[date.decade=="1820s"]
