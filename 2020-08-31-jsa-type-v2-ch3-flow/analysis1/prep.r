@@ -15,7 +15,7 @@ library(networkD3)
 library(ggplot2)
 
 # Parameters
-theme = theme_classic()
+theme = theme_classic() + theme(text = element_text(size=12))
 
 dir_base = "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\"
 dir_plot = paste0(dir_base, "_figures\\_ch3\\_ch3-flow\\")

@@ -122,10 +122,9 @@ des_whereplot <- ggplot(
     scale_y_discrete(labels=labels_y) +
     theme
 
-ggsave(
-    paste0(dir_plot, 'fig-1.png'), 
-    des_whereplot, units="cm", width=20, height=10, dpi=300
-)
+
+cfile <- paste0(dir_plot, 'fig-1.png')
+ggsave(cfile, des_whereplot, units="cm", width=20, height=10, dpi=300)
 
 # Chisq test of association
 
@@ -167,37 +166,37 @@ s1 <- t[, list(N=sum(N)), by='des']
 s2 <- t[no_flow=="TRUE", list(N=sum(N)), by='des']    
 
 ss <- merge(s1, s2, by='des', all.x=T, all.y=F, suffixes=c("_total", "_cty"))
-ss$prop <- ss$N_cty/ss$N_total
+ss[is.na(N_cty)]$N_cty <- 0
+
+ss$prop <- 1 - (ss$N_cty/ss$N_total)
 
 ss <- merge(
     ss, lookup.cty[, c("DL", "GEC", "Country", "A-3", "Class")], 
     by.x="des", by.y="DL", all.x=T, all.y=F
 )
 
-ss[is.na(N_cty)]$N_cty <- 0
-ss[is.na(prop)]$prop <- 0
 
 ss$Class <- factor(ss$Class, levels=lvls_class)
 ss[Class=="Unclassed"] # !CHECK
 ss[is.na(Country)]     # !CHECK
 
 # Countries with resident describer describing species in the country
+dim(ss[N_cty==0 & N_total >=1])
 dim(ss[N_cty>=1])
 
 # Median proportion of species
-summary(ss[N_total>=30 & N_cty>=1]$prop*100)
-dim(ss[N_total>=30 & N_cty>=1])
+summary(ss[N_total>=10 & N_cty>=1]$prop*100)
+dim(ss[N_total>=10 & N_cty>=1])
 
-shapiro.test(ss[N_total>=30 & N_cty>=1]$prop*100) # not normal
+shapiro.test(ss[N_total>=10 & N_cty>=1]$prop*100) # not normal
 
-# Countries with highest proportion of species described by residents
-ss[N_total>=30][order(-prop)][1:8]
-
+# Countries with lowest proportion of species described by non-residents
+ss[N_total>=10][order(prop)][1:3]
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - Chi sq test for proportion
+# Section - Kruskal wallis test for proportion
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- Chi sq test for proportion"))
+print(paste0(Sys.time(), " --- Kruskal wallis test for proportion"))
 
 # Countries which are unclassed
 ss[Class == "Unclassed"]
@@ -230,24 +229,22 @@ print(paste0(
 ))
 
 # Plot
-xlab <- "\nWorld Bank classification\n of describer country"
-ylab <- "Proportion of species described\n by describers residing in country (%)\n"
+xlab <- "\nWorld Bank classification\n of country"
+ylab <- "Percentage of species described\n by non-resident describers (%)\n"
 
 p1 <- ggplot(ss[!is.na(Class)], aes(x=Class, y=round(prop*100,2))) + 
 	geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
 	labs(x=xlab, y=ylab) +
 	theme
-    
-ggsave(
-    paste0(dir_plot, 'fig-2.png'), p1, units="cm",
-    width=20, height=10, dpi=300
-)
+
+cfile <- paste0(dir_plot, 'fig-2.png')
+ggsave(cfile, p1, units="cm", width=20, height=9, dpi=300)
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - Chi sq test for number of countries for flow
+# Section - Kruskal wallis test for number of countries for flow
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- Chi sq test for number of countries for flow"))
+print(paste0(Sys.time(), " --- Kruskal wallis test for number of countries for flow"))
 
 # Data processing
 flow <- unique(spp_s[
@@ -308,17 +305,15 @@ write.csv(
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- Fig 3 socioeconomic status on number of countries contributed to"))
 
-lab_x <- "\nWorld Bank classification\n of describer country"
-lab_y <- "Number of countries which\n received taxonomic flow from describer country"
+lab_x <- "\nWorld Bank classification\n of donor country"
+lab_y <- "Number of recipient countries \n for each donor country"
 
 p2 <- ggplot(flow[!is.na(Class),], aes(x=Class, y=N)) + 
   	geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
 	labs(x=lab_x, y=lab_y) + theme
 
-ggsave(
-    paste0(dir_plot, 'fig-3.png'), p2, units="cm",
-    width=20, height=10, dpi=300
-)
+cfile <- paste0(dir_plot, 'fig-3.png')
+ggsave(cfile, p2, units="cm", width=20, height=10, dpi=300)
 
 # continue with analysis1b.r for GLM (determinants of flow)
 

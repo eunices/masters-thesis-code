@@ -8,13 +8,10 @@
 source('2020-08-31-jsa-type-v2/00-init/var.R')
 source('2020-08-31-jsa-type-v2/subset.R')
 
-# Libraries
-library(gridExtra)
-
 # Parameters
 dir_base <- "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\research\\"
 dir_plot <- paste0(dir_base, "_figures\\_ch3\\_ch3-coauth\\")
-theme <- theme_minimal() + theme(text = element_text(size=12))
+theme <- theme_minimal() + theme(text = element_text(size=13))
 date_cutoff <- 2019
 
 # Read/wrangle data
@@ -32,13 +29,14 @@ df <- df[order(date)]
 df$date.decade <- paste0(substr(as.character(df$date), 1, 3), "0s")
 df$coauth <- "Did not coauthor"
 df[grepl("; ", full.name.of.describer)]$coauth <- "Coauthor"
+table(df$coauth)
 
 df_full <- df
 
 # Count number of describers
 df <- df %>% separate_rows(full.name.of.describer, sep="; ")
 df <- data.table(unique(df))
-df <- df[, list(.N), by=c('idx', 'date.decade', 'date')]
+df <- df[, list(.N), by=c('idx', 'date.decade', 'date', 'coauth')]
 df <- df[order(date.decade)]
 df$N <- as.character(df$N)
 
@@ -86,11 +84,25 @@ length(auth_did_not_coauth)
 df_bp <- rbind(df_coauth, df_did_not_coauth)
 df_bp$date <- as.integer(df_bp$date)
 df_bp$coauth <- factor(df_bp$coauth, levels=c("Coauthor", "Did not coauthor"))
-df_bp[, list(mean=mean(date), se=sd(date)/sqrt(.N), n=.N), by=coauth]
+df_bp[, 
+    list(
+        mean=mean(date), 
+        se=sd(date)/sqrt(.N), n=.N,
+        median=quantile(date, .5), 
+        q25=quantile(date, .25),
+        q75=quantile(date, .75)
+        ),
+    by=coauth]
 
-res <- t.test(
+qqPlot(df_coauth$date)
+qqPlot(df_did_not_coauth$date)
+
+shapiro.test(df_coauth$date)
+shapiro.test(df_did_not_coauth$date)
+
+res <- wilcox.test(
     df_coauth$date, df_did_not_coauth$date, 
-    alternative = "two.sided", var.equal = FALSE
+    alternative = "two.sided"
 )
 
 res
@@ -118,31 +130,37 @@ plot_bp <- ggplot(df_bp) +
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Section - Proportion of describers across years
+# Section - Percentage of describers across years
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(paste0(Sys.time(), " --- Proportion of describers across years"))
+print(paste0(Sys.time(), " --- Percentage of describers across years"))
 
 calc_median <- function(x){
   return(c(y = -0.1, label = length(x)))
   # experiment with the multiplier to find the perfect position
 }
 
+x_scale <- unique(df$date.decade)
+x_scale_tf <- rep(c(TRUE, FALSE), round(length(x_scale)/2, 0))
+x_scale[x_scale_tf == FALSE] <- ""
+
 plot_auth_decade1 <- ggplot(data = df, aes(x=date.decade, fill=N)) +
         geom_bar(position = "fill") +
         xlab("\nDecade") + 
-        ylab("Proportion of species with \nN number of describers\n") +
-        theme + scale_fill_grey()
+        ylab("Percentage of species with \nnumber of describers\n") +
+        theme + scale_fill_grey() +
+        scale_x_discrete(labels = x_scale)
 
 plot_auth_decade2 <- ggplot(data=df, aes(x=date.decade, fill=N)) +
         geom_bar(stat = 'count') +
         xlab("\nDecade") +
-        ylab("Number of species with \nN number of describers\n") +
-        theme + scale_fill_grey()
+        ylab("Number of species with \nnumber of describers\n") +
+        theme + scale_fill_grey() +
+        scale_x_discrete(labels = x_scale)
 
-gr <- grid.arrange(plot_auth_decade1, plot_auth_decade2)
-
-cfile <- paste0(dir_plot, 'fig-1.png')
-ggsave(cfile, gr, units="cm", width=30, height=15, dpi=300)
+cfile <- paste0(dir_plot, 'fig-1a.png')
+ggsave(cfile, plot_auth_decade1, units="cm", width=20, height=7.5, dpi=300)
+cfile <- paste0(dir_plot, 'fig-1b.png')
+ggsave(cfile, plot_auth_decade2, units="cm", width=20, height=7.5, dpi=300)
 
 dim(df_full[date.decade=="1820s"])
 df_full[date.decade=="1820s"]
