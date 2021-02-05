@@ -111,16 +111,15 @@ print(paste0(Sys.time(), " --- gender rep - in text fig on country"))
 
 prop_tax <- auth[, .N, c("Country", "describer.gender")][order(-N)]
 prop_tax <- dcast(prop_tax, Country ~ describer.gender, value.var="N")
-
 prop_tax <- prop_tax[!is.na(Country)]
 prop_tax[is.na(prop_tax)] <- 0
-
 prop_tax$N <- prop_tax$F + prop_tax$M
 prop_tax$prop_F <- prop_tax$F / prop_tax$N
 prop_tax <- prop_tax[order(-prop_F)]
 
 head(prop_tax, 3)
 
+dim(prop_tax)
 prop_tax[U >= 1 & (F == 0 & M == 0)]
 
 # Exclude those countries with only unknown gender
