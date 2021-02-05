@@ -60,7 +60,7 @@ head(dat, 5)
 # Author info
 auth_full <- get_des()
 
-auth <- auth_full[, c(
+auth <- auth_full[(ns_spp_N + syn_spp_N) >=1, c(
         'full.name.of.describer', 'residence.country.describer',
         'residence.country.describer.first',
         'describer.gender', "min", "max_corrected"

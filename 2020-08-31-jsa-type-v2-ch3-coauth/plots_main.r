@@ -18,8 +18,9 @@ date_cutoff <- 2019
 df <- get_df()
 
 df <- df[
-  status %in% c("Valid species", "Synonym"),
-  c("full.name.of.describer", "idx", "date")
+    duplicated == FALSE &
+    status %in% c("Valid species", "Synonym"),
+    c("full.name.of.describer", "idx", "date")
 ]
 
 df$date <- as.integer(df$date)
@@ -49,9 +50,13 @@ df_coauth <- df[N >= 2] # for coauth analysis
 # Section - Number of co-authoring describers
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- Number of co-authoring describers"))
-dim(df)
+
+dim(df[N>=2])
+
 table(df$N)
 prop.table(table(df$N)) * 100
+
+dim(df)
 prop.table(table(df$N %in% c(2,3,4)))*100
 
 
@@ -70,6 +75,8 @@ auth_did_not_coauth <- unique(
 )
 
 any(auth_did_not_coauth %in% auth_coauth) # check
+
+(length(auth_coauth) + length(auth_did_not_coauth)) 
 
 length(auth_did_not_coauth) / 
     (length(auth_coauth) + length(auth_did_not_coauth)) * 100
@@ -164,6 +171,7 @@ ggsave(cfile, plot_auth_decade2, units="cm", width=20, height=7.5, dpi=300)
 
 dim(df_full[date.decade=="1820s"])
 df_full[date.decade=="1820s"]
+df_full[date.decade=="1820s" & grepl("Amédée", full.name.of.describer), .N]
 df_full[date.decade=="1820s", .N]
 df_full[date.decade=="1820s", .N, by="coauth"]
 

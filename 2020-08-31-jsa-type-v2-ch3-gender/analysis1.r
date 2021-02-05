@@ -25,6 +25,7 @@ source('2020-08-31-jsa-type-v2-ch3-gender/analysis1/data-model.r')
 
 # % of M, F, U
 names(auth_full)
+dim(auth_full)
 table(auth_full$describer.gender)
 prop.table(table(auth_full$describer.gender))
 

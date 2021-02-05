@@ -377,7 +377,7 @@ save_graph <- function(
     plot_filepath <- paste0(dir_output, country, "-", position, ".png")
     
     ggsave(
-        plot_filepath, plot=p1, width = 10, height = 5, dpi = 150, 
+        plot_filepath, plot=p1, width = 9, height = 4, dpi = 150, 
         units = "in", device='png'
     )
     
