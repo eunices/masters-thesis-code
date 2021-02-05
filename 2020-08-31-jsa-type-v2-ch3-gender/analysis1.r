@@ -125,6 +125,7 @@ prop_tax[U >= 1 & (F == 0 & M == 0)]
 
 # Exclude those countries with only unknown gender
 prop_tax <- prop_tax[!(U >= 1 & (F == 0 & M == 0))]
+prop_tax[grepl("Unknown", Country)]
 
 dim(prop_tax)[1]              # N countries
 length(prop_tax[prop_F>0]$F)  # N countries w females

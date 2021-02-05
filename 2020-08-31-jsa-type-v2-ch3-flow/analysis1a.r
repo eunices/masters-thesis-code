@@ -13,6 +13,8 @@ print(paste0(Sys.time(), " --- Where do describers come from?"))
 des = get_des() # get dataset
 dim(des)
 
+des = des[(ns_spp_N + syn_spp_N) >=1]
+
 # number of describers with multiple countries
 des_multiple = data.table(separate_rows(
     des[, c("full.name.of.describer", "residence.country.describer")], 
@@ -24,6 +26,7 @@ dim(des_multiple) - dim(des)
 
 # number of describers with no country
 table(is.na(des$residence.country.describer.first))
+table(des$residence.country.describer.first == "[unknown]")
 
 # number of countries for describers
 des_tabulate <- des[
@@ -31,7 +34,7 @@ des_tabulate <- des[
     by="residence.country.describer.first"
 ][order(-N)]
 
-dim(des_tabulate) 
+dim(des_tabulate[residence.country.describer.first != "[unknown]"]) 
 
 # top 3 countries with describers
 des_tabulate[1:3]
@@ -147,6 +150,8 @@ length(unique(des_where2[Class == "Unclassed"]$residence.country.describer))
 
 des_where_summary2 <- des_where2[Class != "Unclassed", .N, by=Class] 
 tl <- sum(des_where_summary2$N); tl
+
+sum(des_where_summary2$N)
 des_where_summary2
 des_where_summary2$N / tl *100
 
