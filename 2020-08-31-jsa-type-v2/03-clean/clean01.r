@@ -107,6 +107,9 @@ table(df$date.lag < -1000)
 df[date.lag < -10,]$date.of.type.yyyy <- NA
 df[date.lag < -10,]$date.lag <- NA
 
+# Manual edit for date
+df[idx==32133]$date <- 2010
+
 
 # Species type status ----------------------------------------------------------
 

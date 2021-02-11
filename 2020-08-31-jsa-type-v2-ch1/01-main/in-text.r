@@ -8,6 +8,7 @@ print(paste0(Sys.time(), " --- in-text figures"))
 
 # % of valid species
 dim(df_all)
+dim(df_all[status %in% c("Valid species", "Synonym")])
 round(prop.table(table(df_all$status))*100, 1)
 
 # Number of PTEs

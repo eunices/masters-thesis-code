@@ -75,7 +75,7 @@ plot_tax <- ggplot(des_y, aes(x=years, y=value, group=variable)) +
     geom_point(size=.5, color='grey') + 
     geom_smooth(size=1, colour="black") +
     geom_line(size=.7, aes(y=value_roll), color='grey50') +
-    xlab("Year") + ylab("Proportion of PTEs describing <= N species (%)\n") +
+    xlab("\nYear") + ylab("Proportion of PTEs describing <= N species (%)\n") +
     facet_wrap(
         . ~variable, ncol=2, 
         labeller=labeller(variable=formatstr), dir="v"
@@ -85,7 +85,7 @@ plot_tax <- ggplot(des_y, aes(x=years, y=value, group=variable)) +
 
 ggsave(
     paste0(dir_plot, 'fig-5.png'), plot_tax, units="cm", 
-    width=15, height=9, dpi=300
+    width=10, height=9, dpi=300
 )
 
 

@@ -19,7 +19,7 @@ lp_pop <- get_lp_pop()
 print(paste0("Read valid species"))
 df <- get_df()
 df$date <- as.integer(df$date)
-df <- df[date <= year_end]
+df <- df[date <= year_end & duplicated == FALSE]
 df$date.decade <- paste0(substr(df$date, 1, 3), "0s")
 
 df_all <- df # all 
@@ -98,6 +98,8 @@ taxonomic_effort_long <- data.table(
 
 print(paste0("Read df_describers / df_describers_year "))
 df_describers <- get_des()
+df_describers <- df_describers[(ns_spp_N + syn_spp_N) >=1]
+
 df_describers[, 11:48] <- lapply(df_describers[,11:48], as.numeric)
 df_describers$dod.describer <- as.integer(df_describers$dod.describer)
 df_describers$dob.describer <- as.integer(df_describers$dob.describer)
