@@ -64,6 +64,9 @@ df$date <- gsub("\\)", "", df$date) # note: date field had extra bracket
 df$date <- as.integer(gsub("\\[[^\\]]*\\]", "", df$date, perl = TRUE))
 df[date < 1700]$date <- NA # set old dates as NA
 
+# Manual edit
+df[idx==32133]$date <- 2010
+
 # CHECK: missing description year
 table(is.na(df$date)) 
 
@@ -107,8 +110,6 @@ table(df$date.lag < -1000)
 df[date.lag < -10,]$date.of.type.yyyy <- NA
 df[date.lag < -10,]$date.lag <- NA
 
-# Manual edit for date
-df[idx==32133]$date <- 2010
 
 
 # Species type status ----------------------------------------------------------
