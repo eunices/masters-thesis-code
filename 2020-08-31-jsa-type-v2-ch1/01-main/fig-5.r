@@ -81,11 +81,11 @@ plot_tax <- ggplot(des_y, aes(x=years, y=value, group=variable)) +
         labeller=labeller(variable=formatstr), dir="v"
     ) +
     scale_y_continuous(limits=c(0, 50), breaks=seq(0,50,10)) +
-    theme
+    theme + theme_minimal(base_size=10)
 
 ggsave(
     paste0(dir_plot, 'fig-5.png'), plot_tax, units="cm", 
-    width=10, height=9, dpi=300
+    width=15, height=12, dpi=300
 )
 
 
