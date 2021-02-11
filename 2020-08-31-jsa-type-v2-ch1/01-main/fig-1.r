@@ -52,7 +52,7 @@ pts <- data.frame(date=as.integer(c(1914, 1919, 1939, 1945)))
 # Per year
 
 p0 <- ggplot(species_per_year, aes(x=date, y=N)) + 
-    xlab("") + ylab("Number of species") + 
+    xlab("\nYear") + ylab("Number of species") + 
     theme +
     ggtitle("Number of species described by year") +
     annotate("rect", xmin=pts[1,], xmax=pts[2,], ymin=0, ymax=Inf, fill="red", alpha=0.2) +
@@ -69,7 +69,7 @@ p0 <- ggplot(species_per_year, aes(x=date, y=N)) +
 species_per_decade <- df[,.(.N), by=.(date.decade)]
 p2 <- ggplot(species_per_decade, aes(x=date.decade, y=N)) + 
     geom_bar(stat="identity") + 
-    xlab("") + ylab("Number of species") + 
+    xlab("\nYear") + ylab("Number of species") + 
     theme +
     ggtitle("Number of species described  by decade")
 
@@ -86,7 +86,7 @@ p2 <- ggplot(species_per_decade, aes(x=date.decade, y=N)) +
 # Per year
 
 p3 <- ggplot(publications_per_year, aes(x=date, y=N)) + 
-    xlab("") + ylab("Number of publications\n") + 
+    xlab("\nYear") + ylab("Number of \npublications\n") + 
     theme +
     # ggtitle("Number of publications by year") +
     # ggtitle("A") +
@@ -101,7 +101,7 @@ p3 <- ggplot(publications_per_year, aes(x=date, y=N)) +
 # Per year
 
 p8 <- ggplot(taxonomic_effort, aes(x=years, y=N_real_describers)) + 
-    xlab("") + ylab("Number of PTEs\n") + 
+    xlab("\nYear") + ylab("Number of \nPTEs\n") + 
     theme +
     # ggtitle("Number of PTEs by year") + 
     # ggtitle("B") + 
@@ -115,7 +115,7 @@ p8 <- ggplot(taxonomic_effort, aes(x=years, y=N_real_describers)) +
 
 ## Species per author across years
 p15 <- ggplot(data=taxonomic_effort, aes(x=years, y=N_weighted_real_describers)) +
-    xlab("Year") + ylab("Number of PTEs (wted)\n") + theme +
+    xlab("\nYear") + ylab("Number of \nPTEs (wted)\n") + theme +
     # ggtitle("Number of PTEs (wted) by year") +
     # ggtitle("C") +
     geom_point(size=1, color='grey') + 

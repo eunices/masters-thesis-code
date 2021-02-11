@@ -18,6 +18,9 @@ calc_median <- function(x){
   # experiment with the multiplier to find the perfect position
 }
 
+x_axis <- unique(df_publications_N$date.decade)
+x_axis[rep(c(FALSE, TRUE), length(x_axis)/2)] <- ""
+
 plot_tax_pub_decade <- 
     ggplot(data=df_publications_N, aes(x=date.decade, y=n_species)) +
         geom_violin(width=3, fill="grey", alpha=.7, color="grey40", trim=T) + 
@@ -46,6 +49,7 @@ plot_tax_pub_decade <-
         #    fun.data=calc_median, geom="text", fun=median,
         #    position=position_dodge(width = 0.75), size=3
         # ) +
+        scale_x_discrete(breaks = x_axis) + 
         xlab("\nDecade") +
         ylab("Number of species described \nper publication\n") +
         theme
@@ -87,6 +91,7 @@ plot_tax_des_decade <-
         #    size=1, color='grey'
         # ) +
         scale_y_continuous(limit=c(-5, 40)) +
+        scale_x_discrete(breaks = x_axis) + 
         # stat_summary(
         #    fun.data=calc_median, geom="text", fun=median,
         #    position=position_dodge(width = 0.75), size=3
@@ -96,8 +101,8 @@ plot_tax_des_decade <-
         theme
 
 # Save plots
-ggsave(paste0(dir_plot, 'fig-2a.png'), plot_tax_pub_decade, units="cm", width=21, height=8, dpi=300)
-ggsave(paste0(dir_plot, 'fig-2b.png'), plot_tax_des_decade, units="cm", width=21, height=8, dpi=300)
+ggsave(paste0(dir_plot, 'fig-2a.png'), plot_tax_pub_decade, units="cm", width=16, height=6, dpi=300)
+ggsave(paste0(dir_plot, 'fig-2b.png'), plot_tax_des_decade, units="cm", width=16, height=6, dpi=300)
 
 
 ################################################################################
