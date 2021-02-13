@@ -173,7 +173,7 @@ s2 <- t[no_flow=="TRUE", list(N=sum(N)), by='des']
 ss <- merge(s1, s2, by='des', all.x=T, all.y=F, suffixes=c("_total", "_cty"))
 ss[is.na(N_cty)]$N_cty <- 0
 
-ss$prop <- 1 - (ss$N_cty/ss$N_total)
+ss$prop <- (ss$N_cty/ss$N_total)
 
 ss <- merge(
     ss, lookup.cty[, c("DL", "GEC", "Country", "A-3", "Class")], 
@@ -196,7 +196,7 @@ dim(ss[N_total>=10 & N_cty>=1])
 shapiro.test(ss[N_total>=10 & N_cty>=1]$prop*100) # not normal
 
 # Countries with lowest proportion of species described by non-residents
-ss[N_total>=10][order(prop)][1:3]
+ss[N_total>=10][order(-prop)][1:3]
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Kruskal wallis test for proportion
@@ -212,7 +212,8 @@ kruskal.test(prop~Class, data=ss)
 pairwise.wilcox.test(ss$prop, ss$Class, p.adjust.method = "BH")
 
 ss_summary <- ss[, list(
-    mean=mean(prop), median=median(prop),
+    mean=mean(prop), 
+    median=median(prop),
     quantile_1st = quantile(prop, 0.25),
     quantile_3rd = quantile(prop, 0.75),
     N=.N
@@ -235,7 +236,7 @@ print(paste0(
 
 # Plot
 xlab <- "\nWorld Bank classification\n of country"
-ylab <- "Percentage of species described\n by non-resident describers (%)\n"
+ylab <- "Percentage of species described\n by resident describers (%)\n"
 
 p1 <- ggplot(ss[!is.na(Class)], aes(x=Class, y=round(prop*100,2))) + 
 	geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
@@ -319,6 +320,28 @@ p2 <- ggplot(flow[!is.na(Class),], aes(x=Class, y=N)) +
 
 cfile <- paste0(dir_plot, 'fig-3.png')
 ggsave(cfile, p2, units="cm", width=20, height=10, dpi=300)
+
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - In-text: correlation between n describers & prop described by non-residents
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(paste0(Sys.time(), " --- In-text: correlation between n describers & prop described by non-residents"))
+
+countries_prop <- ss[!is.na(Class)]
+
+countries_des <- des_where1[
+    !is.na(residence.country.describer),
+    .N, by=c("residence.country.describer")
+]
+
+countries <- merge(
+    countries_prop, countries_des,
+    by.x = "des", by.y = "residence.country.describer",
+    all.x = F, all.y = F
+)
+
+cor(countries$N, countries$prop)
 
 # continue with analysis1b.r for GLM (determinants of flow)
 

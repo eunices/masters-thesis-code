@@ -17,6 +17,12 @@ date_cutoff <- 2019
 # Read/wrangle data
 df <- get_df()
 
+df_syn <- df[
+    duplicated == FALSE & date <= date_cutoff &
+    status %in% c("Valid species", "Synonym"),
+    c("idx", "date", "status")
+]
+
 df <- df[
     duplicated == FALSE &
     status %in% c("Valid species", "Synonym"),
@@ -58,6 +64,13 @@ prop.table(table(df$N)) * 100
 
 dim(df)
 prop.table(table(df$N %in% c(2,3,4)))*100
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Section - % of synonyms
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+syn_summary <- df_syn[, .N, by="status"]
+syn_summary[status == "Synonym"]$N / sum(syn_summary$N)
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
