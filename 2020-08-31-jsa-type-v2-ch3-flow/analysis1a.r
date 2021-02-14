@@ -36,8 +36,20 @@ des_tabulate <- des[
 
 dim(des_tabulate[residence.country.describer.first != "[unknown]"]) 
 
+des_tabulate <- merge(
+    des_tabulate, lu[, c("DL", "continent")], 
+    all.x=T, all.y=F, 
+    by.x="residence.country.describer.first", by.y="DL"
+)
+
 # top 3 countries with describers
 des_tabulate[1:3]
+
+# canada + usa
+des_tabulate[residence.country.describer.first %in% c("US", "CA") ]
+des_tabulate[continent == "North America"]
+sum(des_tabulate$N)
+
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -197,6 +209,8 @@ shapiro.test(ss[N_total>=10 & N_cty>=1]$prop*100) # not normal
 
 # Countries with lowest proportion of species described by non-residents
 ss[N_total>=10][order(-prop)][1:3]
+
+ss[des %in% c("CA", "US")]
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Section - Kruskal wallis test for proportion
