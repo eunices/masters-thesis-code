@@ -59,6 +59,7 @@ See: https://mc-stan.org/docs/2_20/stan-users-guide/zero-inflated-section.html
 [Basic stan models](http://avehtari.github.io/BDA_R_demos/demos_rstan/rstan_demo.html)
 [Intro to stan & regression](https://jrnold.github.io/bayesian_notes/introduction-to-stan-and-linear-regression.html)
 [Hierarchical models](https://vasishth.github.io/bayescogsci/book/hierarchical-models-with-stan.html)
+[Q&A for cross validation](https://avehtari.github.io/modelselection/CV-FAQ.html)
 
 # Stan diagnostics
 
