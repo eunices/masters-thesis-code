@@ -155,14 +155,15 @@ main <- function(country="All", position="All", prop) {
 
     resampled.data <- sample(
         1:nrow(prop_p), size = n.authors * replicates,
-        replace = T, prob = probabilities
+        replace = T, 
+        prob = probabilities # sampling weighted by N authors
     )
 
     # Get frequency (=count)
     resampled.data <- data.table(table(
         factor(resampled.data, levels = 1:nrow(prop_p)),
         rep(1:replicates, each = n.authors)
-    ))
+    )) # tabulated frequencies after resampling weighted by N authors
 
     names(resampled.data)[which(names(resampled.data)=="V1")] = "row"
     names(resampled.data)[which(names(resampled.data)=="V2")] = "replicate_id"
