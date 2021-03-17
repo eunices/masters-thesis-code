@@ -42,6 +42,9 @@ publications_per_year$N_roll <- rollmean(
 # World War I 1914-1919; World War II 1939-1945 
 pts <- data.frame(date=as.integer(c(1914, 1919, 1939, 1945)))
 
+wfile <- paste0(v2_dir_data_webapp, "ch1-war-years.csv")
+fwrite(pts, wfile, na="")
+
 
 ################################################################################
 
@@ -99,8 +102,11 @@ p3 <- ggplot(publications_per_year, aes(x=date, y=N)) +
 
 
 # Per year
+p8_data <- taxonomic_effort[,
+    c("years", "N_real_describers", "N_real_describers_roll")
+]
 
-p8 <- ggplot(taxonomic_effort, aes(x=years, y=N_real_describers)) + 
+p8 <- ggplot(p8_data, aes(x=years, y=N_real_describers)) + 
     xlab("\nYear") + ylab("Number of \nPTEs\n") + 
     theme +
     # ggtitle("Number of PTEs by year") + 
@@ -112,9 +118,16 @@ p8 <- ggplot(taxonomic_effort, aes(x=years, y=N_real_describers)) +
     annotate("rect", xmin=pts[1,], xmax=pts[2,], ymin=0, ymax=Inf, fill="red", alpha=0.2) +
     annotate("rect", xmin=pts[3,], xmax=pts[4,], ymin=0, ymax=Inf, fill="red", alpha=0.2)
 
+wfile <- paste0(v2_dir_data_webapp, "ch1-fig-01-data.csv")
+fwrite(p8_data, wfile, na="")
 
 ## Species per author across years
-p15 <- ggplot(data=taxonomic_effort, aes(x=years, y=N_weighted_real_describers)) +
+
+p15_data <- taxonomic_effort[,
+    c("years", "N_weighted_real_describers", "N_weighted_real_describers_roll")
+]
+
+p15 <- ggplot(data=p15_data, aes(x=years, y=N_weighted_real_describers_roll)) +
     xlab("\nYear") + ylab("Number of \nPTEs (wted)\n") + theme +
     # ggtitle("Number of PTEs (wted) by year") +
     # ggtitle("C") +
@@ -124,7 +137,9 @@ p15 <- ggplot(data=taxonomic_effort, aes(x=years, y=N_weighted_real_describers))
     scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) + 
     annotate("rect", xmin=pts[1,], xmax=pts[2,], ymin=0, ymax=Inf, fill="red", alpha=0.2) +
     annotate("rect", xmin=pts[3,], xmax=pts[4,], ymin=0, ymax=Inf, fill="red", alpha=0.2)
-              
+
+wfile <- paste0(v2_dir_data_webapp, "ch1-fig-02-data.csv")
+fwrite(p15_data, wfile, na="")
 
 ggsave(paste0(dir_plot, 'fig-1a.png'), p3, units="cm", width=16, height=4, dpi=300)
 ggsave(paste0(dir_plot, 'fig-1b.png'), p8, units="cm", width=16, height=4, dpi=300)

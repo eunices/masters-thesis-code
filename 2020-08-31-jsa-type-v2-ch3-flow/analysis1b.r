@@ -170,6 +170,21 @@ write.csv(
     fileEncoding="UTF-8", row.names=T
 )
 
+glm_results_data <- data.frame(glm_results)
+glm_results_data$coefficient <- rownames(glm_results_data)
+
+names(glm_results_data) <- c(
+    "coefficient", "se", "z", "p_value", "odds_ratio", 
+    "lower_95CI", "upper_95CI", "significant", "coefficient_name"
+)
+
+glm_results_data <- cbind(
+    glm_results_data[,dim(glm_results_data)[2]],
+    glm_results_data[,-dim(glm_results_data)[2]]
+)
+
+wfile <- paste0(v2_dir_data_webapp, "ch3-fig-02-data.csv")
+fwrite(glm_results_data, wfile, na="")
 
 
 # Model diagnostics --------------------------------------------------------------------------------

@@ -89,4 +89,15 @@ ggsave(
 )
 
 
+des_y_data <- des_y[, c("years", "variable", "value", "value_roll")]
 
+des_y_data$N_species_described <- as.integer(
+    gsub("N_real_describers.|.prop", "", des_y_data$variable)
+)
+
+des_y_data$variable <- NULL
+
+des_y_data <- des_y_data[order(N_species_described, years)]
+
+wfile <- paste0(v2_dir_data_webapp, "ch1-fig-03-data.csv")
+fwrite(des_y_data, wfile, na="")

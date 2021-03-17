@@ -30,7 +30,7 @@ run.optimiser <- function(data) optim(par = c(0.1, 1), find.ll, data = data)
 # Works for a pair of columns nFemales and nMales
 get.CIs <- function(nFemales.column, nMales.column){
 
-    CIs <- data.frame(lower = numeric(length(nFemales.column)), upper = NA)
+    CIs <- data.frame(lowerCI = numeric(length(nFemales.column)), upperCI = NA)
     
     for(i in 1:length(nFemales.column)){
 

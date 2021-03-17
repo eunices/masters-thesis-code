@@ -11,6 +11,7 @@ v2_dir_data <- paste0(v2_data, "2019-05-23-ascher-bee-data/")
 
 # Output data
 v2_dir_data_analysis <- paste0(v2_dir_data, "analysis/", data_version, "/")
+v2_dir_data_webapp <- paste0(v2_dir_data_analysis, "web-app/")
 v2_dir_data_ch1 <- paste0(v2_dir_data_analysis, 'ch1/')
 v2_dir_data_ch2 <- paste0(v2_dir_data_analysis, 'ch2/')
 v2_dir_data_ch3_coauth <- paste0(v2_dir_data_analysis, 'ch3-coauth/')
@@ -46,7 +47,8 @@ register_google(key = geocode_api)
 
 # If data dir does not exist, create it
 data_dirs <- c(
-    v2_dir_data, v2_dir_data_analysis, v2_dir_data_ch1,
+    v2_dir_data, v2_dir_data_analysis, 
+    v2_dir_data_webapp, v2_dir_data_ch1,
     v2_dir_data_ch2, v2_dir_data_ch3_coauth, v2_dir_data_ch3_flow, 
     v2_dir_data_ch3_gender,
     v2_dir_data_raw, v2_dir_data_raw_raw, v2_dir_data_raw_clean,

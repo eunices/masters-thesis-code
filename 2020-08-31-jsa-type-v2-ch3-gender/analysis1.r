@@ -65,6 +65,56 @@ ts_prop_f_tax$prop <- ts_prop_f_tax$nF/ ( ts_prop_f_tax$nF + ts_prop_f_tax$nM )
 # Section - gender rep - run model for taxonomists
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+unique(auth_years[describer.gender=="U", 'full.name.of.describer'])
+
+# Output data
+country <- "All"; position <- "All"; type <- "Tax"
+prop  <- generate_prop_t_tax(country=country)
+output <- main(country=country, position=position, prop)
+
+r <- output$summary$r; c <- output$summary$c 
+parity.year <- output$summary$years.to.parity
+
+baseline_yr <- min(prop$date.n)
+max_y <- 70
+
+# determine x-axis max value
+max_predict_year <- as.integer((max(prop$date.n) - min(prop$date.n)) * 1.75)
+parity.year <- as.numeric(parity.year) + CURRENT_YEAR - baseline_yr 
+max_predict_year <- ifelse(
+    parity.year > max_predict_year, parity.year, max_predict_year
+)
+
+prop_overlay <- cbind(prop, get.CIs(prop$nFemales, prop$nMales))
+prop_template <- data.frame(
+    yrs_fr_baseline = 0:max_predict_year + baseline_yr,
+    predicted = sapply(0:max_predict_year, pfunc, r=r, c=c)
+)
+
+prop_overlay <- merge(
+    prop_template, prop_overlay, 
+    by.x="yrs_fr_baseline", by.y="date.n", 
+    all.x=T, all.y=F
+)
+
+# NOTE! the unknowns were excluded!
+sum(prop_overlay$`U`, na.rm=T)
+
+prop_overlay$U <- NULL
+prop_overlay$n <- NULL
+prop_overlay$date <- NULL
+
+
+names(prop_overlay) <- c(
+    "year", "prop_F_predicted", "N_female", "N_males",
+    "prop_Fl", "prop_F_lwrCI", "prop_F_uprCI"
+)
+
+wfile <- paste0(v2_dir_data_webapp, "ch3-fig-04-data.csv")
+fwrite(prop_overlay, wfile, na="")
+
+
+
 # Run model
 result <- run_specific_scenario(
     country="All", position="All", dir_data_subf2, "tax"
