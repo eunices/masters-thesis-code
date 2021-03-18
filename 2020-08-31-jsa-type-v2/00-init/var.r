@@ -18,6 +18,8 @@ v2_dir_data_ch3_coauth <- paste0(v2_dir_data_analysis, 'ch3-coauth/')
 v2_dir_data_ch3_flow <- paste0(v2_dir_data_analysis, 'ch3-flow/')
 v2_dir_data_ch3_gender <- paste0(v2_dir_data_analysis, 'ch3-gender/')
 
+v2_dir_data_webapp_img <- paste0(v2_dir_data_webapp, "/img/")
+
 # Raw data
 v2_dir_data_raw <- paste0(v2_dir_data, data_version, "/")
 v2_dir_data_raw_raw <- paste0(v2_dir_data_raw, "raw/")
@@ -48,7 +50,7 @@ register_google(key = geocode_api)
 # If data dir does not exist, create it
 data_dirs <- c(
     v2_dir_data, v2_dir_data_analysis, 
-    v2_dir_data_webapp, v2_dir_data_ch1,
+    v2_dir_data_webapp, v2_dir_data_webapp_img, v2_dir_data_ch1,
     v2_dir_data_ch2, v2_dir_data_ch3_coauth, v2_dir_data_ch3_flow, 
     v2_dir_data_ch3_gender,
     v2_dir_data_raw, v2_dir_data_raw_raw, v2_dir_data_raw_clean,

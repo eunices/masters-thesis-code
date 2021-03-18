@@ -179,9 +179,11 @@ names(glm_results_data) <- c(
 )
 
 glm_results_data <- cbind(
-    glm_results_data[,dim(glm_results_data)[2]],
+    data.frame(variable=glm_results_data[,dim(glm_results_data)[2]]),
     glm_results_data[,-dim(glm_results_data)[2]]
 )
+
+glm_results_data
 
 wfile <- paste0(v2_dir_data_webapp, "ch3-fig-02-data.csv")
 fwrite(glm_results_data, wfile, na="")

@@ -30,6 +30,23 @@ mapping <- unique(data.frame(
     group = as.numeric(data_raw$group)
 ))
 
+# Forecast information
+
+forsim <- data.table(convert_forecast_to_df(data, data_raw, forecast))
+
+head(forsim)
+
+forsim <- forsim[, list(
+    for_cml_value_pred_median = as.integer(median(value)),
+    for_cml_value_pred_lwrCI95 = as.integer(quantile(value, 0.025)),
+    for_cml_value_pred_uprCI95 = as.integer(quantile(value, 0.925)),
+    for_cml_value_pred_mean = as.integer(mean(value))
+), by=c("index", "group")]
+
+names(forsim)[names(forsim) == "index"] <- "year"
+
+# Up till year 2019
+
 li_df <- summarize_simulations_observed(data, allsim)
 Z <- li_df$Z                      # Counts for each year for sim and actual, df
 
@@ -43,16 +60,42 @@ sim_median <- Y[sim != 0, list(
 obs <- Y[sim == 0, c("year", "group", "cml_value")]
 names(obs)[3] <- "cml_value_obs"
 
-
 # sanity check
 check <- data.table(data_raw)[, .N, by=c("group", "year")][order(group, year)]
 check[, cml:= cumsum(N), by="group"]
 head(check[group=="NA"], 20)
 
 all <- merge(obs, sim_median, by=c("year", "group"))
+
+
+# Combine with forecasts
+head(all)
+head(forsim)
+
+final_counts <- all[year==max(year),list(
+    count = max(cml_value_obs)
+), by= c("year", "group")]
+final_counts$year <- NULL
+
+forsim <- merge(forsim, final_counts, by=c("group"), all.x=T, all.y=T)
+
+forsim$for_cml_value_pred_median <- 
+    forsim$for_cml_value_pred_median + forsim$count
+forsim$for_cml_value_pred_lwrCI95 <- 
+    forsim$for_cml_value_pred_lwrCI95 + forsim$count
+forsim$for_cml_value_pred_uprCI95 <-
+    forsim$for_cml_value_pred_uprCI95 + forsim$count
+forsim$for_cml_value_pred_mean <-
+    forsim$for_cml_value_pred_mean + forsim$count
+forsim$count <- NULL
+
+head(all)
+
+
+all <- merge(all, forsim, by=c("year", "group"), all.x=T, all.y=T)
+
 all <- merge(all, mapping, by="group", all.x=T, all.y=F)
 all$group <- NULL
-all$value <- NULL
 
 wfile <- paste0(v2_dir_data_webapp, "ch2-fig-01-data.csv")
 fwrite(all, wfile, na="")
@@ -73,9 +116,9 @@ results <- fread(rfile)
 results$expected_median <- NULL
 results$expected_CI_lower <- NULL
 results$expected_CI_upper <- NULL
-results$fore_mu <- NULL
-results$fore_lower <- NULL
-results$fore_upper <- NULL
+results$for_mu <- NULL
+results$for_lower <- NULL
+results$for_upper <- NULL
 results$group <- NULL
 
 dir_model_folder <- paste0(dir_analysis_edie_model, model_predict, "/")
@@ -92,8 +135,8 @@ results_pred$group <- NULL
 
 results <- merge(results, results_pred, on="groupname")
 
-names(results)[grep("fore_", names(results))] <- 
-    paste0(names(results)[grep("fore_", names(results))], "_10y")
+names(results)[grep("for_", names(results))] <- 
+    paste0(names(results)[grep("for_", names(results))], "_10y")
 
 wfile <- paste0(v2_dir_data_webapp, "ch2-fig-02-data.csv")
 fwrite(results, wfile, na="")
