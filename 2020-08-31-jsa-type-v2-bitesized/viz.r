@@ -45,7 +45,7 @@ for (i in decades) {
 # Chapter 1
 print(paste0("Visualisation for ", f[[2]]))
 head(dfs[[2]], 5)
-xlab <- "\nYear"; ylab <- "Number of describers (weighted)\n"
+xlab <- "\nYear"; ylab <- "Number of PTEs\n"
 plt <- ggplot(dfs[[2]]) + theme +
     xlab(xlab) + ylab(ylab) +
     geom_point(aes(x=years, y=N_real_describers), size=0.1) +
@@ -57,7 +57,7 @@ ggsave(wfile, plt, units="cm", width=25, height=10, dpi=300)
 print(paste0("Visualisation for ", f[[3]]))
 head(dfs[[3]], 5)
 
-xlab <- "\nYear"; ylab <- "Number of describers (weighted)\n"
+xlab <- "\nYear"; ylab <- "Number of PTEs (weighted)\n"
 plt <- ggplot(dfs[[3]]) + theme +
     xlab(xlab) + ylab(ylab) +
     geom_point(aes(x=years, y=N_weighted_real_describers), size=0.1) +
@@ -71,7 +71,7 @@ head(dfs[[4]], 5)
 
 dfs[[4]]$N_species_described <- as.factor(dfs[[4]]$N_species_described)
 
-xlab <- "\nYear"; ylab <- "Proportion of describers describing  <=N species\n"
+xlab <- "\nYear"; ylab <- "Percentage of PTEs describing  <=N species\n"
 plt <- ggplot(dfs[[4]]) + theme +
     xlab(xlab) + ylab(ylab) +
     geom_point(aes(x=years, y=value), size=0.1) +
@@ -140,11 +140,15 @@ ggsave(wfile, plt, units="cm", width=24, height=10, dpi=300)
 
 print(paste0("Visualisation for ", f[[9]]))
 head(dfs[[9]], 5)
+# Flow map
 
-dfs[[9]]$variable <- paste0(dfs[[9]]$variable, dfs[[9]]$significant)
+print(paste0("Visualisation for ", f[[10]]))
+head(dfs[[10]], 5)
+
+dfs[[10]]$variable <- paste0(dfs[[10]]$variable, dfs[[10]]$significant)
 
 xlab <- "\nVariable"; ylab <- "Coefficient\n"
-plt <- ggplot(dfs[[9]]) + theme + coord_flip() +
+plt <- ggplot(dfs[[10]]) + theme + coord_flip() +
     xlab(xlab) + ylab(ylab) + 
     geom_hline(yintercept=0, color="grey", linetype=3) +
     geom_point(aes(x=variable, y=coefficient)) + 
@@ -153,23 +157,23 @@ plt <- ggplot(dfs[[9]]) + theme + coord_flip() +
         ymin=coefficient-(se*1.96), 
         ymax=coefficient+(se*1.96)
     )) 
-wfile <- paste0(v2_dir_data_webapp_img, gsub(".csv", "", f[[9]]), ".png")
+wfile <- paste0(v2_dir_data_webapp_img, gsub(".csv", "", f[[10]]), ".png")
 ggsave(wfile, plt, units="cm", width=18, height=10, dpi=300)
-
-
-print(paste0("Visualisation for ", f[[10]]))
-head(dfs[[10]], 5)
-# Network
 
 
 print(paste0("Visualisation for ", f[[11]]))
 head(dfs[[11]], 5)
+# Network
+
+
+print(paste0("Visualisation for ", f[[12]]))
+head(dfs[[12]], 5)
 
 xlab <- "\nYear"; ylab <- "Percentage of active female describers\n"
-plt <- ggplot(dfs[[11]]) + theme +
+plt <- ggplot(dfs[[12]]) + theme +
     xlab(xlab) + ylab(ylab) +
     geom_point(aes(x=year, y=prop_Fl), size=0.1) +
     geom_line(aes(x=year, y=prop_F_predicted))
-wfile <- paste0(v2_dir_data_webapp_img, gsub(".csv", "", f[[11]]), ".png")
+wfile <- paste0(v2_dir_data_webapp_img, gsub(".csv", "", f[[12]]), ".png")
 ggsave(wfile, plt, units="cm", width=25, height=10, dpi=300)
 

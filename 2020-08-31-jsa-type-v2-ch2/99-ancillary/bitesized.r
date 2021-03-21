@@ -115,10 +115,10 @@ results <- fread(rfile)
 
 results$expected_median <- NULL
 results$expected_CI_lower <- NULL
-results$expected_CI_upper <- NULL
-results$for_mu <- NULL
-results$for_lower <- NULL
-results$for_upper <- NULL
+results$expected_CI_higher <- NULL
+results$fore_mu <- NULL
+results$fore_lower <- NULL
+results$fore_upper <- NULL
 results$group <- NULL
 
 dir_model_folder <- paste0(dir_analysis_edie_model, model_predict, "/")
@@ -127,10 +127,10 @@ results_pred <- fread(rfile)
 
 results_pred$expected_median <- NULL
 results_pred$expected_CI_lower <- NULL
-results_pred$expected_CI_higher<- NULL
+results_pred$expected_CI_higher <- NULL
 results_pred$slowdown<- NULL
-results_pred$slowdown_CI_lower<- NULL
-results_pred$slowdown_CI_higher<- NULL
+results_pred$slowdown_CI_lower <- NULL
+results_pred$slowdown_CI_higher <- NULL
 results_pred$group <- NULL
 
 results <- merge(results, results_pred, on="groupname")

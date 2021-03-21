@@ -110,7 +110,7 @@ names(prop_overlay) <- c(
     "prop_Fl", "prop_F_lwrCI", "prop_F_uprCI"
 )
 
-wfile <- paste0(v2_dir_data_webapp, "ch3-fig-04-data.csv")
+wfile <- paste0(v2_dir_data_webapp, "ch3-fig-05-data.csv")
 fwrite(prop_overlay, wfile, na="")
 
 

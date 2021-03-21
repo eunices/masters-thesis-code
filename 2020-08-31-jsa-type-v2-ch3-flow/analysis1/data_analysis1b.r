@@ -17,6 +17,33 @@ flow <- fread(
     encoding="UTF-8"
 )
 
+flow_map <- flow[no_flow==FALSE, c("ori", "des", "N", "dY", "dX", "oY", "oX")]
+
+flow_map <- merge(
+    flow_map, lu[, c("DL", "A-3", "Country")], 
+    by.x="ori", by.y="DL", all.x=T, all.y=F
+)
+
+names(flow_map)[which(names(flow_map) == "A-3")] <- "ori_A3"
+names(flow_map)[which(names(flow_map) == "Country")] <- "ori_name"
+
+flow_map <- merge(
+    flow_map, lu[, c("DL", "A-3", "Country")], 
+    by.x="des", by.y="DL", all.x=T, all.y=F
+)
+
+names(flow_map)[which(names(flow_map) == "A-3")] <- "des_A3"
+names(flow_map)[which(names(flow_map) == "Country")] <- "des_name"
+
+flow_map <- flow_map[!(is.na(des_A3) | is.na(ori_A3))]
+
+flow_map$des <- NULL
+flow_map$ori <- NULL
+
+wfile <- paste0(v2_dir_data_webapp, "ch3-fig-02-data.csv")
+fwrite(flow_map, wfile, na="")
+
+
 flow[no_flow==FALSE, list(N_cty=length(unique(des))), by=c("ori")][
     order(-N_cty)
 ]

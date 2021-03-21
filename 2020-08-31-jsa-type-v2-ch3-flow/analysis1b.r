@@ -185,7 +185,7 @@ glm_results_data <- cbind(
 
 glm_results_data
 
-wfile <- paste0(v2_dir_data_webapp, "ch3-fig-02-data.csv")
+wfile <- paste0(v2_dir_data_webapp, "ch3-fig-03-data.csv")
 fwrite(glm_results_data, wfile, na="")
 
 

@@ -18,6 +18,14 @@ fwrite(df, wfile, na="")
 
 
 network <- get_describer_network()
-wfile <- paste0(v2_dir_data_webapp, "ch3-fig-03-data.csv")
+wfile <- paste0(v2_dir_data_webapp, "ch3-fig-04-data.csv")
 fwrite(network, wfile, na="")
+
+
+
+# Also explore data here
+
+df[date==min(date) & duplicated == FALSE & status %in% c(
+    "Valid species", "Synonym"), 
+    c("date", "author", "genus", "species", "status")][order(genus, species)]
 
