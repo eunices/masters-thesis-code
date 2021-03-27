@@ -46,3 +46,7 @@ filepath_nearest_loc_biome <- paste0(
 )
 # note: this process took >3h so it was persisted instead
 
+filepath_nearest_loc_ecoregion <- paste0(
+    v2_dir_data_ch2, 
+    '2020-11-03-nearest-loc-ecoregion.csv'
+)

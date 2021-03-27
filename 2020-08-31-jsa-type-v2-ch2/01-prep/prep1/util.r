@@ -224,7 +224,7 @@ lookup_for_no_ll_lt <- function(join_cty) {
 }
 
 
-persist_nearest_shp <- function(join, shp_grp, filepath_nearest_loc) {
+persist_nearest_shp <- function(join, shp_grp, filepath_nearest_loc, col="ecoregions2017_biome") {
 
     print("----------------- Persist nearest shp")
 
@@ -238,7 +238,7 @@ persist_nearest_shp <- function(join, shp_grp, filepath_nearest_loc) {
     ###############################################################
 
     get_nearest <- 
-      join[is.na(ecoregions2017_biome), c("idx", "lat", "lon")] 
+      join[is.na(get(col)), c("idx", "lat", "lon")] 
 
     get_nearest <- 
       st_as_sf(
@@ -251,19 +251,28 @@ persist_nearest_shp <- function(join, shp_grp, filepath_nearest_loc) {
         print(paste0(Sys.time(), " -- nearest biome for index ", i))
         v <- get_nearest[i,]
         nearest <- shp_grp[which.min(st_distance(shp_grp, v)),]
-        nearest <- as.character(nearest$BIOME_NAME)
+        if(col=="ecoregions2017_biome") {
+            nearest <- as.character(nearest$BIOME_NAME)
+        } else if (col == "biogeo_wwf") {
+            nearest <- as.character(nearest$REALM_EDIT)
+        }
         nearestBM[i] <- nearest
     }
 
-    get_nearest$BIOME_NAME <- 
-      sapply(nearestBM, function(x) x[[1]])
+    if(col=="ecoregions2017_biome") {
+        get_nearest$BIOME_NAME <- 
+            sapply(nearestBM, function(x) x[[1]])
+    } else if (col == "biogeo_wwf") {
+        get_nearest$biogeo_wwf <- 
+            sapply(nearestBM, function(x) x[[1]])
+    }
 
     st_geometry(get_nearest) <- NULL
 
     write.csv(
        data.frame(get_nearest), 
        filepath_nearest_loc, 
-       row.names = F
+       row.names = F, na=""
     )
 
     ################################################################
