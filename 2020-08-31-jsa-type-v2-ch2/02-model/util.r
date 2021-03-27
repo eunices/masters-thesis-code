@@ -351,8 +351,7 @@ extract_delta <- function(fit) {
 	# [posterior sample [1:N samples], 
 	# group number[1:N groups], coefficient[1:2]]
 
-	name <- ifelse("delta" %in% names(fit), "delta", "coef")
-	coef <- rstan::extract(fit, par = name)[[1]]
+	coef <- rstan::extract(fit, par = "delta")[[1]]
 
 	group_cf1 <- apply(coef, 1, function(i) i[, 1]) # intercept
 	group_cf2 <- apply(coef, 1, function(i) i[, 2]) # coef * year

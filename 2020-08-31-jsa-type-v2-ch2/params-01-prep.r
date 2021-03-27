@@ -4,7 +4,15 @@
 #############
 
 # Model parameters
-model_folder_names <- c("BGY-E1-C4-I20000-A0.9-T12-F25-V0") # sanity check
+
+model_folder_names <- c(
+    "BGY-E0-C4-I8000-A0.8-T12-F10-V0",
+    "BGY-E1-C4-I20000-A0.9-T12-F10-V0",
+    "BGY-E1-C4-I20000-A0.99-T12-F50-V50",
+    "BGY-E2-C4-I8000-A0.8-T12-F25-V0"
+)
+
+# model_folder_names <- c("BGY-E1-C4-I20000-A0.9-T12-F25-V0") # sanity check
 
 # model_folder_names <- c(
 #     "BGY-E0-C4-I8000-A0.8-T12-F50-V50",
