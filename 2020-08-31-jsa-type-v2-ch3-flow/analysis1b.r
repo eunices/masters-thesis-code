@@ -13,6 +13,7 @@ library(car)
 library(ResourceSelection) # mcfadden
 library(pscl)              # hoslem
 library(caret)             # cross validation
+library(boot)
 # library(ROCR)            # roc
 
 
@@ -123,7 +124,7 @@ df$flow <- factor(df$flow, levels=c("No", "Yes"))
 any(sapply(df, function(x) any(is.na(x))))
 unlist(lapply(df, class))
 
-# Create model -------------------------------------------------------------------------------------
+# Create model -----------------------------------------------------------------
 # Model 1: predict binary
 # baseline: Same continent, equal class, not colonised, not adjacent, Australia, Low income
 
@@ -152,9 +153,9 @@ dim(df)
 # see https://fukamilab.github.io/BIO202/04-B-binary-data.html
 # to change to cloglog as flow is highly inbalanced
 # this resulted in decreased but similar effect sizes
-vif(a1)
 
-# Model summary ------------------------------------------------------------------------------------
+
+# Model summary ----------------------------------------------------------------
 glm_summary <- summary(a1)
 glm_odds_ratio <- exp(cbind(OR = coef(a1), confint(a1, level=0.95)))
 glm_odds_ratio <- glm_odds_ratio[!is.na(glm_odds_ratio[,1]),]
@@ -189,14 +190,34 @@ wfile <- paste0(v2_dir_data_webapp, "ch3-fig-03-data.csv")
 fwrite(glm_results_data, wfile, na="")
 
 
-# Model diagnostics --------------------------------------------------------------------------------
+# Model diagnostics ------------------------------------------------------------
 
 # source: https://www.r-bloggers.com/evaluating-logistic-regression-models/
 
-
 # Macfadden's pseudo Rsq
-pR2(a1) # !IMPORTANT
+pR2(a1) # !IMPORTANT # McFadden 0.1734151
 
+# Overdispersion
+resid.ssq <- sum(residuals(a1, type="pearson")^2)   ## sum of squares of Pearson resids
+resid.df <- nrow(df)-length(coef(a1))               ## estimated resid df (N-p)
+resid.ssq/resid.df # 1.148002
+
+# Diagnostic plots
+diag <- glm.diag(a1)
+glm.diag.plots(a1, diag)
+# using top left: residuals against X or yhat (how residuals are distributed)
+# using top right: QQ plot (how expected transformed fits)
+
+# https://bookdown.org/egarpor/PM-UC3M/glm-diagnostics.html
+# https://stat.ethz.ch/R-manual/R-devel/library/boot/html/glm.diag.plots.html
+# https://ms.mcmaster.ca/~bolker/R/misc/modelDiag.html
+
+# Multicollinearity
+car::vif(a1) # absence of multicollinearity
+
+
+
+# Others
 
 # Deviance explained
 with(a1, null.deviance - deviance)
@@ -204,15 +225,12 @@ with(a1, df.null - df.residual)
 with(a1, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE))
 logLik(a1)
 
-
 # Homer-Lemeshow Test
 # source: http://ijbssnet.com/journals/Vol_4_No_3_March_2013/6.pdf
 hoslem.test(as.numeric(df$flow), fitted(a1), g=10)
 
-
 # Variable importance
 varImp(a1)
-
 
 
 
@@ -223,10 +241,3 @@ a2 <- glm(cbind(N_flow, N_total-N_flow) ~ continent_check + class_check + col_ch
 summary(a2)
 par(mfrow=c(2,2)); plot(a2)
 
-
-# Model diagnostics --------------------------------------------------------------------------------
-
-# Overdispersion
-resid.ssq <- sum(residuals(a2, type="pearson")^2)   ## sum of squares of Pearson resids
-resid.df <- nrow(df)-length(coef(a2))               ## estimated resid df (N-p)
-resid.ssq/resid.df
