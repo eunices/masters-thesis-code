@@ -3,7 +3,7 @@
 # 1. Fill in params-01-prep.r
 
 # 2. Prepare data.
-source('2020-08-31-jsa-type-v2-ch2/01-prep/main.r')
+# source('2020-08-31-jsa-type-v2-ch2/01-prep/main.r')
 
 # 3. Transfer to HPC
 

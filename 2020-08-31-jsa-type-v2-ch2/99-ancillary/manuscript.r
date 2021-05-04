@@ -2,7 +2,7 @@
 bdir <- "C:\\Users\\ejysoh\\Dropbox\\msc-thesis\\"
 
 odir <- paste0(
-    bdir, "research\\manuscripts\\global-trajectory-bee-discovery-output\\"
+    bdir, "research\\thesis-manuscripts\\global-trajectories-bee-discovery-output\\"
 )
 
 
@@ -65,7 +65,7 @@ source('2020-08-31-jsa-type-v2-ch2/02-model/init.r')
 
 
 model_analyse <- "BGY-E0-C4-I8000-A0.8-T12-F25-V0"
-model_predict <- "BGY-E1-C4-I20000-A0.9-T12-F10-V0"
+model_predict <- "BGY-E1-C4-I20000-A0.9-T12-F25-V0"
 model_person <- "BGY-E2-C4-I8000-A0.8-T12-F25-V0"
 
 # Get results.csv from model_analyse
@@ -109,6 +109,7 @@ fwrite(r, rfile)
 
 # Get graph from model_predict
 models <- c(model_analyse, model_predict, model_person)
+# models <- c(model_predict)
 
 counter <- 1
 for (i in models) {
@@ -138,109 +139,112 @@ for (i in models) {
         group = as.numeric(data_raw$group)
     ))
 
-    # Forecast information
-
+    # Forecast
     forsim <- data.table(convert_forecast_to_df(data, data_raw, forecast))
-
-    head(forsim)
-
+    names(forsim)[names(forsim) == "index"] <- "year"
     forsim <- forsim[, list(
         for_cml_value_pred_median = as.integer(median(value)),
-        for_cml_value_pred_lwrCI95 = as.integer(quantile(value, 0.025)),
-        for_cml_value_pred_uprCI95 = as.integer(quantile(value, 0.925)),
+        for_cml_value_pred_lwrCI80 = as.integer(quantile(value, 0.1)),
+        for_cml_value_pred_uprCI80 = as.integer(quantile(value, 0.9)),
         for_cml_value_pred_mean = as.integer(mean(value))
-    ), by=c("index", "group")]
-
-    names(forsim)[names(forsim) == "index"] <- "year"
-
-    # Up till year 2019
-
-    li_df <- summarize_simulations_observed(data, allsim)
-    Z <- li_df$Z                      # Counts for each year for sim and actual, df
-
-    Y <- data.table(Z)
-    sim_median <- Y[sim != 0, list(
-        cml_value_pred_median = as.integer(median(cml_value)),
-        cml_value_pred_lwrCI95 = as.integer(quantile(cml_value, 0.025)),
-        cml_value_pred_uprCI95 = as.integer(quantile(cml_value, 0.925)),
-        cml_value_pred_mean = as.integer(mean(cml_value))
     ), by=c("year", "group")]
+    forsim <- merge(forsim, mapping, by="group", all.x=T, all.y=F)
+    forsim$group <- NULL
+
+    # Simulated and observed
+    li_df <- summarize_simulations_observed(data, allsim)
+    Z <- li_df$Z # Counts for each year for sim and actual, df
+
+    # Simulated
+    Y <- data.table(Z)
+    sim <- Y[sim != 0, c("year", "group", "cml_value", "sim")]
+    sim <- merge(sim, mapping, by="group", all.x=T, all.y=F)
+    sim$group <- NULL
+
+    # Observed
     obs <- Y[sim == 0, c("year", "group", "cml_value")]
-    names(obs)[3] <- "cml_value_obs"
+    obs <- merge(obs, mapping, by="group", all.x=T, all.y=F)
+    obs$group <- NULL
 
-    # sanity check
-    check <- data.table(data_raw)[, .N, by=c("group", "year")][order(group, year)]
-    check[, cml:= cumsum(N), by="group"]
-    head(check[group=="NA"], 20)
-
-    all <- merge(obs, sim_median, by=c("year", "group"))
-
-
-    # Combine with forecasts
-    head(all)
-    head(forsim)
-
-    final_counts <- all[year==max(year),list(
-        count = max(cml_value_obs)
-    ), by= c("year", "group")]
+    # But first, add the final year's count
+    final_counts <- obs[year==max(year), list(count = max(cml_value)),
+        by= c("year", "groupname")]
     final_counts$year <- NULL
-
-    forsim <- merge(forsim, final_counts, by=c("group"), all.x=T, all.y=T)
-
+    forsim <- merge(forsim, final_counts, by=c("groupname"), all.x=T, all.y=T)
     forsim$for_cml_value_pred_median <- 
         forsim$for_cml_value_pred_median + forsim$count
-    forsim$for_cml_value_pred_lwrCI95 <- 
-        forsim$for_cml_value_pred_lwrCI95 + forsim$count
-    forsim$for_cml_value_pred_uprCI95 <-
-        forsim$for_cml_value_pred_uprCI95 + forsim$count
+    forsim$for_cml_value_pred_lwrCI80 <- 
+        forsim$for_cml_value_pred_lwrCI80 + forsim$count
+    forsim$for_cml_value_pred_uprCI80 <-
+        forsim$for_cml_value_pred_uprCI80 + forsim$count
     forsim$for_cml_value_pred_mean <-
         forsim$for_cml_value_pred_mean + forsim$count
     forsim$count <- NULL
-
-    head(all)
-
-
-    all <- merge(all, forsim, by=c("year", "group"), all.x=T, all.y=T)
-
-    all <- merge(all, mapping, by="group", all.x=T, all.y=F)
-    all$group <- NULL
-
+    
+    
 
     if(i == model_predict) {
-        rfile <- paste0(odir, "fig-2/fig-2-data.csv")
-        fwrite(all, rfile, na="")
+	    sim <- sim %>% # subset a sample of simmed series
+            split( . , .$group) %>%   # group by group
+            lapply( . , function(oo){ # for each group
 
-        head(all, 3)
+                ids <- sample(unique(oo$sim), 200)
+                oo[oo$sim %in% ids, ]
 
-        xlab <- "\nYear"; ylab <- "Cumulative number of valid species described\n"
-        plt <- ggplot(all) + theme_minimal(base_size=16) + 
+            }) %>% rbind.fill %>% data.table
+
+        xlab <- "\nYear"
+        ylab <- "Cumulative number of valid species described\n"
+        
+        plt <- ggplot() + theme_minimal(base_size=14) + 
             guides(fill=F) + 
-            theme(panel.background = element_rect(fill = "transparent", colour = NA))+
+            theme(
+                panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                panel.background = element_rect(fill = "transparent", colour = NA)
+            )+
             xlab(xlab) + ylab(ylab) +
-            geom_ribbon(aes(
-                x=year,
-                ymin=for_cml_value_pred_lwrCI95,
-                ymax=for_cml_value_pred_uprCI95
-            ), alpha=.1, fill="red") + 
-            geom_line(aes(x=year, y=for_cml_value_pred_mean), colour="red", size=1.5) + 
-            geom_ribbon(aes(
-                x=year,
-                ymin=0,
-                ymax=cml_value_obs, fill=groupname
-            ), alpha=.9) + 
-            geom_point(aes(x=year, y=cml_value_obs), size=0.1) +
+
+            # Forecast (for future)
+            geom_ribbon(data=forsim, aes(x=year,
+                ymin=for_cml_value_pred_lwrCI80,
+                ymax=for_cml_value_pred_uprCI80
+            ), alpha=.1, fill="red", inherit.aes=F) + 
+            geom_line(data=forsim,
+                aes(x=year, y=for_cml_value_pred_mean), colour="red", size=1,
+                inherit.aes=F
+            ) + 
+
+            # Observed (fill)
+            geom_ribbon(data=obs, aes(
+                x=year, ymin=0, ymax=cml_value, fill=groupname
+            ), alpha=1, inherit.aes=F) + 
+
+            # Simulations (within observed timeframe)
+            geom_path(data=sim, aes(
+                x=year, y=cml_value, group=sim
+            ), col = "#5b5b5b", alpha = 0.05, inherit.aes=F) + 
+
+            # Observed (line)
+            geom_path(
+                data=obs, aes(x=year, y=cml_value), size=1, inherit.aes=F
+            ) +
+
             facet_wrap(~groupname) + 
             scale_y_continuous(limits=c(0,6000), breaks=seq(0, 6000, 2000)) +
+
+            # facet_wrap(~groupname, scales = "free_y") + 
+
+            scale_x_continuous(limits=c(1758, 2025)) +
             scale_fill_manual(values=c(
-                "#e1d8b9", # AA
-                "#fdfce0", # AT 
-                "#96bd8f", # IM
-                "#86d0ff", # NA 
-                "#bbdfac", # NT
-                "#42c9aa", # OC 
-                "#b2f0fe" # PA 
+                "#994e95", # AA
+                "#edad08", # AT 
+                "#73af48", # IM
+                "#cc503e", # NA 
+                "#0f8554", # NT
+                "#1aa0e6", # OC 
+                "#38a6a5" # PA 
             ))
-            # scale_y_continuous(limits=c(0,200), breaks=seq(0, 200, 50))
+
         wfile <- paste0(odir, "fig-2/fig-2-graph.png")
         ggsave(wfile, plt, units="cm", width=26, height=15, dpi=300)
     }
@@ -249,21 +253,31 @@ for (i in models) {
     title <- options[counter] 
 
     xlab <- "\nYear"; ylab <- "Cumulative number of species\n"
-    plt <- ggplot(all) + theme_minimal(base_size=16) + 
+    plt <- ggplot() + theme_minimal(base_size=16) + 
         xlab(xlab) + ylab(ylab) +
-        geom_ribbon(aes(
-            x=year,
-            ymin=for_cml_value_pred_lwrCI95,
-            ymax=for_cml_value_pred_uprCI95
-        ), alpha=.1, fill="red") + 
-        geom_line(aes(x=year, y=for_cml_value_pred_mean), colour="red", size=1.5) + 
-        geom_ribbon(aes(
-            x=year,
-            ymin=cml_value_pred_lwrCI95,
-            ymax=cml_value_pred_uprCI95
-        ), alpha=.1, fill="blue") + 
-        geom_line(aes(x=year, y=cml_value_pred_mean), colour="blue", size=1.5) + 
-        geom_point(aes(x=year, y=cml_value_obs), size=0.1) +
+
+        # Forecast (for future)
+        geom_ribbon(data=forsim, aes(x=year,
+            ymin=for_cml_value_pred_lwrCI80,
+            ymax=for_cml_value_pred_uprCI80
+        ), alpha=.1, fill="red", inherit.aes=F) + 
+        geom_line(data=forsim,
+            aes(x=year, y=for_cml_value_pred_mean), colour="red", size=1,
+            inherit.aes=F
+        ) + 
+
+        # Simulations (within observed timeframe)
+        geom_path(data=sim, aes(
+            x=year, y=cml_value, group=sim
+        ), col = "#5b5b5b", alpha = 0.05, inherit.aes=F) + 
+
+        # Observed (line)
+        geom_path(
+            data=obs, aes(x=year, y=cml_value), size=1, inherit.aes=F
+        ) +
+
+        facet_wrap(~groupname) + 
+        scale_y_continuous(limits=c(0,6000), breaks=seq(0, 6000, 2000)) +
         facet_wrap(~groupname, scales="free_y") +
         theme(plot.title = element_text(hjust = -.1)) +
         ggtitle(title)
