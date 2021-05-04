@@ -151,10 +151,7 @@ p1 <- ggplot(summary, aes(x = ptime, y = summary$MAPEplt, fill = type)) +
     scale_fill_manual(
         values = c('#999999','#E69F00'),
         name = "",
-        labels = c(
-            "Validation forecast (using data)", 
-            lab_naive
-        )
+        labels = c("Validation forecast (using data)", lab_naive)
     ) + theme(legend.position="bottom")
 
 output <- paste0(dir_model_folder, "ts.png")
