@@ -7,6 +7,15 @@ print(paste0(
 
 ## Mean number of species per publication by decade
 
+# Used in chapter 2 as supporting information
+
+p <- ggplot(df_publications_N) +
+    theme_minimal() +
+    geom_histogram(aes(x=n_species), binwidth=1) +
+    xlab('\n Number of species') + ylab('Number of publications (log scale)\n') 
+f <- paste0(dir_plot2, 'n-species-pub.png')
+ggsave(f, p, units="cm", width=16, height=12, dpi=300)
+
 median_N_spp_per_pub_decade <- df_publications_N[,
     list(median_N_spp=median(n_species)), by = "date.decade"
 ]
