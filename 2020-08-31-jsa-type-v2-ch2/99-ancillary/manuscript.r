@@ -15,11 +15,12 @@ source(paste0(dir_script, "subset.r"))
 df <- get_df()
 
 df$date <-  as.integer(df$date)
-df <- df[
-    duplicated == FALSE & status %in% c("Valid species"), 
+df_all <- df[
+    date <= 2019 &
+    duplicated == FALSE & status %in% c("Valid species", "Synonym"), 
     c("genus", "species", "status", "date", "lat", "lon")
 ]
-df <- df[date <= 2019,]
+df <- df_all[ status %in% c("Valid species"), ]
 
 rfile <- paste0(odir, "fig-2\\data\\lat-lon.csv")
 fwrite(df, rfile)
@@ -35,8 +36,8 @@ max <- max(yr$N)
 xlab <-  "\nYear"; ylab <- "Number of species\n"
 plt <- ggplot(yr) + theme_minimal(base_size=14) +
     theme(plot.title = element_text(hjust = -.12)) +
-    annotate("rect", xmin=pts[1], xmax=pts[2], ymin=0, ymax=max, fill="red", alpha=0.2) +
-    annotate("rect", xmin=pts[3], xmax=pts[4], ymin=0, ymax=max, fill="red", alpha=0.2) +
+    annotate("rect", xmin=pts[1], xmax=pts[2], ymin=0, ymax=max, fill="#2c40ff", alpha=0.2) +
+    annotate("rect", xmin=pts[3], xmax=pts[4], ymin=0, ymax=max, fill="#2c40ff", alpha=0.2) +
     geom_line(aes(x=date, y=N)) + 
     ylab(ylab) + xlab(xlab) +
     scale_x_continuous(breaks=ybreaks20, limits=c(1750, 2020)) +
@@ -58,6 +59,16 @@ plt <- ggplot(yr) + theme_minimal(base_size=14) +
     ggtitle("(b)") 
 wfile <- paste0(odir, "fig-1b.png")
 ggsave(wfile, plt, units="cm", width=20, height=10, dpi=300)
+
+# Rate of synonymisation
+
+
+# Proportion of synonyms
+prop.table(df_all[,.N,by=status][,2])
+
+
+# Data as of 1990
+prop.table(df[,as_of_1990 := date>=1990, ][,.N, by=as_of_1990][,2])
 
 # Table data 
 
