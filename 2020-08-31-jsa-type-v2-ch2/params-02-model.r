@@ -6,12 +6,8 @@
 
 # Model parameters
 
-model_folder_names <- c(
-    # "BGY-E0-C4-I8000-A0.8-T12-F10-V0",
-    "LTY-E0-C4-I8000-A0.8-T12-F25-V0",
-    "LTY-E1-C4-I20000-A0.99-T12-F25-V0",
-    "LTY-E2-C4-I100000-A0.99-T12-F25-V0"
-) # sanity check
+# sanity-check/
+model_folder_names <- c("BGY-E1-C4-I20000-A0.9-T12-F25-V0")
 
 ######################## 2020-08-31-v2 data ####################################
 
