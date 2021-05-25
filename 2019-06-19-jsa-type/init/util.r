@@ -36,6 +36,9 @@ ybreaks10 = function(lims) {ybreaks(lims, 10)}
 ybreaks20 = function(lims) {ybreaks(lims, 20)}
 ybreaks50 = function(lims) {ybreaks(lims, 50)}
 ybreaks100 = function(lims) {ybreaks(lims, 100)}
+ybreaks1000 = function(lims) {ybreaks(lims, 1000)}
+ybreaks2000 = function(lims) {ybreaks(lims, 2000)}
+ybreaks4000 = function(lims) {ybreaks(lims, 4000)}
 
 
 read_escaped_data = function(filepath, escape=T) {

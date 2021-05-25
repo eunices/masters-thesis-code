@@ -63,7 +63,8 @@ plt <- ggplot(yr) + theme_minimal(base_size=14) +
     ), alpha=.1, fill="#faef1f") + 
     ylab(ylab) + xlab(xlab) +
     scale_x_continuous(breaks=ybreaks20, limits=c(1750, 2020)) +
-    theme(plot.title = element_text(hjust = -.12)) +
+    scale_y_continuous(breaks=ybreaks4000) +
+    theme(plot.title = element_text(hjust = -.16)) +
     ggtitle("(b)") 
 wfile <- paste0(odir, "fig-1b.png")
 ggsave(wfile, plt, units="cm", width=20, height=10, dpi=300)
