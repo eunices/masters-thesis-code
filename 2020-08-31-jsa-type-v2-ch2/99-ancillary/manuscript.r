@@ -22,8 +22,16 @@ df_all <- df[
 ]
 df <- df_all[ status %in% c("Valid species"), ]
 
-rfile <- paste0(odir, "fig-2\\data\\lat-lon.csv")
+df$lat_n <- as.numeric(df$lat)
+df$lon_n <- as.numeric(df$lon)
+
+table(is.na(df$lat_n) | is.na(df$lon_n))
+prop.table(table(is.na(df$lat_n) | is.na(df$lon_n)))
+
+rfile <- paste0(odir, "fig-2\\fig-2-lat-lon.csv")
 fwrite(df, rfile)
+
+
 
 
 pts <- c(1914, 1919, 1939, 1945)
@@ -119,8 +127,8 @@ fwrite(r, rfile)
 
 
 # Get graph from model_predict
-models <- c(model_analyse, model_predict, model_person)
-# models <- c(model_predict)
+# models <- c(model_analyse, model_predict, model_person)
+models <- c(model_predict)
 
 counter <- 1
 for (i in models) {
@@ -233,11 +241,11 @@ for (i in models) {
             # Simulations (within observed timeframe)
             geom_path(data=sim, aes(
                 x=year, y=cml_value, group=sim
-            ), col = "#5b5b5b", alpha = 0.05, inherit.aes=F) + 
+            ), col = "#5b5b5b", alpha = 0.05, inherit.aes=F, size=1) + 
 
             # Observed (line)
             geom_path(
-                data=obs, aes(x=year, y=cml_value), size=1, inherit.aes=F
+                data=obs, aes(x=year, y=cml_value), size=1.5, inherit.aes=F
             ) +
 
             facet_wrap(~groupname) + 
