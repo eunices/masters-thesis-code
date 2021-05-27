@@ -45,7 +45,7 @@ hist_active_yrs <- ggplot(data.frame(yrs=yrs_active1b)) +
     #     xintercept=summary(yrs_active1b)[5], 
     #     color='grey', size=.5, linetype="dotted"
     # ) +
-    xlab("\nNumber of active years") + ylab("Proportion of PTEs (%)\n") + 
+    xlab("\nNumber of active years") + ylab("Percentage of PTEs (%)\n") + 
     theme
 
 ggsave(

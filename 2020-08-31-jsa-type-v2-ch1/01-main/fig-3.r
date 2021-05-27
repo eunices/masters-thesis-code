@@ -19,8 +19,8 @@ hist_tl_spp <- ggplot(tax, aes(x=ns_spp_N)) +
         fill='grey30', binwidth=100
     ) + 
     geom_vline(xintercept=median(tax$ns_spp_N), color='grey', size=.5) +
-    xlab("\nTotal number of valid species described, by PTE") + 
-    ylab("Proportion of PTEs (%)\n") + 
+    xlab("\nTotal number of valid species \ndescribed, by PTE") + 
+    ylab("Percentage of PTEs (%)\n") + 
     geom_label_repel(
         data=tax_highlight, 
         aes(x=ns_spp_N, y=.1, label=last.name),
@@ -34,7 +34,7 @@ hist_tl_spp <- ggplot(tax, aes(x=ns_spp_N)) +
 
 ggsave(
     paste0(dir_plot, 'fig-3a.png'), hist_tl_spp, units="cm", 
-    width=7, height=6, dpi=300
+    width=6.5, height=6.5, dpi=300
 )
 
 
@@ -60,20 +60,20 @@ hist_mean_spp <- ggplot(tax, aes(x=ns_species_per_year_active)) +
         xintercept=median(tax$ns_species_per_year_active), 
         color='grey', size=.5
     ) +
-    xlab("\nMean number of species described per year, by PTE") +
-    ylab("Proportion of PTEs (%)\n") + 
+    xlab("\nMean number of species \ndescribed per year, by PTE") +
+    ylab("Percentage of PTEs (%)\n") + 
     scale_x_continuous(
         breaks= seq(0, max(tax$ns_species_per_year_active), 10)
     ) +
     geom_label_repel(
         data=tax_highlight, 
         aes(x=ns_species_per_year_active, y=.1, label=paste0(last.name, " (", round(ns_species_per_year_active, 0),")")), 
-        size=2, nudge_x=20, nudge_y=30,
+        size=2, nudge_x=30, nudge_y=30,
         fontface='bold', color='black', segment.color='grey80', force=5,
         box.padding = unit(0.001, 'lines')
     ) + theme
 
 ggsave(
     paste0(dir_plot, 'fig-3b.png'), hist_mean_spp, units="cm", 
-    width=7, height=6, dpi=300
+    width=6.5, height=6, dpi=300
 )

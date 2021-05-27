@@ -314,7 +314,7 @@ save_graph <- function(
     
     } else if (type=="tax"){
 
-        y_main <- "Proportion of female authors (%)\n"
+        y_main <- "Percentage of female describers (%)\n"
 
         y_axis_title <- ifelse(
             country=="All",
