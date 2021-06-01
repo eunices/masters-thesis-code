@@ -147,12 +147,9 @@ des_whereplot_data <- des_where_summary_plot[, c(
 
 names(des_whereplot_data) <- c("socioecon", "continent", "n_pte")
 
-des_whereplot_data <- dcast(
-    des_whereplot_data, socioecon ~ continent, value.var="n_pte", sum
-)
-
 wfile <- paste0(v2_dir_data_webapp, "ch3-fig-01-data.csv")
 fwrite(des_whereplot_data, wfile, na="")
+
 
 # Chisq test of association
 

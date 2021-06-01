@@ -51,7 +51,7 @@ plt <- ggplot(dfs[[2]]) + theme +
     geom_point(aes(x=years, y=N_real_describers), size=0.1) +
     geom_line(aes(x=years, y=N_real_describers_roll)) 
 wfile <- paste0(v2_dir_data_webapp_img, gsub(".csv", "", f[[2]]), ".png")
-ggsave(wfile, plt, units="cm", width=25, height=10, dpi=300)
+ggsave(wfile, plt, units="cm", width=15, height=7, dpi=300)
 
 
 print(paste0("Visualisation for ", f[[3]]))
@@ -63,7 +63,7 @@ plt <- ggplot(dfs[[3]]) + theme +
     geom_point(aes(x=years, y=N_weighted_real_describers), size=0.1) +
     geom_line(aes(x=years, y=N_weighted_real_describers_roll)) 
 wfile <- paste0(v2_dir_data_webapp_img, gsub(".csv", "", f[[3]]), ".png")
-ggsave(wfile, plt, units="cm", width=25, height=10, dpi=300)
+ggsave(wfile, plt, units="cm", width=15, height=7, dpi=300)
 
 
 print(paste0("Visualisation for ", f[[4]]))
@@ -71,14 +71,14 @@ head(dfs[[4]], 5)
 
 dfs[[4]]$N_species_described <- as.factor(dfs[[4]]$N_species_described)
 
-xlab <- "\nYear"; ylab <- "Percentage of PTEs describing  <=N species\n"
+xlab <- "\nYear"; ylab <- "Percentage of PTEs describing \n <=N species\n"
 plt <- ggplot(dfs[[4]]) + theme +
     xlab(xlab) + ylab(ylab) +
     geom_point(aes(x=years, y=value), size=0.1) +
     geom_line(aes(x=years, y=value_roll)) + 
     facet_wrap(~N_species_described)
 wfile <- paste0(v2_dir_data_webapp_img, gsub(".csv", "", f[[4]]), ".png")
-ggsave(wfile, plt, units="cm", width=25, height=10, dpi=300)
+ggsave(wfile, plt, units="cm", width=20, height=9, dpi=300)
 
 
 print(paste0("Visualisation for ", f[[5]]))
@@ -124,7 +124,6 @@ ggsave(wfile, plt, units="cm", width=15, height=10, dpi=300)
 print(paste0("Visualisation for ", f[[8]]))
 head(dfs[[8]], 5)
 
-dfs[[8]] <- melt(dfs[[8]])
 dfs[[8]]$socioecon <- factor(dfs[[8]]$socioecon,
     c("High income", "Upper middle income", "Lower middle income", "Low income")
 )
@@ -169,11 +168,11 @@ head(dfs[[11]], 5)
 print(paste0("Visualisation for ", f[[12]]))
 head(dfs[[12]], 5)
 
-xlab <- "\nYear"; ylab <- "Percentage of active female describers\n"
+xlab <- "\nYear"; ylab <- "Percentage of \nactive female describers\n"
 plt <- ggplot(dfs[[12]]) + theme +
     xlab(xlab) + ylab(ylab) +
     geom_point(aes(x=year, y=prop_Fl), size=0.1) +
     geom_line(aes(x=year, y=prop_F_predicted))
 wfile <- paste0(v2_dir_data_webapp_img, gsub(".csv", "", f[[12]]), ".png")
-ggsave(wfile, plt, units="cm", width=25, height=10, dpi=300)
+ggsave(wfile, plt, units="cm", width=20, height=9, dpi=300)
 
