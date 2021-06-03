@@ -55,7 +55,7 @@ p <- ggplot(n_species, aes(date, N)) + theme_minimal() +
     facet_wrap(. ~ pri, ncol=3) +
     xlab("\nYear") + ylab("Number of valid species \n") 
 
-ggsave(paste0(v2_dir_china, '03-time-series-01b.png'), p, units="cm", width=15, height=18, dpi=300)
+ggsave(paste0(v2_dir_china, '03-time-series-01c.png'), p, units="cm", width=15, height=18, dpi=300)
 
 
 # Using Ascher's fields
