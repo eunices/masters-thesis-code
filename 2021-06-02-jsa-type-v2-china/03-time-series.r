@@ -108,7 +108,7 @@ p <- ggplot(n_species, aes(date, N)) + theme_minimal() +
     xlab("\nYear") + ylab("Number of valid species \n") +
     labs(color="")
 
-ggsave(paste0(v2_dir_china, '03-time-series-01c-new.png'), p, units="cm", width=15, height=8, dpi=300)
+ggsave(paste0(v2_dir_china, '03-time-series-01b-new.png'), p, units="cm", width=15, height=8, dpi=300)
 
 
 
@@ -172,7 +172,7 @@ p <- ggplot(n_species, aes(date, N)) + theme_minimal() +
     xlab("\nYear") + ylab("Number of valid species \n") +
     labs(color="")
 
-ggsave(paste0(v2_dir_china, '03-time-series-01c-max.png'), p, units="cm", width=15, height=8, dpi=300)
+ggsave(paste0(v2_dir_china, '03-time-series-01b-max.png'), p, units="cm", width=15, height=8, dpi=300)
 
 
 
@@ -222,11 +222,7 @@ p <- ggplot(n_species, aes(date, N, color=status)) + theme_minimal() +
     xlab("\nYear") + ylab("Number of valid species \n") +
     labs(color="")
 
-ggsave(paste0(v2_dir_china, '03-time-series-01b-new.png'), p, units="cm", width=18, height=18, dpi=300)
-
-
-# Synonyms
-
+ggsave(paste0(v2_dir_china, '03-time-series-01c-new.png'), p, units="cm", width=18, height=18, dpi=300)
 
 
 
