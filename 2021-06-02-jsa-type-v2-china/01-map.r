@@ -30,12 +30,14 @@ df_all[type.country_n == "CH" & !(is.na(lat) | is.na(lon)), .N, by=status]
 # but were included in 04-flow and 05-type-repo (also including synonyms)
 round((160/665*100), 1) 
 
+
 dir_geo_chn <- "data/geo_processed/gadm/china/gadm36_CHN_shp/"
 list.files(dir_geo_chn)
 v_chn <- st_read(paste0(dir_geo_chn, "gadm36_CHN_0.shp"))
 v_chn_pri <- st_read(paste0(dir_geo_chn, "gadm36_CHN_1.shp"))
 
-v_df <- st_as_sf(df, coords = c("lon", "lat"), crs = wgs84)
+v_df <- st_as_sf(df[!(is.na(lat) | is.na(lon))], coords = c("lon", "lat"), crs = wgs84)
+v_df <- st_transform(v_df, st_crs(v_chn_pri))
 v_df <- st_join(v_df, v_chn_pri, join = st_intersects)
 
 df_merged <- data.table(v_df)[, c("idx", "GID_0", "NAME_1")]
@@ -44,8 +46,24 @@ names(df_merged) <- c("idx", "china", "pri")
 df <- merge(df, df_merged, by="idx", all.x=T, all.y=F)
 dim(df)
 
+
+v_chn_pri <- st_read(paste0(v2_dir_china, "01-map/Prov_ann/Prov_ann.shp"))
+
+v_df <- st_as_sf(df[!(is.na(lat) | is.na(lon))], coords = c("lon", "lat"), crs = wgs84)
+v_df <- st_transform(v_df, st_crs(v_chn_pri))
+v_df <- st_join(v_df, v_chn_pri, join = st_intersects)
+
+df_merged <- data.table(v_df)[, c("idx", "Eng_NAME")]
+names(df_merged) <- c("idx", "pri")
+
+df <- merge(df, df_merged, by="idx", all.x=T, all.y=F, suffixes=c("", "_max"))
+dim(df)
+
 wfile <- paste0(v2_dir_china, "01-map/lat-lon.csv")
 fwrite(df, wfile, na="")
+
+
+
 
 
 # Mismatches 
