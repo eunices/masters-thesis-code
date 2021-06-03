@@ -4,14 +4,17 @@ source('2021-06-02-jsa-type-v2-china/init.r')
 
 df_all <- get_df()
 
+df_all <- df_all[duplicated == FALSE]
+
 df_all$lat_old <- df_all$lat
 df$lon_old <- df_all$lon
 
 df_all$lat <- as.numeric(df_all$lat)
 df_all$lon <- as.numeric(df_all$lon)
 
+
 df <- df_all[
-    duplicated == FALSE & status %in% c("Valid species", "Synonym"), 
+    status %in% c("Valid species", "Synonym"), 
     c("idx", "genus", "species", "status", "date", "lat", "lon", "type.country_n", "type.state")
 ]
 # note: "type.state" field was not cleaned!
@@ -22,12 +25,10 @@ df_all[type.country_n == "CH" & (is.na(lat) | is.na(lon)), .N, by=status]
 df_all[type.country_n == "CH" & !(is.na(lat) | is.na(lon)), .N, by=status]
 
 # Note: mapped/ plotted in species description curves for China, using lat/lon
-# which means 161 valid species (of 669 species; 24.1%) were omitted from the map and curves
+# which means 160 valid species (of 665 species; 24.1%) were omitted from the map and curves
 # (these with country China, but no lat/lon)
 # but were included in 04-flow and 05-type-repo (also including synonyms)
-round((161/669*100), 1) 
-
-df <- df[!(is.na(lat) | is.na(lon))]
+round((160/665*100), 1) 
 
 dir_geo_chn <- "data/geo_processed/gadm/china/gadm36_CHN_shp/"
 list.files(dir_geo_chn)
@@ -40,7 +41,7 @@ v_df <- st_join(v_df, v_chn_pri, join = st_intersects)
 df_merged <- data.table(v_df)[, c("idx", "GID_0", "NAME_1")]
 names(df_merged) <- c("idx", "china", "pri")
 
-df <- merge(df, df_merged, by="idx")
+df <- merge(df, df_merged, by="idx", all.x=T, all.y=F)
 dim(df)
 
 wfile <- paste0(v2_dir_china, "01-map/lat-lon.csv")
@@ -56,3 +57,6 @@ df[type.country_n=="CH" & is.na(china)]
 
 df[type.country_n!="CH" & china=="CHN"] 
 # erroneous georeferencing (should be excluded)
+
+df[type.country_n == "CH", .N, by=status]
+# tally with values above
