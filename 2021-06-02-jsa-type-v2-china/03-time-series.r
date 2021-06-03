@@ -38,6 +38,11 @@ n_species <- data.table(n_species)
 n_species[is.na(N)]$N <- 0 
 n_species[, N := cumsum(N), by="pri"]
 
+n_species$pri <- as.character(n_species$pri)
+
+
+n_species$pri <- factor(n_species$pri, levels=sort(unique(n_species$pri)))
+
 p <- ggplot(n_species, aes(date, N)) + theme_minimal() +
     # geom_smooth(fill=NA, color='black', size=1) +
     # geom_point(size=1, color='grey') + 
