@@ -11,10 +11,12 @@ t <- fread(rfile)
 
 type_loc <- t[des=="CH", c("ori", "N")][order(-N)]
 type_loc$ori <- factor(type_loc$ori, levels=type_loc$ori)
+type_loc <- type_loc[N>10]
 
-p <- ggplot(type_loc) + theme_minimal() +
-    geom_col(aes(x=ori, y=N)) +
-    xlab("\nCountries") + ylab("Number of species \n")
+p <- ggplot(type_loc, aes(x=ori, y=N, label=N)) + theme_minimal() +
+    geom_col(fill='grey24') +
+    xlab("\nCountries") + ylab("Number of descriptions \n")
+    # geom_text(size = 3, position = position_stack(vjust = 0.5))
 # both valid and synonym
 
 ggsave(
@@ -29,8 +31,8 @@ describers_loc <- t[ori=="CH" & des != "CH", c("des", "N")][order(-N)]
 describers_loc$des <- factor(describers_loc$des, levels=describers_loc$des)
 describers_loc$N <- as.integer(describers_loc$N)
 
-p <- ggplot(describers_loc) + theme_minimal() +
-    geom_col(aes(x=des, y=N)) +
+p <- ggplot(describers_loc, aes(x=des, y=N)) + theme_minimal() +
+    geom_col(fill='grey24') +
     xlab("\nCountries") + ylab("Number of species \n") +
     scale_y_continuous(breaks=ybreaks1)
 # both valid and synonym

@@ -7,16 +7,18 @@ source('2021-06-02-jsa-type-v2-china/init.r')
 rfile <- paste0(v2_dir_china, "01-map/lat-lon.csv")
 df <- fread(rfile)
 
-n_species <- df[china=="CHN", .N, by="date"]
+n_species <- df[china=="CHN" & status =="Valid species", .N, by="date"]
 n_species$date <- as.integer(n_species$date)
+n_species <- n_species[order(date)]
+n_species$N <- cumsum(n_species$N)
 
 p <- ggplot(n_species, aes(date, N)) + theme_minimal() +
+    geom_smooth(fill=NA, color='black', size=1) +
     geom_point(size=1, color='grey') + 
     geom_line(size=.5, color='grey', linetype='dashed') +
-    geom_smooth(fill=NA, color='black', size=1.5) +
     scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
-    scale_y_continuous(breaks=ybreaks10, minor_breaks=ybreaks2) + 
-    xlab("\nYear") + ylab("Number of descriptions\n") 
+    scale_y_continuous(breaks=ybreaks100, minor_breaks=ybreaks50) + 
+    xlab("\nYear") + ylab("Number of valid species \n") 
 
 ggsave(paste0(v2_dir_china, '03-time-series-01.png'), p, units="cm", width=15, height=8, dpi=300)
 
@@ -54,18 +56,18 @@ taxonomic_effort1 <- des[, list(
 by = years][order(years)]
 
 p <- ggplot(taxonomic_effort1, aes(years, N_describers)) + theme_minimal() +
+    geom_smooth(fill=NA, color='black', size=1) +
     geom_point(size=1, color='grey') + 
     geom_line(size=.5, color='grey', linetype='dashed') +
-    geom_smooth(fill=NA, color='black', size=1.5) +
     scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
     xlab("\nYear") + ylab("Number of active describers\n") 
 
 ggsave(paste0(v2_dir_china, '03-time-series-02.png'), p, units="cm", width=15, height=8, dpi=300)
 
 p <- ggplot(taxonomic_effort1, aes(years, N_weighted_describers)) + theme_minimal() +
+    geom_smooth(fill=NA, color='black', size=1) +
     geom_point(size=1, color='grey') + 
     geom_line(size=.5, color='grey', linetype='dashed') +
-    geom_smooth(fill=NA, color='black', size=1.5) +
     scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
     xlab("\nYear") + ylab("Number of active describers\n") 
 
