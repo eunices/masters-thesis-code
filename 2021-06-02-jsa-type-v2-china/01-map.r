@@ -15,7 +15,8 @@ df_all$lon <- as.numeric(df_all$lon)
 
 df <- df_all[
     status %in% c("Valid species", "Synonym"), 
-    c("idx", "genus", "species", "status", "date", "lat", "lon", "type.country_n", "type.state")
+    c("idx", "genus", "species", "status", "date", "lat", "lon", 
+        "global.mapper_n", "global.mapper", "merged.global.mapper", "type.country_n", "type.state")
 ]
 # note: "type.state" field was not cleaned!
 

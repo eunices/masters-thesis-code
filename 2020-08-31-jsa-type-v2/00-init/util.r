@@ -296,7 +296,8 @@ ybreaks10 = function(lims) {ybreaks(lims, 10)}
 ybreaks20 = function(lims) {ybreaks(lims, 20)}
 ybreaks50 = function(lims) {ybreaks(lims, 50)}
 ybreaks100 = function(lims) {ybreaks(lims, 100)}
-
+ybreaks200 = function(lims) {ybreaks(lims, 200)}
+ybreaks500 = function(lims) {ybreaks(lims, 500)}
     
 
 
