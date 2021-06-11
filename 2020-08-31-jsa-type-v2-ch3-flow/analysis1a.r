@@ -280,6 +280,7 @@ print(paste0(Sys.time(), " --- Kruskal wallis test for number of countries for f
 flow <- unique(spp_s[
     , c("type.country_n", "residence.country.describer.first")
 ])
+# only includes countries with at least one donor!
 
 flow <- flow[type.country_n != residence.country.describer.first]
 flow <- flow[,.N, by=c("residence.country.describer.first")]

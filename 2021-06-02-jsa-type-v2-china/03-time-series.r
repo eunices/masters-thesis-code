@@ -135,7 +135,7 @@ p <- ggplot(n_species, aes(date, N, color=status)) + theme_minimal() +
     # geom_point(size=1, color='grey') + 
     # geom_line(size=.5, color='grey', linetype='dashed') +
     scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
-    scale_y_continuous(breaks=ybreaks100, minor_breaks=ybreaks50) + 
+    scale_y_continuous(breaks=ybreaks100) + 
     xlab("\nYear") + ylab("Number of species \n") +
     labs(color="")
 
@@ -168,7 +168,7 @@ p <- ggplot(n_species, aes(date, N)) + theme_minimal() +
     # geom_point(size=1, color='grey') + 
     # geom_line(size=.5, color='grey', linetype='dashed') +
     scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
-    scale_y_continuous(breaks=ybreaks100) + 
+    scale_y_continuous(breaks=ybreaks200) + 
     xlab("\nYear") + ylab("Number of valid species \n") +
     labs(color="")
 

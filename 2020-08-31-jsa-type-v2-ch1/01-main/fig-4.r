@@ -1,142 +1,78 @@
-print(paste0(Sys.time(), " --- Catch per effort graph"))
-
-################################################################################
-
-# Plots
-
-species_and_pub_per_year <- df_publications_N[, 
-    list(
-        species_per_publication=mean(n_species),
-        N_publications=length(n_species),
-        N_species=sum(n_species)
-    ), by="date"][order(date)]
-
-rng <- range(species_and_pub_per_year$date)
-
-species_and_pub_per_year <- data.table(merge(
-    data.frame(date=seq(rng[1], rng[2])), species_and_pub_per_year,
-    by="date", all.x=T, all.y=F
-))
-
-species_and_pub_per_year[is.na(species_and_pub_per_year)] <- 0
-
-species_and_pub_per_year$species_per_publication_roll <-
-    rollmean(species_and_pub_per_year$species_per_publication, 10, 
-             fill = list(NA, NULL, NA))
+print(paste0(Sys.time(), " --- Histogram of PTEs active years"))
 
 
-adjust_font <- theme_minimal(base_size=9)
+# Tabulate statistics of years active
+tax <- df_describers[spp_N_1st_auth_s>=1]
+tax$yrs_active1 <- tax$max_corrected - tax$min + 1
 
-p5 <- ggplot(species_and_pub_per_year, aes(x=date, y=species_per_publication)) + 
-    xlab("\nYear") + ylab("Number of species/ publication") + 
-    theme + adjust_font + 
-    ggtitle("") +
-    # ggtitle("Number of species/ publication by year") +
-    geom_point(size=1, color='grey') + 
-    geom_line(size=.5, color='grey', linetype='dashed') +
-    geom_smooth(fill=NA, color='black', size=1.5) +
-    geom_line(size=1, aes(y=species_per_publication_roll), color='grey50') +
-    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
-    scale_y_continuous(breaks=ybreaks20, minor_breaks=ybreaks5)
+# Active based on max_corrected
+yrs_active1 <- tax$yrs_active1
+tax[yrs_active1 <=0]
+yrs_active1[yrs_active1<=0] <- 0
+# tax[yrs_active1>30]$full.name.of.describer
 
-bp_year = 1910; y=4.1
-# y = taxonomic_effort[which(years==bp_year)]$species_per_real_taxonomist
+# Active based on max_correct and with date of death
+yrs_active1b <- tax[!is.na(dod.describer),]$yrs_active1
 
-p13 <- ggplot(data=taxonomic_effort, aes(x=years, y=species_per_real_taxonomist)) +
-    xlab("\nYear") + ylab("Number of species/ PTE") + 
-    ggtitle("") +
-    # ggtitle("Number of species described/ PTE by year") + 
-    theme + adjust_font + 
-    geom_point(size=1, color='grey') + 
-    geom_line(size=.5, color='grey', linetype='dashed') +
-    geom_smooth(fill=NA, color='black', size=1.5) +
-    geom_line(size=1, aes(y=species_per_real_taxonomist_roll), color='grey50') +
-    annotate(
-        geom='curve', x=bp_year+30, y=round(y+4,0), xend=bp_year, yend=y,
-        curvature=.1, arrow=arrow(length=unit(1, 'mm')), size=1, color='red'
-    ) + 
-    annotate(
-        geom='text', hjust='left', x=bp_year+33, y=round(y+4,0)+.2, 
-        label='Break point', size=4, color='red'
-    ) + 
-    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
-    scale_y_continuous(breaks=ybreaks2, minor_breaks=ybreaks1, limits=c(0,12))
+tax[yrs_active1 >100]
+df[grepl("Abrahamovich|Lucia", full.name.of.describer) & date == 1913]
 
-p16 <- ggplot(
-        data=taxonomic_effort, 
-        aes(x=years, y=species_per_real_taxonomist_weighted)
-    ) +
-    xlab("\nYear") + ylab("Number of species \ndescribed/ PTE \n(wted)") +
-    theme + adjust_font + 
-    # ggtitle("Number of species described/ PTE (wted) by year") + 
-    ggtitle("") +
-    geom_point(size=1, color='grey') + 
-    geom_line(size=.5, color='grey', linetype='dashed') +
-    geom_smooth(fill=NA, color='black', size=1.5) +
-    geom_line(
-        size=1, aes(y=species_per_real_taxonomist_weighted_roll), color='grey50'
-    ) +
-    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
-    scale_y_continuous(breaks=ybreaks2, minor_breaks=ybreaks1, limits=c(0,12))
+summary(yrs_active1)  # all
+summary(yrs_active1b) # with dod
+length(yrs_active1)
 
+hist_active_yrs <- ggplot(data.frame(yrs=yrs_active1b)) +
+    geom_histogram(data.frame(yrs=yrs_active1), 
+                   mapping=aes(x=yrs, y=..count../sum(..count..) * 100),
+                   binwidth=10, fill='black') + 
+    # geom_histogram(aes(x=yrs, y=..count../sum(..count..) * 100), binwidth=10, 
+    #                fill='grey80', alpha=0.6) +
+    scale_x_continuous(breaks= seq(0, max(yrs_active1), 10)) +
+    scale_y_continuous(breaks= seq(0, 50, 10), limits=c(0, 50)) +
+    # geom_vline(
+    #     xintercept=summary(yrs_active1)[2], 
+    #     color='grey', size=.5, 
+    # ) +
+    # geom_vline(
+    #     xintercept=summary(yrs_active1)[3], 
+    #     color='grey', size=.5, 
+    # ) +
+    # geom_vline(
+    #     xintercept=summary(yrs_active1)[5], 
+    #     color='grey', size=.5, 
+    # ) +
+    # geom_vline(
+    #     xintercept=summary(yrs_active1b)[5], 
+    #     color='grey', size=.5, linetype="dotted"
+    # ) +
+    xlab("\nNumber of active years") + ylab("Percentage of PTEs (%)\n") + 
+    theme
 
-ggsave(paste0(dir_plot, 'fig-4a.png'), p5, units="cm", width=15, height=6, dpi=300)
-ggsave(paste0(dir_plot, 'fig-4b.png'), p13, units="cm", width=15, height=6, dpi=300)
-ggsave(paste0(dir_plot, 'fig-4c.png'), p16, units="cm", width=15, height=5, dpi=300)
-
-
-################################################################################
-# Trend analysis
-
-# species_and_pub_per_year$species_per_publication
-# taxonomic_effort$species_per_real_taxonomist
-
-ts_data_sp_per_pub <- ts(
-    species_and_pub_per_year$species_per_publication,
-    frequency = 1, start = c(1758)
+ggsave(
+    paste0(dir_plot, 'fig-4.png'), hist_active_yrs,
+    units="cm", width=12, height=5.5, dpi=300
 )
 
-ts_data_species_per_tax <- ts(
-    taxonomic_effort$species_per_real_taxonomist,
-    frequency = 1, start = c(1758)
-)
+# Active based on max publication dates
+yrs_active2 <- tax$max - tax$min
 
-ts_data <- ts_data_species_per_tax
+# Based on sum of authors that described a species
+yrs_active3 <- df[, c("date", "full.name.of.describer")] %>% 
+    separate_rows(full.name.of.describer, sep="; ")
 
-# adf.test(ts_data)
-# kpss.test(ts_data)
-# nsdiffs(ts_data)
+yrs_active3 <- data.table(unique(yrs_active3))
+yrs_active3 <- yrs_active3[, .N, by='date'][order(date)]
+yrs_active3$date <- as.integer(yrs_active3$date)
 
-idx_1909 <- which(species_and_pub_per_year$date == 1909)
+plot_tax_effort5 <- ggplot(data=yrs_active3, aes(x=date, y=N)) +
+    geom_line() + theme +
+    xlab("Number of PTEs") + ylab("Year") + 
+    ggtitle(paste0("Number of PTEs in each year"))
 
-res <- MannKendall(ts_data_sp_per_pub)
-print("--------------------------")
-print("Trend test: mean species per publication")
-summary(res)
+# Mean number of species/year 
+hist_mean_sp_per_auth <- ggplot(df_describers) +
+    geom_histogram(
+        mapping=aes(x=ns_species_per_year_active, 
+        y=..count../sum(..count..) * 100), binwidth=5) +
+    theme
 
-res <- MannKendall(ts_data_species_per_tax[1:idx_1909])
-print("--------------------------")
-print("Trend test: mean species per describer before breakpoint")
-summary(res)
-
-res <- MannKendall(
-    ts_data_species_per_tax[idx_1909:length(ts_data_species_per_tax)]
-)
-print("--------------------------")
-print("Trend test: mean species per describer after breakpoint")
-summary(res)
-
-################################################################################
-
-# Breakpoint analysis
-
-# Resource: https://rpubs.com/MarkusLoew/12164
-
-plot(taxonomic_effort$years, taxonomic_effort$species_per_real_taxonomist_roll)
-mod <- lm(species_per_real_taxonomist~years, data = taxonomic_effort)
-seg <- segmented(mod, seg.Z = ~ years, psi = list(years=1909))
-print(summary(seg))
-print(seg$psi)
-
-# https://otexts.com/fpp2/moving-averages.html
-# https://otexts.com/fpp2/stationarity.html

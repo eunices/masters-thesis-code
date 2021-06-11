@@ -1,103 +1,142 @@
-print(paste0(Sys.time(), " --- Prop species describing <=N species"))
+print(paste0(Sys.time(), " --- Catch per effort graph"))
 
-taxonomic_effort$N_real_describers.1.prop <- taxonomic_effort$N_real_describers.1 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.2.prop <- taxonomic_effort$N_real_describers.2 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.3.prop <- taxonomic_effort$N_real_describers.3 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.4.prop <- taxonomic_effort$N_real_describers.4 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.5.prop <- taxonomic_effort$N_real_describers.5 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.6.prop <- taxonomic_effort$N_real_describers.6 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.7.prop <- taxonomic_effort$N_real_describers.7 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.8.prop <- taxonomic_effort$N_real_describers.8 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.9.prop <- taxonomic_effort$N_real_describers.9 / taxonomic_effort$N_real_describers * 100
-taxonomic_effort$N_real_describers.10.prop <- taxonomic_effort$N_real_describers.10 / taxonomic_effort$N_real_describers * 100
+################################################################################
 
-taxonomic_effort$N_real_describers.1.prop_roll <- rollmean(taxonomic_effort$N_real_describers.1.prop, 10, fill = list(NA, NULL, NA))  
-taxonomic_effort$N_real_describers.2.prop_roll <- rollmean(taxonomic_effort$N_real_describers.2.prop, 10, fill = list(NA, NULL, NA))  
-taxonomic_effort$N_real_describers.3.prop_roll <- rollmean(taxonomic_effort$N_real_describers.3.prop, 10, fill = list(NA, NULL, NA))  
-taxonomic_effort$N_real_describers.4.prop_roll <- rollmean(taxonomic_effort$N_real_describers.4.prop, 10, fill = list(NA, NULL, NA))  
-taxonomic_effort$N_real_describers.5.prop_roll <- rollmean(taxonomic_effort$N_real_describers.5.prop, 10, fill = list(NA, NULL, NA))  
-taxonomic_effort$N_real_describers.6.prop_roll <- rollmean(taxonomic_effort$N_real_describers.6.prop, 10, fill = list(NA, NULL, NA))  
-taxonomic_effort$N_real_describers.7.prop_roll <- rollmean(taxonomic_effort$N_real_describers.7.prop, 10, fill = list(NA, NULL, NA))  
-taxonomic_effort$N_real_describers.8.prop_roll <- rollmean(taxonomic_effort$N_real_describers.8.prop, 10, fill = list(NA, NULL, NA))  
-taxonomic_effort$N_real_describers.9.prop_roll <- rollmean(taxonomic_effort$N_real_describers.9.prop, 10, fill = list(NA, NULL, NA))  
-taxonomic_effort$N_real_describers.10.prop_roll <- rollmean(taxonomic_effort$N_real_describers.10.prop, 10, fill = list(NA, NULL, NA)) 
+# Plots
 
-cols <- names(taxonomic_effort)[grepl(".prop", names(taxonomic_effort))]
-cols <- c("years", cols)
-des_y <- melt(taxonomic_effort[, ..cols], id.vars="years")
+species_and_pub_per_year <- df_publications_N[, 
+    list(
+        species_per_publication=mean(n_species),
+        N_publications=length(n_species),
+        N_species=sum(n_species)
+    ), by="date"][order(date)]
 
-cols <- names(taxonomic_effort)[grepl(".prop_roll", names(taxonomic_effort))]
-cols <- c("years", cols)
-des_y_roll <- melt(taxonomic_effort[, ..cols], id.vars="years")
-des_y_roll$variable <- gsub("_roll", "", des_y_roll$variable)
+rng <- range(species_and_pub_per_year$date)
 
-des_y <- merge(
-    des_y, des_y_roll, by=c("years", "variable"), suffixes=c("", "_roll")
-)
+species_and_pub_per_year <- data.table(merge(
+    data.frame(date=seq(rng[1], rng[2])), species_and_pub_per_year,
+    by="date", all.x=T, all.y=F
+))
 
-# Trend analysis
-cols <- names(taxonomic_effort)[grepl(".prop_roll", names(taxonomic_effort))]
-cols <- c("years", cols)
-te_trend <- taxonomic_effort[, ..cols]
+species_and_pub_per_year[is.na(species_and_pub_per_year)] <- 0
 
-results_p <- c()
-results_tau <- c()
-for (i in 1:10) {
-    name <- paste0("N_real_describers.", i, ".prop_roll")
-    trend <- te_trend[, get(name)]
-    # plot(trend)
-    res <- MannKendall(trend)
-    results_p <- c(results_p, round(as.numeric(res$sl), 2))
-    results_tau <- c(results_tau, round(as.numeric(res$tau), 2))
-}
+species_and_pub_per_year$species_per_publication_roll <-
+    rollmean(species_and_pub_per_year$species_per_publication, 10, 
+             fill = list(NA, NULL, NA))
 
-print(paste0(results_tau, collapse = ", "))
-print(paste0(results_p, collapse = ", "))
-print(which(results_p > 0.05))
-print(sum(results_p <= 0.05))
 
-formatstr <- function(string) {
-    string <- gsub("N_real_describers.", "", string)
-    string <- gsub(".prop", "", string)
-    string <- ifelse(
-        string=="1", 
-        paste0(string, " species"), paste0("<=", string, " species")
-    )
-    string
-}
+adjust_font <- theme_minimal(base_size=9)
 
-des_y$variable <- factor(
-    des_y$variable, levels = paste0("N_real_describers.", 1:10, ".prop")
-)
+p5 <- ggplot(species_and_pub_per_year, aes(x=date, y=species_per_publication)) + 
+    xlab("\nYear") + ylab("Number of species/ publication") + 
+    theme + adjust_font + 
+    ggtitle("") +
+    # ggtitle("Number of species/ publication by year") +
+    geom_point(size=1, color='grey') + 
+    geom_line(size=.5, color='grey', linetype='dashed') +
+    geom_smooth(fill=NA, color='black', size=1.5) +
+    geom_line(size=1, aes(y=species_per_publication_roll), color='grey50') +
+    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
+    scale_y_continuous(breaks=ybreaks20, minor_breaks=ybreaks5)
 
-plot_tax <- ggplot(des_y, aes(x=years, y=value, group=variable)) + 
-    geom_line(size=.5, colour="grey", linetype='dashed') + 
-    geom_point(size=.5, color='grey') + 
-    geom_smooth(size=1, colour="black") +
-    geom_line(size=.7, aes(y=value_roll), color='grey50') +
-    xlab("\nYear") + ylab("Percentage of PTEs describing <= N species (%)\n") +
-    facet_wrap(
-        . ~variable, ncol=2, 
-        labeller=labeller(variable=formatstr), dir="v"
+bp_year = 1910; y=4.1
+# y = taxonomic_effort[which(years==bp_year)]$species_per_real_taxonomist
+
+p13 <- ggplot(data=taxonomic_effort, aes(x=years, y=species_per_real_taxonomist)) +
+    xlab("\nYear") + ylab("Number of species/ PTE") + 
+    ggtitle("") +
+    # ggtitle("Number of species described/ PTE by year") + 
+    theme + adjust_font + 
+    geom_point(size=1, color='grey') + 
+    geom_line(size=.5, color='grey', linetype='dashed') +
+    geom_smooth(fill=NA, color='black', size=1.5) +
+    geom_line(size=1, aes(y=species_per_real_taxonomist_roll), color='grey50') +
+    annotate(
+        geom='curve', x=bp_year+30, y=round(y+4,0), xend=bp_year, yend=y,
+        curvature=.1, arrow=arrow(length=unit(1, 'mm')), size=1, color='red'
+    ) + 
+    annotate(
+        geom='text', hjust='left', x=bp_year+33, y=round(y+4,0)+.2, 
+        label='Break point', size=4, color='red'
+    ) + 
+    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
+    scale_y_continuous(breaks=ybreaks2, minor_breaks=ybreaks1, limits=c(0,12))
+
+p16 <- ggplot(
+        data=taxonomic_effort, 
+        aes(x=years, y=species_per_real_taxonomist_weighted)
     ) +
-    scale_y_continuous(limits=c(0, 50), breaks=seq(0,50,10)) +
-    theme + theme_minimal(base_size=10)
+    xlab("\nYear") + ylab("Number of species \ndescribed/ PTE \n(wted)") +
+    theme + adjust_font + 
+    # ggtitle("Number of species described/ PTE (wted) by year") + 
+    ggtitle("") +
+    geom_point(size=1, color='grey') + 
+    geom_line(size=.5, color='grey', linetype='dashed') +
+    geom_smooth(fill=NA, color='black', size=1.5) +
+    geom_line(
+        size=1, aes(y=species_per_real_taxonomist_weighted_roll), color='grey50'
+    ) +
+    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
+    scale_y_continuous(breaks=ybreaks2, minor_breaks=ybreaks1, limits=c(0,12))
 
-ggsave(
-    paste0(dir_plot, 'fig-5.png'), plot_tax, units="cm", 
-    width=15, height=12, dpi=300
+
+ggsave(paste0(dir_plot, 'fig-5a.png'), p5, units="cm", width=15, height=6, dpi=300)
+ggsave(paste0(dir_plot, 'fig-5b.png'), p13, units="cm", width=15, height=6, dpi=300)
+ggsave(paste0(dir_plot, 'fig-5c.png'), p16, units="cm", width=15, height=5, dpi=300)
+
+
+################################################################################
+# Trend analysis
+
+# species_and_pub_per_year$species_per_publication
+# taxonomic_effort$species_per_real_taxonomist
+
+ts_data_sp_per_pub <- ts(
+    species_and_pub_per_year$species_per_publication,
+    frequency = 1, start = c(1758)
 )
 
-
-des_y_data <- des_y[, c("years", "variable", "value", "value_roll")]
-
-des_y_data$N_species_described <- as.integer(
-    gsub("N_real_describers.|.prop", "", des_y_data$variable)
+ts_data_species_per_tax <- ts(
+    taxonomic_effort$species_per_real_taxonomist,
+    frequency = 1, start = c(1758)
 )
 
-des_y_data$variable <- NULL
+ts_data <- ts_data_species_per_tax
 
-des_y_data <- des_y_data[order(N_species_described, years)]
+# adf.test(ts_data)
+# kpss.test(ts_data)
+# nsdiffs(ts_data)
 
-wfile <- paste0(v2_dir_data_webapp, "ch1-fig-03-data.csv")
-fwrite(des_y_data, wfile, na="")
+idx_1909 <- which(species_and_pub_per_year$date == 1909)
+
+res <- MannKendall(ts_data_sp_per_pub)
+print("--------------------------")
+print("Trend test: mean species per publication")
+summary(res)
+
+res <- MannKendall(ts_data_species_per_tax[1:idx_1909])
+print("--------------------------")
+print("Trend test: mean species per describer before breakpoint")
+summary(res)
+
+res <- MannKendall(
+    ts_data_species_per_tax[idx_1909:length(ts_data_species_per_tax)]
+)
+print("--------------------------")
+print("Trend test: mean species per describer after breakpoint")
+summary(res)
+
+################################################################################
+
+# Breakpoint analysis
+
+# Resource: https://rpubs.com/MarkusLoew/12164
+
+plot(taxonomic_effort$years, taxonomic_effort$species_per_real_taxonomist_roll)
+mod <- lm(species_per_real_taxonomist~years, data = taxonomic_effort)
+seg <- segmented(mod, seg.Z = ~ years, psi = list(years=1909))
+print(summary(seg))
+print(seg$psi)
+
+# https://otexts.com/fpp2/moving-averages.html
+# https://otexts.com/fpp2/stationarity.html

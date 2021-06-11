@@ -19,7 +19,7 @@ df_des <- read_escaped_data_v2(file)
 # Part 1: all valid species
 des <- df_des[!is.na(max_corrected), 
     c(
-        "full.name.of.describer", "min", "max_corrected", 
+        "full.name.of.describer", "min", "max_corrected",  # including subspecies, synonyms
         "ns_species_per_year_active"
     )
 ]
@@ -96,7 +96,7 @@ des <- df_des[
     as.integer(spp_N) <= N_species_thres, 
     c(
         "full.name.of.describer", "min", "max_corrected",
-        "ns_species_per_year_active", "spp_N"
+        "ns_species_per_year_active", "spp_N" # valid species and synonyms
     )
 ]
 

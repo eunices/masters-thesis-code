@@ -1,78 +1,33 @@
-print(paste0(Sys.time(), " --- Histogram of PTEs active years"))
+print(paste0(Sys.time(), " --- tax per person"))
 
+taxonomic_effort_per_person <- merge(
+    taxonomic_effort, lp_pop, 
+    by.x="years", by.y="year", all.x=T, all.y=F
+) 
+# https://www.worldometers.info/world-population/
 
-# Tabulate statistics of years active
-tax <- df_describers[spp_N_1st_auth_s>=1]
-tax$yrs_active1 <- tax$max_corrected - tax$min + 1
+taxonomic_effort_per_person[years=="2016"]$pop <- 7464022049	
+taxonomic_effort_per_person[years=="2017"]$pop <- 7547858925
+taxonomic_effort_per_person[years=="2018"]$pop <- 7631091040
+taxonomic_effort_per_person[years=="2019"]$pop <- 7713468100
 
-# Active based on max_corrected
-yrs_active1 <- tax$yrs_active1
-tax[yrs_active1 <=0]
-yrs_active1[yrs_active1<=0] <- 0
-# tax[yrs_active1>30]$full.name.of.describer
+taxonomic_effort_per_person$tax_per_mil_person <- 
+    taxonomic_effort_per_person$N_real_describers / 
+        (taxonomic_effort_per_person$pop /10^9)
 
-# Active based on max_correct and with date of death
-yrs_active1b <- tax[!is.na(dod.describer),]$yrs_active1
+yscale = .5
+p8b <- ggplot(taxonomic_effort_per_person, aes(x=years, y=tax_per_mil_person)) + 
+    xlab("") + ylab("Number of PTEs \nper billion persons (black)") + 
+    theme +
+    geom_point(size=1, color='grey') + 
+    geom_line(size=.5, color='grey', linetype='dashed') +
+    geom_line(size=1, y=rollmean(taxonomic_effort_per_person$tax_per_mil_person, 10, 
+              fill = list(NA, NULL, NA))) +
+    geom_line(aes(y=pop/(10^9)/yscale), size=1, color='red') + 
+    scale_x_continuous(breaks=ybreaks50, minor_breaks=ybreaks10) +
+    scale_y_continuous(sec.axis = sec_axis(~ .*yscale, name="World population,\nbillions (red)"))
 
-tax[yrs_active1 >100]
-df[grepl("Abrahamovich|Lucia", full.name.of.describer) & date == 1913]
+max(taxonomic_effort_per_person$tax_per_mil_person)
+taxonomic_effort_per_person[years %in% 2015:2018]$tax_per_mil_person
 
-summary(yrs_active1)  # all
-summary(yrs_active1b) # with dod
-length(yrs_active1)
-
-hist_active_yrs <- ggplot(data.frame(yrs=yrs_active1b)) +
-    geom_histogram(data.frame(yrs=yrs_active1), 
-                   mapping=aes(x=yrs, y=..count../sum(..count..) * 100),
-                   binwidth=10, fill='black') + 
-    # geom_histogram(aes(x=yrs, y=..count../sum(..count..) * 100), binwidth=10, 
-    #                fill='grey80', alpha=0.6) +
-    scale_x_continuous(breaks= seq(0, max(yrs_active1), 10)) +
-    scale_y_continuous(breaks= seq(0, 50, 10), limits=c(0, 50)) +
-    # geom_vline(
-    #     xintercept=summary(yrs_active1)[2], 
-    #     color='grey', size=.5, 
-    # ) +
-    # geom_vline(
-    #     xintercept=summary(yrs_active1)[3], 
-    #     color='grey', size=.5, 
-    # ) +
-    # geom_vline(
-    #     xintercept=summary(yrs_active1)[5], 
-    #     color='grey', size=.5, 
-    # ) +
-    # geom_vline(
-    #     xintercept=summary(yrs_active1b)[5], 
-    #     color='grey', size=.5, linetype="dotted"
-    # ) +
-    xlab("\nNumber of active years") + ylab("Percentage of PTEs (%)\n") + 
-    theme
-
-ggsave(
-    paste0(dir_plot, '_si/si-B-fig-1.png'), hist_active_yrs,
-    units="cm", width=10, height=8, dpi=300
-)
-
-# Active based on max publication dates
-yrs_active2 <- tax$max - tax$min
-
-# Based on sum of authors that described a species
-yrs_active3 <- df[, c("date", "full.name.of.describer")] %>% 
-    separate_rows(full.name.of.describer, sep="; ")
-
-yrs_active3 <- data.table(unique(yrs_active3))
-yrs_active3 <- yrs_active3[, .N, by='date'][order(date)]
-yrs_active3$date <- as.integer(yrs_active3$date)
-
-plot_tax_effort5 <- ggplot(data=yrs_active3, aes(x=date, y=N)) +
-    geom_line() + theme +
-    xlab("Number of PTEs") + ylab("Year") + 
-    ggtitle(paste0("Number of PTEs in each year"))
-
-# Mean number of species/year 
-hist_mean_sp_per_auth <- ggplot(df_describers) +
-    geom_histogram(
-        mapping=aes(x=ns_species_per_year_active, 
-        y=..count../sum(..count..) * 100), binwidth=5) +
-    theme
-
+ggsave(paste0(dir_plot, '_si/si-b-fig-1.png'), p8b, units="cm", width=21, height=5, dpi=300)
