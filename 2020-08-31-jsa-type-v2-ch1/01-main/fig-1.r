@@ -141,9 +141,9 @@ p15 <- ggplot(data=p15_data, aes(x=years, y=N_weighted_real_describers_roll)) +
 wfile <- paste0(v2_dir_data_webapp, "ch1-fig-02-data.csv")
 fwrite(p15_data, wfile, na="")
 
-ggsave(paste0(dir_plot, 'fig-1a.png'), p3, units="cm", width=16, height=4, dpi=300)
-ggsave(paste0(dir_plot, 'fig-1b.png'), p8, units="cm", width=16, height=4, dpi=300)
-ggsave(paste0(dir_plot, 'fig-1c.png'), p15, units="cm", width=16, height=4, dpi=300)
+ggsave(paste0(dir_plot, 'fig-1a.png'), p3, units="cm", width=14, height=4, dpi=300)
+ggsave(paste0(dir_plot, 'fig-1b.png'), p8, units="cm", width=14, height=4, dpi=300)
+ggsave(paste0(dir_plot, 'fig-1c.png'), p15, units="cm", width=14, height=4, dpi=300)
 
 
 ################################################################################

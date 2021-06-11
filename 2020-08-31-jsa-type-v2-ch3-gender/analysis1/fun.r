@@ -331,16 +331,17 @@ save_graph <- function(
         # ) +
 
         # real data
-        geom_point(data = prop_overlay, aes(x = yrs_fr_baseline, y = prop_F)) + 
+        geom_point(data = prop_overlay, aes(x = yrs_fr_baseline, y = prop_F), size=.8) + 
 
         # fitted data
-        geom_line(data = prop_overlay, aes(x = yrs_fr_baseline, y = predicted)) + 
+        geom_line(data = prop_overlay, aes(x = yrs_fr_baseline, y = predicted), size=.8) + 
 
         # thresholds
-        geom_hline(yintercept= 45, linetype="dotted", size=0.8, color="red")  +   
-        geom_hline(yintercept= 55, linetype="dotted", size=0.8, color="red")  +
+        geom_hline(yintercept = 45, linetype="dotted", size=0.8, color="red")  +   
+        geom_hline(yintercept = 55, linetype="dotted", size=0.8, color="red")  +
 
-        xlab("\nYear") + ylab(y_axis_title) + ylim(c(0, max_y)) + theme
+        xlab("\nYear") + ylab(y_axis_title) + ylim(c(0, max_y)) +
+        theme_minimal(base_size = 10)
     
 
     # Plot parity year if it exists
@@ -350,7 +351,7 @@ save_graph <- function(
 
         p1 <- p1 + geom_vline(
             xintercept= parity.year + baseline_yr, linetype="dashed",
-            size=1.5, color="black"
+            size=.8, color="black"
         ) + 
         # annotate(
         #     "text", x=parity.year + baseline_yr, y = 10, label=parity_annotation
@@ -378,8 +379,8 @@ save_graph <- function(
     plot_filepath <- paste0(dir_output, country, "-", position, ".png")
     
     ggsave(
-        plot_filepath, plot=p1, width = 9, height = 4, dpi = 150, 
-        units = "in", device='png'
+        plot_filepath, plot=p1, width = 14, height = 7, dpi = 300, 
+        units = "cm", device='png'
     )
     
 }

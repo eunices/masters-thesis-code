@@ -85,7 +85,7 @@ plot_tax <- ggplot(des_y, aes(x=years, y=value, group=variable)) +
 
 ggsave(
     paste0(dir_plot, 'fig-6.png'), plot_tax, units="cm", 
-    width=15, height=12, dpi=300
+    width=14, height=12, dpi=300
 )
 
 

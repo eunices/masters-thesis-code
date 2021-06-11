@@ -1,6 +1,6 @@
 options("scipen"=100, "digits"=4)
 
-yng <- tax[, c("full.name.of.describer", "min", "max_corrected", "spp_N")]
+yng <- df_describer[, c("full.name.of.describer", "min", "max_corrected", "spp_N")]
 yng$mid <- as.integer((yng$max_corrected - yng$min) / 2) + yng$min
 
 # spp_N includes valid species and synonyms
@@ -44,16 +44,19 @@ summary <- yng[, {
 
 p <- ggplot(summary, aes(x = spp_bin, y = frac*100, fill = age_bin)) +
   geom_bar(stat="identity", width = 0.7, color="black", size=.2) +
-  labs(x = "\nNumber of species", y = "Percentage of PTEs (%)\n", fill = "First\npublication date") +
-  theme_minimal(base_size = 9) + 
-  scale_y_continuous(breaks=ybreaks10) +
+  labs(x = "Number of species", y = "Percentage of PTEs (%)\n", fill = "First\npublication date") +
+  theme_minimal(base_size = 11) + 
+  scale_y_continuous(breaks=ybreaks20) +
   scale_x_discrete() +
-  theme(panel.grid.major.x = element_blank()) +
+  theme(
+      panel.grid.major.x = element_blank(),
+      axis.text.x = element_text(size=9, angle=90, hjust=1, vjust=0)
+    ) +
   scale_fill_brewer(palette="Greys")
 
 ggsave(
     paste0(dir_plot, 'fig-7a.png'), p, units="cm", 
-    width=17.5, height=6, dpi=300
+    width=18.5, height=8, dpi=300
 )
 
 summary <- yng[, {
@@ -67,15 +70,18 @@ getPalette <- colorRampPalette(brewer.pal(9, "Greys"))
 p <- ggplot(summary, aes(x = age_bin, y = frac*100, fill = spp_bin)) +
   geom_bar(stat="identity", width = 0.7, color="black", size=.2) +
   labs(x = "\nFirst publication date", y = "Percentage of PTEs (%)\n", fill = "Number of species") +
-  theme_minimal(base_size = 7) + 
+  theme_minimal(base_size = 11) + 
   scale_y_continuous(breaks=ybreaks10) +
   scale_x_discrete() +
-  theme(panel.grid.major.x = element_blank()) +
+  theme(
+      panel.grid.major.x = element_blank(),
+      axis.text.x = element_text(size=9)
+    ) +
   scale_fill_manual(values=getPalette(length(levels(yng$spp_bin))))
 
 ggsave(
     paste0(dir_plot, 'fig-7b.png'), p, units="cm", 
-    width=17.5, height=10, dpi=300
+    width=18.5, height=10, dpi=300
 )
 
 summary[age_bin=="After 2000"]

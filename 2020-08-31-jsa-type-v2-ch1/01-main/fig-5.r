@@ -80,9 +80,9 @@ p16 <- ggplot(
     scale_y_continuous(breaks=ybreaks2, minor_breaks=ybreaks1, limits=c(0,12))
 
 
-ggsave(paste0(dir_plot, 'fig-5a.png'), p5, units="cm", width=15, height=6, dpi=300)
-ggsave(paste0(dir_plot, 'fig-5b.png'), p13, units="cm", width=15, height=6, dpi=300)
-ggsave(paste0(dir_plot, 'fig-5c.png'), p16, units="cm", width=15, height=5, dpi=300)
+ggsave(paste0(dir_plot, 'fig-5a.png'), p5, units="cm", width=14, height=6, dpi=300)
+ggsave(paste0(dir_plot, 'fig-5b.png'), p13, units="cm", width=14, height=6, dpi=300)
+ggsave(paste0(dir_plot, 'fig-5c.png'), p16, units="cm", width=14, height=5, dpi=300)
 
 
 ################################################################################
