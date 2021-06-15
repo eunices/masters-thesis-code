@@ -30,4 +30,4 @@ p8b <- ggplot(taxonomic_effort_per_person, aes(x=years, y=tax_per_mil_person)) +
 max(taxonomic_effort_per_person$tax_per_mil_person)
 taxonomic_effort_per_person[years %in% 2015:2018]$tax_per_mil_person
 
-ggsave(paste0(dir_plot, '_si/si-b-fig-1.png'), p8b, units="cm", width=21, height=5, dpi=300)
+ggsave(paste0(dir_plot, '_si/si-b-fig-1.png'), p8b, units="cm", width=18, height=7, dpi=300)

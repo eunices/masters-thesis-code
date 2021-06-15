@@ -76,11 +76,15 @@ des_where <- merge(
 )
 
 lvls_class <- c(
-    "Low income", "Lower middle income", "Upper middle income",
-    "High income",  "Unclassed"
+    "Low", "Lower middle", "Upper middle",
+    "High",  "Unclassed"
 )
 
-des_where$Class <- factor(des_where$Class, lvls_class)
+des_where$Class <- factor(
+   gsub(' income', '', des_where$Class),
+   levels=lvls_class
+)
+
 
 lvls_continent <- rev(c(
     "Africa", "Oceania", "Asia", "Australia", "South America", 
@@ -142,11 +146,11 @@ des_whereplot <- ggplot(
     scale_y_discrete(labels=labels_y) +
     theme +
     guides(fill = FALSE) +
-    theme(axis.text.x=element_text(size=9.5))
-
+    theme_minimal(base_size=12) +
+    theme(axis.text=element_text(size=11)) 
 
 cfile <- paste0(dir_plot, 'fig-1.png')
-ggsave(cfile, des_whereplot, units="cm", width=18, height=8, dpi=300)
+ggsave(cfile, des_whereplot, units="cm", width=18, height=7, dpi=300)
 
 des_whereplot_data <- des_where_summary_plot[, c(
     "Class", "variable", "value"
@@ -210,7 +214,7 @@ ss <- merge(
 )
 
 
-ss$Class <- factor(ss$Class, levels=lvls_class)
+ss$Class <- factor(gsub(" income", "", ss$Class), levels=lvls_class)
 ss[Class=="Unclassed"] # !CHECK
 ss[is.na(Country)]     # !CHECK
 
@@ -266,16 +270,16 @@ print(paste0(
 ))
 
 # Plot
-xlab <- "\nWorld Bank classification\n of country"
+xlab <- "\nWorld Bank income class\n of donor country"
 ylab <- "Percentage of species described\n by resident describers (%)\n"
 
 p1 <- ggplot(ss[!is.na(Class)], aes(x=Class, y=round(prop*100,2))) + 
 	geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
-	labs(x=xlab, y=ylab) +
+	labs(x=xlab, y=ylab) + theme_minimal(base_size=13) +
 	theme
 
 cfile <- paste0(dir_plot, 'fig-2.png')
-ggsave(cfile, p1, units="cm", width=20, height=9, dpi=300)
+ggsave(cfile, p1, units="cm", width=18, height=9, dpi=300)
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -315,7 +319,7 @@ flow <- flow[
     residence.country.describer.first != "[unknown]"
 ]
 
-flow$Class <- factor(flow$Class, levels=lvls_class)
+flow$Class <- factor(gsub(" income", "", flow$Class), levels=lvls_class)
 
 kruskal.test(N~Class, data = flow)
 pairwise.wilcox.test(flow$N, flow$Class, p.adjust.method = "BH")
@@ -343,15 +347,15 @@ write.csv(
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(paste0(Sys.time(), " --- Fig 3 socioeconomic status on number of countries contributed to"))
 
-lab_x <- "\nWorld Bank classification\n of donor country"
+lab_x <- "\nWorld Bank income class\n of donor country"
 lab_y <- "Number of recipient countries \n for each donor country"
 
 p2 <- ggplot(flow[!is.na(Class),], aes(x=Class, y=N)) + 
   	geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
-	labs(x=lab_x, y=lab_y) + theme
+	labs(x=lab_x, y=lab_y) + theme + theme_minimal(base_size=13)
 
 cfile <- paste0(dir_plot, 'fig-3.png')
-ggsave(cfile, p2, units="cm", width=20, height=10, dpi=300)
+ggsave(cfile, p2, units="cm", width=18, height=9, dpi=300)
 
 
 

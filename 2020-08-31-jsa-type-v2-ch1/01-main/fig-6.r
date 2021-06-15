@@ -80,8 +80,12 @@ plot_tax <- ggplot(des_y, aes(x=years, y=value, group=variable)) +
         . ~variable, ncol=2, 
         labeller=labeller(variable=formatstr), dir="v"
     ) +
-    scale_y_continuous(limits=c(0, 50), breaks=seq(0,50,10)) +
-    theme + theme_minimal(base_size=10)
+    scale_y_continuous(limits=c(0, 50), breaks=seq(0,50,20), minor_breaks=seq(0, 50, 10)) +
+    theme + theme_minimal(
+        base_size=10
+    ) + theme(
+        strip.text = element_text(size = 9)
+    )
 
 ggsave(
     paste0(dir_plot, 'fig-6.png'), plot_tax, units="cm", 

@@ -166,9 +166,10 @@ x_scale[x_scale_tf == FALSE] <- ""
 plot_auth_decade1 <- ggplot(data = df, aes(x=date.decade, fill=N)) +
         geom_bar(position = "fill") +
         xlab("\nDecade") + 
-        ylab("Percentage of species with \nnumber of describers\n") +
+        ylab("Percentage of species with \nnumber of describers (%)\n") +
         theme + scale_fill_grey() +
-        scale_x_discrete(labels = x_scale)
+        scale_x_discrete(labels = x_scale) +
+        scale_y_continuous(labels = function(x) x*100)
 
 plot_auth_decade2 <- ggplot(data=df, aes(x=date.decade, fill=N)) +
         geom_bar(stat = 'count') +

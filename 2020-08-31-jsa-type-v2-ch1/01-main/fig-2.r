@@ -54,8 +54,8 @@ plot_tax_pub_decade <-
         scale_y_continuous(limit=c(-5, 40)) +
         scale_x_discrete(breaks = x_axis) + 
         xlab("\nDecade") + 
-        ylab("Number of species described \nper publication\n") +
-        theme
+        ylab("Number of species \nper publication\n") +
+        theme + theme_minimal(base_size=10)
 
 # Old plot
 # plot_tax_pub_decade <- 
@@ -88,7 +88,7 @@ plot_tax_pub_decade <-
 #         # ) +
 #         scale_x_discrete(breaks = x_axis) + 
 #         xlab("\nDecade") +
-#         ylab("Number of species described \nper publication\n") +
+#         ylab("Number of species \nper publication\n") +
 #         theme
 
 
@@ -135,12 +135,12 @@ plot_tax_des_decade <-
         #    position=position_dodge(width = 0.75), size=3
         # ) +
         xlab("\nDecade") + 
-        ylab("Number of species described \nper PTE\n") +
-        theme
+        ylab("Number of species \nper PTE\n") +
+        theme + theme_minimal(base_size=10)
 
 # Save plots
-ggsave(paste0(dir_plot, 'fig-2a.png'), plot_tax_pub_decade, units="cm", width=16, height=6, dpi=300)
-ggsave(paste0(dir_plot, 'fig-2b.png'), plot_tax_des_decade, units="cm", width=16, height=6, dpi=300)
+ggsave(paste0(dir_plot, 'fig-2a.png'), plot_tax_pub_decade, units="cm", width=13.5, height=6, dpi=300)
+ggsave(paste0(dir_plot, 'fig-2b.png'), plot_tax_des_decade, units="cm", width=13.5, height=6, dpi=300)
 
 
 ################################################################################

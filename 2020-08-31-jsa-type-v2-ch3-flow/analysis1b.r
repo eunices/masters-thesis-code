@@ -70,6 +70,8 @@ df <- merge(
 df <- unique(df)
 
 # Remove where ori and des are same
+dim(df)
+
 df <- df[ori != des] # minus length(auth) number of rows
 
 dim(df)[1] + length(auth)
