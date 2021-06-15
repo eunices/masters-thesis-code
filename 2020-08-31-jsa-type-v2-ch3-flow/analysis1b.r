@@ -20,10 +20,11 @@ library(boot)
 # Process data  ------------------------------------------------------------------------------------
 # Read and process describer data
 auth <- get_des()
+names(auth)
 
 # Subset those with at least one valid species
 auth <- auth[
-    ns_spp_N >=1, 
+    (ns_spp_N + syn_spp_N) >=1, 
     c("full.name.of.describer", "residence.country.describer.first")
 ]
 
@@ -32,21 +33,34 @@ auth_N <- auth[
     by=c("residence.country.describer.first")
 ]
 
-auth <- auth[, idx:= 1:.N, by=c("full.name.of.describer")]
-auth <- auth[!duplicated(full.name.of.describer)]
-
 auth <- unique(auth[
     residence.country.describer.first != "[unknown]"
 ]$residence.country.describer.first)
+
 
 # Read bee data
 df <- fread(
     paste0(v2_dir_data_ch3_flow, "2019-11-01-flow-GLM.csv"), encoding="UTF-8"
 )
 
-df <- df[class_check != 'Unclassed']
-df <- df[continent_ori != 'Unclassed']
-df <- df[ori %in% auth]
+# Check 
+sqrt(dim(df)[1]) # 249 countries
+df[class_check == 'Unclassed']
+df[Class_des == 'Unclassed', .N, by="des"]
+df[Class_ori == 'Unclassed', .N, by="ori"]
+unclass <- unique(df[Class_ori == 'Unclassed']$ori)
+length(unclass) # 33 with no class
+auth[auth %in% unclass] # none of the authors from there
+
+sqrt(dim(df)[1]) - length(unclass) # expected number of countries 
+
+df <- df[class_check != 'Unclassed'] # removing countries with no class
+df <- df[ori %in% auth] # only filtering for countrie with authors
+
+# Check
+dim(df)[1]
+length(auth)
+dim(df)[1]/length(auth)
 
 df <- merge(
     df, auth_N, by.x="ori", by.y="residence.country.describer.first", 
@@ -56,8 +70,13 @@ df <- merge(
 df <- unique(df)
 
 # Remove where ori and des are same
-df <- df[ori != des]
+df <- df[ori != des] # minus length(auth) number of rows
 
+dim(df)[1] + length(auth)
+
+
+
+dim(df)[1]
 
 length(table(df$ori)) # number of origin countries
 length(table(df$des)) # number of describer countries
@@ -68,6 +87,7 @@ table(df$des)
 sapply(df[, 5:10], unique)
 sapply(df[, 5:10], table)
 
+unique(df$ori)
 
 # Derived values
 df$prop_flow <- ifelse(df$N_flow==0, 0, df$N_flow / df$N_total)

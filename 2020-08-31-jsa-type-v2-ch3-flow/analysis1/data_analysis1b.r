@@ -48,6 +48,10 @@ flow[no_flow==FALSE, list(N_cty=length(unique(des))), by=c("ori")][
     order(-N_cty)
 ]
 
+flow[no_flow==FALSE, list(N_cty=length(unique(des))), by=c("des")][
+    order(-N_cty)
+]
+
 spp <- get_df()[
     duplicated == FALSE & status %in% c("Valid species", "Synonym"),
     c("type.country_n", "full.name.of.describer")
@@ -57,6 +61,10 @@ spp <- data.table(separate_rows(spp, full.name.of.describer, sep="; "))
 sum_flow <- spp[, .N, by="type.country_n"][order(-N)]
 flow <- flow[no_flow == "FALSE" ,c("ori", "des", "N")]
 
+unique(flow$ori)
+unique(flow$des)
+
+
 # Get statoid country codes (with socioeconomic status)
 comb <- expand.grid(lu$DL, lu$DL)
 names(comb) <- c("ori", "des")
@@ -65,7 +73,7 @@ flow[is.na(flow)] <- 0
 
 # Get colonial history data
 lu_col <- get_lp_col()
-lu_col <- lu_col[, c("_A3", "_ColRulerA3", "_IndYear")]
+lu_col <- lu_col[, c("_A3", "_ColRulerA3")]
 
 names(lu_col) <- gsub("_", "", names(lu_col))
 lu_col <- lu_col %>% separate_rows(A3, sep="; ")
@@ -161,6 +169,17 @@ flow <- merge(
 
 flow[is.na(N_total)]$N_total <- 0
 flow <- flow[!is.na(ori)]
+
+# Check
+flow[,list(n=sum(N_flow)), by="ori"][order(-n)]
+flow[,list(n=sum(N_flow)), by="des"][order(-n)]
+249*249
+
+dup <- flow[duplicated(paste0(ori, des))][order(ori, des)]
+dups <- paste0(dup$ori, " ", dup$des)
+flow[paste0(ori, " ", des) %in% dups][order(ori, des)]
+
+sqrt(dim(flow)[1])
 
 # Persist dataset
 vars <- c("ori", "des", "N_flow", "N_total", model_vars)

@@ -34,6 +34,8 @@ des_tabulate <- des[
     by="residence.country.describer.first"
 ][order(-N)]
 
+des_tabulate
+
 dim(des_tabulate[residence.country.describer.first != "[unknown]"]) 
 
 des_tabulate <- merge(
@@ -41,6 +43,9 @@ des_tabulate <- merge(
     all.x=T, all.y=F, 
     by.x="residence.country.describer.first", by.y="DL"
 )
+
+check <- des_tabulate[residence.country.describer.first != "[unknown]",]
+check[!check[,residence.country.describer.first] %in% unique(df$ori),] # analysis1b.r
 
 # top 3 countries with describers
 des_tabulate[1:3]
@@ -139,7 +144,7 @@ des_whereplot <- ggplot(
 
 
 cfile <- paste0(dir_plot, 'fig-1.png')
-ggsave(cfile, des_whereplot, units="cm", width=20, height=10, dpi=300)
+ggsave(cfile, des_whereplot, units="cm", width=20, height=8, dpi=300)
 
 des_whereplot_data <- des_where_summary_plot[, c(
     "Class", "variable", "value"
