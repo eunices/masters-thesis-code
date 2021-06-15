@@ -140,11 +140,13 @@ des_whereplot <- ggplot(
     # scale_fill_continuous(name="") +
     scale_x_discrete(labels=labels_x) +
     scale_y_discrete(labels=labels_y) +
-    theme
+    theme +
+    guides(fill = FALSE) +
+    theme(axis.text.x=element_text(size=9.5))
 
 
 cfile <- paste0(dir_plot, 'fig-1.png')
-ggsave(cfile, des_whereplot, units="cm", width=20, height=8, dpi=300)
+ggsave(cfile, des_whereplot, units="cm", width=18, height=8, dpi=300)
 
 des_whereplot_data <- des_where_summary_plot[, c(
     "Class", "variable", "value"
