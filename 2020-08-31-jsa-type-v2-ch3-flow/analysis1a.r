@@ -273,10 +273,10 @@ print(paste0(
 xlab <- "\nWorld Bank income class\n of donor country"
 ylab <- "Percentage of species described\n by resident describers (%)\n"
 
-p1 <- ggplot(ss[!is.na(Class)], aes(x=Class, y=round(prop*100,2))) + 
+p1 <- ggplot(ss[!(is.na(Class) | Class=="Unclassed")], aes(x=Class, y=round(prop*100,2))) + 
 	geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
-	labs(x=xlab, y=ylab) + theme_minimal(base_size=13) +
-	theme
+	labs(x=xlab, y=ylab) + 
+	theme + theme_minimal(base_size=13)
 
 cfile <- paste0(dir_plot, 'fig-2.png')
 ggsave(cfile, p1, units="cm", width=18, height=9, dpi=300)
