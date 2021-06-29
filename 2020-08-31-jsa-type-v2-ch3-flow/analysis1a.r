@@ -276,6 +276,7 @@ ylab <- "Percentage of species described\n by resident describers (%)\n"
 p1 <- ggplot(ss[!(is.na(Class) | Class=="Unclassed")], aes(x=Class, y=round(prop*100,2))) + 
 	geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
 	labs(x=xlab, y=ylab) + 
+    scale_y_continuous(breaks=ybreaks10) +
 	theme + theme_minimal(base_size=13)
 
 cfile <- paste0(dir_plot, 'fig-2.png')
@@ -352,7 +353,8 @@ lab_y <- "Number of recipient countries \n for each donor country"
 
 p2 <- ggplot(flow[!is.na(Class),], aes(x=Class, y=N)) + 
   	geom_boxplot() + stat_summary(fun.y=mean, geom="point", shape=1, size=1) +
-	labs(x=lab_x, y=lab_y) + theme + theme_minimal(base_size=13)
+	labs(x=lab_x, y=lab_y) + theme + theme_minimal(base_size=13) +
+    scale_y_continuous(breaks=ybreaks20)
 
 cfile <- paste0(dir_plot, 'fig-3.png')
 ggsave(cfile, p2, units="cm", width=18, height=9, dpi=300)

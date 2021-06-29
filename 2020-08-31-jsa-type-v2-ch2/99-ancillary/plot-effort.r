@@ -5,6 +5,8 @@ source(paste0(dir_script, "subset.r"))
 source('2020-08-31-jsa-type-v2-ch2/02-model/init.r')
 
 
+
+
 model <- "version01/BGY-E1-C4-I20000-A0.9-T12-F25-V0/"
 fdir <- paste0(dir_analysis_edie_model, model)
 
@@ -16,7 +18,6 @@ p <- ggplot(df, aes(x=year, y=N)) +
     theme_minimal() + xlab("Year") + ylab("Number of publications\n") 
 
 ggsave(paste0(fdir, "te.png"), p, units="cm", width=20, height=10, dpi=300)
-
 
 
 
