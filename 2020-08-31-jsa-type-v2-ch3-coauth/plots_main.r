@@ -42,7 +42,20 @@ df_full <- df
 
 # Count number of describers
 df <- df %>% separate_rows(full.name.of.describer, sep="; ")
-df <- data.table(unique(df))
+df_authors <- df <- data.table(unique(df))
+
+# Get authors inside / outside network (new)
+df_author_max_date <- df[, list(max=max(date)), by="full.name.of.describer"]
+df_authors <- dcast(df_authors, full.name.of.describer ~ coauth)
+df_authors <- merge(
+    df_authors, df_author_max_date, by="full.name.of.describer", all.x=T, all.y=T
+)
+names(df_authors) <- c("full.name", "coauth", "no.coauth", "max.date")
+dim(df_authors)
+df_authors[coauth > 0] # coauthored (in network)
+df_authors[coauth == 0] # did not coauthor
+df_authors[coauth == 0 & max.date >= 2000] # did not coauthor and still active
+
 df <- df[, list(.N), by=c('idx', 'date.decade', 'date', 'coauth')]
 df <- df[order(date.decade)]
 df$N <- as.character(df$N)
